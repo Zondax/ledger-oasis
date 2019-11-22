@@ -19,6 +19,8 @@ For development purposes, this repo is recommended as it includes unit tests, to
 
 At the moment, the only option is to build the app on your own. **Please only use a TEST DEVICE!**
 
+**We strongly recommend using Linux as your development environment.**
+
 Once the app is ready and we reach v1.0.0, it will be submitted to Ledger so it is published in the app Catalog.
 
 ## Get source
@@ -46,36 +48,6 @@ git submodule update --init --recursive
   libssl-dev libgmp-dev autoconf libtool
    ```
 
-#### OSX Dependencies
-- Instal `brew` and `xcode`.
-
-- You will also need:
-
-   ```
-   brew install libusb
-   ```
-
-  In OSX, python version is by default 2.7 and you will need python 3.x
-
-   ```
-   brew install python3
-   ```
-   there are a few alternatives, for instance, you can create a `virtualenv`
-
-   ```
-   pip3 install virtualenv
-   virtualenv -p python3 <your-venv-path>
-   ```
-  and then activate
-  ```
-  source <your-venv-path>/bin/activate
-  ```
-  to deactivate
-  ```
-  deactivate
-  ```
-
-
 #### Other dependencies
 
 - You need Python 3. In most cases, `make deps` will be able to install all additional dependencies:
@@ -90,14 +62,12 @@ git submodule update --init --recursive
 
    **Have a second device that is used ONLY for development and testing**
 
-   There are two steps that are useful to increase reproducibility and simplify development:
+   There are a few additional steps that increase reproducibility and simplify development:
 
-### Ensure your device works in your OS
-- In Linux hosts it might be necessary to adjust udev rules, etc.
+**1 - Ensure your device works in your OS**
+- In Linux hosts it might be necessary to adjust udev rules, etc. Refer to Ledger documentation: https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues
 
-Refer to Ledger documentation: https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues
-
-### Set test mnemonic
+**2 - Set a test mnemonic**
 
 All our tests expect the device to be configured with a known test mnemonic.
 
@@ -114,7 +84,7 @@ All our tests expect the device to be configured with a known test mnemonic.
    Mnemonic: equip will roof matter pink blind book anxiety banner elbow sun young
    ```
 
-### Add a development certificate
+**3 - Add a development certificate**
 
 - Plug your device while pressing the right button
 
