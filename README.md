@@ -1,7 +1,7 @@
 # Ledger Oasis app
 ![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![CircleCI](https://circleci.com/gh/zondax/ledger-oasis/tree/master.svg?style=shield)](https://circleci.com/gh/zondax/ledger-oasis/tree/master)
+[![CircleCI](https://circleci.com/gh/ZondaX/ledger-oasis/tree/master.svg?style=shield)](https://circleci.com/gh/ZondaX/ledger-oasis/tree/master)
 
 This repository contains:
 
