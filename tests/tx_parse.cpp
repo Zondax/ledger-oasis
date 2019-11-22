@@ -22,6 +22,7 @@
 
 namespace {
     TEST(CBORParserTest, TransferExample) {
+        // TODO: Adjust so it really follows the transaction format
         // {"nonce": 123456, "xfer_to": "1234567890abcdef", "xfer_tokens": 887766554433}
         uint8_t inBuffer[100];
         auto inBufferLen = parseHexString(
