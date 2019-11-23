@@ -25,8 +25,7 @@ string(APPEND CMAKE_LINKER_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-poin
 
 ##############################################################
 ##############################################################
-##############################################################
-##############################################################
+#  static libs
 file(GLOB_RECURSE JSMN_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/jsmn/src/jsmn.c
         )
@@ -41,11 +40,6 @@ file(GLOB_RECURSE LIB_SRC
         #########
         src/ledger/src/lib/parser.c
         src/ledger/src/lib/parser_impl.c
-
-#        src/ledger/src/lib/json/json_parser.c
-#        src/ledger/src/lib/json/tx_parser.c
-#        src/ledger/src/lib/json/tx_display.c
-#        src/ledger/src/lib/json/tx_validate.c
         )
 
 file(GLOB_RECURSE TESTS_SRC
@@ -73,6 +67,7 @@ target_include_directories(unittests PUBLIC
         )
 target_link_libraries(unittests gtest_main cbor_parser nlohmann_json::nlohmann_json)
 add_test(unittests ${PROJECT_BINARY_DIR}/unittests)
+set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 ###############################################################
 # Force tests to depend from app compiling

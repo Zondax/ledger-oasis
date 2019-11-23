@@ -1,2 +1,77 @@
 [
+  {
+    "kind": "Transfer",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Transfer",
+      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0A="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+      "signature": {
+        "public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ=",
+        "signature": "4ez5EhcI/x9yl5NfAvQ/ichK+b1Zfna67xFAW3na7Ce1ff+Bv1o4F7QA26ePAosMaVGxm5mDPvB3rzNQXcE3AA=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA4ez5EhcI/x9yl5NfAvQ/ichK+b1Zfna67xFAW3na7Ce1ff+Bv1o4F7QA26ePAosMaVGxm5mDPvB3rzNQXcE3AGpwdWJsaWNfa2V5WCADvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBHN1bnRydXN0ZWRfcmF3X3ZhbHVlWG+kY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmiZ3hmZXJfdG9YIGQ2FoVYTIgS5uZLcRW1EtNqcPdT68NXl+R7g5vKrzcJa3hmZXJfdG9rZW5zQGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
+    "valid": true,
+    "signer_private_key": "qp7gpPixo3I6qDj8yWJFFc7AAVDJEYsWBS8gb3Bv5RMDvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBA==",
+    "signer_public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ="
+  },
+  {
+    "kind": "Transfer",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Transfer",
+      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0ID6A=="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
+      "signature": {
+        "public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ=",
+        "signature": "R8swFNcJ9wzQimainKxJ6mq6mVofjQfLWlLZVueydelcBeYAK/TOQB8noz2slgQQvOJZ1O3Wgt8KIMZabaG2Bg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAR8swFNcJ9wzQimainKxJ6mq6mVofjQfLWlLZVueydelcBeYAK/TOQB8noz2slgQQvOJZ1O3Wgt8KIMZabaG2BmpwdWJsaWNfa2V5WCADvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBHN1bnRydXN0ZWRfcmF3X3ZhbHVlWHGkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmiZ3hmZXJfdG9YIGQ2FoVYTIgS5uZLcRW1EtNqcPdT68NXl+R7g5vKrzcJa3hmZXJfdG9rZW5zQgPoZW5vbmNlAGZtZXRob2Rwc3Rha2luZy5UcmFuc2Zlcg==",
+    "valid": true,
+    "signer_private_key": "qp7gpPixo3I6qDj8yWJFFc7AAVDJEYsWBS8gb3Bv5RMDvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBA==",
+    "signer_public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ="
+  },
+  {
+    "kind": "Transfer",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Transfer",
+      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0OYloA="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+      "signature": {
+        "public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ=",
+        "signature": "7SKjTPGlcN2h61/Lc3szBTOBQh3Rxr/Tk0ugyPh0Um0XYdNTmpnJQ38aDIyRqXAm2IIr53AWSam7zDHKMIp4Cw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA7SKjTPGlcN2h61/Lc3szBTOBQh3Rxr/Tk0ugyPh0Um0XYdNTmpnJQ38aDIyRqXAm2IIr53AWSam7zDHKMIp4C2pwdWJsaWNfa2V5WCADvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBHN1bnRydXN0ZWRfcmF3X3ZhbHVlWHKkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmiZ3hmZXJfdG9YIGQ2FoVYTIgS5uZLcRW1EtNqcPdT68NXl+R7g5vKrzcJa3hmZXJfdG9rZW5zQ5iWgGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
+    "valid": true,
+    "signer_private_key": "qp7gpPixo3I6qDj8yWJFFc7AAVDJEYsWBS8gb3Bv5RMDvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBA==",
+    "signer_public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ="
+  }
 ]
