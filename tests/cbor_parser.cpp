@@ -118,7 +118,6 @@ namespace {
         // "x":1  key
         type = cbor_value_get_type(&contents);
         EXPECT_EQ(type, CborTextStringType);
-        EXPECT_EQ(err, CborNoError);
         key_len = sizeof(buffer);
         err = _cbor_value_copy_string(&contents, buffer, &key_len, nullptr);
         EXPECT_EQ(err, CborNoError);

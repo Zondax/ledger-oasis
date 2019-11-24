@@ -73,5 +73,230 @@
     "valid": true,
     "signer_private_key": "qp7gpPixo3I6qDj8yWJFFc7AAVDJEYsWBS8gb3Bv5RMDvqReBbqFTNj+2tyDyFyYOVNCW1zCZd0PnH5xaFHzBA==",
     "signer_public_key": "A76kXgW6hUzY/trcg8hcmDlTQltcwmXdD5x+cWhR8wQ="
+  },
+  {
+    "kind": "Burn",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Burn",
+      "body": "oWtidXJuX3Rva2Vuc0A="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
+      "signature": {
+        "public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM=",
+        "signature": "jJbZ5qqr/WqaVavFq6F3z4NZkNwp9+ng2Az9DfVP70XZkJjilHxJyv7+3h8OpRahR/4GmPsVz5cAdQ9sBywYCQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAjJbZ5qqr/WqaVavFq6F3z4NZkNwp9+ng2Az9DfVP70XZkJjilHxJyv7+3h8OpRahR/4GmPsVz5cAdQ9sBywYCWpwdWJsaWNfa2V5WCCCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBE3N1bnRydXN0ZWRfcmF3X3ZhbHVlWEGkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmha2J1cm5fdG9rZW5zQGVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+    "valid": true,
+    "signer_private_key": "+gzOVCXnGp38f5x/NvZN+4U5Psq8kIMmdw2Iefn+CIaCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBEw==",
+    "signer_public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM="
+  },
+  {
+    "kind": "Burn",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Burn",
+      "body": "oWtidXJuX3Rva2Vuc0ID6A=="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+      "signature": {
+        "public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM=",
+        "signature": "WR5ei72Ltjwff8LzflFAQyCmd+JZqDjpY9Wx3xzJLyxWqoSE1NiZsGb9kkXJ6obOVDPmzhMptDrkP3wb5OQTDw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAWR5ei72Ltjwff8LzflFAQyCmd+JZqDjpY9Wx3xzJLyxWqoSE1NiZsGb9kkXJ6obOVDPmzhMptDrkP3wb5OQTD2pwdWJsaWNfa2V5WCCCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBE3N1bnRydXN0ZWRfcmF3X3ZhbHVlWEOkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmha2J1cm5fdG9rZW5zQgPoZW5vbmNlAGZtZXRob2Rsc3Rha2luZy5CdXJu",
+    "valid": true,
+    "signer_private_key": "+gzOVCXnGp38f5x/NvZN+4U5Psq8kIMmdw2Iefn+CIaCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBEw==",
+    "signer_public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM="
+  },
+  {
+    "kind": "Burn",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.Burn",
+      "body": "oWtidXJuX3Rva2Vuc0OYloA="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
+      "signature": {
+        "public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM=",
+        "signature": "nvm/qHzzKxv22HCw1Kh1ux4xpMoIMBxfvVGNL47p1litvFyZtAGLRgsDa8m1xZsIzZ/Q+2VRy4Vqt8vxmpk5AQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAnvm/qHzzKxv22HCw1Kh1ux4xpMoIMBxfvVGNL47p1litvFyZtAGLRgsDa8m1xZsIzZ/Q+2VRy4Vqt8vxmpk5AWpwdWJsaWNfa2V5WCCCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBE3N1bnRydXN0ZWRfcmF3X3ZhbHVlWESkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmha2J1cm5fdG9rZW5zQ5iWgGVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+    "valid": true,
+    "signer_private_key": "+gzOVCXnGp38f5x/NvZN+4U5Psq8kIMmdw2Iefn+CIaCEby+iA1bu38OGgmI0weR62rOrSREfQ4EPq4uC1zBEw==",
+    "signer_public_key": "ghG8vogNW7t/DhoJiNMHketqzq0kRH0OBD6uLgtcwRM="
+  },
+  {
+    "kind": "Escrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.AddEscrow",
+      "body": "om1lc2Nyb3dfdG9rZW5zQG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
+      "signature": {
+        "public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps=",
+        "signature": "DE9wr5ojU9eYUtC65F7vUfKS+lB7NUnNVzZyohYyH17VdIXHOD8olj38bbEoIyTyenLn7pKzrPmX5qUKGokJBw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhADE9wr5ojU9eYUtC65F7vUfKS+lB7NUnNVzZyohYyH17VdIXHOD8olj38bbEoIyTyenLn7pKzrPmX5qUKGokJB2pwdWJsaWNfa2V5WCBYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mm3N1bnRydXN0ZWRfcmF3X3ZhbHVlWHmkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibWVzY3Jvd190b2tlbnNAbmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNWVub25jZQBmbWV0aG9kcXN0YWtpbmcuQWRkRXNjcm93",
+    "valid": true,
+    "signer_private_key": "R/2OEviyv7iMDQetecV5QmxV0lE7i6bBD2kX/nMHUlpYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mmw==",
+    "signer_public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps="
+  },
+  {
+    "kind": "Escrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.AddEscrow",
+      "body": "om1lc2Nyb3dfdG9rZW5zQgPobmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNQ=="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQgPobmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNWVub25jZQBmbWV0aG9kcXN0YWtpbmcuQWRkRXNjcm93",
+      "signature": {
+        "public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps=",
+        "signature": "UVygpzynBqpbI5bSvefK41ccENtZFGxWsyxFY6pI7mUZ7ZEkFCfCHFkC0Nd0YKDo1Z3QXToV5aEoW7QmvTZQCg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQgPobmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNWVub25jZQBmbWV0aG9kcXN0YWtpbmcuQWRkRXNjcm93",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAUVygpzynBqpbI5bSvefK41ccENtZFGxWsyxFY6pI7mUZ7ZEkFCfCHFkC0Nd0YKDo1Z3QXToV5aEoW7QmvTZQCmpwdWJsaWNfa2V5WCBYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mm3N1bnRydXN0ZWRfcmF3X3ZhbHVlWHukY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibWVzY3Jvd190b2tlbnNCA+huZXNjcm93X2FjY291bnRYIFMzL2WuXIsQkxF7Mqchrl1YBJFe35bifsJQVMVC1hw1ZW5vbmNlAGZtZXRob2Rxc3Rha2luZy5BZGRFc2Nyb3c=",
+    "valid": true,
+    "signer_private_key": "R/2OEviyv7iMDQetecV5QmxV0lE7i6bBD2kX/nMHUlpYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mmw==",
+    "signer_public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps="
+  },
+  {
+    "kind": "Escrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.AddEscrow",
+      "body": "om1lc2Nyb3dfdG9rZW5zQ5iWgG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQ5iWgG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
+      "signature": {
+        "public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps=",
+        "signature": "UiknNzv5eIU4IC7HQZ53J57q1UaF95taZ1r7p2ONQ90h5SjRn0qInpsWf+fSyE1sRXHy8pQ97t3wwL2eNEymBg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQ5iWgG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAUiknNzv5eIU4IC7HQZ53J57q1UaF95taZ1r7p2ONQ90h5SjRn0qInpsWf+fSyE1sRXHy8pQ97t3wwL2eNEymBmpwdWJsaWNfa2V5WCBYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mm3N1bnRydXN0ZWRfcmF3X3ZhbHVlWHykY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibWVzY3Jvd190b2tlbnNDmJaAbmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNWVub25jZQBmbWV0aG9kcXN0YWtpbmcuQWRkRXNjcm93",
+    "valid": true,
+    "signer_private_key": "R/2OEviyv7iMDQetecV5QmxV0lE7i6bBD2kX/nMHUlpYeJjh7paNUK61MG+j7PcyR8keIWR/B9AVHJe351+mmw==",
+    "signer_public_key": "WHiY4e6WjVCutTBvo+z3MkfJHiFkfwfQFRyXt+dfpps="
+  },
+  {
+    "kind": "ReclaimEscrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.ReclaimEscrow",
+      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNA"
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
+      "signature": {
+        "public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE=",
+        "signature": "HbO/lKLc3DBnUnXWjcKAVBpSpVFtx5Gs1QAjp+6udx75absKWIrIRXXqdkHdQkqSD4M0d1DohcUWRIQKnuwZDw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAHbO/lKLc3DBnUnXWjcKAVBpSpVFtx5Gs1QAjp+6udx75absKWIrIRXXqdkHdQkqSD4M0d1DohcUWRIQKnuwZD2pwdWJsaWNfa2V5WCBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUXN1bnRydXN0ZWRfcmF3X3ZhbHVlWH6kY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibmVzY3Jvd19hY2NvdW50WCApXsbi5cjNC6GrSchlAgJ2iT5aGt92P1k6C2Q0vY26jm5yZWNsYWltX3NoYXJlc0Blbm9uY2UAZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
+    "valid": true,
+    "signer_private_key": "XFRE44PlI3uPWeTgpIBMhbwhOylkks3a5Dd/7LRIZXBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUQ==",
+    "signer_public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE="
+  },
+  {
+    "kind": "ReclaimEscrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.ReclaimEscrow",
+      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNCA+g="
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNCA+hlbm9uY2UAZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
+      "signature": {
+        "public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE=",
+        "signature": "4n4/qA8xKCYa2HvjnX2LL7pLAi106OOwN5UK9DosPpRpN8yXubsmK+54RtSC1weVdD79iiCsRIKtgK//CDtwCg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNCA+hlbm9uY2UAZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA4n4/qA8xKCYa2HvjnX2LL7pLAi106OOwN5UK9DosPpRpN8yXubsmK+54RtSC1weVdD79iiCsRIKtgK//CDtwCmpwdWJsaWNfa2V5WCBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUXN1bnRydXN0ZWRfcmF3X3ZhbHVlWICkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibmVzY3Jvd19hY2NvdW50WCApXsbi5cjNC6GrSchlAgJ2iT5aGt92P1k6C2Q0vY26jm5yZWNsYWltX3NoYXJlc0ID6GVub25jZQBmbWV0aG9kdXN0YWtpbmcuUmVjbGFpbUVzY3Jvdw==",
+    "valid": true,
+    "signer_private_key": "XFRE44PlI3uPWeTgpIBMhbwhOylkks3a5Dd/7LRIZXBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUQ==",
+    "signer_public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE="
+  },
+  {
+    "kind": "ReclaimEscrow",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.ReclaimEscrow",
+      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNDmJaA"
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNDmJaAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
+      "signature": {
+        "public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE=",
+        "signature": "u8bEHBrJc/Z0IlmXcBmSaWvbW87a+MiIbL4xUv9FfPx8v+/TeKWhpWjvZy0EiST/T1m1IHD34T7DrT10+aWbDA=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNDmJaAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAu8bEHBrJc/Z0IlmXcBmSaWvbW87a+MiIbL4xUv9FfPx8v+/TeKWhpWjvZy0EiST/T1m1IHD34T7DrT10+aWbDGpwdWJsaWNfa2V5WCBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUXN1bnRydXN0ZWRfcmF3X3ZhbHVlWIGkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmibmVzY3Jvd19hY2NvdW50WCApXsbi5cjNC6GrSchlAgJ2iT5aGt92P1k6C2Q0vY26jm5yZWNsYWltX3NoYXJlc0OYloBlbm9uY2UAZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
+    "valid": true,
+    "signer_private_key": "XFRE44PlI3uPWeTgpIBMhbwhOylkks3a5Dd/7LRIZXBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUQ==",
+    "signer_public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE="
   }
 ]
