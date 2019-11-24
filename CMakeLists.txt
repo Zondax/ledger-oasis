@@ -36,6 +36,7 @@ file(GLOB_RECURSE TINYCBOR_SRC
 
 file(GLOB_RECURSE LIB_SRC
         src/ledger/deps/ledger-zxlib/src/hexutils.c
+        src/ledger/deps/ledger-zxlib/src/bignum.c
         src/ledger/deps/ledger-zxlib/src/zxmacros.c
         #########
         src/ledger/src/lib/parser.c

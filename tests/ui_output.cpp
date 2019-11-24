@@ -42,13 +42,6 @@ typedef struct {
     std::string signature_context;
     std::string encoded_tx;
     bool valid;
-
-//    std::string parsingErr;
-////    std::string signed_tx;
-//    std::string encoded_signed_tx;
-//    bool valid;
-//    std::string signer_private_key;
-//    std::string signer_public_key;
 } testcase_t;
 
 class JsonTests : public ::testing::TestWithParam<testcase_t> {
@@ -109,7 +102,6 @@ void check_testcase(const testcase_t &tc) {
 
     char bufferOut[500];
     array_to_hexstr(bufferOut, (uint8_t *) cborString.c_str(), (uint8_t) bufferLen);
-    std::cout << bufferOut << std::endl;
 
     err = parser_parse(&ctx, buffer, bufferLen);
     if (tc.valid) {
@@ -120,10 +112,10 @@ void check_testcase(const testcase_t &tc) {
 
     auto output = dumpUI(&ctx, 40, 40);
 
+    std::cout << std::endl;
     for (const auto &i : output) {
         std::cout << i << std::endl;
     }
-    std::cout << std::endl << std::endl;
 
 //    EXPECT_EQ(output.size(), tc.expected.size());
 //    for (size_t i = 0; i < tc.expected.size(); i++) {
