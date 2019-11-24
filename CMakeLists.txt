@@ -38,6 +38,8 @@ file(GLOB_RECURSE LIB_SRC
         src/ledger/deps/ledger-zxlib/src/hexutils.c
         src/ledger/deps/ledger-zxlib/src/bignum.c
         src/ledger/deps/ledger-zxlib/src/zxmacros.c
+        src/ledger/deps/ledger-zxlib/src/bech32.c
+        src/ledger/deps/ledger-zxlib/src/segwit_addr.c
         #########
         src/ledger/src/lib/parser.c
         src/ledger/src/lib/parser_impl.c
