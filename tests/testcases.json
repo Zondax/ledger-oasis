@@ -344,6 +344,36 @@
       "method": "staking.AmendCommissionSchedule",
       "body": {
         "amendment": {
+          "rates": null,
+          "bounds": null
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVz9mZib3VuZHP2ZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "3L+p3BxgFde8UXY0DRe0aQo2fvjMVmwL2XJppjgLoFm+5/7acflPneyhCKkPoYK0n6Jv0lztCwkwutbXalgSAw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVz9mZib3VuZHP2ZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA3L+p3BxgFde8UXY0DRe0aQo2fvjMVmwL2XJppjgLoFm+5/7acflPneyhCKkPoYK0n6Jv0lztCwkwutbXalgSA2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWGKkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXP2ZmJvdW5kc/Zlbm9uY2UAZm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
           "rates": [
             {
               "start": 0,

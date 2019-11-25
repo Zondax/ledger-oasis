@@ -98,8 +98,28 @@ std::string FormatBounds(const json &bounds, uint8_t idx, uint8_t *pageCount) {
     return "";
 }
 
+bool TestcaseIsValid(const json &tc) {
+    // TODO: Extend as necessary
+    if (tc["kind"] == "AmendCommissionSchedule") {
+        auto rates = tc["tx"]["body"]["amendment"]["rates"];
+        auto bounds = tc["tx"]["body"]["amendment"]["bounds"];
+        if (rates.empty()) {
+            return false;
+        }
+        if (bounds.empty()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 std::vector<std::string> GenerateExpectedUIOutput(json j) {
     auto answer = std::vector<std::string>();
+
+    if (!TestcaseIsValid(j)) {
+        answer.emplace_back("Test case is not valid!");
+        return answer;
+    }
 
     auto type = (std::string) j["tx"]["method"];
 
@@ -200,7 +220,7 @@ std::vector<testcase_t> GetJsonTestCases() {
                 item["kind"],
                 item["signature_context"],
                 item["encoded_tx"],
-                item["valid"],
+                item["valid"] && TestcaseIsValid(item),
                 GenerateExpectedUIOutput(item)
         });
     }
@@ -231,7 +251,9 @@ void check_testcase(const testcase_t &tc) {
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
+        // TODO: maybe we can eventually match error codes too
         ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
+        return;
     }
 
     auto output = dumpUI(&ctx, 40, 40);
