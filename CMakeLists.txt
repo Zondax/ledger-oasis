@@ -19,6 +19,7 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 11)
 add_subdirectory(cmake/gtest)
+add_subdirectory(deps/fmt)
 
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
 string(APPEND CMAKE_LINKER_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
@@ -68,7 +69,12 @@ target_include_directories(unittests PUBLIC
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
         )
-target_link_libraries(unittests gtest_main cbor_parser nlohmann_json::nlohmann_json)
+target_link_libraries(unittests PRIVATE
+        fmt
+        gtest_main
+        cbor_parser
+        nlohmann_json::nlohmann_json)
+
 add_test(unittests ${PROJECT_BINARY_DIR}/unittests)
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 

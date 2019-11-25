@@ -9,7 +9,10 @@
         "gas": 0
       },
       "method": "staking.Transfer",
-      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0A="
+      "body": {
+        "xfer_to": "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk=",
+        "xfer_tokens": "0"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
@@ -34,7 +37,10 @@
         "gas": 0
       },
       "method": "staking.Transfer",
-      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0ID6A=="
+      "body": {
+        "xfer_to": "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk=",
+        "xfer_tokens": "1000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
@@ -59,7 +65,10 @@
         "gas": 0
       },
       "method": "staking.Transfer",
-      "body": "omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0OYloA="
+      "body": {
+        "xfer_to": "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk=",
+        "xfer_tokens": "10000000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
@@ -84,7 +93,9 @@
         "gas": 0
       },
       "method": "staking.Burn",
-      "body": "oWtidXJuX3Rva2Vuc0A="
+      "body": {
+        "burn_tokens": "0"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
@@ -109,7 +120,9 @@
         "gas": 0
       },
       "method": "staking.Burn",
-      "body": "oWtidXJuX3Rva2Vuc0ID6A=="
+      "body": {
+        "burn_tokens": "1000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0ID6GVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
@@ -134,7 +147,9 @@
         "gas": 0
       },
       "method": "staking.Burn",
-      "body": "oWtidXJuX3Rva2Vuc0OYloA="
+      "body": {
+        "burn_tokens": "10000000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWtidXJuX3Rva2Vuc0OYloBlbm9uY2UAZm1ldGhvZGxzdGFraW5nLkJ1cm4=",
@@ -159,7 +174,10 @@
         "gas": 0
       },
       "method": "staking.AddEscrow",
-      "body": "om1lc2Nyb3dfdG9rZW5zQG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU="
+      "body": {
+        "escrow_account": "UzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU=",
+        "escrow_tokens": "0"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
@@ -184,7 +202,10 @@
         "gas": 0
       },
       "method": "staking.AddEscrow",
-      "body": "om1lc2Nyb3dfdG9rZW5zQgPobmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNQ=="
+      "body": {
+        "escrow_account": "UzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU=",
+        "escrow_tokens": "1000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQgPobmVzY3Jvd19hY2NvdW50WCBTMy9lrlyLEJMRezKnIa5dWASRXt+W4n7CUFTFQtYcNWVub25jZQBmbWV0aG9kcXN0YWtpbmcuQWRkRXNjcm93",
@@ -209,7 +230,10 @@
         "gas": 0
       },
       "method": "staking.AddEscrow",
-      "body": "om1lc2Nyb3dfdG9rZW5zQ5iWgG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU="
+      "body": {
+        "escrow_account": "UzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDU=",
+        "escrow_tokens": "10000000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om1lc2Nyb3dfdG9rZW5zQ5iWgG5lc2Nyb3dfYWNjb3VudFggUzMvZa5cixCTEXsypyGuXVgEkV7fluJ+wlBUxULWHDVlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
@@ -234,7 +258,10 @@
         "gas": 0
       },
       "method": "staking.ReclaimEscrow",
-      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNA"
+      "body": {
+        "escrow_account": "KV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo4=",
+        "reclaim_shares": "0"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
@@ -259,7 +286,10 @@
         "gas": 0
       },
       "method": "staking.ReclaimEscrow",
-      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNCA+g="
+      "body": {
+        "escrow_account": "KV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo4=",
+        "reclaim_shares": "1000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNCA+hlbm9uY2UAZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
@@ -284,7 +314,10 @@
         "gas": 0
       },
       "method": "staking.ReclaimEscrow",
-      "body": "om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNDmJaA"
+      "body": {
+        "escrow_account": "KV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo4=",
+        "reclaim_shares": "10000000"
+      }
     },
     "signed_tx": {
       "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5om5lc2Nyb3dfYWNjb3VudFggKV7G4uXIzQuhq0nIZQICdok+Whrfdj9ZOgtkNL2Nuo5ucmVjbGFpbV9zaGFyZXNDmJaAZW5vbmNlAGZtZXRob2R1c3Rha2luZy5SZWNsYWltRXNjcm93",
@@ -298,5 +331,46 @@
     "valid": true,
     "signer_private_key": "XFRE44PlI3uPWeTgpIBMhbwhOylkks3a5Dd/7LRIZXBpNVyK1wUDznURqrLbW8Hhne0nla32vQ3ob8BPobeYUQ==",
     "signer_public_key": "aTVcitcFA851Eaqy21vB4Z3tJ5Wt9r0N6G/AT6G3mFE="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "0"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "0",
+              "rate_max": "0"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUBlc3RhcnQAZmJvdW5kc4GjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "LZtywIVKPcTjqG9Q7T6/9wkOZ5b2W8LX2tackHsAQ69QtGk1zvMEY/+w2Hbi9NU7LmlYdXFdHulCrxedSA8IAQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUBlc3RhcnQAZmJvdW5kc4GjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhALZtywIVKPcTjqG9Q7T6/9wkOZ5b2W8LX2tackHsAQ69QtGk1zvMEY/+w2Hbi9NU7LmlYdXFdHulCrxedSA8IAWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWIykY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXOBomRyYXRlQGVzdGFydABmYm91bmRzgaNlc3RhcnQAaHJhdGVfbWF4QGhyYXRlX21pbkBlbm9uY2UAZm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
   }
 ]
