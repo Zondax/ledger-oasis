@@ -33,7 +33,7 @@ git submodule update --init --recursive
 
 #### Ledger Nano S
 
-- This project requires Ledger firmware 1.5.5
+- This project requires Ledger firmware 1.6
 
 - The current repository keeps track of Ledger's SDK but it is possible to override it by changing the git submodule.
 
