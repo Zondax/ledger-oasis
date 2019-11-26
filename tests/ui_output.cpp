@@ -244,9 +244,6 @@ void check_testcase(const testcase_t &tc) {
     const auto *buffer = (const uint8_t *) cborString.c_str();
     uint16_t bufferLen = cborString.size();
 
-    char bufferOut[500];
-    array_to_hexstr(bufferOut, (uint8_t *) cborString.c_str(), (uint8_t) bufferLen);
-
     err = parser_parse(&ctx, buffer, bufferLen);
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
