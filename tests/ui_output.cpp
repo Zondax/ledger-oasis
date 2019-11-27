@@ -66,6 +66,21 @@ std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t 
     return std::string(outBuffer);
 }
 
+std::string FormatAmount(const std::string &amount) {
+    char buffer[500];
+    MEMZERO(buffer, sizeof(buffer));
+    fpstr_to_str(buffer, amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
+    return std::string(buffer);
+}
+
+std::string FormatRate(const std::string &rate) {
+    char buffer[500];
+    MEMZERO(buffer, sizeof(buffer));
+    // This is shifting two decimal places to show as a percentage
+    fpstr_to_str(buffer, rate.c_str(), COIN_RATE_DECIMAL_PLACES - 2);
+    return std::string(buffer) + "%";
+}
+
 std::string FormatRates(const json &rates, uint8_t idx, uint8_t *pageCount) {
     *pageCount = rates.size() * 2;
     if (idx < *pageCount) {
@@ -74,7 +89,7 @@ std::string FormatRates(const json &rates, uint8_t idx, uint8_t *pageCount) {
             case 0:
                 return fmt::format("[{}] start: {}", idx / 2, (uint64_t) r["start"]);
             case 1:
-                return fmt::format("[{}] rate: {}", idx / 2, (std::string) r["rate"]);
+                return fmt::format("[{}] rate: {}", idx / 2, FormatRate(r["rate"]));
         }
     }
 
@@ -89,9 +104,9 @@ std::string FormatBounds(const json &bounds, uint8_t idx, uint8_t *pageCount) {
             case 0:
                 return fmt::format("[{}] start: {}", idx / 3, (uint64_t) r["start"]);
             case 1:
-                return fmt::format("[{}] min: {}", idx / 3, (std::string) r["rate_min"]);
+                return fmt::format("[{}] min: {}", idx / 3, FormatRate(r["rate_min"]));
             case 2:
-                return fmt::format("[{}] max: {}", idx / 3, (std::string) r["rate_max"]);
+                return fmt::format("[{}] max: {}", idx / 3, FormatRate(r["rate_max"]));
         }
     }
 
@@ -125,25 +140,25 @@ std::vector<std::string> GenerateExpectedUIOutput(json j) {
 
     if (type == "staking.Transfer") {
         answer.push_back(fmt::format("0 | Type : Transfer"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(j["tx"]["fee"]["amount"])));
         answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
 
         uint8_t dummy;
         answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(j["tx"]["body"]["xfer_to"], 0, &dummy)));
         answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(j["tx"]["body"]["xfer_to"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["xfer_tokens"]));
+        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(j["tx"]["body"]["xfer_tokens"])));
     }
 
     if (type == "staking.Burn") {
         answer.push_back(fmt::format("0 | Type : Burn"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(j["tx"]["fee"]["amount"])));
         answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
-        answer.push_back(fmt::format("3 | Tokens : {}", (std::string) j["tx"]["body"]["burn_tokens"]));
+        answer.push_back(fmt::format("3 | Tokens : {}", FormatAmount(j["tx"]["body"]["burn_tokens"])));
     }
 
     if (type == "staking.AddEscrow") {
         answer.push_back(fmt::format("0 | Type : Add escrow"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(j["tx"]["fee"]["amount"])));
         answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
 
         uint8_t dummy;
@@ -151,12 +166,12 @@ std::vector<std::string> GenerateExpectedUIOutput(json j) {
                 fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 0, &dummy)));
         answer.push_back(
                 fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["escrow_tokens"]));
+        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(j["tx"]["body"]["escrow_tokens"])));
     }
 
     if (type == "staking.ReclaimEscrow") {
         answer.push_back(fmt::format("0 | Type : Reclaim escrow"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(j["tx"]["fee"]["amount"])));
         answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
 
         uint8_t dummy;
@@ -164,12 +179,12 @@ std::vector<std::string> GenerateExpectedUIOutput(json j) {
                 fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 0, &dummy)));
         answer.push_back(
                 fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["reclaim_shares"]));
+        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(j["tx"]["body"]["reclaim_shares"])));
     }
 
     if (type == "staking.AmendCommissionSchedule") {
         answer.push_back(fmt::format("0 | Type : Amend commission schedule"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(j["tx"]["fee"]["amount"])));
         answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
 
         uint8_t pageIdx = 0;
