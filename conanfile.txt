@@ -1,0 +1,5 @@
+ [requires]
+ jsoncpp/1.9.0@theirix/stable
+
+ [generators]
+ cmake
