@@ -189,13 +189,15 @@ std::vector<std::string> GenerateExpectedUIOutput(Json::Value j) {
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
 
+        uint32_t itemCount = 3;
         uint8_t pageIdx = 0;
         uint8_t pageCount = 1;
         while (pageIdx < pageCount) {
             auto s = FormatRates(txbody["amendment"]["rates"], pageIdx, &pageCount);
             if (!s.empty())
-                answer.push_back(fmt::format("3 | Rates : {}", s));
+                answer.push_back(fmt::format("{} | Rates : {}", itemCount, s));
             pageIdx++;
+            itemCount++;
         }
 
         pageIdx = 0;
@@ -203,8 +205,9 @@ std::vector<std::string> GenerateExpectedUIOutput(Json::Value j) {
         while (pageIdx < pageCount) {
             auto s = FormatBounds(txbody["amendment"]["bounds"], pageIdx, &pageCount);
             if (!s.empty())
-                answer.push_back(fmt::format("4 | Bounds : {}", s));
+                answer.push_back(fmt::format("{} | Bounds : {}", itemCount, s));
             pageIdx++;
+            itemCount++;
         }
     }
 
