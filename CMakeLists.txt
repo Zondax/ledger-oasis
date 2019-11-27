@@ -78,7 +78,7 @@ target_link_libraries(unittests PRIVATE
         cbor_parser
         CONAN_PKG::jsoncpp)
 
-add_test(unittests ${PROJECT_BINARY_DIR}/unittests)
+add_test(unittests ${PROJECT_BINARY_DIR}/bin/unittests)
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 ###############################################################
