@@ -86,9 +86,9 @@ std::string FormatRates(const Json::Value &rates, uint8_t idx, uint8_t *pageCoun
         auto r = rates[idx / 2];
         switch (idx % 2) {
             case 0:
-                return fmt::format("[{}] start: {}", idx / 2, r["start"].asUInt64());
+                return fmt::format("[{}] start : {}", idx / 2, r["start"].asUInt64());
             case 1:
-                return fmt::format("[{}] rate: {}", idx / 2, FormatRate(r["rate"].asString()));
+                return fmt::format("[{}] rate : {}", idx / 2, FormatRate(r["rate"].asString()));
         }
     }
 
@@ -101,11 +101,11 @@ std::string FormatBounds(const Json::Value &bounds, uint8_t idx, uint8_t *pageCo
         auto r = bounds[idx / 3];
         switch (idx % 3) {
             case 0:
-                return fmt::format("[{}] start: {}", idx / 3, r["start"].asUInt64());
+                return fmt::format("[{}] start : {}", idx / 3, r["start"].asUInt64());
             case 1:
-                return fmt::format("[{}] min: {}", idx / 3, FormatRate(r["rate_min"].asString()));
+                return fmt::format("[{}] min : {}", idx / 3, FormatRate(r["rate_min"].asString()));
             case 2:
-                return fmt::format("[{}] max: {}", idx / 3, FormatRate(r["rate_max"].asString()));
+                return fmt::format("[{}] max : {}", idx / 3, FormatRate(r["rate_max"].asString()));
         }
     }
 
