@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run: git submodule update --init --recursive
       - run: cmake -DDISABLE_DOCKER_BUILDS=ON -DCMAKE_BUILD_TYPE=Debug . && make
-      # Unfortunatley need to disable leak sanitizer https://github.com/google/sanitizers/issues/916
+      # Unfortunately need to disable leak sanitizer https://github.com/google/sanitizers/issues/916
       # Still run all other ASAN components
       - run: GTEST_COLOR=1 ASAN_OPTIONS=detect_leaks=0 ctest -VV
 

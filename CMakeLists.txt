@@ -21,7 +21,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(cmake/conan/CMakeLists.txt)
 add_subdirectory(cmake/gtest)
-add_subdirectory(deps/fmt)
 
 string(APPEND CMAKE_CXX_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
@@ -69,13 +68,14 @@ target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
+        ${CONAN_INCLUDE_DIRS_FMT}
         ${CONAN_INCLUDE_DIRS_JSONCPP}
         )
 
 target_link_libraries(unittests PRIVATE
-        fmt
         gtest_main
         cbor_parser
+        CONAN_PKG::fmt
         CONAN_PKG::jsoncpp)
 
 add_test(unittests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests)
