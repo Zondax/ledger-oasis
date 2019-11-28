@@ -1,0 +1,7 @@
+{
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "catch2TestExplorer.executables": {
+        "pattern": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
+        "cwd": "${workspaceDirectory}/tests",
+    }
+}
