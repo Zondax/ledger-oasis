@@ -23,8 +23,8 @@ include(cmake/conan/CMakeLists.txt)
 add_subdirectory(cmake/gtest)
 add_subdirectory(deps/fmt)
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
-string(APPEND CMAKE_LINKER_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
+string(APPEND CMAKE_CXX_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
+string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 
 ##############################################################
 ##############################################################
@@ -78,7 +78,7 @@ target_link_libraries(unittests PRIVATE
         cbor_parser
         CONAN_PKG::jsoncpp)
 
-add_test(unittests ${PROJECT_BINARY_DIR}/unittests)
+add_test(unittests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests)
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 ###############################################################
