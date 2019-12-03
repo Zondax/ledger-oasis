@@ -23,6 +23,7 @@
 #include <zxmacros.h>
 #include <lib/crypto.h>
 #include <bech32.h>
+#include <lib/context.h>
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"
@@ -127,13 +128,16 @@ bool TestcaseIsValid(const Json::Value &tc) {
     return true;
 }
 
-std::vector<std::string> GenerateExpectedUIOutput(Json::Value j) {
+std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Value j) {
     auto answer = std::vector<std::string>();
 
     if (!TestcaseIsValid(j)) {
         answer.emplace_back("Test case is not valid!");
         return answer;
     }
+
+    auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
+    auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
 
     auto type = j["tx"]["method"].asString();
     auto tx = j["tx"];
@@ -143,18 +147,21 @@ std::vector<std::string> GenerateExpectedUIOutput(Json::Value j) {
         answer.push_back(fmt::format("0 | Type : Transfer"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy)));
-        answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(txbody["xfer_tokens"].asString())));
+        answer.push_back(fmt::format("4 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("4 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy)));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["xfer_tokens"].asString())));
     }
 
     if (type == "staking.Burn") {
         answer.push_back(fmt::format("0 | Type : Burn"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Tokens : {}",
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
+
+        answer.push_back(fmt::format("4 | Tokens : {}",
                                      FormatAmount(txbody["burn_tokens"].asString())));
     }
 
@@ -162,34 +169,37 @@ std::vector<std::string> GenerateExpectedUIOutput(Json::Value j) {
         answer.push_back(fmt::format("0 | Type : Add escrow"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(fmt::format("3 | Escrow : {}",
+        answer.push_back(fmt::format("4 | Escrow : {}",
                                      FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
-        answer.push_back(fmt::format("3 | Escrow : {}",
+        answer.push_back(fmt::format("4 | Escrow : {}",
                                      FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(txbody["escrow_tokens"].asString())));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["escrow_tokens"].asString())));
     }
 
     if (type == "staking.ReclaimEscrow") {
         answer.push_back(fmt::format("0 | Type : Reclaim escrow"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(fmt::format("3 | Escrow : {}",
+        answer.push_back(fmt::format("4 | Escrow : {}",
                                      FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
-        answer.push_back(fmt::format("3 | Escrow : {}",
+        answer.push_back(fmt::format("4 | Escrow : {}",
                                      FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(txbody["reclaim_shares"].asString())));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["reclaim_shares"].asString())));
     }
 
     if (type == "staking.AmendCommissionSchedule") {
         answer.push_back(fmt::format("0 | Type : Amend commission schedule"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
-        uint32_t itemCount = 3;
+        uint32_t itemCount = 4;
         uint8_t pageIdx = 0;
         uint8_t pageCount = 1;
         while (pageIdx < pageCount) {
@@ -242,7 +252,7 @@ std::vector<testcase_t> GetJsonTestCases() {
                 obj[i]["signature_context"].asString(),
                 obj[i]["encoded_tx"].asString(),
                 obj[i]["valid"] && TestcaseIsValid(obj[i]),
-                GenerateExpectedUIOutput(obj[i])
+                GenerateExpectedUIOutput(obj[i]["signature_context"].asString(), obj[i])
         });
     }
 
@@ -250,12 +260,6 @@ std::vector<testcase_t> GetJsonTestCases() {
 }
 
 void check_testcase(const testcase_t &tc) {
-    // Output Expected value as a reference
-    std::cout << std::endl;
-    for (const auto &i : tc.expected_ui_output) {
-        std::cout << i << std::endl;
-    }
-
     parser_context_t ctx;
     parser_error_t err;
 
@@ -266,6 +270,18 @@ void check_testcase(const testcase_t &tc) {
     uint16_t bufferLen = cborString.size();
 
     err = parser_parse(&ctx, buffer, bufferLen);
+    if (tc.valid) {
+        ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+    } else {
+        // TODO: maybe we can eventually match error codes too
+        ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
+        return;
+    }
+
+    crypto_set_context((const uint8_t *) tc.signature_context.c_str(),
+                       tc.signature_context.size());
+
+    err = parser_validate(&ctx);
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
