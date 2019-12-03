@@ -56,6 +56,15 @@ git submodule update --init --recursive
    make deps
    ```
 
+- You also need to install [Conan](https://conan.io/)
+
+   ```bash
+   pip install conan
+   ```
+
+*Warning*: Some IDEs may not use the same python interpreter or virtual enviroment as the one you used when running `pip`.
+If you see conan is not found, check that you installed the package in the same interpreter as the one that launches `cmake`.
+
 # Prepare your development device
 
    **Please do not use a Ledger device with funds for development purposes.**

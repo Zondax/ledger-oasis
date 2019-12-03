@@ -336,28 +336,48 @@
     "kind": "AmendCommissionSchedule",
     "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
     "tx": {
-      "nonce": 0,
+      "nonce": 18446744073709551615,
       "fee": {
-        "amount": "0",
-        "gas": 0
+        "amount": "4242",
+        "gas": 1000
       },
       "method": "staking.AmendCommissionSchedule",
       "body": {
         "amendment": {
-          "rates": null,
-          "bounds": null
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate": "50000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            }
+          ]
         }
       }
     },
     "signed_tx": {
-      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVz9mZib3VuZHP2ZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4KiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAZmJvdW5kc4KjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1Blbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
       "signature": {
         "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
-        "signature": "3L+p3BxgFde8UXY0DRe0aQo2fvjMVmwL2XJppjgLoFm+5/7acflPneyhCKkPoYK0n6Jv0lztCwkwutbXalgSAw=="
+        "signature": "QxDRddcRxxVcSMkZfJrpDPAmos3GZFY/Dz/BO2nZRNAp7ONZ9Ap4Yx1GtI4hTK7FtnSAIjyZ8qwl5WqLrx+pDA=="
       }
     },
-    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVz9mZib3VuZHP2ZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
-    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA3L+p3BxgFde8UXY0DRe0aQo2fvjMVmwL2XJppjgLoFm+5/7acflPneyhCKkPoYK0n6Jv0lztCwkwutbXalgSA2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWGKkY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXP2ZmJvdW5kc/Zlbm9uY2UAZm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4KiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAZmJvdW5kc4KjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1Blbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAQxDRddcRxxVcSMkZfJrpDPAmos3GZFY/Dz/BO2nZRNAp7ONZ9Ap4Yx1GtI4hTK7FtnSAIjyZ8qwl5WqLrx+pDGpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWN6kY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgqJkcmF0ZULDUGVzdGFydBoAD0JAomRyYXRlQsNQZXN0YXJ0GgAPQkBmYm91bmRzgqNlc3RhcnQaAA9CQGhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQaAA9CQGhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
     "valid": true,
     "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
     "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
@@ -366,15 +386,81 @@
     "kind": "AmendCommissionSchedule",
     "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
     "tx": {
-      "nonce": 0,
+      "nonce": 18446744073709551615,
       "fee": {
-        "amount": "0",
-        "gas": 0
+        "amount": "4242",
+        "gas": 1000
       },
       "method": "staking.AmendCommissionSchedule",
       "body": {
         "amendment": {
           "rates": [
+            {
+              "start": 1000000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate": "100000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4KiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkBmYm91bmRzgqNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "zFPCgqQGF/tgLNYi58ef+wh9hCFWXJIW1ajJ67d0a+dbbOSTFdkERWXdjRQ7kf3jOZfN0+qAZQRgSsalQOj7BQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4KiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkBmYm91bmRzgqNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAzFPCgqQGF/tgLNYi58ef+wh9hCFWXJIW1ajJ67d0a+dbbOSTFdkERWXdjRQ7kf3jOZfN0+qAZQRgSsalQOj7BWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWOSkY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgqJkcmF0ZUMBhqBlc3RhcnQaAA9CQKJkcmF0ZUMBhqBlc3RhcnQaAA9CQGZib3VuZHOCo2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "0"
+            },
+            {
+              "start": 0,
+              "rate": "0"
+            },
+            {
+              "start": 0,
+              "rate": "0"
+            },
+            {
+              "start": 0,
+              "rate": "0"
+            },
             {
               "start": 0,
               "rate": "0"
@@ -385,20 +471,1811 @@
               "start": 0,
               "rate_min": "0",
               "rate_max": "0"
+            },
+            {
+              "start": 0,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 0,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 0,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 0,
+              "rate_min": "0",
+              "rate_max": "0"
             }
           ]
         }
       }
     },
     "signed_tx": {
-      "untrusted_raw_value": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUBlc3RhcnQAZmJvdW5kc4GjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAomRyYXRlQGVzdGFydACiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
       "signature": {
         "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
-        "signature": "LZtywIVKPcTjqG9Q7T6/9wkOZ5b2W8LX2tackHsAQ69QtGk1zvMEY/+w2Hbi9NU7LmlYdXFdHulCrxedSA8IAQ=="
+        "signature": "KDM532zdVms12uJ3ckv0mJYSEem0zPFR1003FMKl6ULU0epPO/WdY3TMbJX7OmlIW7WFK+sZQOD4Btf9EQULCw=="
       }
     },
-    "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUBlc3RhcnQAZmJvdW5kc4GjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlAGZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
-    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhALZtywIVKPcTjqG9Q7T6/9wkOZ5b2W8LX2tackHsAQ69QtGk1zvMEY/+w2Hbi9NU7LmlYdXFdHulCrxedSA8IAWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWIykY2ZlZaJjZ2FzAGZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXOBomRyYXRlQGVzdGFydABmYm91bmRzgaNlc3RhcnQAaHJhdGVfbWF4QGhyYXRlX21pbkBlbm9uY2UAZm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAomRyYXRlQGVzdGFydACiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAKDM532zdVms12uJ3ckv0mJYSEem0zPFR1003FMKl6ULU0epPO/WdY3TMbJX7OmlIW7WFK+sZQOD4Btf9EQULC2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFApGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAomRyYXRlQGVzdGFydACiZHJhdGVAZXN0YXJ0AKJkcmF0ZUBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0AGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydABocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "10"
+            },
+            {
+              "start": 0,
+              "rate": "10"
+            },
+            {
+              "start": 0,
+              "rate": "10"
+            },
+            {
+              "start": 0,
+              "rate": "10"
+            },
+            {
+              "start": 0,
+              "rate": "10"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 0,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 0,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 0,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 0,
+              "rate_min": "10",
+              "rate_max": "10"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydABmYm91bmRzhaNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "jYXU1q+2DnfaS+UomHDnsTDYJm+1Vbhv7DF3QwtbWkW7uUo0yItYQ44b3eUHzFazhYux8iVhwFy0o/P55UraDQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydABmYm91bmRzhaNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAjYXU1q+2DnfaS+UomHDnsTDYJm+1Vbhv7DF3QwtbWkW7uUo0yItYQ44b3eUHzFazhYux8iVhwFy0o/P55UraDWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFPpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydACiZHJhdGVBCmVzdGFydABmYm91bmRzhaNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQAaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "1000"
+            },
+            {
+              "start": 0,
+              "rate": "1000"
+            },
+            {
+              "start": 0,
+              "rate": "1000"
+            },
+            {
+              "start": 0,
+              "rate": "1000"
+            },
+            {
+              "start": 0,
+              "rate": "1000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 0,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 0,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 0,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 0,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AKJkcmF0ZUID6GVzdGFydACiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQAaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "KV0ssuAqYlUh0prlGsq6iFHndgIIFOzsz29rqz7RQ6/vHv4P8PQiCiLCQlDoHDuuNZxB/JxcUFk0E2kat6wnAQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AKJkcmF0ZUID6GVzdGFydACiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQAaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAKV0ssuAqYlUh0prlGsq6iFHndgIIFOzsz29rqz7RQ6/vHv4P8PQiCiLCQlDoHDuuNZxB/JxcUFk0E2kat6wnAWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AKJkcmF0ZUID6GVzdGFydACiZHJhdGVCA+hlc3RhcnQAomRyYXRlQgPoZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQAaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydABocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0AGhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "10000"
+            },
+            {
+              "start": 0,
+              "rate": "10000"
+            },
+            {
+              "start": 0,
+              "rate": "10000"
+            },
+            {
+              "start": 0,
+              "rate": "10000"
+            },
+            {
+              "start": 0,
+              "rate": "10000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 0,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 0,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 0,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 0,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AKJkcmF0ZUInEGVzdGFydACiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQAaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "o52fvCtnGxZma61v6Ahp8KD+Xz4KyBBfD4q3jDzkV0loO1a6yH1Zpne6JIKUbzu2MrhmtIPFK9z0oky1Xcf9BQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AKJkcmF0ZUInEGVzdGFydACiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQAaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAo52fvCtnGxZma61v6Ahp8KD+Xz4KyBBfD4q3jDzkV0loO1a6yH1Zpne6JIKUbzu2MrhmtIPFK9z0oky1Xcf9BWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AKJkcmF0ZUInEGVzdGFydACiZHJhdGVCJxBlc3RhcnQAomRyYXRlQicQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQAaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydABocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0AGhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "50000"
+            },
+            {
+              "start": 0,
+              "rate": "50000"
+            },
+            {
+              "start": 0,
+              "rate": "50000"
+            },
+            {
+              "start": 0,
+              "rate": "50000"
+            },
+            {
+              "start": 0,
+              "rate": "50000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 0,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 0,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 0,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 0,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AKJkcmF0ZULDUGVzdGFydACiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQAaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "mhWh5I6qBkRrygdBWU6eXRAn9R01YKZV6negYBpm3qqMbev5yDXtk8lnZEGdr9pABML8UCWujX1ikQuPy8xBBg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AKJkcmF0ZULDUGVzdGFydACiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQAaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAmhWh5I6qBkRrygdBWU6eXRAn9R01YKZV6negYBpm3qqMbev5yDXtk8lnZEGdr9pABML8UCWujX1ikQuPy8xBBmpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AKJkcmF0ZULDUGVzdGFydACiZHJhdGVCw1Blc3RhcnQAomRyYXRlQsNQZXN0YXJ0AGZib3VuZHOFo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQAaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydABocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0AGhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 0,
+              "rate": "100000"
+            },
+            {
+              "start": 0,
+              "rate": "100000"
+            },
+            {
+              "start": 0,
+              "rate": "100000"
+            },
+            {
+              "start": 0,
+              "rate": "100000"
+            },
+            {
+              "start": 0,
+              "rate": "100000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 0,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 0,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 0,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 0,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 0,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAomRyYXRlQwGGoGVzdGFydACiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "jFbvsBVgS+jUV2j5RET0vcrYYDkupvv6mvuhDtXKSEKxV2zxxy4ev1ZUHAP6DoixFP7ajuFGZDYeV1gVIH/LAg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAomRyYXRlQwGGoGVzdGFydACiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAjFbvsBVgS+jUV2j5RET0vcrYYDkupvv6mvuhDtXKSEKxV2zxxy4ev1ZUHAP6DoixFP7ajuFGZDYeV1gVIH/LAmpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFtpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAomRyYXRlQwGGoGVzdGFydACiZHJhdGVDAYagZXN0YXJ0AKJkcmF0ZUMBhqBlc3RhcnQAZmJvdW5kc4WjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0AGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydABocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "0"
+            },
+            {
+              "start": 10,
+              "rate": "0"
+            },
+            {
+              "start": 10,
+              "rate": "0"
+            },
+            {
+              "start": 10,
+              "rate": "0"
+            },
+            {
+              "start": 10,
+              "rate": "0"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 10,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 10,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 10,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 10,
+              "rate_min": "0",
+              "rate_max": "0"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKomRyYXRlQGVzdGFydAqiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQKaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "5sKK+89nqjzgfpOCkTdksflynBGKQEc4wO6HjbP+3m8KmVg9poW6ZMf0c4VQ7EEq2f+Fu/nFrlE7VU52jDxTAw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKomRyYXRlQGVzdGFydAqiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQKaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA5sKK+89nqjzgfpOCkTdksflynBGKQEc4wO6HjbP+3m8KmVg9poW6ZMf0c4VQ7EEq2f+Fu/nFrlE7VU52jDxTA2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFApGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKomRyYXRlQGVzdGFydAqiZHJhdGVAZXN0YXJ0CqJkcmF0ZUBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQKaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0CmhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydApocmF0ZV9tYXhAaHJhdGVfbWluQGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "10"
+            },
+            {
+              "start": 10,
+              "rate": "10"
+            },
+            {
+              "start": 10,
+              "rate": "10"
+            },
+            {
+              "start": 10,
+              "rate": "10"
+            },
+            {
+              "start": 10,
+              "rate": "10"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 10,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 10,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 10,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 10,
+              "rate_min": "10",
+              "rate_max": "10"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydApmYm91bmRzhaNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "6UA9lzSe9k2ZbvT7leSAszEOUyr7NgAv2X9MAjuJ8CSauqCkRQkLCuGW6tJEMgZu/GaZIqIa1KoQ4LUhaSUZAw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydApmYm91bmRzhaNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA6UA9lzSe9k2ZbvT7leSAszEOUyr7NgAv2X9MAjuJ8CSauqCkRQkLCuGW6tJEMgZu/GaZIqIa1KoQ4LUhaSUZA2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFPpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydAqiZHJhdGVBCmVzdGFydApmYm91bmRzhaNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQKaHJhdGVfbWF4QQpocmF0ZV9taW5BCmVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "1000"
+            },
+            {
+              "start": 10,
+              "rate": "1000"
+            },
+            {
+              "start": 10,
+              "rate": "1000"
+            },
+            {
+              "start": 10,
+              "rate": "1000"
+            },
+            {
+              "start": 10,
+              "rate": "1000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 10,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 10,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 10,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 10,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CqJkcmF0ZUID6GVzdGFydAqiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQKaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "M1Q5ylIRrb1eGyJG8qVT4DTzwRPRA05b5YfF3sDJDMpGnPYVvt7k1FtwvLNxRsJNZsctCl3fMAjHw3X1NJg9Ag=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CqJkcmF0ZUID6GVzdGFydAqiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQKaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAM1Q5ylIRrb1eGyJG8qVT4DTzwRPRA05b5YfF3sDJDMpGnPYVvt7k1FtwvLNxRsJNZsctCl3fMAjHw3X1NJg9AmpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CqJkcmF0ZUID6GVzdGFydAqiZHJhdGVCA+hlc3RhcnQKomRyYXRlQgPoZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQKaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydApocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0CmhyYXRlX21heEID6GhyYXRlX21pbkID6GVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "10000"
+            },
+            {
+              "start": 10,
+              "rate": "10000"
+            },
+            {
+              "start": 10,
+              "rate": "10000"
+            },
+            {
+              "start": 10,
+              "rate": "10000"
+            },
+            {
+              "start": 10,
+              "rate": "10000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 10,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 10,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 10,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 10,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CqJkcmF0ZUInEGVzdGFydAqiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQKaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "P62Uiz19fpggCZHOB1sNo1kZxD7yFYQo818lT/ZsHH8VWpLojfVUZRi3H26Qy6yyPTN7wbqfo0QA6Bn0zc13Cw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CqJkcmF0ZUInEGVzdGFydAqiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQKaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAP62Uiz19fpggCZHOB1sNo1kZxD7yFYQo818lT/ZsHH8VWpLojfVUZRi3H26Qy6yyPTN7wbqfo0QA6Bn0zc13C2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CqJkcmF0ZUInEGVzdGFydAqiZHJhdGVCJxBlc3RhcnQKomRyYXRlQicQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQKaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydApocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0CmhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "50000"
+            },
+            {
+              "start": 10,
+              "rate": "50000"
+            },
+            {
+              "start": 10,
+              "rate": "50000"
+            },
+            {
+              "start": 10,
+              "rate": "50000"
+            },
+            {
+              "start": 10,
+              "rate": "50000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 10,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 10,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 10,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 10,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CqJkcmF0ZULDUGVzdGFydAqiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQKaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "bvXRgZtxFeZJIPF92B9pKuMUWlMG/RNTCK/Aph6oO/kGxRHMzsNt3XpMRVJ71Yj+HQOabAFOK8n1p3Q4TzHwBw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CqJkcmF0ZULDUGVzdGFydAqiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQKaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAbvXRgZtxFeZJIPF92B9pKuMUWlMG/RNTCK/Aph6oO/kGxRHMzsNt3XpMRVJ71Yj+HQOabAFOK8n1p3Q4TzHwB2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFepGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CqJkcmF0ZULDUGVzdGFydAqiZHJhdGVCw1Blc3RhcnQKomRyYXRlQsNQZXN0YXJ0CmZib3VuZHOFo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQKaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydApocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0CmhyYXRlX21heELDUGhyYXRlX21pbkLDUGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 10,
+              "rate": "100000"
+            },
+            {
+              "start": 10,
+              "rate": "100000"
+            },
+            {
+              "start": 10,
+              "rate": "100000"
+            },
+            {
+              "start": 10,
+              "rate": "100000"
+            },
+            {
+              "start": 10,
+              "rate": "100000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 10,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 10,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 10,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 10,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 10,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKomRyYXRlQwGGoGVzdGFydAqiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQKaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "8gPKqV6vNzmmx4+MXjaaJ7t/+1V+xdTjw4KvajRmeIidhvQZ7t01WuZvfFD/TnC3yBLn+ahxSMdJW4UI5WSvCQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKomRyYXRlQwGGoGVzdGFydAqiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQKaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA8gPKqV6vNzmmx4+MXjaaJ7t/+1V+xdTjw4KvajRmeIidhvQZ7t01WuZvfFD/TnC3yBLn+ahxSMdJW4UI5WSvCWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFtpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKomRyYXRlQwGGoGVzdGFydAqiZHJhdGVDAYagZXN0YXJ0CqJkcmF0ZUMBhqBlc3RhcnQKZmJvdW5kc4WjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQKaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0CmhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydApocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZRv//////////2ZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "0"
+            },
+            {
+              "start": 1000,
+              "rate": "0"
+            },
+            {
+              "start": 1000,
+              "rate": "0"
+            },
+            {
+              "start": 1000,
+              "rate": "0"
+            },
+            {
+              "start": 1000,
+              "rate": "0"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000,
+              "rate_min": "0",
+              "rate_max": "0"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6KJkcmF0ZUBlc3RhcnQZA+iiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "lWUuVuX+tYb+yRyXtfwINgqtOrnGLZKNauJDlRdipPsiBUAQ9OkhEb/BNonhu/tXX2dZZtYE5qXc0j0T9FVsAg=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6KJkcmF0ZUBlc3RhcnQZA+iiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAlWUuVuX+tYb+yRyXtfwINgqtOrnGLZKNauJDlRdipPsiBUAQ9OkhEb/BNonhu/tXX2dZZtYE5qXc0j0T9FVsAmpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFUpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6KJkcmF0ZUBlc3RhcnQZA+iiZHJhdGVAZXN0YXJ0GQPoomRyYXRlQGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBkD6GhyYXRlX21heEBocmF0ZV9taW5AZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "10"
+            },
+            {
+              "start": 1000,
+              "rate": "10"
+            },
+            {
+              "start": 1000,
+              "rate": "10"
+            },
+            {
+              "start": 1000,
+              "rate": "10"
+            },
+            {
+              "start": 1000,
+              "rate": "10"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10",
+              "rate_max": "10"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoomRyYXRlQQplc3RhcnQZA+iiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoZmJvdW5kc4WjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBkD6GhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "CRmEeYk3Kc2Jj8stfsg28qcr4GxubQ2yCqmLZIH1Q5YhOOIqphbdjwhnPSuUSx4NRGiQXNOAHfP578KW9d+aCw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoomRyYXRlQQplc3RhcnQZA+iiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoZmJvdW5kc4WjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBkD6GhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhACRmEeYk3Kc2Jj8stfsg28qcr4GxubQ2yCqmLZIH1Q5YhOOIqphbdjwhnPSuUSx4NRGiQXNOAHfP578KW9d+aC2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFjpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoomRyYXRlQQplc3RhcnQZA+iiZHJhdGVBCmVzdGFydBkD6KJkcmF0ZUEKZXN0YXJ0GQPoZmJvdW5kc4WjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBkD6GhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GQPoaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQZA+hocmF0ZV9tYXhBCmhyYXRlX21pbkEKZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000,
+              "rate": "1000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydBkD6GhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "Dy9GRkcYWyN6XBZ2b9SfL0f52jK9OQltAGRr9bYs4pNqOwhFaqPFonDLxkQjfQcj+WdwkKH6x9tzoOWqSTPlBQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydBkD6GhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhADy9GRkcYWyN6XBZ2b9SfL0f52jK9OQltAGRr9bYs4pNqOwhFaqPFonDLxkQjfQcj+WdwkKH6x9tzoOWqSTPlBWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFypGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+iiZHJhdGVCA+hlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoo2VzdGFydBkD6GhyYXRlX21heEID6GhyYXRlX21pbkID6KNlc3RhcnQZA+hocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GQPoaHJhdGVfbWF4QgPoaHJhdGVfbWluQgPoZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000,
+              "rate": "10000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "kNHOOlQm7DxswiAg1bBS282Om+xt/d8MizHTKpkG7kKfzDVGqZUwS/HlFmFhGD+Xivusg+hNDFzYLPWVFrnNCA=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAkNHOOlQm7DxswiAg1bBS282Om+xt/d8MizHTKpkG7kKfzDVGqZUwS/HlFmFhGD+Xivusg+hNDFzYLPWVFrnNCGpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFypGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+iiZHJhdGVCJxBlc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000,
+              "rate": "50000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydBkD6GhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "Q62G3cE9HLr0DkWlcMEPvHJHIBY6l5P5HsowOwwRUUO3ukdg7mcLXCVt9cgfZ/UxbIVdi4wQ1BgmnYvdRyB1Dw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydBkD6GhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAQ62G3cE9HLr0DkWlcMEPvHJHIBY6l5P5HsowOwwRUUO3ukdg7mcLXCVt9cgfZ/UxbIVdi4wQ1BgmnYvdRyB1D2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFypGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+iiZHJhdGVCw1Blc3RhcnQZA+hmYm91bmRzhaNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQo2VzdGFydBkD6GhyYXRlX21heELDUGhyYXRlX21pbkLDUKNlc3RhcnQZA+hocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GQPoaHJhdGVfbWF4QsNQaHJhdGVfbWluQsNQZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000,
+              "rate": "100000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6KJkcmF0ZUMBhqBlc3RhcnQZA+iiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYagZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "twKSFOweGyB6xdDFEEgLG1u2QTovJFQRZwmdeQ4xmx4UK8rZuQF06LPv406TH8t2zbc3BdbdW45kHP5BFbnxAQ=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6KJkcmF0ZUMBhqBlc3RhcnQZA+iiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYagZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAtwKSFOweGyB6xdDFEEgLG1u2QTovJFQRZwmdeQ4xmx4UK8rZuQF06LPv406TH8t2zbc3BdbdW45kHP5BFbnxAWpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQGBpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6KJkcmF0ZUMBhqBlc3RhcnQZA+iiZHJhdGVDAYagZXN0YXJ0GQPoomRyYXRlQwGGoGVzdGFydBkD6GZib3VuZHOFo2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBkD6GhyYXRlX21heEMBhqBocmF0ZV9taW5DAYagZW5vbmNlG///////////Zm1ldGhvZHgfc3Rha2luZy5BbWVuZENvbW1pc3Npb25TY2hlZHVsZQ==",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "0"
+            },
+            {
+              "start": 1000000,
+              "rate": "0"
+            },
+            {
+              "start": 1000000,
+              "rate": "0"
+            },
+            {
+              "start": 1000000,
+              "rate": "0"
+            },
+            {
+              "start": 1000000,
+              "rate": "0"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "0",
+              "rate_max": "0"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "0",
+              "rate_max": "0"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "7tsOhMuHylm4E+4oHYM12JU0L9sFo56mhbd0dB4k88BmiRmeDFIpV/6Gk4R+SMwlNatxWg/13aHbFrtQfu9IAw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA7tsOhMuHylm4E+4oHYM12JU0L9sFo56mhbd0dB4k88BmiRmeDFIpV/6Gk4R+SMwlNatxWg/13aHbFrtQfu9IA2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQFopGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkCiZHJhdGVAZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhAaHJhdGVfbWluQKNlc3RhcnQaAA9CQGhyYXRlX21heEBocmF0ZV9taW5Ao2VzdGFydBoAD0JAaHJhdGVfbWF4QGhyYXRlX21pbkBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "10"
+            },
+            {
+              "start": 1000000,
+              "rate": "10"
+            },
+            {
+              "start": 1000000,
+              "rate": "10"
+            },
+            {
+              "start": 1000000,
+              "rate": "10"
+            },
+            {
+              "start": 1000000,
+              "rate": "10"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10",
+              "rate_max": "10"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10",
+              "rate_max": "10"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQKJkcmF0ZUEKZXN0YXJ0GgAPQkCiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQGZib3VuZHOFo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GgAPQkBocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQplbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "7HL5leUHrPm66qIW/6S/WnrdnUxSsfZaLdEEWw3CcWPZGOB4Yyr17qp8y+JvC8mkIFGtq1gysHQj6YjeO/WMCw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQKJkcmF0ZUEKZXN0YXJ0GgAPQkCiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQGZib3VuZHOFo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GgAPQkBocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQplbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA7HL5leUHrPm66qIW/6S/WnrdnUxSsfZaLdEEWw3CcWPZGOB4Yyr17qp8y+JvC8mkIFGtq1gysHQj6YjeO/WMC2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQF3pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQKJkcmF0ZUEKZXN0YXJ0GgAPQkCiZHJhdGVBCmVzdGFydBoAD0JAomRyYXRlQQplc3RhcnQaAA9CQGZib3VuZHOFo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQqjZXN0YXJ0GgAPQkBocmF0ZV9tYXhBCmhyYXRlX21pbkEKo2VzdGFydBoAD0JAaHJhdGVfbWF4QQpocmF0ZV9taW5BCqNlc3RhcnQaAA9CQGhyYXRlX21heEEKaHJhdGVfbWluQQplbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate": "1000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "1000",
+              "rate_max": "1000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAomRyYXRlQgPoZXN0YXJ0GgAPQkCiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+hlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "kIubWr5BkTH+n/QoypQipwAyJV+ZDOos97ljT0RfTHE7U6nCPGNBjsqFfF0HU4MiI4kvxrgOkjaQJA+adqbhCw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAomRyYXRlQgPoZXN0YXJ0GgAPQkCiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+hlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAkIubWr5BkTH+n/QoypQipwAyJV+ZDOos97ljT0RfTHE7U6nCPGNBjsqFfF0HU4MiI4kvxrgOkjaQJA+adqbhC2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQGGpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAomRyYXRlQgPoZXN0YXJ0GgAPQkCiZHJhdGVCA+hlc3RhcnQaAA9CQKJkcmF0ZUID6GVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+ijZXN0YXJ0GgAPQkBocmF0ZV9tYXhCA+hocmF0ZV9taW5CA+hlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate": "10000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "10000",
+              "rate_max": "10000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAomRyYXRlQicQZXN0YXJ0GgAPQkCiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "HxUhh5mLlWADsXX57xVOMgTQUUIdzxypxMtOtbaU6YbMPCsgJ5qs9PzIFwyjKrXIANUv4My8RULcV4a4wIPIBw=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAomRyYXRlQicQZXN0YXJ0GgAPQkCiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAHxUhh5mLlWADsXX57xVOMgTQUUIdzxypxMtOtbaU6YbMPCsgJ5qs9PzIFwyjKrXIANUv4My8RULcV4a4wIPIB2pwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQGGpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAomRyYXRlQicQZXN0YXJ0GgAPQkCiZHJhdGVCJxBlc3RhcnQaAA9CQKJkcmF0ZUInEGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate": "50000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "50000",
+              "rate_max": "50000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAomRyYXRlQsNQZXN0YXJ0GgAPQkCiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1Blbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "s12ImqP2BqhB7vbVdzQxZ6sGj/onxr68z/m4poXMGh6GiWlC6LIK0kuVMSEe34y2FDLtKsd40pCzK9/lx/+2CA=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAomRyYXRlQsNQZXN0YXJ0GgAPQkCiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1Blbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAs12ImqP2BqhB7vbVdzQxZ6sGj/onxr68z/m4poXMGh6GiWlC6LIK0kuVMSEe34y2FDLtKsd40pCzK9/lx/+2CGpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQGGpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAomRyYXRlQsNQZXN0YXJ0GgAPQkCiZHJhdGVCw1Blc3RhcnQaAA9CQKJkcmF0ZULDUGVzdGFydBoAD0JAZmJvdW5kc4WjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1CjZXN0YXJ0GgAPQkBocmF0ZV9tYXhCw1BocmF0ZV9taW5Cw1Blbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "valid": true,
+    "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
+    "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="
+  },
+  {
+    "kind": "AmendCommissionSchedule",
+    "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "staking.AmendCommissionSchedule",
+      "body": {
+        "amendment": {
+          "rates": [
+            {
+              "start": 1000000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate": "100000"
+            }
+          ],
+          "bounds": [
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            },
+            {
+              "start": 1000000,
+              "rate_min": "100000",
+              "rate_max": "100000"
+            }
+          ]
+        }
+      }
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+      "signature": {
+        "public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0=",
+        "signature": "/eaa/aGbFPY4Zyt/uijLZ0QvFeisL86SIboCbr30k5eHuHuTY4vArI9PxdIGzdfqBPB9tB3pYzFhRNyl3O5dBA=="
+      }
+    },
+    "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA/eaa/aGbFPY4Zyt/uijLZ0QvFeisL86SIboCbr30k5eHuHuTY4vArI9PxdIGzdfqBPB9tB3pYzFhRNyl3O5dBGpwdWJsaWNfa2V5WCDwxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07XN1bnRydXN0ZWRfcmF3X3ZhbHVlWQGVpGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaFpYW1lbmRtZW50omVyYXRlc4WiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkCiZHJhdGVDAYagZXN0YXJ0GgAPQkBmYm91bmRzhaNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqCjZXN0YXJ0GgAPQkBocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoKNlc3RhcnQaAA9CQGhyYXRlX21heEMBhqBocmF0ZV9taW5DAYago2VzdGFydBoAD0JAaHJhdGVfbWF4QwGGoGhyYXRlX21pbkMBhqBlbm9uY2Ub//////////9mbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
     "valid": true,
     "signer_private_key": "7SOOT9aGL5XSH/o8SOyrjsWxKmddFKZ6MXseSHUhfv7wxyceUw9jsYhN77NEKOEMDgF7HLGsIPlJajNx6jr07Q==",
     "signer_public_key": "8McnHlMPY7GITe+zRCjhDA4BexyxrCD5SWozceo69O0="

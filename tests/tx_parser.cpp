@@ -17,12 +17,7 @@
 #include <gmock/gmock.h>
 #include <fmt/core.h>
 
-#include <iostream>
-#include <fstream>
-#include <nlohmann/json.hpp>
 #include <zxmacros.h>
-#include <lib/crypto.h>
-#include <bech32.h>
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"

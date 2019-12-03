@@ -18,11 +18,12 @@ project(ledger-oasis VERSION 0.0.0)
 enable_testing()
 
 set(CMAKE_CXX_STANDARD 11)
-add_subdirectory(cmake/gtest)
-add_subdirectory(deps/fmt)
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
-string(APPEND CMAKE_LINKER_FLAGS_DEBUG " -fsanitize=address -fno-omit-frame-pointer")
+include(cmake/conan/CMakeLists.txt)
+add_subdirectory(cmake/gtest)
+
+string(APPEND CMAKE_CXX_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
+string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 
 ##############################################################
 ##############################################################
@@ -36,14 +37,16 @@ file(GLOB_RECURSE TINYCBOR_SRC
         )
 
 file(GLOB_RECURSE LIB_SRC
-        src/ledger/deps/ledger-zxlib/src/hexutils.c
-        src/ledger/deps/ledger-zxlib/src/bignum.c
-        src/ledger/deps/ledger-zxlib/src/zxmacros.c
-        src/ledger/deps/ledger-zxlib/src/bech32.c
-        src/ledger/deps/ledger-zxlib/src/segwit_addr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/hexutils.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/bignum.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/zxmacros.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/bech32.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/segwit_addr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/hexutils.c
         #########
-        src/ledger/src/lib/parser.c
-        src/ledger/src/lib/parser_impl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/context.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/parser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/parser_impl.c
         )
 
 file(GLOB_RECURSE TESTS_SRC
@@ -59,23 +62,24 @@ target_include_directories(cbor_parser PUBLIC
         )
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/deps/json)
 
 add_executable(unittests ${TESTS_SRC})
 target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/hexutils.c
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
+        ${CONAN_INCLUDE_DIRS_FMT}
+        ${CONAN_INCLUDE_DIRS_JSONCPP}
         )
+
 target_link_libraries(unittests PRIVATE
-        fmt
         gtest_main
         cbor_parser
-        nlohmann_json::nlohmann_json)
+        CONAN_PKG::fmt
+        CONAN_PKG::jsoncpp)
 
-add_test(unittests ${PROJECT_BINARY_DIR}/unittests)
+add_test(unittests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests)
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 ###############################################################

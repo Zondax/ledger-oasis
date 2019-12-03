@@ -19,17 +19,17 @@
 
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <json/json.h>
 #include <zxmacros.h>
 #include <lib/crypto.h>
 #include <bech32.h>
+#include <lib/context.h>
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"
 
 using ::testing::TestWithParam;
 using ::testing::Values;
-using json = nlohmann::json;
 
 typedef struct {
     std::string index;
@@ -66,39 +66,54 @@ std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t 
     return std::string(outBuffer);
 }
 
-std::string FormatRates(const json &rates, uint8_t idx, uint8_t *pageCount) {
+std::string FormatAmount(const std::string &amount) {
+    char buffer[500];
+    MEMZERO(buffer, sizeof(buffer));
+    fpstr_to_str(buffer, amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
+    return std::string(buffer);
+}
+
+std::string FormatRate(const std::string &rate) {
+    char buffer[500];
+    MEMZERO(buffer, sizeof(buffer));
+    // This is shifting two decimal places to show as a percentage
+    fpstr_to_str(buffer, rate.c_str(), COIN_RATE_DECIMAL_PLACES - 2);
+    return std::string(buffer) + "%";
+}
+
+std::string FormatRates(const Json::Value &rates, uint8_t idx, uint8_t *pageCount) {
     *pageCount = rates.size() * 2;
     if (idx < *pageCount) {
         auto r = rates[idx / 2];
         switch (idx % 2) {
             case 0:
-                return fmt::format("[{}] start: {}", idx / 2, (uint64_t) r["start"]);
+                return fmt::format("[{}] start : {}", idx / 2, r["start"].asUInt64());
             case 1:
-                return fmt::format("[{}] rate: {}", idx / 2, (std::string) r["rate"]);
+                return fmt::format("[{}] rate : {}", idx / 2, FormatRate(r["rate"].asString()));
         }
     }
 
     return "";
 }
 
-std::string FormatBounds(const json &bounds, uint8_t idx, uint8_t *pageCount) {
+std::string FormatBounds(const Json::Value &bounds, uint8_t idx, uint8_t *pageCount) {
     *pageCount = bounds.size() * 3;
     if (idx < *pageCount) {
         auto r = bounds[idx / 3];
         switch (idx % 3) {
             case 0:
-                return fmt::format("[{}] start: {}", idx / 3, (uint64_t) r["start"]);
+                return fmt::format("[{}] start : {}", idx / 3, r["start"].asUInt64());
             case 1:
-                return fmt::format("[{}] min: {}", idx / 3, (std::string) r["rate_min"]);
+                return fmt::format("[{}] min : {}", idx / 3, FormatRate(r["rate_min"].asString()));
             case 2:
-                return fmt::format("[{}] max: {}", idx / 3, (std::string) r["rate_max"]);
+                return fmt::format("[{}] max : {}", idx / 3, FormatRate(r["rate_max"].asString()));
         }
     }
 
     return "";
 }
 
-bool TestcaseIsValid(const json &tc) {
+bool TestcaseIsValid(const Json::Value &tc) {
     // TODO: Extend as necessary
     if (tc["kind"] == "AmendCommissionSchedule") {
         auto rates = tc["tx"]["body"]["amendment"]["rates"];
@@ -113,7 +128,7 @@ bool TestcaseIsValid(const json &tc) {
     return true;
 }
 
-std::vector<std::string> GenerateExpectedUIOutput(json j) {
+std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Value j) {
     auto answer = std::vector<std::string>();
 
     if (!TestcaseIsValid(j)) {
@@ -121,73 +136,88 @@ std::vector<std::string> GenerateExpectedUIOutput(json j) {
         return answer;
     }
 
-    auto type = (std::string) j["tx"]["method"];
+    auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
+    auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
+
+    auto type = j["tx"]["method"].asString();
+    auto tx = j["tx"];
+    auto txbody = tx["body"];
 
     if (type == "staking.Transfer") {
         answer.push_back(fmt::format("0 | Type : Transfer"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
-        answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
+        answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(j["tx"]["body"]["xfer_to"], 0, &dummy)));
-        answer.push_back(fmt::format("3 | To : {}", FormatPKasAddress(j["tx"]["body"]["xfer_to"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["xfer_tokens"]));
+        answer.push_back(fmt::format("4 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("4 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy)));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["xfer_tokens"].asString())));
     }
 
     if (type == "staking.Burn") {
         answer.push_back(fmt::format("0 | Type : Burn"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
-        answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
-        answer.push_back(fmt::format("3 | Tokens : {}", (std::string) j["tx"]["body"]["burn_tokens"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
+        answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
+
+        answer.push_back(fmt::format("4 | Tokens : {}",
+                                     FormatAmount(txbody["burn_tokens"].asString())));
     }
 
     if (type == "staking.AddEscrow") {
         answer.push_back(fmt::format("0 | Type : Add escrow"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
-        answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
+        answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(
-                fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 0, &dummy)));
-        answer.push_back(
-                fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["escrow_tokens"]));
+        answer.push_back(fmt::format("4 | Escrow : {}",
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("4 | Escrow : {}",
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["escrow_tokens"].asString())));
     }
 
     if (type == "staking.ReclaimEscrow") {
         answer.push_back(fmt::format("0 | Type : Reclaim escrow"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
-        answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
+        answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
-        answer.push_back(
-                fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 0, &dummy)));
-        answer.push_back(
-                fmt::format("3 | Escrow : {}", FormatPKasAddress(j["tx"]["body"]["escrow_account"], 1, &dummy)));
-        answer.push_back(fmt::format("4 | Tokens : {}", (std::string) j["tx"]["body"]["reclaim_shares"]));
+        answer.push_back(fmt::format("4 | Escrow : {}",
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("4 | Escrow : {}",
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+        answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["reclaim_shares"].asString())));
     }
 
     if (type == "staking.AmendCommissionSchedule") {
         answer.push_back(fmt::format("0 | Type : Amend commission schedule"));
-        answer.push_back(fmt::format("1 | Fee Amount : {}", (std::string) j["tx"]["fee"]["amount"]));
-        answer.push_back(fmt::format("2 | Fee Gas : {}", (uint64_t) j["tx"]["fee"]["gas"]));
+        answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
+        answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
+        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
+        uint32_t itemCount = 4;
         uint8_t pageIdx = 0;
         uint8_t pageCount = 1;
         while (pageIdx < pageCount) {
-            auto s = FormatRates(j["tx"]["body"]["amendment"]["rates"], pageIdx, &pageCount);
+            auto s = FormatRates(txbody["amendment"]["rates"], pageIdx, &pageCount);
             if (!s.empty())
-                answer.push_back(fmt::format("3 | Rates : {}", s));
+                answer.push_back(fmt::format("{} | Rates : {}", itemCount, s));
             pageIdx++;
+            itemCount++;
         }
 
         pageIdx = 0;
         pageCount = 1;
         while (pageIdx < pageCount) {
-            auto s = FormatBounds(j["tx"]["body"]["amendment"]["bounds"], pageIdx, &pageCount);
+            auto s = FormatBounds(txbody["amendment"]["bounds"], pageIdx, &pageCount);
             if (!s.empty())
-                answer.push_back(fmt::format("4 | Bounds : {}", s));
+                answer.push_back(fmt::format("{} | Bounds : {}", itemCount, s));
             pageIdx++;
+            itemCount++;
         }
     }
 
@@ -197,7 +227,9 @@ std::vector<std::string> GenerateExpectedUIOutput(json j) {
 std::vector<testcase_t> GetJsonTestCases() {
     auto answer = std::vector<testcase_t>();
 
-    json j;
+    Json::CharReaderBuilder builder;
+    Json::Value obj;
+
     std::ifstream inFile("testcases.json");
     EXPECT_TRUE(inFile.is_open())
                         << "\n"
@@ -209,19 +241,18 @@ std::vector<testcase_t> GetJsonTestCases() {
         return answer;
 
     // Retrieve all test cases
-    inFile >> j;
-    std::cout << "Number of testcases: " << j.size() << std::endl;
+    JSONCPP_STRING errs;
+    Json::parseFromStream(builder, inFile, &obj, &errs);
+    std::cout << "Number of testcases: " << obj.size() << std::endl;
 
-    int count = 0;
-    for (auto &item : j) {
-        count++;
+    for (int i = 0; i < obj.size(); i++) {
         answer.push_back(testcase_t{
-                std::to_string(count),
-                item["kind"],
-                item["signature_context"],
-                item["encoded_tx"],
-                item["valid"] && TestcaseIsValid(item),
-                GenerateExpectedUIOutput(item)
+                std::to_string(i),
+                obj[i]["kind"].asString(),
+                obj[i]["signature_context"].asString(),
+                obj[i]["encoded_tx"].asString(),
+                obj[i]["valid"] && TestcaseIsValid(obj[i]),
+                GenerateExpectedUIOutput(obj[i]["signature_context"].asString(), obj[i])
         });
     }
 
@@ -229,12 +260,6 @@ std::vector<testcase_t> GetJsonTestCases() {
 }
 
 void check_testcase(const testcase_t &tc) {
-    // Output Expected value as a reference
-    std::cout << std::endl;
-    for (const auto &i : tc.expected_ui_output) {
-        std::cout << i << std::endl;
-    }
-
     parser_context_t ctx;
     parser_error_t err;
 
@@ -245,6 +270,18 @@ void check_testcase(const testcase_t &tc) {
     uint16_t bufferLen = cborString.size();
 
     err = parser_parse(&ctx, buffer, bufferLen);
+    if (tc.valid) {
+        ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+    } else {
+        // TODO: maybe we can eventually match error codes too
+        ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
+        return;
+    }
+
+    crypto_set_context((const uint8_t *) tc.signature_context.c_str(),
+                       tc.signature_context.size());
+
+    err = parser_validate(&ctx);
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
