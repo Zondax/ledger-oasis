@@ -99,7 +99,9 @@ All our tests expect the device to be configured with a known test mnemonic.
 
 - Your device will show "Recovery" in the screen
 
-- Double click
+- Click both buttons at the same time
+
+- Enter your pin if necessary
 
 - Run `make dev_ca`. The device will receive a development certificate to avoid constant manual confirmations.
 
