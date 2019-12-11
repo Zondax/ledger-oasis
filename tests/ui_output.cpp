@@ -128,13 +128,8 @@ bool TestcaseIsValid(const Json::Value &tc) {
     return true;
 }
 
-std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Value j) {
+std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json::Value j) {
     auto answer = std::vector<std::string>();
-
-    if (!TestcaseIsValid(j)) {
-        answer.emplace_back("Test case is not valid!");
-        return answer;
-    }
 
     auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
     auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
@@ -161,8 +156,7 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
         answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
-        answer.push_back(fmt::format("4 | Tokens : {}",
-                                     FormatAmount(txbody["burn_tokens"].asString())));
+        answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(txbody["burn_tokens"].asString())));
     }
 
     if (type == "staking.AddEscrow") {
@@ -173,9 +167,9 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+                                 FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+                                 FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
         answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["escrow_tokens"].asString())));
     }
 
@@ -187,9 +181,9 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+                                 FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+                                 FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
         answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["reclaim_shares"].asString())));
     }
 
@@ -209,7 +203,6 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
             pageIdx++;
             itemCount++;
         }
-
         pageIdx = 0;
         pageCount = 1;
         while (pageIdx < pageCount) {
@@ -222,6 +215,55 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
     }
 
     return answer;
+}
+
+std::vector<std::string> GenerateExpectedUIOutputForEntity(std::string context, Json::Value j) {
+    auto answer = std::vector<std::string>();
+    auto entity = j["entity"];
+
+    answer.push_back(fmt::format("0 | Type : Entity signing"));
+
+    uint8_t dummy;
+    answer.push_back(fmt::format("1 | ID : {}", FormatPKasAddress(entity["id"].asString(), 0, &dummy)));
+    answer.push_back(fmt::format("1 | ID : {}", FormatPKasAddress(entity["id"].asString(), 1, &dummy)));
+
+    uint32_t itemCount = 2;
+
+    int nodeIndex;
+    for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
+        uint8_t dummy;
+        answer.push_back(fmt::format("{} | Node : {}", itemCount, FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("{} | Node : {}", itemCount, FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 1, &dummy)));
+
+        itemCount++;
+    }
+
+    if (entity["allow_entity_signed_nodes"]) {
+        answer.push_back(fmt::format("{} | Allowed", itemCount));
+    } else {
+        answer.push_back(fmt::format("{} | Not Allowed", itemCount));
+    }
+
+    return answer;
+}
+
+std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Value j) {
+    auto answer = std::vector<std::string>();
+
+    if (!TestcaseIsValid(j)) {
+        answer.emplace_back("Test case is not valid!");
+        return answer;
+    }
+
+    // Entity or tx ?
+    if (j.isMember("tx")) {
+        // is tx
+        return GenerateExpectedUIOutputForTx(context, j);
+    } else {
+        // is entity
+        return GenerateExpectedUIOutputForEntity(context, j);
+    }
+
 }
 
 std::vector<testcase_t> GetJsonTestCases() {
