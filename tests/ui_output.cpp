@@ -167,9 +167,9 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                 FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                 FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
         answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["escrow_tokens"].asString())));
     }
 
@@ -181,9 +181,9 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                 FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 0, &dummy)));
         answer.push_back(fmt::format("4 | Escrow : {}",
-                                 FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
+                                     FormatPKasAddress(txbody["escrow_account"].asString(), 1, &dummy)));
         answer.push_back(fmt::format("5 | Tokens : {}", FormatAmount(txbody["reclaim_shares"].asString())));
     }
 
@@ -232,8 +232,10 @@ std::vector<std::string> GenerateExpectedUIOutputForEntity(std::string context, 
     int nodeIndex;
     for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
         uint8_t dummy;
-        answer.push_back(fmt::format("{} | Node : {}", itemCount, FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 0, &dummy)));
-        answer.push_back(fmt::format("{} | Node : {}", itemCount, FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 1, &dummy)));
+        answer.push_back(fmt::format("{} | Node : {}", itemCount,
+                                     FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 0, &dummy)));
+        answer.push_back(fmt::format("{} | Node : {}", itemCount,
+                                     FormatPKasAddress(entity["nodes"][nodeIndex].asString(), 1, &dummy)));
 
         itemCount++;
     }
@@ -266,13 +268,13 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
 
 }
 
-std::vector<testcase_t> GetJsonTestCases() {
+std::vector<testcase_t> GetJsonTestCases(std::string filename) {
     auto answer = std::vector<testcase_t>();
 
     Json::CharReaderBuilder builder;
     Json::Value obj;
 
-    std::ifstream inFile("testcases.json");
+    std::ifstream inFile(filename);
     EXPECT_TRUE(inFile.is_open())
                         << "\n"
                         << "******************\n"
@@ -347,12 +349,25 @@ void check_testcase(const testcase_t &tc) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// Define groups of test vectors
 
-(
-        JsonTestCases,
+INSTANTIATE_TEST_CASE_P(
+        OasisTestCases,
         JsonTests,
-        ::testing::ValuesIn(GetJsonTestCases()), JsonTests::PrintToStringParamName()
+        ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), JsonTests::PrintToStringParamName()
 );
 
-TEST_P(JsonTests, CheckUIOutput) { check_testcase(GetParam()); }
+INSTANTIATE_TEST_CASE_P(
+        ManualTestCases,
+        JsonTests,
+        ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), JsonTests::PrintToStringParamName()
+);
+
+TEST_P(JsonTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
+
+TEST_P(JsonTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
