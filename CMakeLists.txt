@@ -34,6 +34,7 @@ file(GLOB_RECURSE JSMN_SRC
 
 file(GLOB_RECURSE TINYCBOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src/cborparser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src/cborvalidation.c
         )
 
 file(GLOB_RECURSE LIB_SRC
