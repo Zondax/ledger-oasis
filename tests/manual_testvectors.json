@@ -23,14 +23,14 @@
         "kind": "Burn",
         "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
         "tx": {
-            "nonce": 0,
-            "method": "staking.Burn",
             "body": {
                 "burn_tokens": "0"
-            }
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
         },
-        "encoded_tx": "o2Vub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybmRib2R5oWtidXJuX3Rva2Vuc0EA",
+        "encoded_tx": "o2Rib2R5oWtidXJuX3Rva2Vuc0EAZW5vbmNlAGZtZXRob2Rsc3Rha2luZy5CdXJu",
         "valid": true,
-        "cborhex": "a3656e6f6e636500666d6574686f646c7374616b696e672e4275726e64626f6479a16b6275726e5f746f6b656e734100"
+        "cborhex": "a364626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
     }
 ]
