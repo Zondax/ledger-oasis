@@ -341,6 +341,11 @@ void check_testcase(const testcase_t &tc) {
         std::cout << i << std::endl;
     }
 
+    std::cout << " EXPECTED ============" << std::endl;
+    for (const auto &i : tc.expected_ui_output  ) {
+        std::cout << i << std::endl;
+    }
+
     EXPECT_EQ(output.size(), tc.expected_ui_output.size());
     for (size_t i = 0; i < tc.expected_ui_output.size(); i++) {
         if (i < output.size()) {
