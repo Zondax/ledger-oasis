@@ -32,6 +32,7 @@ using ::testing::TestWithParam;
 using ::testing::Values;
 
 typedef struct {
+    std::string description;
     std::string index;
     std::string kind;
     std::string signature_context;
@@ -39,19 +40,6 @@ typedef struct {
     bool valid;
     std::vector<std::string> expected_ui_output;
 } testcase_t;
-
-class JsonTests : public ::testing::TestWithParam<testcase_t> {
-public:
-    struct PrintToStringParamName {
-        template<class ParamType>
-        std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-            auto p = static_cast<testcase_t>(info.param);
-            std::stringstream ss;
-            ss << p.index << "_" << p.kind;
-            return ss.str();
-        }
-    };
-};
 
 std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t *pageCount) {
     std::string pkBytes;
@@ -290,12 +278,23 @@ std::vector<testcase_t> GetJsonTestCases(std::string filename) {
     std::cout << "Number of testcases: " << obj.size() << std::endl;
 
     for (int i = 0; i < obj.size(); i++) {
+        auto v = obj[i];
+        auto description = std::string("");
+
+        if (v.isMember("description")) {
+            description = v["description"].asString();
+        } else {
+            description = v["kind"].asString();
+        }
+        description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
+
         answer.push_back(testcase_t{
+                description,
                 std::to_string(i),
-                obj[i]["kind"].asString(),
-                obj[i]["signature_context"].asString(),
-                obj[i]["encoded_tx"].asString(),
-                obj[i]["valid"] && TestcaseIsValid(obj[i]),
+                v["kind"].asString(),
+                v["signature_context"].asString(),
+                v["encoded_tx"].asString(),
+                v["valid"] && TestcaseIsValid(obj[i]),
                 GenerateExpectedUIOutput(obj[i]["signature_context"].asString(), obj[i])
         });
     }
@@ -361,18 +360,48 @@ void check_testcase(const testcase_t &tc) {
 ///////////////////////////////////////////////////////////////////////
 // Define groups of test vectors
 
-INSTANTIATE_TEST_CASE_P(
-        OasisTestCases,
-        JsonTests,
-        ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), JsonTests::PrintToStringParamName()
-);
+class OasisTests : public ::testing::TestWithParam<testcase_t> {
+public:
+    struct PrintToStringParamName {
+        template<class ParamType>
+        std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
+            auto p = static_cast<testcase_t>(info.param);
+            std::stringstream ss;
+            ss << std::setfill('0') << std::setw(5) << p.index << "_" << p.description;
+            return ss.str();
+        }
+    };
+};
 
 INSTANTIATE_TEST_CASE_P(
-        ManualTestCases,
-        JsonTests,
-        ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), JsonTests::PrintToStringParamName()
+        Generated,
+        OasisTests,
+        ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), OasisTests::PrintToStringParamName()
 );
 
-TEST_P(JsonTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
+TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
 
-TEST_P(JsonTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+class ManualTests : public ::testing::TestWithParam<testcase_t> {
+public:
+    struct PrintToStringParamName {
+        template<class ParamType>
+        std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
+            auto p = static_cast<testcase_t>(info.param);
+            std::stringstream ss;
+            ss << std::setfill('0') << std::setw(5) << p.index << "_" << p.description;
+            return ss.str();
+        }
+    };
+};
+
+INSTANTIATE_TEST_CASE_P(
+        Manual,
+        ManualTests,
+        ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), ManualTests::PrintToStringParamName()
+);
+
+TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
