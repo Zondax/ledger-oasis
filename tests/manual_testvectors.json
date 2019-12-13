@@ -1,0 +1,36 @@
+[
+    {
+        "description": "with fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QQBkYm9keaFrYnVybl90b2tlbnNBAGVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+        "valid": true,
+        "cborhex": "a463666565a2636761730066616d6f756e74410064626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
+    },
+    {
+        "description": "without fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "nonce": 0,
+            "method": "staking.Burn",
+            "body": {
+                "burn_tokens": "0"
+            }
+        },
+        "encoded_tx": "o2Vub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybmRib2R5oWtidXJuX3Rva2Vuc0EA",
+        "valid": true,
+        "cborhex": "a3656e6f6e636500666d6574686f646c7374616b696e672e4275726e64626f6479a16b6275726e5f746f6b656e734100"
+    }
+]

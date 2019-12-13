@@ -1,0 +1,34 @@
+[
+    {
+        "description": "with fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "",
+        "valid": true
+    },
+    {
+        "description": "without fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "nonce": 0,
+            "method": "staking.Burn",
+            "body": {
+                "burn_tokens": "0"
+            }
+        },
+        "encoded_tx": "",
+        "valid": true
+    }
+]
