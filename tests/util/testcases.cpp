@@ -62,7 +62,7 @@ testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value> &jsonSource, 
             v["kind"].asString(),
             v["signature_context"].asString(),
             v["encoded_tx"].asString(),
-            v["valid"] && TestcaseIsValid(v),
+            v["valid"].asBool() && TestcaseIsValid(v),
             GenerateExpectedUIOutput(v["signature_context"].asString(), v)
     };
 }

@@ -1,5 +1,19 @@
 [
     {
+        "description": "not_canonical",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "nonce": 0,
+            "method": "staking.Burn",
+            "body": {
+                "burn_tokens": "0"
+            }
+        },
+        "encoded_tx": "",
+        "valid": false
+    },
+    {
         "description": "with fee",
         "kind": "Burn",
         "signature_context": "oasis-core/consensus: tx for chain test-chain-id",

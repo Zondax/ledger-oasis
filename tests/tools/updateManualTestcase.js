@@ -8,8 +8,12 @@ let jsonData = JSON.parse(rawData);
 function bigintToArray(v) {
     tmp = BigInt(v).toString(16);
     // not sure why it is not padding and buffer does not like it
-    if (tmp.length%2 ===1) tmp="0"+tmp;
+    if (tmp.length % 2 === 1) tmp = "0" + tmp;
     return Buffer.from(tmp, "hex");
+}
+
+function hexstringToArray(v) {
+    return Buffer.from(v, "hex");
 }
 
 function fixQuantityTypes(tx) {
@@ -19,17 +23,28 @@ function fixQuantityTypes(tx) {
     out = JSON.parse(JSON.stringify(tx));
     try {
         out.fee.amount = bigintToArray(out.fee.amount)
-    }catch (e) {}
+    } catch (e) {
+    }
 
     try {
         out.body.burn_tokens = bigintToArray(out.body.burn_tokens);
-    }catch (e) {}
+    } catch (e) {
+    }
+
+    try {
+        out.body.signature.signature = hexstringToArray(out.body.signature.signature);
+    } catch (e) {
+    }
+    try {
+        out.body.signature.public_key = hexstringToArray(out.body.signature.public_key);
+    } catch (e) {
+    }
 
     return out
 }
 
 // Now process the data and generate the correct cbor output
-jsonData.forEach( tc => {
+jsonData.forEach(tc => {
     // Fix types
     console.log(tc.tx);
     tmp = fixQuantityTypes(tc.tx);
