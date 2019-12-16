@@ -34,6 +34,8 @@ typedef struct {
     std::string description;
 } testcase_t;
 
+std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor);
+
 testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value>& jsonSource, int index);
 
 std::vector<testcase_t> GetJsonTestCases(const std::string& filename);

@@ -21,6 +21,28 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
+std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {
+    std::string cborString;
+    macaron::Base64::Decode(base64Cbor, cborString);
+
+    if (context.size() >= 256) {
+        throw std::invalid_argument("context should be < 256 bytes");
+    }
+
+    // Allocate and prepare buffer
+    // context size
+    // context
+    // CBOR payload
+    uint16_t bufferLen = 1 + context.size() + cborString.size();
+    auto bufferAllocation = std::vector<uint8_t>(bufferLen);
+
+    bufferAllocation[0] = context.size();
+    MEMCPY(bufferAllocation.data() + 1, context.c_str(), context.size());
+    MEMCPY(bufferAllocation.data() + 1 + context.size(), cborString.c_str(), cborString.size());
+
+    return bufferAllocation;
+}
+
 testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value> &jsonSource, int index) {
     testcaseData_t answer;
     auto v = (*jsonSource)[index];

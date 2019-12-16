@@ -33,24 +33,9 @@ void check_testcase(const testcase_t &testcase) {
     parser_context_t ctx;
     parser_error_t err;
 
-    std::string cborString;
-    macaron::Base64::Decode(tc.encoded_tx, cborString);
+    auto buffer = prepareBlob(tc.signature_context, tc.encoded_tx);
 
-    ASSERT_LT(tc.signature_context.size(), 256);
-
-    // Allocate and prepare buffer
-    // context size
-    // context
-    // CBOR payload
-    uint16_t bufferLen = 1 + tc.signature_context.size() + cborString.size();
-    auto bufferAllocation = std::unique_ptr<uint8_t[]>(new uint8_t[bufferLen]);
-    bufferAllocation[0] = tc.signature_context.size();
-    MEMCPY(bufferAllocation.get() + 1, tc.signature_context.c_str(), tc.signature_context.size());
-    MEMCPY(bufferAllocation.get() + 1 + tc.signature_context.size(), cborString.c_str(), cborString.size());
-
-    const auto *buffer = (const uint8_t *) bufferAllocation.get();
-
-    err = parser_parse(&ctx, buffer, bufferLen);
+    err = parser_parse(&ctx, buffer.data(), buffer.size());
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
