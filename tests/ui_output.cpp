@@ -18,9 +18,8 @@
 #include "util/testcases.h"
 
 #include <iostream>
-#include <json/json.h>
+#include <memory>
 #include <zxmacros.h>
-#include <lib/context.h>
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"
@@ -37,8 +36,19 @@ void check_testcase(const testcase_t &testcase) {
     std::string cborString;
     macaron::Base64::Decode(tc.encoded_tx, cborString);
 
-    const auto *buffer = (const uint8_t *) cborString.c_str();
-    uint16_t bufferLen = cborString.size();
+    ASSERT_LT(tc.signature_context.size(), 256);
+
+    // Allocate and prepare buffer
+    // context size
+    // context
+    // CBOR payload
+    uint16_t bufferLen = 1 + tc.signature_context.size() + cborString.size();
+    auto bufferAllocation = std::unique_ptr<uint8_t[]>(new uint8_t[bufferLen]);
+    bufferAllocation[0] = tc.signature_context.size();
+    MEMCPY(bufferAllocation.get() + 1, tc.signature_context.c_str(), tc.signature_context.size());
+    MEMCPY(bufferAllocation.get() + 1 + tc.signature_context.size(), cborString.c_str(), cborString.size());
+
+    const auto *buffer = (const uint8_t *) bufferAllocation.get();
 
     err = parser_parse(&ctx, buffer, bufferLen);
     if (tc.valid) {
@@ -48,9 +58,6 @@ void check_testcase(const testcase_t &testcase) {
         ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
         return;
     }
-
-    crypto_set_context((const uint8_t *) tc.signature_context.c_str(),
-                       tc.signature_context.size());
 
     err = parser_validate(&ctx);
     if (tc.valid) {

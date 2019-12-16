@@ -158,11 +158,8 @@ bool TestcaseIsValid(const Json::Value &tc) {
     return true;
 }
 
-std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json::Value j) {
+std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j) {
     auto answer = std::vector<std::string>();
-
-    auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
-    auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
 
     auto type = j["tx"]["method"].asString();
     auto tx = j["tx"];
@@ -172,7 +169,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
         answer.push_back(fmt::format("0 | Type : Transfer"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | To : {}", FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy)));
@@ -184,7 +180,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
         answer.push_back(fmt::format("0 | Type : Burn"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         answer.push_back(fmt::format("4 | Tokens : {}", FormatAmount(txbody["burn_tokens"].asString())));
     }
@@ -193,7 +188,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
         answer.push_back(fmt::format("0 | Type : Add escrow"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
@@ -207,7 +201,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
         answer.push_back(fmt::format("0 | Type : Reclaim escrow"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint8_t dummy;
         answer.push_back(fmt::format("4 | Escrow : {}",
@@ -221,7 +214,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
         answer.push_back(fmt::format("0 | Type : Amend commission schedule"));
         answer.push_back(fmt::format("1 | Fee Amount : {}", FormatAmount(tx["fee"]["amount"].asString())));
         answer.push_back(fmt::format("2 | Fee Gas : {}", tx["fee"]["gas"].asUInt64()));
-        answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
 
         uint32_t itemCount = 4;
         uint8_t pageIdx = 0;
@@ -242,12 +234,13 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(std::string context, Json
             pageIdx++;
             itemCount++;
         }
+
     }
 
     return answer;
 }
 
-std::vector<std::string> GenerateExpectedUIOutputForEntity(std::string context, Json::Value j) {
+std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j) {
     auto answer = std::vector<std::string>();
     auto entity = j["entity"];
 
@@ -290,11 +283,15 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Val
     // Entity or tx ?
     if (j.isMember("tx")) {
         // is tx
-        return GenerateExpectedUIOutputForTx(context, j);
+        answer = GenerateExpectedUIOutputForTx(j);
     } else {
         // is entity
-        return GenerateExpectedUIOutputForEntity(context, j);
+        answer = GenerateExpectedUIOutputForEntity(j);
     }
 
-}
+    auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
+    auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
 
+    answer.push_back(fmt::format("3 | Context : {}", contextSuffix));
+    return answer;
+}
