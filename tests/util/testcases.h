@@ -34,11 +34,11 @@ typedef struct {
     std::string description;
 } testcase_t;
 
-testcaseData_t ReadTestCaseData(std::shared_ptr<Json::Value> jsonSource, int index);
+testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value>& jsonSource, int index);
 
 std::vector<testcase_t> GetJsonTestCases(const std::string& filename);
 
-std::vector<std::string> GenerateExpectedUIOutput(std::string context, Json::Value j);
+std::vector<std::string> GenerateExpectedUIOutput(std::string context, const Json::Value& j);
 
 bool TestcaseIsValid(const Json::Value &tc);
 
