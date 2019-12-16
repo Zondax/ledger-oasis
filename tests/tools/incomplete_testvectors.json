@@ -44,5 +44,23 @@
         },
         "encoded_tx": "",
         "valid": true
+    },
+    {
+        "description": "RegisterEntity_Basic",
+        "kind": "RegisterEntity",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "body": {
+                "signature": {
+                    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                    "public_key": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                "untrusted_raw_value": "0"
+            },
+            "nonce": 123,
+            "method": "registry.RegisterEntity"
+        },
+        "encoded_tx": "",
+        "valid": true
     }
 ]
