@@ -18,9 +18,8 @@
 #include "util/testcases.h"
 
 #include <iostream>
-#include <json/json.h>
+#include <memory>
 #include <zxmacros.h>
-#include <lib/context.h>
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"
@@ -34,13 +33,9 @@ void check_testcase(const testcase_t &testcase) {
     parser_context_t ctx;
     parser_error_t err;
 
-    std::string cborString;
-    macaron::Base64::Decode(tc.encoded_tx, cborString);
+    auto buffer = prepareBlob(tc.signature_context, tc.encoded_tx);
 
-    const auto *buffer = (const uint8_t *) cborString.c_str();
-    uint16_t bufferLen = cborString.size();
-
-    err = parser_parse(&ctx, buffer, bufferLen);
+    err = parser_parse(&ctx, buffer.data(), buffer.size());
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
@@ -48,9 +43,6 @@ void check_testcase(const testcase_t &testcase) {
         ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
         return;
     }
-
-    crypto_set_context((const uint8_t *) tc.signature_context.c_str(),
-                       tc.signature_context.size());
 
     err = parser_validate(&ctx);
     if (tc.valid) {

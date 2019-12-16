@@ -21,35 +21,35 @@
 #include "lib/parser.h"
 #include "util/base64.h"
 #include "util/common.h"
+#include "util/testcases.h"
 
 // Test some specific corner cases that may not be part of the test vectors
-TEST(TxParser, RandomDataAtEnd) {
-    std::string cborString;
-    macaron::Base64::Decode("pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy", cborString);
-
-    EXPECT_EQ(cborString.size(), 111);
-
-    cborString = cborString + "123456";
-    EXPECT_EQ(cborString.size(), 117);
-
-    const auto *buffer = (const uint8_t *) cborString.c_str();
-    uint16_t bufferLen = cborString.size();
-
+TEST(TxParser, EmptyBuffer) {
     parser_context_t ctx;
-    auto err = parser_parse(&ctx, buffer, bufferLen);
-    ASSERT_EQ(err, parser_unexpected_data_at_end) << parser_getErrorDescription(err);
+    auto buffer = std::vector<uint8_t>();
+    buffer.push_back(0);
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size());
+    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
+}
+
+TEST(TxParser, RandomDataAtEnd) {
+    parser_context_t ctx;
+
+    std::string context = "oasis-core/consensus: tx for chain ";
+    std::string cborString = "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy";
+    auto buffer = prepareBlob(context, cborString);
+    buffer.push_back(0);
+
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size());
+    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
 }
 
 TEST(TxParser, MissingLastByte) {
-    std::string cborString;
-    macaron::Base64::Decode("pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy", cborString);
-
-    EXPECT_EQ(cborString.size(), 111);
-
-    const auto *buffer = (const uint8_t *) cborString.c_str();
-    uint16_t bufferLen = cborString.size() - 1;
-
     parser_context_t ctx;
-    auto err = parser_parse(&ctx, buffer, bufferLen);
-    ASSERT_EQ(err, parser_cbor_unexpected) << parser_getErrorDescription(err);
+
+    std::string context = "oasis-core/consensus: tx for chain ";
+    std::string cborString = "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy";
+    auto buffer = prepareBlob(context, cborString);
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
+    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
 }
