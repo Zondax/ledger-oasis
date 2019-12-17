@@ -52,3 +52,5 @@ src/ledger/pkgdemo/app\.hex
 !\deps/nanos-secure-sdk
 build/
 \deps/nano2-sdk
+
+tests/peda-session-unknown.txt
