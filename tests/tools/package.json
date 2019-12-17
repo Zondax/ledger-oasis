@@ -6,7 +6,6 @@
         "cbor": "^5.0.1"
     },
     "scripts": {
-        "updateTests" : "node updateManualTestcase.js"
+        "updateTests": "node updateManualTestcase.js"
     }
 }
-

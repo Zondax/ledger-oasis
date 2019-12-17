@@ -62,5 +62,17 @@
         },
         "encoded_tx": "",
         "valid": true
+    },
+    {
+        "description": "signing entity",
+        "kind": "Signing",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "entity": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nodes": ["0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"],
+            "allow_entity_signed_nodes": true
+        },
+        "encoded_tx": "",
+        "valid": true
     }
 ]

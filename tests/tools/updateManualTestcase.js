@@ -21,6 +21,7 @@ function fixQuantityTypes(tx) {
     // output CborTextStringType and not CborByteStringType
 
     out = JSON.parse(JSON.stringify(tx));
+
     try {
         out.fee.amount = bigintToArray(out.fee.amount)
     } catch (e) {
@@ -40,14 +41,37 @@ function fixQuantityTypes(tx) {
     } catch (e) {
     }
 
-    return out
+    return out;
 }
+
+function fixPublicKeysTypes(entity) {
+
+    out = JSON.parse(JSON.stringify(entity));
+
+    out.id = hexstringToArray(out.id);
+
+    for (let i =0; i < out.nodes.length; i++) {
+        out.nodes[i] = hexstringToArray(out.nodes[i])
+    }
+
+    return out;
+
+}
+
 
 // Now process the data and generate the correct cbor output
 jsonData.forEach(tc => {
-    // Fix types
-    console.log(tc.tx);
-    tmp = fixQuantityTypes(tc.tx);
+
+    if ('entity' in tc) {
+        console.log(tc.entity);
+        tmp = fixPublicKeysTypes(tc.entity);
+    } else {
+        // Fix types
+        console.log(tc.tx);
+        tmp = fixQuantityTypes(tc.tx);
+    }
+
+
 
     cbortx = cbor.encode(tmp);
     base64Tx = base64.fromByteArray(cbortx);
