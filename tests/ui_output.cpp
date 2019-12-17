@@ -46,10 +46,10 @@ void check_testcase(const testcase_t &testcase) {
 
     err = parser_validate(&ctx);
     if (tc.valid) {
-        ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+        EXPECT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
         // TODO: maybe we can eventually match error codes too
-        ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
+        EXPECT_NE(err, parser_ok) << parser_getErrorDescription(err);
         return;
     }
 
