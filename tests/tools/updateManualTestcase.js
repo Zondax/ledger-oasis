@@ -42,6 +42,11 @@ function fixQuantityTypes(tx) {
     } catch (e) {
     }
 
+    try {
+        out.body.untrusted_raw_value = hexstringToArray(out.body.untrusted_raw_value);
+    } catch (e) {
+    }
+
     return out;
 }
 
@@ -63,13 +68,13 @@ function fixPublicKeysTypes(entity) {
 // Now process the data and generate the correct cbor output
 jsonData.forEach(tc => {
 
-    if ('entity' in tc) {
-        console.log(tc.entity);
-        tmp = fixPublicKeysTypes(tc.entity);
-    } else {
+    if ('tx' in tc) {
         // Fix types
         console.log(tc.tx);
         tmp = fixQuantityTypes(tc.tx);
+    } else {
+        console.log(tc.entity);
+        tmp = fixPublicKeysTypes(tc.entity);
     }
 
 
