@@ -19,9 +19,7 @@
 
 #include <iostream>
 #include <memory>
-#include <zxmacros.h>
 #include "lib/parser.h"
-#include "util/base64.h"
 #include "util/common.h"
 
 using ::testing::TestWithParam;
@@ -46,10 +44,10 @@ void check_testcase(const testcase_t &testcase) {
 
     err = parser_validate(&ctx);
     if (tc.valid) {
-        ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+        EXPECT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
         // TODO: maybe we can eventually match error codes too
-        ASSERT_NE(err, parser_ok) << parser_getErrorDescription(err);
+        EXPECT_NE(err, parser_ok) << parser_getErrorDescription(err);
         return;
     }
 
@@ -93,7 +91,7 @@ public:
     };
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
         ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), OasisTests::PrintToStringParamName()
@@ -118,7 +116,7 @@ public:
     };
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
         Manual,
         ManualTests,
         ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), ManualTests::PrintToStringParamName()
