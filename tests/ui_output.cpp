@@ -93,7 +93,7 @@ public:
     };
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
         ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), OasisTests::PrintToStringParamName()
@@ -118,7 +118,7 @@ public:
     };
 };
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
         Manual,
         ManualTests,
         ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), ManualTests::PrintToStringParamName()
