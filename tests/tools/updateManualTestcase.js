@@ -37,7 +37,8 @@ function fixQuantityTypes(tx) {
     } catch (e) {
     }
     try {
-        out.body.signature.public_key = hexstringToArray(out.body.signature.public_key);
+        // In test the publick keys are given in base 64 encoding!
+        out.body.signature.public_key = Buffer.from(out.body.signature.public_key, 'base64');
     } catch (e) {
     }
 
@@ -48,10 +49,10 @@ function fixPublicKeysTypes(entity) {
 
     out = JSON.parse(JSON.stringify(entity));
 
-    out.id = hexstringToArray(out.id);
+    out.id = Buffer.from(out.id, 'base64');
 
     for (let i =0; i < out.nodes.length; i++) {
-        out.nodes[i] = hexstringToArray(out.nodes[i])
+        out.nodes[i] = Buffer.from(out.nodes[i], 'base64')
     }
 
     return out;

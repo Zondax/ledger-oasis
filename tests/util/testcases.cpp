@@ -283,14 +283,15 @@ std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j, uint32
     int nodeIndex;
     for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
         auto nodeData = entity["nodes"][nodeIndex].asString();
-        addTo(answer, "{} | Node : {}", itemCount, FormatPKasAddress(nodeData, 0, &dummy));
-        addTo(answer, "{} | Node : {}", itemCount++, FormatPKasAddress(nodeData, 1, &dummy));
+        addTo(answer, "{} | Node [{}] : {}", itemCount, itemCount-2, FormatPKasAddress(nodeData, 0, &dummy));
+        addTo(answer, "{} | Node [{}] : {}", itemCount, itemCount-2, FormatPKasAddress(nodeData, 1, &dummy));
+        itemCount++;
     }
 
     if (entity["allow_entity_signed_nodes"]) {
-        addTo(answer, "{} | Allowed", itemCount);
+        addTo(answer, "{} | Allowed :  ", itemCount++);
     } else {
-        addTo(answer, "{} | Not Allowed", itemCount);
+        addTo(answer, "{} | Not Allowed :  ", itemCount++);
     }
 
     return answer;

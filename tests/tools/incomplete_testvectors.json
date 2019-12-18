@@ -53,7 +53,7 @@
             "body": {
                 "signature": {
                     "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-                    "public_key": "0000000000000000000000000000000000000000000000000000000000000000"
+                    "public_key": "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk="
                 },
                 "untrusted_raw_value": "0"
             },
@@ -68,8 +68,8 @@
         "kind": "Signing",
         "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
         "entity": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "nodes": ["0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"],
+            "id": "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk=",
+            "nodes": ["ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk=", "ZDYWhVhMiBLm5ktxFbUS02pw91Prw1eX5HuDm8qvNwk="],
             "allow_entity_signed_nodes": true
         },
         "encoded_tx": "",
