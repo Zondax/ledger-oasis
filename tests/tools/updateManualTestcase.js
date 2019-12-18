@@ -1,9 +1,5 @@
 const fs = require('fs');
-//const base64 = require('base64-js');
 const cbor = require('cbor');
-
-let rawData = fs.readFileSync('template_testvectors.json');
-let jsonData = JSON.parse(rawData);
 
 function bigintToArray(v) {
     tmp = BigInt(v).toString(16);
@@ -12,26 +8,18 @@ function bigintToArray(v) {
     return Buffer.from(tmp, "hex");
 }
 
-function hexstringToArray(v) {
-    return Buffer.from(v, "hex");
-}
-
-function fixFields(obj) {
-    // We need to convert types here otherwise the encoder will
-    // output CborTextStringType and not CborByteStringType
-
+function fixFieldsForCBOR(obj) {
+    // We need to convert types here otherwise the encoder will output CborTextStringType and not CborByteStringType
     out = JSON.parse(JSON.stringify(obj));
 
     try {
         out.id = Buffer.from(out.id, 'hex');
-        obj.id = out.id.toString('base64')
     } catch (e) {
     }
 
     try {
         for (let i = 0; i < out.nodes.length; i++) {
             out.nodes[i] = Buffer.from(out.nodes[i], 'hex');
-            obj.nodes[i] = out.nodes[i].toString('base64');
         }
     } catch (e) {
     }
@@ -47,37 +35,87 @@ function fixFields(obj) {
     }
 
     try {
-        out.body.signature.signature = hexstringToArray(out.body.signature.signature);
-        obj.body.signature.signature = out.body.signature.signature.toString('base64');
+        out.body.signature.signature = Buffer.from(out.body.signature.signature, 'hex');
     } catch (e) {
     }
     try {
         // In test the public keys are given in base 64 encoding!
         out.body.signature.public_key = Buffer.from(out.body.signature.public_key, 'hex');
-        obj.body.signature.public_key = out.body.signature.public_key.toString('base64');
+    } catch (e) {
+    }
+
+    try {
+        out.body.untrusted_raw_value = toCBOR(out.body.untrusted_raw_value);
     } catch (e) {
     }
 
     return out;
 }
 
-// Now process the data and generate the correct cbor output
-jsonData.forEach(tc => {
+function fixFieldsForJSON(obj) {
+    // We need to convert types here otherwise the encoder will output CborTextStringType and not CborByteStringType
+    out = JSON.parse(JSON.stringify(obj));
 
-    if ('entity' in tc) {
-        tmp = fixFields(tc.entity);
-        console.log(tc.entity);
-    } else {
-        // Fix types
-        tmp = fixFields(tc.tx);
-        console.log(tc.tx);
+    try {
+        out.entity.id = Buffer.from(out.entity.id, 'hex').toString('base64')
+    } catch (e) {
     }
 
-    cbortx = cbor.encode(tmp);
+    try {
+        for (let i = 0; i < out.entity.nodes.length; i++) {
+            out.entity.nodes[i] = Buffer.from(out.entity.nodes[i], 'hex').toString('base64');
+        }
+    } catch (e) {
+    }
 
-    tc['encoded_tx'] = cbortx.toString('base64');
-    tc['cborhex'] = cbortx.toString('hex');
+    try {
+        out.tx.body.untrusted_raw_value.entity.id = Buffer.from(out.tx.body.untrusted_raw_value.entity.id, 'hex').toString('base64')
+    } catch (e) {
+    }
+
+    try {
+        for (let i = 0; i < out.tx.body.untrusted_raw_value.entity.nodes.length; i++) {
+            out.tx.body.untrusted_raw_value.entity.nodes[i] = Buffer.from(out.tx.body.untrusted_raw_value.entity.nodes[i], 'hex').toString('base64');
+        }
+    } catch (e) {
+    }
+
+    try {
+        out.tx.body.signature.signature = Buffer.from(out.tx.body.signature.signature, 'hex').toString('base64');
+    } catch (e) {
+    }
+    try {
+        out.tx.body.signature.public_key = Buffer.from(out.tx.body.signature.public_key, 'hex').toString('base64');
+    } catch (e) {
+    }
+
+    return out;
+}
+
+function toCBOR(root) {
+    root = JSON.parse(JSON.stringify(root));
+
+// Now process the data and generate the correct cbor output
+    if ('entity' in root) {
+        tmp = fixFieldsForCBOR(root.entity);
+    } else {
+        // Fix types
+        tmp = fixFieldsForCBOR(root.tx);
+    }
+    return cbor.encode(tmp).toString('base64');
+}
+
+let rawData = fs.readFileSync('template_testvectors.json');
+
+let jsonData = JSON.parse(rawData);
+
+newJsonData = [];
+jsonData.forEach(tc => {
+    tc['encoded_tx'] = toCBOR(tc);
+    tc['encoded_tx_hex'] = Buffer.from(toCBOR(tc), 'base64').toString('hex');
+    newJsonData.push(fixFieldsForJSON(tc));
 });
 
-let rawdata = JSON.stringify(jsonData, null, 4);
+let rawdata = JSON.stringify(newJsonData, null, 4);
+
 fs.writeFileSync('../manual_testvectors.json', rawdata);
