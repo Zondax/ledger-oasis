@@ -19,9 +19,7 @@
 
 #include <iostream>
 #include <memory>
-#include <zxmacros.h>
 #include "lib/parser.h"
-#include "util/base64.h"
 #include "util/common.h"
 
 using ::testing::TestWithParam;
