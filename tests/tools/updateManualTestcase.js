@@ -45,7 +45,7 @@ function fixFieldsForCBOR(obj) {
     }
 
     try {
-        out.body.untrusted_raw_value = toCBOR(out.body.untrusted_raw_value);
+        out.body.untrusted_raw_value = Buffer.from(out.body.untrusted_raw_value, 'hex');
     } catch (e) {
     }
 
@@ -69,18 +69,6 @@ function fixFieldsForJSON(obj) {
     }
 
     try {
-        out.tx.body.untrusted_raw_value.entity.id = Buffer.from(out.tx.body.untrusted_raw_value.entity.id, 'hex').toString('base64')
-    } catch (e) {
-    }
-
-    try {
-        for (let i = 0; i < out.tx.body.untrusted_raw_value.entity.nodes.length; i++) {
-            out.tx.body.untrusted_raw_value.entity.nodes[i] = Buffer.from(out.tx.body.untrusted_raw_value.entity.nodes[i], 'hex').toString('base64');
-        }
-    } catch (e) {
-    }
-
-    try {
         out.tx.body.signature.signature = Buffer.from(out.tx.body.signature.signature, 'hex').toString('base64');
     } catch (e) {
     }
@@ -96,12 +84,13 @@ function toCBOR(root) {
     root = JSON.parse(JSON.stringify(root));
 
 // Now process the data and generate the correct cbor output
-    if ('entity' in root) {
-        tmp = fixFieldsForCBOR(root.entity);
+    if ('tx' in root) {
+        tmp = fixFieldsForCBOR(root.tx);
     } else {
         // Fix types
-        tmp = fixFieldsForCBOR(root.tx);
+        tmp = fixFieldsForCBOR(root.entity);
     }
+    
     return cbor.encode(tmp).toString('base64');
 }
 
