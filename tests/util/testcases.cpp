@@ -335,7 +335,7 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
         addTo(answer, "{} | Signature : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
         // Entity (from entity)
-        auto entityAnswer = _GenerateExpectedUIOutputForEntity(j, itemCount);
+        auto entityAnswer = _GenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"], itemCount);
         answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
 
     }

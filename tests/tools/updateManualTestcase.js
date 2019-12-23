@@ -10,7 +10,7 @@ function bigintToArray(v) {
 
 function fixFieldsForCBOR(obj) {
     // We need to convert types here otherwise the encoder will output CborTextStringType and not CborByteStringType
-    out = JSON.parse(JSON.stringify(obj));
+    let out = JSON.parse(JSON.stringify(obj));
 
     try {
         out.id = Buffer.from(out.id, 'hex');
@@ -45,7 +45,7 @@ function fixFieldsForCBOR(obj) {
     }
 
     try {
-        out.body.untrusted_raw_value = Buffer.from(out.body.untrusted_raw_value, 'hex');
+        out.body.untrusted_raw_value = toCBOR(out.body.untrusted_raw_value);
     } catch (e) {
     }
 
@@ -54,7 +54,7 @@ function fixFieldsForCBOR(obj) {
 
 function fixFieldsForJSON(obj) {
     // We need to convert types here otherwise the encoder will output CborTextStringType and not CborByteStringType
-    out = JSON.parse(JSON.stringify(obj));
+    let out = JSON.parse(JSON.stringify(obj));
 
     try {
         out.entity.id = Buffer.from(out.entity.id, 'hex').toString('base64')
@@ -69,9 +69,22 @@ function fixFieldsForJSON(obj) {
     }
 
     try {
+        out.tx.body.untrusted_raw_value.entity.id = Buffer.from(out.tx.body.untrusted_raw_value.entity.id, 'hex').toString('base64')
+    } catch (e) {
+    }
+
+    try {
+        for (let i = 0; i < out.tx.body.untrusted_raw_value.entity.nodes.length; i++) {
+            out.tx.body.untrusted_raw_value.entity.nodes[i] = Buffer.from(out.tx.body.untrusted_raw_value.entity.nodes[i], 'hex').toString('base64');
+        }
+    } catch (e) {
+    }
+
+    try {
         out.tx.body.signature.signature = Buffer.from(out.tx.body.signature.signature, 'hex').toString('base64');
     } catch (e) {
     }
+
     try {
         out.tx.body.signature.public_key = Buffer.from(out.tx.body.signature.public_key, 'hex').toString('base64');
     } catch (e) {
@@ -84,14 +97,14 @@ function toCBOR(root) {
     root = JSON.parse(JSON.stringify(root));
 
 // Now process the data and generate the correct cbor output
-    if ('tx' in root) {
-        tmp = fixFieldsForCBOR(root.tx);
+    if ('entity' in root) {
+        tmp = fixFieldsForCBOR(root.entity);
     } else {
         // Fix types
-        tmp = fixFieldsForCBOR(root.entity);
+        tmp = fixFieldsForCBOR(root.tx);
     }
-    
-    return cbor.encode(tmp).toString('base64');
+
+    return cbor.encode(tmp);
 }
 
 let rawData = fs.readFileSync('template_testvectors.json');
@@ -100,8 +113,8 @@ let jsonData = JSON.parse(rawData);
 
 newJsonData = [];
 jsonData.forEach(tc => {
-    tc['encoded_tx'] = toCBOR(tc);
-    tc['encoded_tx_hex'] = Buffer.from(toCBOR(tc), 'base64').toString('hex');
+    tc['encoded_tx'] = toCBOR(tc).toString('base64');
+    tc['encoded_tx_hex'] = toCBOR(tc).toString('hex');
     newJsonData.push(fixFieldsForJSON(tc));
 });
 
