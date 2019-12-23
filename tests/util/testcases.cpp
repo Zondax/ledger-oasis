@@ -106,6 +106,21 @@ std::vector<testcase_t> GetJsonTestCases(const std::string &filename) {
     return answer;
 }
 
+std::string FormatSignature(const std::string &sig, uint8_t idx, uint8_t *pageCount) {
+    std::string sigBytes;
+    macaron::Base64::Decode(sig, sigBytes);
+
+    std::stringstream ss;
+    for (int i = 0; i < sigBytes.length(); i++)
+        ss << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) sigBytes[i];
+    std::string sigHex = ss.str();
+
+    char outBuffer[40];
+    pageString(outBuffer, sizeof(outBuffer), sigHex.c_str(), idx, pageCount);
+
+    return std::string(outBuffer);
+}
+
 std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t *pageCount) {
     std::string pkBytes;
     macaron::Base64::Decode(base64PK, pkBytes);
@@ -183,6 +198,41 @@ bool TestcaseIsValid(const Json::Value &tc) {
 template<typename S, typename... Args>
 void addTo(std::vector<std::string> &answer, const S &format_str, Args &&... args) {
     answer.push_back(fmt::format(format_str, args...));
+}
+
+std::vector<std::string> _GenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
+    auto answer = std::vector<std::string>();
+    auto entity = j["entity"];
+    uint8_t dummy;
+
+    addTo(answer, "{} | ID : {}", itemCount, FormatPKasAddress(entity["id"].asString(), 0, &dummy));
+    addTo(answer, "{} | ID : {}", itemCount++, FormatPKasAddress(entity["id"].asString(), 1, &dummy));
+
+    int nodeIndex;
+    for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
+        auto nodeData = entity["nodes"][nodeIndex].asString();
+        addTo(answer, "{} | Node [{}] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 0, &dummy));
+        addTo(answer, "{} | Node [{}] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 1, &dummy));
+        itemCount++;
+    }
+
+    if (entity["allow_entity_signed_nodes"]) {
+        addTo(answer, "{} | Allowed : True", itemCount++);
+    } else {
+        addTo(answer, "{} | Allowed : False", itemCount++);
+    }
+
+    return answer;
+}
+
+std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
+    auto answer = std::vector<std::string>();
+
+    addTo(answer, "{} | Type : Entity signing", itemCount++);
+    auto answerEntity = _GenerateExpectedUIOutputForEntity(j, itemCount);
+    answer.insert(answer.end(), answerEntity.begin(), answerEntity.end());
+
+    return answer;
 }
 
 std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &itemCount) {
@@ -268,30 +318,26 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
         }
     }
 
-    return answer;
-}
+    if (type == "registry.RegisterEntity") {
+        addTo(answer, "{} | Type : Register Entity", itemCount++);
+        if (tx.isMember("fee")) {
+            addTo(answer, "{} | Fee Amount : {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+            addTo(answer, "{} | Fee Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+        }
+        auto publicKey = txbody["signature"]["public_key"].asString();
+        addTo(answer, "{} | Public key : {}", itemCount, FormatPKasAddress(publicKey, 0, &dummy));
+        addTo(answer, "{} | Public key : {}", itemCount++, FormatPKasAddress(publicKey, 1, &dummy));
 
-std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
-    auto answer = std::vector<std::string>();
-    auto entity = j["entity"];
-    uint8_t dummy;
+        auto signature = txbody["signature"]["signature"].asString();
+        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 0, &dummy));
+        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 1, &dummy));
+        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 2, &dummy));
+        addTo(answer, "{} | Signature : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
-    addTo(answer, "{} | Type : Entity signing", itemCount++);
-    addTo(answer, "{} | ID : {}", itemCount, FormatPKasAddress(entity["id"].asString(), 0, &dummy));
-    addTo(answer, "{} | ID : {}", itemCount++, FormatPKasAddress(entity["id"].asString(), 1, &dummy));
+        // Entity (from entity)
+        auto entityAnswer = _GenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"], itemCount);
+        answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
 
-    int nodeIndex;
-    for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
-        auto nodeData = entity["nodes"][nodeIndex].asString();
-        addTo(answer, "{} | Node [{}] : {}", itemCount, itemCount-2, FormatPKasAddress(nodeData, 0, &dummy));
-        addTo(answer, "{} | Node [{}] : {}", itemCount, itemCount-2, FormatPKasAddress(nodeData, 1, &dummy));
-        itemCount++;
-    }
-
-    if (entity["allow_entity_signed_nodes"]) {
-        addTo(answer, "{} | Allowed :  ", itemCount++);
-    } else {
-        addTo(answer, "{} | Not Allowed :  ", itemCount++);
     }
 
     return answer;
