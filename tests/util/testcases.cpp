@@ -337,7 +337,6 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
         // Entity (from entity)
         auto entityAnswer = _GenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"], itemCount);
         answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
-
     }
 
     return answer;
