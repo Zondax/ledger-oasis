@@ -2,6 +2,7 @@
 ![stability-wip](https://img.shields.io/badge/stability-work_in_progress-lightgrey.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![CircleCI](https://circleci.com/gh/ZondaX/ledger-oasis/tree/master.svg?style=shield)](https://circleci.com/gh/ZondaX/ledger-oasis/tree/master)
+[![CodeFactor](https://www.codefactor.io/repository/github/zondax/ledger-oasis/badge)](https://www.codefactor.io/repository/github/zondax/ledger-oasis)
 
 This repository contains:
 
@@ -99,7 +100,9 @@ All our tests expect the device to be configured with a known test mnemonic.
 
 - Your device will show "Recovery" in the screen
 
-- Double click
+- Click both buttons at the same time
+
+- Enter your pin if necessary
 
 - Run `make dev_ca`. The device will receive a development certificate to avoid constant manual confirmations.
 

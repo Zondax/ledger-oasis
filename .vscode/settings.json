@@ -1,5 +1,0 @@
-{
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
-    "catch2TestExplorer.defaultCwd": "${workspaceDirectory}/tests",
-    "catch2TestExplorer.enableTestListCaching": true,
-}

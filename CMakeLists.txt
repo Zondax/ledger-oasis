@@ -17,6 +17,7 @@ cmake_minimum_required(VERSION 3.0)
 project(ledger-oasis VERSION 0.0.0)
 enable_testing()
 
+cmake_policy(SET CMP0025 NEW)
 set(CMAKE_CXX_STANDARD 11)
 
 include(cmake/conan/CMakeLists.txt)
@@ -34,6 +35,7 @@ file(GLOB_RECURSE JSMN_SRC
 
 file(GLOB_RECURSE TINYCBOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src/cborparser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/tinycbor/src/cborvalidation.c
         )
 
 file(GLOB_RECURSE LIB_SRC
@@ -44,7 +46,6 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/src/segwit_addr.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/ledger-zxlib/hexutils.c
         #########
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/context.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/src/lib/parser_impl.c
         )

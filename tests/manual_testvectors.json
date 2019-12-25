@@ -1,0 +1,99 @@
+[
+    {
+        "description": "not_canonical",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "nonce": 0,
+            "method": "staking.Burn",
+            "body": {
+                "burn_tokens": "0"
+            }
+        },
+        "encoded_tx": "o2Vub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybmRib2R5oWtidXJuX3Rva2Vuc0EA",
+        "valid": false,
+        "encoded_tx_hex": "a3656e6f6e636500666d6574686f646c7374616b696e672e4275726e64626f6479a16b6275726e5f746f6b656e734100"
+    },
+    {
+        "description": "with fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QQBkYm9keaFrYnVybl90b2tlbnNBAGVub25jZQBmbWV0aG9kbHN0YWtpbmcuQnVybg==",
+        "valid": true,
+        "encoded_tx_hex": "a463666565a2636761730066616d6f756e74410064626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
+    },
+    {
+        "description": "without fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "o2Rib2R5oWtidXJuX3Rva2Vuc0EAZW5vbmNlAGZtZXRob2Rsc3Rha2luZy5CdXJu",
+        "valid": true,
+        "encoded_tx_hex": "a364626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
+    },
+    {
+        "description": "RegisterEntity_Basic",
+        "kind": "RegisterEntity",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "signature": {
+                    "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+                    "public_key": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+                },
+                "untrusted_raw_value": {
+                    "entity": {
+                        "id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASM=",
+                        "nodes": [
+                            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=",
+                            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAk="
+                        ],
+                        "allow_entity_signed_nodes": true
+                    }
+                }
+            },
+            "nonce": 123,
+            "method": "registry.RegisterEntity"
+        },
+        "encoded_tx": "pGNmZWWiY2dhcwBmYW1vdW50QQBkYm9keaJpc2lnbmF0dXJlomlzaWduYXR1cmVYQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqcHVibGljX2tleVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABzdW50cnVzdGVkX3Jhd192YWx1ZViNo2JpZFggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASNlbm9kZXOCWCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACFggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAl4GWFsbG93X2VudGl0eV9zaWduZWRfbm9kZXP1ZW5vbmNlGHtmbWV0aG9kd3JlZ2lzdHJ5LlJlZ2lzdGVyRW50aXR5",
+        "valid": true,
+        "encoded_tx_hex": "a463666565a2636761730066616d6f756e74410064626f6479a2697369676e6174757265a2697369676e61747572655840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006a7075626c69635f6b65795820000000000000000000000000000000000000000000000000000000000000000073756e747275737465645f7261775f76616c7565588da362696458200000000000000000000000000000000000000000000000000000000000000123656e6f6465738258200000000000000000000000000000000000000000000000000000000000000008582000000000000000000000000000000000000000000000000000000000000000097819616c6c6f775f656e746974795f7369676e65645f6e6f646573f5656e6f6e6365187b666d6574686f647772656769737472792e5265676973746572456e74697479"
+    },
+    {
+        "description": "signing entity",
+        "kind": "Signing",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "entity": {
+            "id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+            "nodes": [
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=",
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI="
+            ],
+            "allow_entity_signed_nodes": true
+        },
+        "encoded_tx": "o2JpZFggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABlbm9kZXOCWCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ4GWFsbG93X2VudGl0eV9zaWduZWRfbm9kZXP1",
+        "valid": true,
+        "encoded_tx_hex": "a362696458200000000000000000000000000000000000000000000000000000000000000000656e6f6465738258200000000000000000000000000000000000000000000000000000000000000001582000000000000000000000000000000000000000000000000000000000000000027819616c6c6f775f656e746974795f7369676e65645f6e6f646573f5"
+    }
+]

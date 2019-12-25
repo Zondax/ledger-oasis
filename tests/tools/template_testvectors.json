@@ -1,0 +1,88 @@
+[
+    {
+        "description": "not_canonical",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "nonce": 0,
+            "method": "staking.Burn",
+            "body": {
+                "burn_tokens": "0"
+            }
+        },
+        "encoded_tx": "",
+        "valid": false
+    },
+    {
+        "description": "with fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "",
+        "valid": true
+    },
+    {
+        "description": "without fee",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "body": {
+                "burn_tokens": "0"
+            },
+            "nonce": 0,
+            "method": "staking.Burn"
+        },
+        "encoded_tx": "",
+        "valid": true
+    },
+    {
+        "description": "RegisterEntity_Basic",
+        "kind": "RegisterEntity",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "tx": {
+            "fee": {
+                "gas": 0,
+                "amount": "0"
+            },
+            "body": {
+                "signature": {
+                    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+                    "public_key": "0000000000000000000000000000000000000000000000000000000000000000"
+                },
+                "untrusted_raw_value": {
+                    "entity": {
+                        "id": "0000000000000000000000000000000000000000000000000000000000000123",
+                        "nodes": ["0000000000000000000000000000000000000000000000000000000000000008", "0000000000000000000000000000000000000000000000000000000000000009"],
+                        "allow_entity_signed_nodes": true
+                    }
+                }
+            },
+            "nonce": 123,
+            "method": "registry.RegisterEntity"
+        },
+        "encoded_tx": "",
+        "valid": true
+    },
+    {
+        "description": "signing entity",
+        "kind": "Signing",
+        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "entity": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "nodes": ["0000000000000000000000000000000000000000000000000000000000000001", "0000000000000000000000000000000000000000000000000000000000000002"],
+            "allow_entity_signed_nodes": true
+        },
+        "encoded_tx": "",
+        "valid": true
+    }
+]
