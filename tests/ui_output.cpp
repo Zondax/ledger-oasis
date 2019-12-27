@@ -95,7 +95,7 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), OasisTests::PrintToStringParamName()
 );
 
-//TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
+TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
