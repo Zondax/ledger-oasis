@@ -83,7 +83,7 @@
     {
         "description": "signing entity",
         "kind": "Signing",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/registry: register entity",
         "entity": {
             "id": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
             "nodes": [

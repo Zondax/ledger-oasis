@@ -20,6 +20,7 @@
 #include <bech32.h>
 #include <gtest/gtest.h>
 #include <algorithm>
+#include <lib/parser_impl.h>
 
 std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {
     std::string cborString;
@@ -360,9 +361,21 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, const Jso
         answer = GenerateExpectedUIOutputForEntity(j, itemCount);
     }
 
-    auto expectedPrefix = std::string("oasis-core/consensus: tx for chain ");
-    auto contextSuffix = context.replace(context.find(expectedPrefix), expectedPrefix.size(), "");
+    auto expectedPrefix1 = std::string(context_prefix_tx);
+    auto expectedPrefix2 = std::string(context_prefix_entity);
 
-    addTo(answer, "{} | Context : {}", itemCount, contextSuffix);
+    std::string contextSuffix;
+
+    auto find1 = context.find(expectedPrefix1);
+    if (find1 != std::string::npos) {
+        contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
+        addTo(answer, "{} | Context : {}", itemCount, contextSuffix);
+    }
+
+    auto find2 = context.find(expectedPrefix2);
+    if (find2 != std::string::npos) {
+        contextSuffix = context.replace(context.find(expectedPrefix2), expectedPrefix2.size(), "");
+    }
+
     return answer;
 }
