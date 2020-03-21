@@ -36,6 +36,14 @@ extern "C" {
 #define MAX_CONTEXT_SIZE    64
 #define MAX_ENTITY_NODES    16
 
+#define MENU_MAIN_APP_LINE1 "Oasis"
+
+#ifdef TESTING_ENABLED
+#define MENU_MAIN_APP_LINE2 "Network"
+#else
+#define MENU_MAIN_APP_LINE2 "Network"
+#endif
+
 #ifdef __cplusplus
 }
 #endif

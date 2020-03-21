@@ -19,10 +19,9 @@
 #include <bech32.h>
 #include "parser_impl.h"
 #include "bignum.h"
-#include "common/view_internal.h"
-#include "common/parser.h"
+#include "view_internal.h"
+#include "parser.h"
 #include "parser_txdef.h"
-#include "coin.h"
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function

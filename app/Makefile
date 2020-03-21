@@ -56,7 +56,7 @@ all: default
 	@echo "APPHEX=\"" >> $(CURDIR)/pkg/zxtool.sh
 	@cat $(CURDIR)/bin/app.hex >> $(CURDIR)/pkg/zxtool.sh
 	@echo "\"" >> $(CURDIR)/pkg/zxtool.sh
-	@cat $(CURDIR)/scripts/template.sh >> $(CURDIR)/pkg/zxtool.sh
+	@cat $(CURDIR)/../deps/ledger-zxlib/scripts/template.sh >> $(CURDIR)/pkg/zxtool.sh
 	@chmod +x $(CURDIR)/pkg/zxtool.sh
 
 ############
@@ -145,6 +145,7 @@ include $(BOLOS_SDK)/Makefile.glyphs
 APP_SOURCE_PATH += $(MY_DIR)/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
+APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
 
 SDK_SOURCE_PATH += lib_stusb lib_u2f lib_stusb_impl
 
