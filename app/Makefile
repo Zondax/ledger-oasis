@@ -149,10 +149,9 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
 
 SDK_SOURCE_PATH += lib_stusb lib_u2f lib_stusb_impl
 
-# TODO: we need a fix in NanoX SDK for this to work because the X SDK is not +=
-INCLUDES_PATH += $(MY_DIR)/../deps/tinycbor/src
-SOURCE_PATH += $(MY_DIR)/../deps/tinycbor/src/cborparser.c
-SOURCE_PATH += $(MY_DIR)/../deps/tinycbor/src/cborvalidation.c
+# NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
+CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
+APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
 
 #SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
 SDK_SOURCE_PATH  += lib_ux
@@ -162,6 +161,9 @@ include $(BOLOS_SDK)/Makefile.rules
 
 #add dependency on custom makefile filename
 dep/%.d: %.c Makefile
+
+rust:
+	# Do nothing
 
 # load, delete and listvariants are provided to comply with Ledger requirements
 load:

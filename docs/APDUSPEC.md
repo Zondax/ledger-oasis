@@ -76,7 +76,7 @@ The general structure of commands and responses is as follows:
 | P2         | byte (1)       | Parameter 2            | ignored        |
 | L          | byte (1)       | Bytes in payload       | (depends)      |
 | Path[0]    | byte (4)       | Derivation Path Data   | 44             |
-| Path[1]    | byte (4)       | Derivation Path Data   | 123            |  # FIX SLIP0044
+| Path[1]    | byte (4)       | Derivation Path Data   | 474            |
 | Path[2]    | byte (4)       | Derivation Path Data   | ?              |
 | Path[3]    | byte (4)       | Derivation Path Data   | ?              |
 | Path[4]    | byte (4)       | Derivation Path Data   | ?              |
@@ -116,7 +116,7 @@ All other packets/chunks contain data chunks as described below
 | Field      | Type     | Content                | Expected  |
 | ---------- | -------- | ---------------------- | --------- |
 | Path[0]    | byte (4) | Derivation Path Data   | 44        |
-| Path[1]    | byte (4) | Derivation Path Data   | 123       | # FIX SLIP0044
+| Path[1]    | byte (4) | Derivation Path Data   | 474       |
 | Path[2]    | byte (4) | Derivation Path Data   | ?         |
 | Path[3]    | byte (4) | Derivation Path Data   | ?         |
 | Path[4]    | byte (4) | Derivation Path Data   | ?         |

@@ -82,3 +82,4 @@ cmake-build-fuzz/
 \deps/nano2-sdk
 !\deps/ledger-zxlib
 !\deps/tinycbor
+!\deps/tinycbor-ledger

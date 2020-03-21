@@ -19,7 +19,6 @@
 #include <bech32.h>
 #include "parser_impl.h"
 #include "bignum.h"
-#include "view_internal.h"
 #include "parser.h"
 #include "parser_txdef.h"
 
