@@ -17,10 +17,10 @@
 #include <stdio.h>
 #include <zxmacros.h>
 #include <bech32.h>
-#include "../parser_impl.h"
+#include "parser_impl.h"
 #include "bignum.h"
-#include "view_internal.h"
-#include "parser.h"
+#include "common/view_internal.h"
+#include "common/parser.h"
 #include "parser_txdef.h"
 #include "coin.h"
 
@@ -46,7 +46,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     char tmpVal[40];
 
     for (uint8_t idx = 0; idx < numItems; idx++) {
-        uint8_t pageCount;
+        uint8_t pageCount = 0;
         CHECK_PARSER_ERR(parser_getItem(ctx, idx, tmpKey, sizeof(tmpKey), tmpVal, sizeof(tmpVal), 0, &pageCount))
     }
 

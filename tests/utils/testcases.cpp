@@ -16,11 +16,11 @@
 #include "testcases.h"
 #include "base64.h"
 #include <fmt/core.h>
-#include <lib/crypto.h>
+#include <crypto.h>
 #include <bech32.h>
 #include <gtest/gtest.h>
 #include <algorithm>
-#include <lib/parser_impl.h>
+#include <parser_impl.h>
 
 std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {
     std::string cborString;
@@ -138,7 +138,7 @@ std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t 
 std::string FormatAmount(const std::string &amount) {
     char buffer[500];
     MEMZERO(buffer, sizeof(buffer));
-    fpstr_to_str(buffer, amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
+    fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
     return std::string(buffer);
 }
 
@@ -146,7 +146,7 @@ std::string FormatRate(const std::string &rate) {
     char buffer[500];
     MEMZERO(buffer, sizeof(buffer));
     // This is shifting two decimal places to show as a percentage
-    fpstr_to_str(buffer, rate.c_str(), COIN_RATE_DECIMAL_PLACES - 2);
+    fpstr_to_str(buffer, sizeof(buffer), rate.c_str(), COIN_RATE_DECIMAL_PLACES - 2);
     return std::string(buffer) + "%";
 }
 

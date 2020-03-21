@@ -29,10 +29,6 @@ string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 ##############################################################
 ##############################################################
 #  static libs
-file(GLOB_RECURSE JSMN_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ledger/deps/jsmn/src/jsmn.c
-        )
-
 file(GLOB_RECURSE TINYCBOR_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborparser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborvalidation.c
@@ -43,8 +39,8 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bignum.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/zxmacros.c
         #########
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib/parser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib/parser_impl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bech32.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/segwit_addr.c
         )

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <lib/parser_impl.h>
+#include <parser_impl.h>
 #include <vector>
 
 #define EXPECT_EQ_STR(_STR1, _STR2, _ERROR_MESSAGE) { if (_STR1 != nullptr & _STR2 != nullptr) \
