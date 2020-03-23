@@ -10,10 +10,6 @@ This repository contains:
 - Specs / Documentation
 - C++ unit tests
 
-Source code for apps is linked as submodules to allow for Ledger's build infrastructure.
-
-For development purposes, this repo is recommended as it includes unit tests, tools, etc.
-
 ## Installing
 
 # Building
@@ -25,7 +21,7 @@ At the moment, the only option is to build the app on your own. **Please only us
 Once the app is ready and we reach v1.0.0, it will be submitted to Ledger so it is published in the app Catalog.
 
 ## Get source
-Apart from cloning, be sure you get all the submodules:
+Apart from cloning, be sure you get all the submodules if you are building locally
 ```
 git submodule update --init --recursive
 ```
@@ -143,4 +139,4 @@ While we recommend you configure your preferred development environment, the min
 
 ## Specifications
 
-- [APDU Protocol](https://github.com/zondax/ledger-oasis-app/tree/master/docs/APDUSPEC.md)
+- [APDU Protocol](https://github.com/zondax/ledger-oasis/tree/master/docs/APDUSPEC.md)
