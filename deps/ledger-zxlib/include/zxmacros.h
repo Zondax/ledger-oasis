@@ -135,6 +135,7 @@ __Z_INLINE void __memzero(void *buffer, size_t s) { memset(buffer, 0, s); }
 #endif
 
 #define sizeof_field(type, member) sizeof(((type *)0)->member)
+#define array_length(array) (sizeof(array) / sizeof(array[0]))
 
 #ifdef __cplusplus
 }
