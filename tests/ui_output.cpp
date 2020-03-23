@@ -15,12 +15,12 @@
 ********************************************************************************/
 
 #include <gmock/gmock.h>
-#include "util/testcases.h"
+#include "utils/testcases.h"
 
 #include <iostream>
 #include <memory>
-#include "lib/parser.h"
-#include "util/common.h"
+#include "common/parser.h"
+#include "utils/common.h"
 
 using ::testing::TestWithParam;
 using ::testing::Values;
@@ -29,11 +29,10 @@ void check_testcase(const testcase_t &testcase) {
     auto tc = ReadTestCaseData(testcase.testcases, testcase.index);
 
     parser_context_t ctx;
-    parser_error_t err;
 
     auto buffer = prepareBlob(tc.signature_context, tc.encoded_tx);
 
-    err = parser_parse(&ctx, buffer.data(), buffer.size());
+    parser_error_t err = parser_parse(&ctx, buffer.data(), buffer.size());
     if (tc.valid) {
         ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
     } else {
@@ -92,7 +91,7 @@ public:
 INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
-        ::testing::ValuesIn(GetJsonTestCases("oasis_testvectors.json")), OasisTests::PrintToStringParamName()
+        ::testing::ValuesIn(GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
 );
 
 TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
@@ -117,7 +116,7 @@ public:
 INSTANTIATE_TEST_SUITE_P(
         Manual,
         ManualTests,
-        ::testing::ValuesIn(GetJsonTestCases("manual_testvectors.json")), ManualTests::PrintToStringParamName()
+        ::testing::ValuesIn(GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
 );
 
 TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }

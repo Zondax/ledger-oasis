@@ -18,10 +18,10 @@
 #include <fmt/core.h>
 
 #include <zxmacros.h>
-#include "lib/parser.h"
-#include "util/base64.h"
-#include "util/common.h"
-#include "util/testcases.h"
+#include "common/parser.h"
+#include "utils/base64.h"
+#include "utils/common.h"
+#include "utils/testcases.h"
 
 // Test some specific corner cases that may not be part of the test vectors
 TEST(TxParser, EmptyBuffer) {
