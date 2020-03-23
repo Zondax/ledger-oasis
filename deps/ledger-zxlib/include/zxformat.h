@@ -75,7 +75,6 @@ __Z_INLINE void bip44_to_str(char *s, uint32_t max, const uint32_t path[5]) {
 }
 
 __Z_INLINE int8_t str_to_int8(const char *start, const char *end, char *error) {
-
     int sign = 1;
     if (*start == '-') {
         sign = -1;
@@ -108,7 +107,6 @@ __Z_INLINE int8_t str_to_int8(const char *start, const char *end, char *error) {
 }
 
 __Z_INLINE int64_t str_to_int64(const char *start, const char *end, char *error) {
-
     int sign = 1;
     if (*start == '-') {
         sign = -1;

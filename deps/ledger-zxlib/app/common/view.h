@@ -1,5 +1,6 @@
 /*******************************************************************************
-*  (c) 2019 ZondaX GmbH
+*   (c) 2018-2020 Zondax GmbH
+*   (c) 2016 Ledger
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,37 +16,27 @@
 ********************************************************************************/
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
-#include <stddef.h>
 
-#define HDPATH_0_DEFAULT     (0x80000000u | 0x2cu)
-#define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
-#define HDPATH_2_DEFAULT     (0x80000000u | 0u)
-#define HDPATH_3_DEFAULT     (0u)
-#define HDPATH_4_DEFAULT     (0u)
-
-#define COIN_HRP            "oasis"
-#define COIN_AMOUNT_DECIMAL_PLACES 9
-#define COIN_RATE_DECIMAL_PLACES 5
-
-#define MAX_RATES           10
-#define MAX_CONTEXT_SIZE    64
-#define MAX_ENTITY_NODES    16
-
-#define MENU_MAIN_APP_LINE1 "Oasis"
-
-#ifdef TESTING_ENABLED
-#define MENU_MAIN_APP_LINE2 "Network"
-#else
-#define MENU_MAIN_APP_LINE2 "Network"
+#if defined(LEDGER_SPECIFIC)
+#include "bolos_target.h"
+#if defined(BOLOS_SDK)
+#include "os.h"
+#include "cx.h"
+#endif
 #endif
 
-#define VIEW_ADDRESS_BUFFER_OFFSET    (PK_LEN)
+/// view_init (initializes UI)
+void view_init();
 
-#ifdef __cplusplus
-}
-#endif
+/// view_idle_show (idle view - main menu + status)
+void view_idle_show(unsigned int ignored);
+
+/// view_error (error view)
+void view_error_show();
+
+// shows address in the screen
+void view_address_show();
+
+// Shows review screen + later sign menu
+void view_sign_show();
