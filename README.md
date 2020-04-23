@@ -10,70 +10,107 @@ This repository contains:
 - Specs / Documentation
 - C++ unit tests
 
-## Installing
-
-# Building
-
-At the moment, the only option is to build the app on your own. **Please only use a TEST DEVICE!**
+## Prerequisites
 
 **We strongly recommend using Linux as your development environment.**
 
-Once the app is ready and we reach v1.0.0, it will be submitted to Ledger so it is published in the app Catalog.
-
-## Get source
-Apart from cloning, be sure you get all the submodules if you are building locally
-```
-git submodule update --init --recursive
-```
-
-## Dependencies
-
-#### Ledger Nano S
+### Ledger Nano S
 
 - This project requires Ledger firmware 1.6
 
 - The current repository keeps track of Ledger's SDK but it is possible to override it by changing the git submodule.
 
+### System packages
+
+Make sure you have the following system tools installed:
+- git,
+- Python 3 and pip,
+- Make.
+
+If you are on Ubuntu, use:
+```
+sudo apt update && sudo apt install git python3-pip make
+```
+
+If you are on Fedora, use:
+```
+sudo dnf install git-core python3-pip make
+```
+
+### Source
+
+Apart from cloning, be sure you get all the submodules if you are building locally
+```
+git submodule update --init --recursive
+```
+
+### [Python tools for Ledger Blue, Nano S and Nano X]
+
+First, install distribution-specific development packages:
+
+- If you are on Ubuntu, use:
+
+   ```
+   sudo apt install libusb-1.0.0 libudev-dev
+   ```
+- If you are on Fedora, use:
+
+   ```
+   sudo dnf install libusbx-devel libudev-devel
+   ```
+
+Then install Python tools for Ledger Blue, Nano S and Nano X with:
+
+```
+pip install ledgerblue
+```
+
+[Python tools for Ledger Blue, Nano S and Nano X]: https://github.com/LedgerHQ/blue-loader-python
+
 #### Docker CE
 
-- Please install docker CE. The instructions can be found here: https://docs.docker.com/install/
+If you don't have a Ledger's SDK installed locally, the Ledger App will be built
+in a container, so install Docker CE by following the instructions at
+https://docs.docker.com/install/.
 
-#### Ubuntu Dependencies
-- Install the following packages:
-   ```
-   sudo apt update && apt-get -y install build-essential git wget cmake \
-  libssl-dev libgmp-dev autoconf libtool
-   ```
+#### Local build/development dependencies
 
-#### Other dependencies
+_NOTE: Only Ubuntu is supported for local building/development._
 
-- You need Python 3. In most cases, `make deps` will be able to install all additional dependencies:
+If you will be developing the Ledger App locally, install the following system packages:
 
-   ```bash
-   make deps
-   ```
+```
+sudo apt install build-essential wget cmake libssl-dev libgmp-dev autoconf libtool
+```
 
-- You also need to install [Conan](https://conan.io/)
+You also need to install [Conan](https://conan.io/):
 
-   ```bash
-   pip install conan
-   ```
+```bash
+pip install conan
+```
 
-*Warning*: Some IDEs may not use the same python interpreter or virtual enviroment as the one you used when running `pip`.
-If you see conan is not found, check that you installed the package in the same interpreter as the one that launches `cmake`.
+_Warning: Some IDEs may not use the same python interpreter or virtual enviroment as the one you used when running `pip`.
+If you see conan is not found, check that you installed the package in the same interpreter as the one that launches `cmake`._
 
-# Prepare your development device
+## Installation
 
-   **Please do not use a Ledger device with funds for development purposes.**
+At the moment, the only option is to build the app on your own. **Please only use a TEST DEVICE!**
 
-   **Have a second device that is used ONLY for development and testing**
+Once the app is ready and we reach v1.0.0, it will be submitted to Ledger so it is published in the app Catalog.
 
-   There are a few additional steps that increase reproducibility and simplify development:
+## Prepare your development device
 
-**1 - Ensure your device works in your OS**
+**Please do not use a Ledger device with funds for development purposes.**
+
+**Have a second device that is used ONLY for development and testing**
+
+There are a few additional steps that increase reproducibility and simplify development:
+
+### 1. Ensure your device works in your OS
+
 - In Linux hosts it might be necessary to adjust udev rules, etc. Refer to Ledger documentation: https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues
 
-**2 - Set a test mnemonic**
+### 2. Set a test mnemonic
 
 All our tests expect the device to be configured with a known test mnemonic.
 
@@ -90,7 +127,7 @@ All our tests expect the device to be configured with a known test mnemonic.
    Mnemonic: equip will roof matter pink blind book anxiety banner elbow sun young
    ```
 
-**3 - Add a development certificate**
+### 3. Add a development certificate
 
 - Plug your device while pressing the right button
 
@@ -102,8 +139,7 @@ All our tests expect the device to be configured with a known test mnemonic.
 
 - Run `make dev_ca`. The device will receive a development certificate to avoid constant manual confirmations.
 
-
-# Building the Ledger App
+## Building the Ledger App
 
 The Makefile will build the firmware in a docker container and leave the binary in the correct directory.
 
@@ -115,27 +151,33 @@ The Makefile will build the firmware in a docker container and leave the binary 
    ```
 
 - Upload to a device
-   The following command will upload the application to the ledger. _Warning: The application will be deleted before uploading._
+
+   The following command will upload the application to the ledger:
+
+   _Warning: The application will be deleted before uploading._
    ```
    make load          # Builds and loads the app to the device
    ```
 
-# Development (building C++ Code / Tests)
+## Development (building C++ Code / Tests)
 
 This is useful when you want to make changes to libraries, run unit tests, etc. It will build all common libraries and unit tests.
 
-## Building unit tests
+### Building unit tests
+
 While we recommend you configure your preferred development environment, the minimum steps are as follows:
 
-   ```
-   mkdir build
-   cd build
-   cmake .. && make
-   ```
-   **Run unit tests**
-   ```
-   export GTEST_COLOR=1 && ctest -VV
-   ```
+```
+mkdir build
+cd build
+cmake .. && make
+```
+
+### Running unit tests
+
+```
+export GTEST_COLOR=1 && ctest -VV
+```
 
 ## Specifications
 
