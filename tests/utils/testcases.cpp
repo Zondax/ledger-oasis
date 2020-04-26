@@ -127,7 +127,7 @@ std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t 
     macaron::Base64::Decode(base64PK, pkBytes);
 
     char buffer[200];
-    bech32EncodeFromBytes(buffer, COIN_HRP, (const uint8_t *) pkBytes.c_str(), PK_LEN);
+    bech32EncodeFromBytes(buffer, sizeof(buffer), COIN_HRP, (const uint8_t *) pkBytes.c_str(), PK_LEN);
 
     char outBuffer[40];
     pageString(outBuffer, sizeof(outBuffer), buffer, idx, pageCount);

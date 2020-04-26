@@ -154,6 +154,6 @@ uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
     // extract pubkey and encode as bech32
     char *addr = (char *) (buffer + PK_LEN);
     crypto_extractPublicKey(hdPath, buffer, buffer_len);
-    bech32EncodeFromBytes(addr, COIN_HRP, buffer, PK_LEN);
+    bech32EncodeFromBytes(addr, buffer_len - PK_LEN, COIN_HRP, buffer, PK_LEN);
     return PK_LEN + strlen(addr);
 }

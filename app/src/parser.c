@@ -164,7 +164,7 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    bech32EncodeFromBytes(outBuffer, COIN_HRP, (uint8_t *) pk, sizeof(publickey_t));
+    bech32EncodeFromBytes(outBuffer, sizeof(outBuffer), COIN_HRP, (uint8_t *) pk, sizeof(publickey_t));
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
     return parser_ok;
 }
