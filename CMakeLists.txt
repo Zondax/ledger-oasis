@@ -62,7 +62,9 @@ target_include_directories(app_lib PUBLIC
 ##############################################################
 #  Tests
 file(GLOB_RECURSE TESTS_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/*.cpp
+        )
 
 add_executable(unittests ${TESTS_SRC})
 target_include_directories(unittests PUBLIC
@@ -71,6 +73,7 @@ target_include_directories(unittests PUBLIC
         ${CONAN_INCLUDE_DIRS_FMT}
         ${CONAN_INCLUDE_DIRS_JSONCPP}
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         )
 
 target_link_libraries(unittests PRIVATE

@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 ZondaX GmbH
+*   (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include "coin.h"
 #include "zxmacros.h"
 #include "apdu_codes.h"
+#include "rslib.h"
 
 #include <bech32.h>
 
@@ -75,11 +76,7 @@ uint16_t crypto_sign(uint8_t *signature,
                      const uint8_t *message,
                      uint16_t messageLen) {
     uint8_t messageDigest[CX_SHA512_SIZE];
-
-    // Hash it
-    cx_sha512_t ctx;
-    cx_sha512_init((cx_sha512_t *)&ctx.header);
-    cx_hash(&ctx.header, CX_LAST, message, messageLen, messageDigest, CX_SHA512_SIZE);
+    rs_sha512_256(message, messageLen, messageDigest, CX_SHA512_SIZE);
 
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];

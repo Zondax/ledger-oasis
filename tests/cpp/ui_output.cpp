@@ -15,12 +15,12 @@
 ********************************************************************************/
 
 #include <gmock/gmock.h>
-#include "utils/testcases.h"
+#include "testcases.h"
+#include "common.h"
 
 #include <iostream>
 #include <memory>
 #include "common/parser.h"
-#include "utils/common.h"
 
 using ::testing::TestWithParam;
 using ::testing::Values;

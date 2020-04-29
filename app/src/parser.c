@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 ZondaX GmbH
+*   (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -401,6 +401,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     MEMZERO(outVal, outValLen);
     snprintf(outKey, outKeyLen, "?");
     snprintf(outVal, outValLen, " ");
+    *pageCount = 0;
 
     if (displayIdx < 0 || displayIdx >= parser_getNumItems(ctx)) {
         return parser_no_data;

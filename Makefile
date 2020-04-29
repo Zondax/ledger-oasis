@@ -19,7 +19,31 @@
 # BOLOS_SDK NOT DEFINED		We use a containerized build approach
 
 ifeq ($(BOLOS_SDK),)
-include $(CURDIR)/deps/ledger-zxlib/cmake/dockerized_build.mk
+	include $(CURDIR)/deps/ledger-zxlib/cmake/dockerized_build.mk
+
+zemu_install:
+	cd tests/zemu && yarn install
+
+zemu_upgrade:
+	# and now install everything
+	cd tests/zemu && yarn install && yarn upgrade --all --latest
+
+zemu_test:
+	cd tests/zemu && yarn test
+
+zemu_debug:
+	cd tests/zemu/tools && node debug.mjs debug
+
+zemu:
+	cd tests/zemu/tools && node debug.mjs
+
+rust_test:
+	cd app/rust && cargo test
+
+cpp_test:
+	mkdir -p build && cd build && cmake -DDISABLE_DOCKER_BUILDS=ON -DCMAKE_BUILD_TYPE=Debug .. && make
+	cd build && GTEST_COLOR=1 ASAN_OPTIONS=detect_leaks=0 ctest -VV
+
 else
 default:
 	$(MAKE) -C app
