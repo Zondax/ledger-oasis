@@ -2,7 +2,7 @@ import Zemu from "@zondax/zemu";
 import OasisApp from "ledger-oasis-js";
 import path from "path";
 
-const APP_PATH = path.resolve(`./../../../app/bin/app.elf`);
+const APP_PATH = path.resolve(`./../../app/bin/app.elf`);
 
 const seed = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const SIM_OPTIONS = {
@@ -25,9 +25,10 @@ async function beforeEnd() {
     await Zemu.default.stopAllEmuContainers();
 }
 
-async function showAddress(sim, app) {
+async function debugScenario(sim, app) {
     // Here you can customize what you want to do :)
-    const addrRequest = app.showAddressAndPubKey("m/44'/133'/5'/0/0");
+    const path = [44, 474, 5, 0, 3];
+    const addrRequest = await app.getAddressAndPubKey(path);
 
     await Zemu.default.sleep(1000);
     // await sim.clickRight();
@@ -65,6 +66,7 @@ async function main() {
     }
 
     const sim = new Zemu.default(APP_PATH);
+
     try {
         await sim.start(SIM_OPTIONS);
         const app = new OasisApp.default(sim.getTransport());
@@ -72,7 +74,7 @@ async function main() {
         ////////////
         /// TIP you can use zemu commands here to take the app to the point where you trigger a breakpoint
 
-        await showShieldedAddress(sim, app);
+        await debugScenario(sim, app);
 
         /// TIP
 

@@ -23,10 +23,6 @@
 extern "C" {
 #endif
 
-#define HDPATH_LEN_DEFAULT      5u
-#define MAX_BECH32_HRP_LEN      83u
-#define PK_LEN                  32u
-
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
 
 uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t bufferLen);

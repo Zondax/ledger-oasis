@@ -40,7 +40,7 @@ void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *p
     {
         TRY {
             // Generate keys
-            SAFE_HEARTBEAT(os_perso_derive_node_bip32_seed_key(
+            os_perso_derive_node_bip32_seed_key(
                     HDW_NORMAL,
                     CX_CURVE_Ed25519,
                     path,
@@ -48,11 +48,11 @@ void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *p
                     privateKeyData,
                     NULL,
                     NULL,
-                    0));
+                    0);
 
-            SAFE_HEARTBEAT(cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey));
-            SAFE_HEARTBEAT(cx_ecfp_init_public_key(CX_CURVE_Ed25519, NULL, 0, &cx_publicKey));
-            SAFE_HEARTBEAT(cx_ecfp_generate_pair(CX_CURVE_Ed25519, &cx_publicKey, &cx_privateKey, 1));
+            cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey);
+            cx_ecfp_init_public_key(CX_CURVE_Ed25519, NULL, 0, &cx_publicKey);
+            cx_ecfp_generate_pair(CX_CURVE_Ed25519, &cx_publicKey, &cx_privateKey, 1);
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));

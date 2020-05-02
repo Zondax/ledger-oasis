@@ -83,3 +83,5 @@ cmake-build-fuzz/
 !\deps/ledger-zxlib
 !\deps/tinycbor
 !\deps/tinycbor-ledger
+
+core
