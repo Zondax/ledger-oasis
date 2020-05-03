@@ -206,14 +206,14 @@ std::vector<std::string> _GenerateExpectedUIOutputForEntity(Json::Value j, uint3
     auto entity = j["entity"];
     uint8_t dummy;
 
-    addTo(answer, "{} | ID : {}", itemCount, FormatPKasAddress(entity["id"].asString(), 0, &dummy));
-    addTo(answer, "{} | ID : {}", itemCount++, FormatPKasAddress(entity["id"].asString(), 1, &dummy));
+    addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatPKasAddress(entity["id"].asString(), 0, &dummy));
+    addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatPKasAddress(entity["id"].asString(), 1, &dummy));
 
     int nodeIndex;
     for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
         auto nodeData = entity["nodes"][nodeIndex].asString();
-        addTo(answer, "{} | Node [{}] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 0, &dummy));
-        addTo(answer, "{} | Node [{}] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 1, &dummy));
+        addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 0, &dummy));
+        addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 1, &dummy));
         itemCount++;
     }
 
@@ -252,8 +252,8 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
             addTo(answer, "{} | Fee Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
         }
 
-        addTo(answer, "{} | To : {}", itemCount, FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy));
-        addTo(answer, "{} | To : {}", itemCount++, FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy));
+        addTo(answer, "{} | To [1/2] : {}", itemCount, FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy));
+        addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy));
         addTo(answer, "{} | Tokens : {}", itemCount++, FormatAmount(txbody["xfer_tokens"].asString()));
     }
 
@@ -274,8 +274,8 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
         }
 
         auto escrowAccount = txbody["escrow_account"].asString();
-        addTo(answer, "{} | Escrow : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-        addTo(answer, "{} | Escrow : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
+        addTo(answer, "{} | Escrow [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
+        addTo(answer, "{} | Escrow [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
         addTo(answer, "{} | Tokens : {}", itemCount++, FormatAmount(txbody["escrow_tokens"].asString()));
     }
 
@@ -287,8 +287,8 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
         }
 
         auto escrowAccount = txbody["escrow_account"].asString();
-        addTo(answer, "{} | Escrow : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-        addTo(answer, "{} | Escrow : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
+        addTo(answer, "{} | Escrow [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
+        addTo(answer, "{} | Escrow [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
         addTo(answer, "{} | Tokens : {}", itemCount++, FormatAmount(txbody["reclaim_shares"].asString()));
     }
 
@@ -326,14 +326,14 @@ std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &
             addTo(answer, "{} | Fee Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
         }
         auto publicKey = txbody["signature"]["public_key"].asString();
-        addTo(answer, "{} | Public key : {}", itemCount, FormatPKasAddress(publicKey, 0, &dummy));
-        addTo(answer, "{} | Public key : {}", itemCount++, FormatPKasAddress(publicKey, 1, &dummy));
+        addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPKasAddress(publicKey, 0, &dummy));
+        addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatPKasAddress(publicKey, 1, &dummy));
 
         auto signature = txbody["signature"]["signature"].asString();
-        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 0, &dummy));
-        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 1, &dummy));
-        addTo(answer, "{} | Signature : {}", itemCount, FormatSignature(signature, 2, &dummy));
-        addTo(answer, "{} | Signature : {}", itemCount++, FormatSignature(signature, 3, &dummy));
+        addTo(answer, "{} | Signature [1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
+        addTo(answer, "{} | Signature [2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
+        addTo(answer, "{} | Signature [3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
+        addTo(answer, "{} | Signature [4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
         // Entity (from entity)
         auto entityAnswer = _GenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"], itemCount);
@@ -369,7 +369,7 @@ std::vector<std::string> GenerateExpectedUIOutput(std::string context, const Jso
     auto find1 = context.find(expectedPrefix1);
     if (find1 != std::string::npos) {
         contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-        addTo(answer, "{} | Context : {}", itemCount, contextSuffix);
+        addTo(answer, "{} | Genesis Hash : {}", itemCount, contextSuffix);
     }
 
     auto find2 = context.find(expectedPrefix2);
