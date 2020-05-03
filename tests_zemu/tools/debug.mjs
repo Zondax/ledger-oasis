@@ -27,35 +27,17 @@ async function beforeEnd() {
 
 async function debugScenario(sim, app) {
     // Here you can customize what you want to do :)
-    const path = [44, 474, 5, 0, 3];
-    const addrRequest = await app.getAddressAndPubKey(path);
 
-    await Zemu.default.sleep(1000);
-    // await sim.clickRight();
-    await sim.clickBoth();
+    const path = [44, 474, 5, 0x80000000, 0x80000003];
+    const context = "oasis-core/consensus: tx for chain testing";
+    const txBlob = Buffer.from(
+        "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+        "base64",
+    );
 
-    const addr = await addrRequest;
-    console.log(addr)
-
-    // From https://iancoleman.io/bip39/
-    const expected_pk = "";
-    const expected_addr = "";
-
-    if (addr.return_code !== 0x9000) {
-        console.log("INVALID RESPONSE")
-        return;
-    }
-
-    const pk = addr.address_raw.toString('hex');
-    console.log(pk)
-    if (expected_pk !== pk) {
-        console.log("INCORRECT PK!")
-    }
-
-    console.log(addr.address)
-    if (expected_addr !== addr.address) {
-        console.log("INVALID ADDRESS!")
-    }
+    const signatureRequest = await app.sign(path, context, txBlob);
+    const signatureResponse = await signatureRequest;
+    console.log(signatureResponse)
 }
 
 async function main() {

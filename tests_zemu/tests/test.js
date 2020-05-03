@@ -10,10 +10,18 @@ const sim_options = {
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
-//    ,X11: true
+    ,X11: true
 };
 
 jest.setTimeout(30000)
+
+function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
+    for (let i = 0; i < snapshotCount; i++) {
+        const img1 = Zemu.LoadPng2RGB(`${snapshotPrefixTmp}${i}.png`);
+        const img2 = Zemu.LoadPng2RGB(`${snapshotPrefixGolden}${i}.png`);
+        expect(img1).toEqual(img2);
+    }
+}
 
 describe('Basic checks', function () {
     it('can start and stop container', async function () {
@@ -45,40 +53,6 @@ describe('Basic checks', function () {
         }
     });
 
-    it('get app info', async function () {
-        const sim = new Zemu(APP_PATH);
-        try {
-            await sim.start(sim_options);
-            const app = new CosmosApp(sim.getTransport());
-            const info = await app.appInfo();
-
-            console.log(info)
-        } finally {
-            await sim.close();
-        }
-    });
-
-    it('get device info', async function () {
-        const sim = new Zemu(APP_PATH);
-        try {
-            await sim.start(sim_options);
-            const app = new CosmosApp(sim.getTransport());
-            const resp = await app.deviceInfo();
-
-            console.log(resp);
-
-            expect(resp.return_code).toEqual(0x9000);
-            expect(resp.error_message).toEqual("No errors");
-
-            expect(resp).toHaveProperty("targetId");
-            expect(resp).toHaveProperty("seVersion");
-            expect(resp).toHaveProperty("flag");
-            expect(resp).toHaveProperty("mcuVersion");
-        } finally {
-            await sim.close();
-        }
-    });
-
     it('get address', async function () {
         const sim = new Zemu(APP_PATH);
         try {
@@ -93,25 +67,17 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            const expected_pk = "031f6d238009787c20d5d7becb6b6ad54529fc0a3fd35088e85c2c3966bfec050e";
-            const expected_bech32_address = "t1KHG39uhsssPkYcAXkzZ5Bk2w1rnFukZvx";
+            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
+            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
+            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
 
-            const addr_bech32 = addr.bech32_address;
-            expect(addr_bech32).toEqual(expected_bech32_address);
-            expect(addr.pk).toEqual(expected_pk);
+            expect(resp.bech32_address).toEqual(expected_bech32_address);
+            expect(resp.pk.toString('hex')).toEqual(expected_pk);
 
         } finally {
             await sim.close();
         }
     });
-
-    function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
-        for (let i = 0; i < snapshotCount; i++) {
-            const img1 = Zemu.LoadPng2RGB(`${snapshotPrefixTmp}${i}.png`);
-            const img2 = Zemu.LoadPng2RGB(`${snapshotPrefixGolden}${i}.png`);
-            expect(img1).toEqual(img2);
-        }
-    }
 
     it('show address', async function () {
         const snapshotPrefixGolden = "snapshots/show-address/";
@@ -121,54 +87,11 @@ describe('Basic checks', function () {
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
-            const app = new CosmosApp(sim.getTransport());
+            const app = new OasisApp(sim.getTransport());
 
             // Derivation path. First 3 items are automatically hardened!
-            const path = [44, 118, 5, 0, 3];
-            const respRequest = app.showAddressAndPubKey(path, "cosmos");
-
-            // We need to wait until the app responds to the APDU
-            await Zemu.sleep(2000);
-
-            // Now navigate the address / path
-            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickBoth(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-
-            const resp = await respRequest;
-            console.log(resp);
-
-            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
-
-            expect(resp.return_code).toEqual(0x9000);
-            expect(resp.error_message).toEqual("No errors");
-
-            expect(resp).toHaveProperty("bech32_address");
-            expect(resp).toHaveProperty("compressed_pk");
-
-            expect(resp.bech32_address).toEqual("cosmos1wkd9tfm5pqvhhaxq77wv9tvjcsazuaykwsld65");
-            expect(resp.compressed_pk.length).toEqual(33);
-        } finally {
-            await sim.close();
-        }
-    });
-
-    it('show address - HUGE', async function () {
-        const snapshotPrefixGolden = "snapshots/show-address-huge/";
-        const snapshotPrefixTmp = "snapshots-tmp/show-address-huge/";
-        let snapshotCount = 0;
-
-        const sim = new Zemu(APP_PATH);
-        try {
-            await sim.start(sim_options);
-            const app = new CosmosApp(sim.getTransport());
-
-            // Derivation path. First 3 items are automatically hardened!
-            const path = [44, 118, 2147483647, 0, 4294967295];
-            const respRequest = app.showAddressAndPubKey(path, "cosmos");
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const respRequest = app.showAddressAndPubKey(path);
 
             // We need to wait until the app responds to the APDU
             await Zemu.sleep(2000);
@@ -191,11 +114,12 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            expect(resp).toHaveProperty("bech32_address");
-            expect(resp).toHaveProperty("compressed_pk");
+            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
+            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
+            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
 
-            expect(resp.bech32_address).toEqual("cosmos1ex7gkwwmq4vcgdwcalaq3t20pgwr37u6ntkqzh");
-            expect(resp.compressed_pk.length).toEqual(33);
+            expect(resp.bech32_address).toEqual(expected_bech32_address);
+            expect(resp.pk.toString('hex')).toEqual(expected_pk);
         } finally {
             await sim.close();
         }
@@ -209,19 +133,28 @@ describe('Basic checks', function () {
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
-            const app = new CosmosApp(sim.getTransport());
+            const app = new OasisApp(sim.getTransport());
 
-            const path = [44, 118, 0, 0, 0];
-            let tx = JSON.stringify(example_tx_str);
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain testing";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
 
             // do not wait here..
-            const signatureRequest = app.sign(path, tx);
+            const signatureRequest = app.sign(path, context, txBlob);
 
             await Zemu.sleep(2000);
 
             // Reference window
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 8; i++) {
                 await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
             }
             await sim.clickBoth();
@@ -235,20 +168,7 @@ describe('Basic checks', function () {
             expect(resp.error_message).toEqual("No errors");
 
             // Now verify the signature
-            const respPk = await app.getAddressAndPubKey(path, "cosmos");
-            expect(respPk.return_code).toEqual(0x9000);
-            expect(respPk.error_message).toEqual("No errors");
-
-            const hash = crypto.createHash("sha256");
-            const msgHash = Uint8Array.from(hash.update(tx).digest());
-
-            const signatureDER = resp.signature;
-            const signature = secp256k1.signatureImport(Uint8Array.from(signatureDER));
-
-            const pk = Uint8Array.from(respPk.compressed_pk)
-
-            const signatureOk = secp256k1.ecdsaVerify(signature, msgHash, pk);
-            expect(signatureOk).toEqual(true);
+            // FIXME: We cannot verify Zemu/Speculos signatures are Ed25519 is not yet supported in emulation
 
         } finally {
             await sim.close();

@@ -371,6 +371,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
+        *pageCount = 1;
         return parser_getType(ctx, outVal, outValLen);
     }
 
@@ -382,6 +383,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
     if (displayIdx == 2 && parser_tx_obj.oasis.tx.has_fee) {
         snprintf(outKey, outKeyLen, "Fee Gas");
         uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+        *pageCount = 1;
         return parser_ok;
     }
 
@@ -405,7 +407,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     snprintf(outVal, outValLen, " ");
     *pageCount = 0;
 
-    uint16_t numItems;
+    uint16_t numItems = 0;
     CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
     CHECK_APP_CANARY()
 
