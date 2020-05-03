@@ -18,6 +18,7 @@
 #include "coin.h"
 #include "zxmacros.h"
 #include "apdu_codes.h"
+#include "coin.h"
 #include "rslib.h"
 
 #include <bech32.h>
@@ -32,7 +33,7 @@ void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *p
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];
 
-    if (pubKeyLen < PK_LEN) {
+    if (pubKeyLen < PK_LEN_ED25519) {
         return;
     }
 
@@ -88,7 +89,7 @@ uint16_t crypto_sign(uint8_t *signature,
         TRY
         {
             // Generate keys
-            SAFE_HEARTBEAT(os_perso_derive_node_bip32_seed_key(
+            os_perso_derive_node_bip32_seed_key(
                     HDW_NORMAL,
                     CX_CURVE_Ed25519,
                     hdPath,
@@ -96,11 +97,10 @@ uint16_t crypto_sign(uint8_t *signature,
                     privateKeyData,
                     NULL,
                     NULL,
-                    0));
-            SAFE_HEARTBEAT(cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey));
+                    0);
+            cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey);
 
             // Sign
-            SAFE_HEARTBEAT(
             signatureLength = cx_eddsa_sign(&cx_privateKey,
                                             CX_LAST,
                                             CX_SHA512,
@@ -110,7 +110,7 @@ uint16_t crypto_sign(uint8_t *signature,
                                             0,
                                             signature,
                                             signatureMaxlen,
-                                            &info));
+                                            &info);
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
@@ -144,13 +144,13 @@ uint16_t crypto_sign(uint8_t *signature,
 #endif
 
 uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
-    if (buffer_len < PK_LEN + 50) {
+    if (buffer_len < PK_LEN_ED25519 + 50) {
         return 0;
     }
 
     // extract pubkey and encode as bech32
-    char *addr = (char *) (buffer + PK_LEN);
+    char *addr = (char *) (buffer + PK_LEN_ED25519);
     crypto_extractPublicKey(hdPath, buffer, buffer_len);
-    bech32EncodeFromBytes(addr, buffer_len - PK_LEN, COIN_HRP, buffer, PK_LEN);
-    return PK_LEN + strlen(addr);
+    bech32EncodeFromBytes(addr, buffer_len - PK_LEN_ED25519, COIN_HRP, buffer, PK_LEN_ED25519);
+    return PK_LEN_ED25519 + strlen(addr);
 }

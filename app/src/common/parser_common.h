@@ -1,5 +1,5 @@
 /*******************************************************************************
-*  (c) 2019 ZondaX GmbH
+*  (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -22,9 +22,10 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
-#define CHECK_PARSER_ERR(CALL) { \
-    parser_error_t err = CALL;  \
-    if (err!=parser_ok) return err;}
+#define CHECK_PARSER_ERR(__CALL) { \
+    parser_error_t __err = __CALL;  \
+    CHECK_APP_CANARY()  \
+    if (__err!=parser_ok) return __err;}
 
 typedef enum {
     // Generic errors

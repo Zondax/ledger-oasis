@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Zondax/ledger-zcash"
+    "url": "git+https://github.com/Zondax/ledger-oasis"
   },
   "keywords": [
     "zondax"

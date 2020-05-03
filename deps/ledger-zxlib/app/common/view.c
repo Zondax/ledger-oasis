@@ -99,12 +99,12 @@ void h_paging_decrease() {
         if (viewdata.itemIdx > 0) {
             viewdata.itemIdx--;
             // jump to last page. update will cap this value
-            viewdata.pageIdx = 255;
+            viewdata.pageIdx = VIEW_ADDRESS_LAST_PAGE_DEFAULT;
         }
     }
 }
 
-__Z_INLINE void h_paging_set_page_count(uint8_t pageCount) {
+void h_paging_set_page_count(uint8_t pageCount) {
     viewdata.pageCount = pageCount;
     if (viewdata.pageIdx > viewdata.pageCount) {
         viewdata.pageIdx = viewdata.pageCount - 1;
@@ -141,16 +141,11 @@ view_error_t h_addr_update_item(uint8_t idx) {
     MEMZERO(viewdata.value, MAX_CHARS_PER_VALUE1_LINE);
 
     switch (idx) {
-        case 0:
-            snprintf(viewdata.addr, MAX_CHARS_ADDR, "%s", (char *) (G_io_apdu_buffer + VIEW_ADDRESS_BUFFER_OFFSET));
-            break;
-        case 1:
-            bip32_to_str(viewdata.addr, MAX_CHARS_ADDR, hdPath, HDPATH_LEN_DEFAULT);
-            break;
+        case 0: return view_printAddr();
+        case 1: return view_printPath();
+        default:
+            return view_error_detected;
     }
-
-    splitValueField();
-    return view_no_error;
 }
 
 void io_seproxyhal_display(const bagl_element_t *element) {

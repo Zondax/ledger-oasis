@@ -29,7 +29,7 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 }
 #endif
 
-parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, uint16_t dataLen) {
+parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
     return _read(ctx, &parser_tx_obj);
@@ -38,7 +38,9 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, uint16_t
 parser_error_t parser_validate(const parser_context_t *ctx) {
     CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
 
-    uint8_t numItems = parser_getNumItems(ctx);
+    // Iterate through all items to check that all can be shown and are valid
+    uint16_t numItems = 0;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems));
 
     char tmpKey[40];
     char tmpVal[40];
@@ -51,12 +53,12 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     return parser_ok;
 }
 
-uint8_t parser_getNumItems(const parser_context_t *ctx) {
-    uint8_t itemCount = _getNumItems(ctx, &parser_tx_obj);
+parser_error_t parser_getNumItems(const parser_context_t *ctx, uint16_t *num_items) {
+    *num_items = _getNumItems(ctx, &parser_tx_obj);
     if (parser_tx_obj.context.suffixLen > 0) {
-        itemCount++;
+        (*num_items)++;
     }
-    return itemCount;
+    return parser_ok;
 }
 
 __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outVal, uint16_t outValLen) {
@@ -393,7 +395,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 }
 
 parser_error_t parser_getItem(const parser_context_t *ctx,
-                              int8_t displayIdx,
+                              uint16_t displayIdx,
                               char *outKey, uint16_t outKeyLen,
                               char *outVal, uint16_t outValLen,
                               uint8_t pageIdx, uint8_t *pageCount) {
@@ -403,11 +405,19 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     snprintf(outVal, outValLen, " ");
     *pageCount = 0;
 
-    if (displayIdx < 0 || displayIdx >= parser_getNumItems(ctx)) {
+    uint16_t numItems;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
+    CHECK_APP_CANARY()
+
+    if (numItems == 0) {
+        return parser_unexpected_number_items;
+    }
+
+    if (displayIdx < 0 || displayIdx >= numItems) {
         return parser_no_data;
     }
 
-    if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == parser_getNumItems(ctx) /*last*/) {
+    if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
         snprintf(outKey, outKeyLen, "Context");
         pageStringExt(outVal, outValLen,
