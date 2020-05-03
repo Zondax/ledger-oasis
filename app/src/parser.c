@@ -419,33 +419,59 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
         return parser_no_data;
     }
 
+    parser_error_t err = parser_ok;
+
     if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
-        snprintf(outKey, outKeyLen, "Context");
+        snprintf(outKey, outKeyLen, "Genesis Hash");
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
                       pageIdx, pageCount);
-        return parser_ok;
-    }
-
-    switch (parser_tx_obj.type) {
-        case txType:
-            return parser_getItemTx(ctx,
-                                    displayIdx,
-                                    outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
-        case entityType: {
-            if (displayIdx == 0) {
-                snprintf(outKey, outKeyLen, "Type");
-                snprintf(outVal, outValLen, "Entity signing");
-                return parser_ok;
+    } else {
+        switch (parser_tx_obj.type) {
+            case txType: {
+                err = parser_getItemTx(ctx,
+                                       displayIdx,
+                                       outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+                break;
+            }
+            case entityType: {
+                if (displayIdx == 0) {
+                    snprintf(outKey, outKeyLen, "Type");
+                    snprintf(outVal, outValLen, "Entity signing");
+                } else {
+                    err = parser_getItemEntity(&parser_tx_obj.oasis.entity,
+                                               displayIdx - 1,
+                                               outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+                }
+                break;
             }
 
-            return parser_getItemEntity(&parser_tx_obj.oasis.entity,
-                                        displayIdx - 1,
-                                        outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+            default:
+                return parser_unexpected_type;
         }
-
-        default:
-            return parser_unexpected_type;
     }
+
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    if (err == parser_ok && *pageCount > 1) {
+        size_t keyLen = strlen(outKey);
+        if (keyLen < outKeyLen) {
+            snprintf(outKey + keyLen, outKeyLen - keyLen, " [%d/%d]", pageIdx + 1, *pageCount);
+        }
+    }
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+
+    return err;
 }
