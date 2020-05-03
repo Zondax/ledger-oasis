@@ -1,4 +1,3 @@
-
 # Oasis App - Ledger Nano S
 ## General structure
 
@@ -91,9 +90,7 @@ First three items in the derivation path will be hardened automatically hardened
 | ADDR    | byte (??) | Bech 32 addr          |                          |
 | SW1-SW2 | byte (2)  | Return code           | see list of return codes |
 
---------------
-
-### INS_SIGN_ED25519
+### SIGN_SECP256K1
 
 #### Command
 
@@ -107,9 +104,9 @@ First three items in the derivation path will be hardened automatically hardened
 | P2    | byte (1) | ----                   | not used  |
 | L     | byte (1) | Bytes in payload       | (depends) |
 
-The first packet/chunk includes: derivation path
+The first packet/chunk includes only the derivation path
 
-All other packets/chunks contain data chunks as described below
+All other packets/chunks should contain message to sign
 
 *First Packet*
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 ZondaX GmbH
+*   (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 }
 #endif
 
-parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, uint16_t dataLen) {
+parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
     return _read(ctx, &parser_tx_obj);
@@ -38,7 +38,9 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, uint16_t
 parser_error_t parser_validate(const parser_context_t *ctx) {
     CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
 
-    uint8_t numItems = parser_getNumItems(ctx);
+    // Iterate through all items to check that all can be shown and are valid
+    uint16_t numItems = 0;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems));
 
     char tmpKey[40];
     char tmpVal[40];
@@ -51,12 +53,12 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     return parser_ok;
 }
 
-uint8_t parser_getNumItems(const parser_context_t *ctx) {
-    uint8_t itemCount = _getNumItems(ctx, &parser_tx_obj);
+parser_error_t parser_getNumItems(const parser_context_t *ctx, uint16_t *num_items) {
+    *num_items = _getNumItems(ctx, &parser_tx_obj);
     if (parser_tx_obj.context.suffixLen > 0) {
-        itemCount++;
+        (*num_items)++;
     }
-    return itemCount;
+    return parser_ok;
 }
 
 __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outVal, uint16_t outValLen) {
@@ -164,7 +166,7 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    bech32EncodeFromBytes(outBuffer, COIN_HRP, (uint8_t *) pk, sizeof(publickey_t));
+    bech32EncodeFromBytes(outBuffer, sizeof(outBuffer), COIN_HRP, (uint8_t *) pk, sizeof(publickey_t));
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
     return parser_ok;
 }
@@ -369,6 +371,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
+        *pageCount = 1;
         return parser_getType(ctx, outVal, outValLen);
     }
 
@@ -380,6 +383,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
     if (displayIdx == 2 && parser_tx_obj.oasis.tx.has_fee) {
         snprintf(outKey, outKeyLen, "Fee Gas");
         uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+        *pageCount = 1;
         return parser_ok;
     }
 
@@ -393,7 +397,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 }
 
 parser_error_t parser_getItem(const parser_context_t *ctx,
-                              int8_t displayIdx,
+                              uint16_t displayIdx,
                               char *outKey, uint16_t outKeyLen,
                               char *outVal, uint16_t outValLen,
                               uint8_t pageIdx, uint8_t *pageCount) {
@@ -401,38 +405,73 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     MEMZERO(outVal, outValLen);
     snprintf(outKey, outKeyLen, "?");
     snprintf(outVal, outValLen, " ");
+    *pageCount = 0;
 
-    if (displayIdx < 0 || displayIdx >= parser_getNumItems(ctx)) {
+    uint16_t numItems = 0;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
+    CHECK_APP_CANARY()
+
+    if (numItems == 0) {
+        return parser_unexpected_number_items;
+    }
+
+    if (displayIdx < 0 || displayIdx >= numItems) {
         return parser_no_data;
     }
 
-    if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == parser_getNumItems(ctx) /*last*/) {
+    parser_error_t err = parser_ok;
+
+    if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
-        snprintf(outKey, outKeyLen, "Context");
+        snprintf(outKey, outKeyLen, "Genesis Hash");
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
                       pageIdx, pageCount);
-        return parser_ok;
-    }
-
-    switch (parser_tx_obj.type) {
-        case txType:
-            return parser_getItemTx(ctx,
-                                    displayIdx,
-                                    outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
-        case entityType: {
-            if (displayIdx == 0) {
-                snprintf(outKey, outKeyLen, "Type");
-                snprintf(outVal, outValLen, "Entity signing");
-                return parser_ok;
+    } else {
+        switch (parser_tx_obj.type) {
+            case txType: {
+                err = parser_getItemTx(ctx,
+                                       displayIdx,
+                                       outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+                break;
+            }
+            case entityType: {
+                if (displayIdx == 0) {
+                    snprintf(outKey, outKeyLen, "Type");
+                    snprintf(outVal, outValLen, "Entity signing");
+                } else {
+                    err = parser_getItemEntity(&parser_tx_obj.oasis.entity,
+                                               displayIdx - 1,
+                                               outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+                }
+                break;
             }
 
-            return parser_getItemEntity(&parser_tx_obj.oasis.entity,
-                                        displayIdx - 1,
-                                        outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+            default:
+                return parser_unexpected_type;
         }
-
-        default:
-            return parser_unexpected_type;
     }
+
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    if (err == parser_ok && *pageCount > 1) {
+        size_t keyLen = strlen(outKey);
+        if (keyLen < outKeyLen) {
+            snprintf(outKey + keyLen, outKeyLen - keyLen, " [%d/%d]", pageIdx + 1, *pageCount);
+        }
+    }
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+    ///////////////////////////////
+
+    return err;
 }

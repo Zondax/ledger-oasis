@@ -1,5 +1,5 @@
 /*******************************************************************************
-*  (c) 2019 ZondaX GmbH
+*  (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -22,11 +22,29 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+#define HDPATH_LEN_DEFAULT   5
+
 #define HDPATH_0_DEFAULT     (0x80000000u | 0x2cu)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
 #define HDPATH_2_DEFAULT     (0x80000000u | 0u)
 #define HDPATH_3_DEFAULT     (0u)
 #define HDPATH_4_DEFAULT     (0u)
+
+#define PK_LEN_ED25519       32u
+
+typedef enum {
+    addr_ed25519 = 0,
+} address_kind_e;
+
+#define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
+#define VIEW_ADDRESS_ITEM_COUNT             2
+#define VIEW_ADDRESS_LAST_PAGE_DEFAULT      0
+
+#define MENU_MAIN_APP_LINE1 "Oasis"
+#define MENU_MAIN_APP_LINE2 "Network"
+#define APPVERSION_LINE2 ""
+
+#define MAX_BECH32_HRP_LEN      83u
 
 #define COIN_HRP            "oasis"
 #define COIN_AMOUNT_DECIMAL_PLACES 9
@@ -35,16 +53,6 @@ extern "C" {
 #define MAX_RATES           10
 #define MAX_CONTEXT_SIZE    64
 #define MAX_ENTITY_NODES    16
-
-#define MENU_MAIN_APP_LINE1 "Oasis"
-
-#ifdef TESTING_ENABLED
-#define MENU_MAIN_APP_LINE2 "Network"
-#else
-#define MENU_MAIN_APP_LINE2 "Network"
-#endif
-
-#define VIEW_ADDRESS_BUFFER_OFFSET    (PK_LEN)
 
 #ifdef __cplusplus
 }

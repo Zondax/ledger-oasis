@@ -19,9 +19,9 @@
 
 #include <zxmacros.h>
 #include "common/parser.h"
-#include "utils/base64.h"
-#include "utils/common.h"
-#include "utils/testcases.h"
+#include "base64.h"
+#include "common.h"
+#include "testcases.h"
 
 // Test some specific corner cases that may not be part of the test vectors
 TEST(TxParser, EmptyBuffer) {

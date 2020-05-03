@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 ZondaX GmbH
+*   (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -22,10 +22,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define HDPATH_LEN_DEFAULT      5u
-#define MAX_BECH32_HRP_LEN      83u
-#define PK_LEN                  32u
 
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
 
