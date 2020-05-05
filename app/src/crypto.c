@@ -20,6 +20,7 @@
 #include "apdu_codes.h"
 #include "coin.h"
 #include "rslib.h"
+#include "sha512.h"
 
 #include <bech32.h>
 
@@ -77,7 +78,7 @@ uint16_t crypto_sign(uint8_t *signature,
                      const uint8_t *message,
                      uint16_t messageLen) {
     uint8_t messageDigest[CX_SHA512_SIZE];
-    rs_sha512_256(message, messageLen, messageDigest, CX_SHA512_SIZE);
+    SHA512_256(message, messageLen, messageDigest);
 
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];
@@ -105,7 +106,7 @@ uint16_t crypto_sign(uint8_t *signature,
                                             CX_LAST,
                                             CX_SHA512,
                                             messageDigest,
-                                            CX_SHA512_SIZE,
+                                            CX_SHA256_SIZE,
                                             NULL,
                                             0,
                                             signature,
