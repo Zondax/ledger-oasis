@@ -42,7 +42,8 @@ typedef enum {
 
 #define MENU_MAIN_APP_LINE1 "Oasis"
 #define MENU_MAIN_APP_LINE2 "Network"
-#define APPVERSION_LINE2 ""
+#define APPVERSION_LINE1 "Version"
+#define APPVERSION_LINE2 "v"APPVERSION
 
 #define MAX_BECH32_HRP_LEN      83u
 

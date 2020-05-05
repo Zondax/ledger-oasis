@@ -1,6 +1,7 @@
 import { expect, test } from "jest";
 import Zemu from "@zondax/zemu";
 import OasisApp from "ledger-oasis-js";
+const tweetnacl = require("tweetnacl");
 
 const Resolve = require("path").resolve;
 const APP_PATH = Resolve("../app/bin/app.elf");
@@ -169,9 +170,28 @@ describe('Basic checks', function () {
 
             // Now verify the signature
             // FIXME: We cannot verify Zemu/Speculos signatures are Ed25519 is not yet supported in emulation
+            // Related to https://github.com/LedgerHQ/speculos/pull/56
 
         } finally {
             await sim.close();
         }
+    });
+
+    it('ed25519', async function () {
+
+        // Now verify the signature
+        let message = Buffer.from("aaa731e500eab8062b5f95830900872a4a4a85560fdf56cecfa0242036299ac7", "hex");
+        let sk = Buffer.from("00000000000000000000000000000000000000000000000000000000000000003b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29", "hex");
+
+        let pair = tweetnacl.sign.keyPair.fromSecretKey( Uint8Array.from(sk) );
+//        console.log(pair)
+
+        console.log(Buffer.from(pair.publicKey).toString("hex"))
+        console.log(Buffer.from(pair.secretKey).toString("hex"))
+
+        let sig = tweetnacl.sign(Uint8Array.from(message), Uint8Array.from(sk))
+        console.log(Buffer.from( sig).toString("hex"))
+
+//        const valid = ed25519.verify(signatureResponse.signature.slice(1), prehash, pubKey);
     });
 });

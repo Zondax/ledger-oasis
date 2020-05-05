@@ -28,7 +28,7 @@ include $(BOLOS_SDK)/Makefile.defines
 APPNAME = "Oasis"
 APPVERSION_M=1
 APPVERSION_N=1
-APPVERSION_P=0
+APPVERSION_P=2
 
 APPPATH = "44'/474'"
 APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path $(APPPATH)
@@ -74,10 +74,7 @@ DEFINES += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64
 
 DEFINES += LEDGER_MAJOR_VERSION=$(APPVERSION_M) LEDGER_MINOR_VERSION=$(APPVERSION_N) LEDGER_PATCH_VERSION=$(APPVERSION_P)
 
-DEFINES   += HAVE_U2F HAVE_IO_U2F
-DEFINES   += U2F_PROXY_MAGIC=\"OAS\"
 DEFINES   += USB_SEGMENT_SIZE=64
-DEFINES   += U2F_MAX_MESSAGE_SIZE=264 #257+5+2
 DEFINES   += HAVE_BOLOS_APP_STACK_CANARY
 
 WEBUSB_URL     = www.ledgerwallet.com
@@ -136,7 +133,8 @@ AFLAGS +=
 
 LD       := $(GCCPATH)arm-none-eabi-gcc
 LDFLAGS  += -O3 -Os
-LDLIBS   += -Lrust/target/thumbv6m-none-eabi/release -lrslib -lm -lgcc -lc
+LDLIBS   += -lm -lgcc -lc
+#LDLIBS   += -Lrust/target/thumbv6m-none-eabi/release -lrslib
 
 ##########################
 include $(BOLOS_SDK)/Makefile.glyphs
@@ -146,8 +144,9 @@ APP_SOURCE_PATH += $(MY_DIR)/rust/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
+APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 
-SDK_SOURCE_PATH += lib_stusb lib_u2f lib_stusb_impl
+SDK_SOURCE_PATH += lib_stusb lib_stusb_impl
 
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
@@ -157,10 +156,12 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
 SDK_SOURCE_PATH  += lib_ux
 
 rust:
-	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
+	@echo "No rust code"
+#	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
 
 rust_clean:
-	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
+	@echo "No rust code"
+#	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
 
 # load, delete and listvariants are provided to comply with Ledger requirements
 load:
