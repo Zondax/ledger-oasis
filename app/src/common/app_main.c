@@ -211,9 +211,14 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     }
 
                     CHECK_APP_CANARY()
-
+#if defined(APP_CONSUMER)
                     view_sign_show();
                     *flags |= IO_ASYNCH_REPLY;
+#elif defined(APP_VALIDATOR)
+                    app_sign();
+#else
+#error "APP MODE IS NOT SUPPORTED"
+#endif
                     break;
                 }
 

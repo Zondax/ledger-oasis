@@ -1,5 +1,5 @@
 import Zemu from "@zondax/zemu";
-import OasisApp from "ledger-oasis-js";
+import Oasis from "@zondax/ledger-oasis";
 import path from "path";
 
 const APP_PATH = path.resolve(`./../../app/bin/app.elf`);
@@ -51,7 +51,7 @@ async function main() {
 
     try {
         await sim.start(SIM_OPTIONS);
-        const app = new OasisApp.default(sim.getTransport());
+        const app = new Oasis.OasisValidatorApp(sim.getTransport());
 
         ////////////
         /// TIP you can use zemu commands here to take the app to the point where you trigger a breakpoint
