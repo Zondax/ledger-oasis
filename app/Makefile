@@ -24,13 +24,37 @@ MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 include $(BOLOS_SDK)/Makefile.defines
 
-# Main app configuration
-APPNAME = "Oasis"
-APPVERSION_M=1
-APPVERSION_N=1
-APPVERSION_P=2
+ifndef COIN
+COIN=oasis
+endif
 
+APPVERSION_M=1
+APPVERSION_N=2
+APPVERSION_P=0
+
+$(info COIN  = [$(COIN)])
+ifeq ($(COIN),oasis)
+# Main app configuration
+DEFINES += APP_CONSUMER
+APPNAME = "Oasis"
 APPPATH = "44'/474'"
+
+else ifeq ($(COIN),oasis_validator)
+DEFINES += APP_VALIDATOR
+APPNAME = "OasisVal"
+APPPATH = "44'/474'"				# FIXME: same path?
+
+else
+define error_message
+
+
+COIN value not supported: [$(COIN)]
+
+
+endef
+$(error "$(error_message)")
+endif
+
 APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path $(APPPATH)
 
 ifeq ($(TARGET_NAME),TARGET_NANOS)
@@ -181,4 +205,5 @@ include $(BOLOS_SDK)/Makefile.rules
 dep/%.d: %.c Makefile
 
 listvariants:
-	@echo VARIANTS COIN OAS
+	@echo VARIANTS COIN oasis
+	@echo VARIANTS COIN oasis_validator

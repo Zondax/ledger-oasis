@@ -21,6 +21,7 @@
 #include "bignum.h"
 #include "parser.h"
 #include "parser_txdef.h"
+#include "coin.h"
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function

@@ -25,9 +25,8 @@
 uint8_t app_sign() {
     uint8_t *signature = G_io_apdu_buffer;
 
-    // Skip first byte (context length)
-    const uint8_t *message = tx_get_buffer() + 1;
-    const uint16_t messageLength = tx_get_buffer_length() - 1;
+    const uint8_t *message = tx_get_buffer() + CRYPTO_BLOB_SKIP_BYTES;
+    const uint16_t messageLength = tx_get_buffer_length() - CRYPTO_BLOB_SKIP_BYTES;
 
     return crypto_sign(signature, IO_APDU_BUFFER_SIZE - 2, message, messageLength);
 }

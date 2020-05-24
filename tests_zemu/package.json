@@ -16,7 +16,7 @@
     "zondax"
   ],
   "dependencies": {
-    "ledger-oasis-js": "^0.0.5",
+    "@zondax/ledger-oasis": "file:../js",
     "@zondax/zemu": "^0.2.4"
   },
   "devDependencies": {
