@@ -9,6 +9,8 @@ readme = "README.md"
 name = "rslib"
 crate-type = ["staticlib"]
 
+[dependencies]
+
 [target.thumbv6m-none-eabi.dev-dependencies]
 panic-halt = "0.2.0"
 
@@ -20,4 +22,3 @@ opt-level = "s"
 
 [profile.dev]
 panic = "abort"
-

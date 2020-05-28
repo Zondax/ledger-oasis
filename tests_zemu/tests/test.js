@@ -12,10 +12,10 @@ const sim_options = {
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
-//    ,X11: true
+    //,X11: true
 };
 
-jest.setTimeout(10000)
+jest.setTimeout(15000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
@@ -115,8 +115,8 @@ describe('Basic checks', function () {
             expect(resp.error_message).toEqual("No errors");
 
             // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
-            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
-            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
+            const expected_bech32_address = "oasis14wjjcrwtsrp0a9hdfsm5rt6qc4e6q5qvp4e6ek3z09wr0jc0zuu8y6jf8";
+            const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
             expect(resp.pk.toString('hex')).toEqual(expected_pk);
@@ -161,9 +161,8 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
-            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
-            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
+            const expected_bech32_address = "oasis14wjjcrwtsrp0a9hdfsm5rt6qc4e6q5qvp4e6ek3z09wr0jc0zuu8y6jf8";
+            const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
             expect(resp.pk.toString('hex')).toEqual(expected_pk);

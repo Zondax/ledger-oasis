@@ -1,5 +1,5 @@
 #*******************************************************************************
-#*   (c) 2018 ZondaX GmbH
+#*   (c) 2018 Zondax GmbH
 #*
 #*  Licensed under the Apache License, Version 2.0 (the "License");
 #*  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ add_subdirectory(cmake/gtest)
 
 string(APPEND CMAKE_CXX_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
+
+add_definitions(-DAPP_CONSUMER)
 
 ##############################################################
 ##############################################################

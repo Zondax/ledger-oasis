@@ -42,7 +42,7 @@ APPPATH = "44'/474'"
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
-APPPATH = "44'/474'"				# FIXME: same path?
+APPPATH = "474'/474'"
 
 else
 define error_message
@@ -114,7 +114,7 @@ DEFINES       += HAVE_BAGL_FONT_OPEN_SANS_REGULAR_11PX
 DEFINES       += HAVE_BAGL_FONT_OPEN_SANS_EXTRABOLD_11PX
 DEFINES       += HAVE_BAGL_FONT_OPEN_SANS_LIGHT_16PX
 
-DEFINES          += HAVE_UX_FLOW
+DEFINES       += HAVE_UX_FLOW
 
 #SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
 SDK_SOURCE_PATH  += lib_ux

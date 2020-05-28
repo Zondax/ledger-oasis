@@ -105,6 +105,17 @@ view_error_t h_review_update_data() {
     tx_error_t err = tx_no_error;
 
     do {
+        err = tx_getNumItems(&viewdata.itemCount);
+        viewdata.itemCount++;
+
+        if (err == tx_no_data) {
+            return view_no_data;
+        }
+
+        if (err != tx_no_error) {
+            return view_error_detected;
+        }
+
         err = tx_getItem(viewdata.itemIdx,
                          viewdata.key, MAX_CHARS_PER_KEY_LINE,
                          viewdata.value, MAX_CHARS_PER_VALUE1_LINE,
@@ -114,14 +125,14 @@ view_error_t h_review_update_data() {
             return view_no_data;
         }
 
+        if (err != tx_no_error) {
+            return view_error_detected;
+        }
+
         if (viewdata.pageCount == 0) {
             h_paging_increase();
         }
     } while (viewdata.pageCount == 0);
-
-    if (err != tx_no_error) {
-        return view_error_detected;
-    }
 
     splitValueField();
     return view_no_error;
