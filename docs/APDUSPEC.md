@@ -1,4 +1,5 @@
-# Oasis App - Ledger Nano S
+# Oasis App
+
 ## General structure
 
 The general structure of commands and responses is as follows:
@@ -54,7 +55,7 @@ The general structure of commands and responses is as follows:
 
 | Field   | Type     | Content          | Note                            |
 | ------- | -------- | ---------------- | ------------------------------- |
-| CLA     | byte (1) | Test Mode        | 0xFF means test mode is enabled |
+| TEST    | byte (1) | Test Mode        | 0xFF means test mode is enabled |
 | MAJOR   | byte (1) | Version Major    |                                 |
 | MINOR   | byte (1) | Version Minor    |                                 |
 | PATCH   | byte (1) | Version Patch    |                                 |

@@ -9,7 +9,7 @@ This repository contains:
 - Ledger Nano S/X BOLOS app
 - Specs / Documentation
 - C++ unit tests
-- Rust unit test
+- Rust unit tests
 - Zemu tests
 
 ## ATTENTION

@@ -114,7 +114,6 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
             const expected_bech32_address = "oasis14wjjcrwtsrp0a9hdfsm5rt6qc4e6q5qvp4e6ek3z09wr0jc0zuu8y6jf8";
             const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 

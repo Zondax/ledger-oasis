@@ -30,10 +30,7 @@ async function debugScenario(sim, app) {
 
     const path = [44, 474, 5, 0x80000000, 0x80000003];
     const context = "oasis-core/consensus: tx for chain testing";
-    const txBlob = Buffer.from(
-        "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
-        "base64",
-    );
+    const txBlob = Buffer.from("210801110500000000000000190000000000000000220b088092b8c398feffffff01", "hex",);
 
     const signatureRequest = await app.sign(path, context, txBlob);
     const signatureResponse = await signatureRequest;

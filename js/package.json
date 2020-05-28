@@ -6,7 +6,7 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zondax/ledger-oasis-js.git"
+    "url": "git+https://github.com/zondax/ledger-oasis.git"
   },
   "keywords": [
     "Ledger",
@@ -16,9 +16,9 @@
   "author": "Zondax GmbH",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/zondax/ledger-oasis-js/issues"
+    "url": "https://github.com/zondax/ledger-oasis/issues"
   },
-  "homepage": "https://github.com/zondax/ledger-oasis-js",
+  "homepage": "https://github.com/zondax/ledger-oasis",
   "dependencies": {
     "@babel/runtime": "^7.9.2",
     "@ledgerhq/hw-transport": "^5.12.0",
