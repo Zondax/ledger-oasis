@@ -200,7 +200,6 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
                     CHECK_APP_CANARY()
 
-#if defined(APP_CONSUMER)
                     const char *error_msg = tx_parse();
                     CHECK_APP_CANARY()
 
@@ -211,6 +210,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                         THROW(APDU_CODE_DATA_INVALID);
                     }
 
+#if defined(APP_CONSUMER)
                     CHECK_APP_CANARY()
                     view_sign_show();
                     *flags |= IO_ASYNCH_REPLY;

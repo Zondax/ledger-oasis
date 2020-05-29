@@ -23,6 +23,8 @@
 #include "parser_txdef.h"
 #include "coin.h"
 
+#if defined(APP_CONSUMER)
+
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function
 void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
@@ -476,3 +478,5 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
 
     return err;
 }
+
+#endif // APP_CONSUMER
