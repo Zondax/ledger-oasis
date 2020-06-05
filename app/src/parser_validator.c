@@ -297,11 +297,44 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
 }
 
 parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
-    // TODO: On the first vote, there is info to review
-    // otherwise num_items = 0
 
-    *num_items = 0;
+    if(vote_state.isInitialized) {
+        *num_items = 0;
+        return parser_ok;
+    }
+
+    //we're only parsing: type, height, round
+    *num_items = 3;
     return parser_ok;
+}
+
+__Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
+                                           int8_t displayIdx,
+                                           char *outKey, uint16_t outKeyLen,
+                                           char *outVal, uint16_t outValLen,
+                                           uint8_t pageIdx, uint8_t *pageCount) {
+    if (displayIdx == 0) {
+        snprintf(outKey, outKeyLen, "Type");
+        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.type);
+        *pageCount = 1;
+        return parser_ok;
+    }
+
+    if (displayIdx == 1) {
+        snprintf(outKey, outKeyLen, "Height");
+        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.height);
+        *pageCount = 1;
+        return parser_ok;
+    }
+
+    if (displayIdx == 2) {
+        snprintf(outKey, outKeyLen, "Round");
+        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.round);
+        *pageCount = 1;
+        return parser_ok;
+    }
+
+    return parser_unexpected_number_items;
 }
 
 parser_error_t parser_getItem(const parser_context_t *ctx,
@@ -310,8 +343,42 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
                               char *outVal, uint16_t outValLen,
                               uint8_t pageIdx, uint8_t *pageCount) {
 
-    // TODO: Normally this will never get called
-    return parser_no_data ;
+    //No user input is required once vote_state is initialized
+    if(vote_state.isInitialized) {
+        return parser_no_data;
+    }
+
+    MEMZERO(outKey, outKeyLen);
+    MEMZERO(outVal, outValLen);
+    snprintf(outKey, outKeyLen, "?");
+    snprintf(outVal, outValLen, " ");
+    *pageCount = 0;
+
+    uint8_t numItems = 0;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
+    CHECK_APP_CANARY()
+
+    if (numItems == 0) {
+        return parser_unexpected_number_items;
+    }
+
+    if (displayIdx < 0 || displayIdx >= numItems) {
+        return parser_no_data;
+    }
+
+    parser_error_t err = parser_ok;
+
+    err = parser_getItemVote(ctx, displayIdx, outKey, outKeyLen,
+                             outVal, outValLen, pageIdx, pageCount);
+
+    if (err == parser_ok && *pageCount > 1) {
+        size_t keyLen = strlen(outKey);
+        if (keyLen < outKeyLen) {
+            snprintf(outKey + keyLen, outKeyLen - keyLen, " [%d/%d]", pageIdx + 1, *pageCount);
+        }
+    }
+
+    return err;
 }
 
 #endif  // APP_VALIDATOR
