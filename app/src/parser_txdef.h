@@ -138,6 +138,9 @@ typedef struct {
 typedef struct {
     const uint8_t *votePtr;
     uint16_t voteLen;
+    uint8_t type;
+    uint64_t height;
+    uint64_t round;
 } oasis_tx_vote_t;
 
 typedef enum {

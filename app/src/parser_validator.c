@@ -34,20 +34,265 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 }
 #endif
 
+parser_error_t validate_fsm() {
+    if (!try_state_transition()) {
+        return parser_unexepected_error;
+    }
+
+    return parser_ok;
+}
+
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
 
-    CHECK_PARSER_ERR(readVote(ctx, &parser_tx_obj))
+    CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
+    CHECK_PARSER_ERR(parser_validate(ctx));
 
-    //CHECK_PARSER_ERR(parser_validate(ctx)); //Validate vote FMS
-    return vote_parse(ctx, &parser_tx_obj);
+    return parser_ok;
+}
+
+parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
+    uint16_t offset = ctx->offset + ctx->lastConsumed;
+    uint16_t consumed = 0;
+
+    const uint8_t *p = ctx->buffer + offset;
+    const uint8_t *end = ctx->buffer + ctx->bufferLen + 1;
+    *value = 0;
+
+    // Extract value
+    uint16_t shift = 0;
+    while (p < end && shift < 64) {
+        const uint64_t tmp = ((*p) & 0x7Fu);
+
+        if (shift == 63 && tmp > 1) {
+            return parser_value_out_of_range;
+        }
+
+        *value += tmp << shift;
+
+        consumed++;
+        if (!(*p & 0x80u)) {
+            ctx->lastConsumed += consumed;
+            return parser_ok;
+        }
+        shift += 7;
+        p++;
+    }
+
+    return parser_unexpected_buffer_end;
+}
+
+parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
+    uint16_t offset = ctx->offset + ctx->lastConsumed;
+
+    const uint8_t *p = ctx->buffer + offset;
+    *value = 0;
+
+    // Extract value
+    uint16_t shift = 0;
+    for (uint8_t i = 0; i < 8; i++, p++) {
+        const uint64_t tmp = ((*p) & 0x7Fu);
+
+        if (shift == 63 && tmp > 1) {
+            return parser_value_out_of_range;
+        }
+
+        *value += tmp << shift;
+
+        shift += 7;
+    }
+
+    ctx->lastConsumed += 8;
+
+    ctx->offset += ctx->lastConsumed; //Do this on the specific getValue*
+    ctx->lastConsumed = 0;
+
+    return parser_ok;
+}
+
+parser_error_t readVoteLength(parser_context_t *c, parser_tx_t *v) {
+    parser_error_t err;
+    //Read tx's length
+    uint64_t _length = 0;
+    c->lastConsumed = 0;
+    err = readRawVarint(c, &_length);
+    if(err != parser_ok) {
+        return err;
+    }
+    c->offset += c->lastConsumed;
+    c->lastConsumed = 0;
+
+    v->oasis.voteTx.voteLen = (uint16_t)_length;
+    v->oasis.voteTx.votePtr = c->buffer + c->offset;
+
+    return parser_ok;
+}
+
+parser_error_t readVoteType(parser_context_t *ctx, uint8_t* val) {
+    parser_error_t err;
+
+    err = readRawVarint(ctx, (uint64_t *) val);
+
+    ctx->offset += ctx->lastConsumed;
+    ctx->lastConsumed = 0;
+
+    return err;
+}
+
+parser_error_t readVoteHeight(parser_context_t *ctx, uint64_t* val) {
+    parser_error_t err;
+    err = read_amino_64bits(ctx, val);
+    return err;
+}
+
+parser_error_t readVoteRound(parser_context_t *ctx, uint64_t* val) {
+    parser_error_t err;
+    err = read_amino_64bits(ctx, val);
+    return err;
+}
+
+parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) {
+    uint8_t expected_field = FIELD_TYPE;
+
+    uint32_t size = voteTx->voteLen;
+    uint64_t val;
+
+    parser_error_t err;
+
+    bool_t doParse = true;
+
+    while (doParse && (ctx->offset < ctx->bufferLen)) {
+
+        err = readRawVarint(ctx, &val);
+        if(err != parser_ok) {
+            return err;
+        }
+
+        const uint8_t field_num = FIELD_NUM(val);
+        const uint8_t wire_type = WIRE_TYPE(val);
+
+        switch (field_num) {
+            case FIELD_ZERO: {
+                return parser_unexpected_field;
+            }
+
+            case FIELD_TYPE: {
+                if (expected_field < FIELD_TYPE) {
+                    return parser_unexpected_field;
+                }
+                if (wire_type != WIRE_TYPE_VARINT) {
+                    return parser_unexpected_wire_type;
+                }
+
+                err = readVoteType(ctx, &voteTx->type);
+                if(err != parser_ok) {
+                    return err;
+                }
+
+                expected_field = FIELD_HEIGHT;
+                break;
+            }
+
+            case FIELD_HEIGHT: {
+                if (expected_field < FIELD_TYPE) {
+                    return parser_unexpected_field;
+                }
+                if (wire_type != WIRE_TYPE_64BIT) {
+                    return parser_unexpected_wire_type;
+                }
+
+                err = readVoteHeight(ctx, &voteTx->height);
+                if(err != parser_ok) {
+                    return err;
+                }
+
+                expected_field = FIELD_ROUND;
+                break;
+            }
+
+            case FIELD_ROUND: {
+                if (expected_field < FIELD_TYPE) {
+                    return parser_unexpected_field;
+                }
+                if (wire_type != WIRE_TYPE_64BIT) {
+                    return parser_unexpected_wire_type;
+                }
+
+                err = readVoteRound(ctx, &voteTx->round);
+                if (err != parser_ok) {
+                    return err;
+                }
+                if (val < 0) {
+                    return parser_unexpected_round_value;
+                }
+                if (val > 255) {
+                    return parser_unexpected_round_value;
+                }
+
+                expected_field = FIELD_UNKNOWN;
+                break;
+            }
+
+            default: {
+                if (size > 10000) {
+                    return parser_unexpected_buffer_size;
+                }
+                doParse = false;
+                break;
+            }
+        }
+        // NOTE: Other fields are not parsed. In particular BlockID
+    }
+
+    // NOTE: for proposal POLRound is not parsed or verified
+
+    return parser_ok;
+}
+
+
+parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
+    CHECK_PARSER_ERR(readVoteLength(ctx, &parser_tx_obj));
+    CHECK_PARSER_ERR(vote_amino_parse(ctx, &v->oasis.voteTx));
+    return parser_ok;
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-//    if (!try_state_transition()) {
-//        return parser_unexepected_error;
-//    }
+
+    // Initialize vote values
+    vote.Type = 0;
+    vote.Round = 0;
+    vote.Height = 0;
+
+    // Validate values
+    switch (parser_tx_obj.oasis.voteTx.type) {
+        case TYPE_PREVOTE:
+        case TYPE_PRECOMMIT:
+        case TYPE_PROPOSAL:
+            break;
+        default:
+            return parser_unexpected_type_value;
+    }
+    if (parser_tx_obj.oasis.voteTx.height < 0) {
+        return parser_unexpected_height_value;
+    }
+    if (parser_tx_obj.oasis.voteTx.round < 0) {
+        return parser_unexpected_height_value;
+    }
+
+    //All fields are good, update vote
+    vote.Type = parser_tx_obj.oasis.voteTx.type;
+    vote.Height = parser_tx_obj.oasis.voteTx.height;
+    vote.Round = parser_tx_obj.oasis.voteTx.round;
+
+    //If vote_state is not initialized, set new valid vote
+    if(!vote_state.isInitialized) {
+        vote_state.vote = vote;
+        vote_state.isInitialized = true;
+    } else {
+        return validate_fsm();
+    }
+
     return parser_ok;
 }
 

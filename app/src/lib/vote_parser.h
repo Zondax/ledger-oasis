@@ -25,11 +25,22 @@ extern "C" {
 #include <common/parser_common.h>
 #include "parser_txdef.h"
 
-parser_error_t readVote(parser_context_t *c, parser_tx_t *v);
+#define WIRE_TYPE_VARINT   0
+#define WIRE_TYPE_64BIT    1
+#define WIRE_TYPE_LEN      2
+#define WIRE_TYPE_32BIT    5
 
-parser_error_t _readArray(parser_context_t *ctx, const uint8_t **arrayPtr, uint16_t *arrayLength);
+#define FIELD_ZERO     0
+#define FIELD_TYPE     1
+#define FIELD_HEIGHT   2
+#define FIELD_ROUND    3
+#define FIELD_UNKNOWN  4
 
-parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx, vote_t *vote);
+#define FIELD_NUM(x) ((uint8_t)((x) >> 3u))
+#define WIRE_TYPE(x) ((uint8_t)((x) & 0x7u))
+
+parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v);
+
 
 /// Parse vote in buffer
 /// This function should be called as soon as full buffer data is loaded.
