@@ -135,6 +135,11 @@ typedef struct {
     oasis_methods_e method;
 } oasis_tx_t;
 
+typedef struct {
+    const uint8_t *votePtr;
+    uint16_t voteLen;
+} oasis_tx_vote_t;
+
 typedef enum {
     unknownType,
     txType,
@@ -147,6 +152,7 @@ typedef struct {
     union {
         oasis_tx_t tx;
         oasis_entity_t entity;
+        oasis_tx_vote_t voteTx;
     } oasis;
 
     oasis_blob_type_e type;

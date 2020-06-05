@@ -22,6 +22,8 @@
 #include "parser.h"
 #include "parser_txdef.h"
 #include "coin.h"
+#include "vote_parser.h"
+#include "vote_fsm.h"
 
 #if defined(APP_VALIDATOR)
 
@@ -33,12 +35,19 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 #endif
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
-    // TODO: Parse votes
-    return parser_ok;
+    CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
+    CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
+
+    CHECK_PARSER_ERR(readVote(ctx, &parser_tx_obj))
+
+    //CHECK_PARSER_ERR(parser_validate(ctx)); //Validate vote FMS
+    return vote_parse(ctx, &parser_tx_obj);
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-    // TODO: Check FSM conditions
+//    if (!try_state_transition()) {
+//        return parser_unexepected_error;
+//    }
     return parser_ok;
 }
 
