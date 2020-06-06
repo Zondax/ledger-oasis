@@ -46,10 +46,7 @@ parser_error_t validate_fsm() {
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
-
     CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
-    CHECK_PARSER_ERR(parser_validate(ctx));
-
     return parser_ok;
 }
 
