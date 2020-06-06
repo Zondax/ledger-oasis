@@ -14,6 +14,8 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_VALIDATOR)
+
 #include <stdio.h>
 #include <zxmacros.h>
 #include <bech32.h>
@@ -25,7 +27,6 @@
 #include "vote_parser.h"
 #include "vote_fsm.h"
 
-#if defined(APP_VALIDATOR)
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function

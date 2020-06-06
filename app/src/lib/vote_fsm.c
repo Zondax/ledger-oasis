@@ -14,6 +14,8 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_VALIDATOR)
+
 #include "vote_fsm.h"
 #include "vote.h"
 
@@ -67,3 +69,6 @@ uint8_t try_state_transition() {
 
     return 1;
 }
+
+
+#endif //APP_VALIDATOR

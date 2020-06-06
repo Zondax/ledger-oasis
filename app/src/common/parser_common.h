@@ -69,12 +69,24 @@ typedef enum {
     parser_unexpected_height_value,
 } parser_error_t;
 
+#ifdef APP_CONSUMER
+
+typedef struct {
+    const uint8_t *buffer;
+    uint16_t bufferLen;
+    uint16_t offset;
+} parser_context_t;
+
+#else
+
 typedef struct {
     const uint8_t *buffer;
     uint16_t bufferLen;
     uint16_t offset;
     uint16_t lastConsumed;
 } parser_context_t;
+
+#endif
 
 #ifdef __cplusplus
 }

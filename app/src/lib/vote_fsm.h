@@ -13,7 +13,11 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
+
+#if defined(APP_VALIDATOR)
+
 #pragma once
+
 
 #include <stdint.h>
 
@@ -26,3 +30,5 @@ uint8_t try_state_transition();
 #ifdef __cplusplus
 }
 #endif
+
+#endif //APP_VALIDATOR

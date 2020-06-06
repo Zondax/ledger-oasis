@@ -13,6 +13,9 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
+
+#if defined(APP_VALIDATOR)
+
 #pragma once
 
 #ifdef __cplusplus
@@ -37,6 +40,14 @@ typedef struct {
   vote_t vote;
 } vote_state_t;
 
+typedef struct {
+    const uint8_t *votePtr;
+    uint16_t voteLen;
+    uint8_t type;
+    uint64_t height;
+    uint64_t round;
+} oasis_tx_vote_t;
+
 extern vote_state_t vote_state;
 extern vote_t vote;
 
@@ -52,3 +63,8 @@ void vote_state_reset();
 #ifdef __cplusplus
 }
 #endif
+
+#else
+typedef struct{} oasis_tx_vote_t;
+
+#endif //APP_VALIDATOR

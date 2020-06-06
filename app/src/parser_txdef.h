@@ -20,6 +20,7 @@
 #include <cbor.h>
 #include <coin.h>
 #include <zxtypes.h>
+#include <vote.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -134,14 +135,6 @@ typedef struct {
     uint64_t nonce;
     oasis_methods_e method;
 } oasis_tx_t;
-
-typedef struct {
-    const uint8_t *votePtr;
-    uint16_t voteLen;
-    uint8_t type;
-    uint64_t height;
-    uint64_t round;
-} oasis_tx_vote_t;
 
 typedef enum {
     unknownType,

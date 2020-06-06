@@ -14,6 +14,8 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_VALIDATOR)
+
 #pragma once
 
 #ifdef __cplusplus
@@ -50,3 +52,6 @@ parser_error_t vote_parse();
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif //APP_VALIDATOR

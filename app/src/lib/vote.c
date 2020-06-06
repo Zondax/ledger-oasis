@@ -14,6 +14,8 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_VALIDATOR)
+
 #include "vote.h"
 #include "buffering.h"
 #include "vote_parser.h"
@@ -33,3 +35,6 @@ void vote_reset() {
     buffering_reset();
 #endif
 }
+
+
+#endif //APP_VALIDATOR

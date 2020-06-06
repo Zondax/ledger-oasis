@@ -283,10 +283,9 @@ void app_init() {
     USB_power(0);
     USB_power(1);
     view_idle_show(0);
+#ifdef APP_VALIDATOR
     vote_state.isInitialized = false;
-    vote_state.vote.Height = 0;
-    vote_state.vote.Round = 0;
-    vote_state.vote.Type = 0;
+#endif
 }
 
 #pragma clang diagnostic push
