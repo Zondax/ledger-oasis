@@ -95,7 +95,7 @@ parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
 
     ctx->lastConsumed += 8;
 
-    ctx->offset += ctx->lastConsumed; //Do this on the specific getValue*
+    ctx->offset += ctx->lastConsumed;
     ctx->lastConsumed = 0;
 
     return parser_ok;
@@ -145,19 +145,12 @@ parser_error_t readVoteRound(parser_context_t *ctx, uint64_t* val) {
 parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) {
     uint8_t expected_field = FIELD_TYPE;
 
-    uint32_t size = voteTx->voteLen;
     uint64_t val;
-
-    parser_error_t err;
-
     bool_t doParse = true;
 
     while (doParse && (ctx->offset < ctx->bufferLen)) {
 
-        err = readRawVarint(ctx, &val);
-        if(err != parser_ok) {
-            return err;
-        }
+        CHECK_PARSER_ERR(readRawVarint(ctx, &val));
 
         const uint8_t field_num = FIELD_NUM(val);
         const uint8_t wire_type = WIRE_TYPE(val);
@@ -175,10 +168,7 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                err = readVoteType(ctx, &voteTx->type);
-                if(err != parser_ok) {
-                    return err;
-                }
+                CHECK_PARSER_ERR(readVoteType(ctx, &voteTx->type));
 
                 expected_field = FIELD_HEIGHT;
                 break;
@@ -192,10 +182,7 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                err = readVoteHeight(ctx, &voteTx->height);
-                if(err != parser_ok) {
-                    return err;
-                }
+                CHECK_PARSER_ERR(readVoteHeight(ctx, &voteTx->height));
 
                 expected_field = FIELD_ROUND;
                 break;
@@ -209,10 +196,8 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                err = readVoteRound(ctx, &voteTx->round);
-                if (err != parser_ok) {
-                    return err;
-                }
+                CHECK_PARSER_ERR(readVoteRound(ctx, &voteTx->round));
+
                 if (val < 0) {
                     return parser_unexpected_round_value;
                 }
@@ -225,9 +210,6 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
             }
 
             default: {
-                if (size > 10000) {
-                    return parser_unexpected_buffer_size;
-                }
                 doParse = false;
                 break;
             }
@@ -360,7 +342,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
         return parser_no_data;
     }
 
-    parser_error_t err = parser_ok;
+    parser_error_t err;
 
     err = parser_getItemVote(ctx, displayIdx, outKey, outKeyLen,
                              outVal, outValLen, pageIdx, pageCount);
