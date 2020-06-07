@@ -35,14 +35,6 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 }
 #endif
 
-parser_error_t validate_fsm() {
-    if (!try_state_transition()) {
-        return parser_unexepected_error;
-    }
-
-    return parser_ok;
-}
-
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
@@ -282,14 +274,6 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     vote.Type = parser_tx_obj.oasis.voteTx.type;
     vote.Height = parser_tx_obj.oasis.voteTx.height;
     vote.Round = parser_tx_obj.oasis.voteTx.round;
-
-    //If vote_state is not initialized, set new valid vote
-    if(!vote_state.isInitialized) {
-        vote_state.vote = vote;
-        vote_state.isInitialized = true;
-    } else {
-        return validate_fsm();
-    }
 
     return parser_ok;
 }
