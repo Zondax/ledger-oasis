@@ -290,7 +290,7 @@ void app_init() {
     USB_power(1);
     view_idle_show(0);
 #ifdef APP_VALIDATOR
-    vote_state.isInitialized = false;
+    vote_state_reset();
 #endif
 }
 

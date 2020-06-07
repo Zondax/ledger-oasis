@@ -17,23 +17,13 @@
 #if defined(APP_VALIDATOR)
 
 #include "vote.h"
-#include "buffering.h"
-#include "vote_parser.h"
 #include <zxmacros.h>
-
-#include <string.h>
 
 vote_state_t vote_state;
 vote_t vote;
 
 void vote_state_reset() {
     explicit_bzero(&vote_state, sizeof(vote_state_t));
-}
-
-void vote_reset() {
-#if defined(LEDGER_SPECIFIC)
-    buffering_reset();
-#endif
 }
 
 

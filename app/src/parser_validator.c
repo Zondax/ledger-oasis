@@ -24,7 +24,6 @@
 #include "parser.h"
 #include "parser_txdef.h"
 #include "coin.h"
-#include "vote_parser.h"
 #include "vote_fsm.h"
 
 
@@ -35,14 +34,21 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 }
 #endif
 
-parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
-    CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
-    CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
-    CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
-    return parser_ok;
-}
+#define WIRE_TYPE_VARINT   0
+#define WIRE_TYPE_64BIT    1
+#define WIRE_TYPE_LEN      2
+#define WIRE_TYPE_32BIT    5
 
-parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
+#define FIELD_ZERO     0
+#define FIELD_TYPE     1
+#define FIELD_HEIGHT   2
+#define FIELD_ROUND    3
+#define FIELD_UNKNOWN  4
+
+#define FIELD_NUM(x) ((uint8_t)((x) >> 3u))
+#define WIRE_TYPE(x) ((uint8_t)((x) & 0x7u))
+
+__Z_INLINE parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;
     uint16_t consumed = 0;
 
@@ -73,7 +79,7 @@ parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
     return parser_unexpected_buffer_end;
 }
 
-parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
+ __Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;
 
     const uint8_t *p = ctx->buffer + offset;
@@ -101,7 +107,7 @@ parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
     return parser_ok;
 }
 
-parser_error_t readVoteLength(parser_context_t *c, parser_tx_t *v) {
+__Z_INLINE parser_error_t readVoteLength(parser_context_t *c, parser_tx_t *v) {
     parser_error_t err;
     //Read tx's length
     uint64_t _length = 0;
@@ -222,10 +228,16 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
     return parser_ok;
 }
 
-
-parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
+__Z_INLINE parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
     CHECK_PARSER_ERR(readVoteLength(ctx, &parser_tx_obj));
     CHECK_PARSER_ERR(vote_amino_parse(ctx, &v->oasis.voteTx));
+    return parser_ok;
+}
+
+parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
+    CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
+    CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
+    CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
     return parser_ok;
 }
 
