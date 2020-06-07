@@ -297,7 +297,19 @@ __Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
                                            uint8_t pageIdx, uint8_t *pageCount) {
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
-        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.type);
+        const char *type;
+        switch (parser_tx_obj.oasis.voteTx.type) {
+            case TYPE_PREVOTE:
+                type = "Prevote";
+                break;
+            case TYPE_PRECOMMIT:
+                type = "Precommit";
+                break;
+            case TYPE_PROPOSAL:
+                type = "Proposal";
+                break;
+        }
+        snprintf(outVal, outValLen, "%s", type);
         *pageCount = 1;
         return parser_ok;
     }
