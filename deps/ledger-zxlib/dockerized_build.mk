@@ -188,7 +188,7 @@ zemu_debug:
 	cd $(TESTS_ZEMU_DIR)/tools && node debug.mjs debug
 
 .PHONY: zemu_val_debug
-zemu_debug:
+zemu_val_debug:
 	cd $(TESTS_ZEMU_DIR)/tools && node debug_val.mjs debug
 
 ########################## TEST Section ###############################
@@ -196,6 +196,10 @@ zemu_debug:
 .PHONY: zemu_test
 zemu_test:
 	cd $(TESTS_ZEMU_DIR) && yarn test
+
+.PHONY: zemu_val_test
+zemu_val_test:
+	cd $(TESTS_ZEMU_DIR) && yarn test_val
 
 .PHONY: rust_test
 rust_test:

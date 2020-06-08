@@ -2,7 +2,7 @@ import Zemu from "@zondax/zemu";
 import Oasis from "@zondax/ledger-oasis";
 import path from "path";
 
-const APP_PATH = path.resolve(`./../../app/bin/app.elf`);
+const APP_PATH = path.resolve(`./../../app/bin/app_val.elf`);
 const VOTE_SLEEP = 500;
 
 const seed = "equip will roof matter pink blind book anxiety banner elbow sun young"
