@@ -26,6 +26,8 @@ include $(CURDIR)/deps/ledger-zxlib/dockerized_build.mk
 
 build_val: COIN=oasis_validator		# Alternative app purpose
 build_val: build
+	mv $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
+
 
 else
 default:
