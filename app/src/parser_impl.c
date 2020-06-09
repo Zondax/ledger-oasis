@@ -653,6 +653,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     return parser_ok;
 }
 
+
 parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
