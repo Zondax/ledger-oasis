@@ -22,11 +22,17 @@ jobs:
       # Docker entrypoint is not considered
       - run: git submodule update --init --recursive
       - run:
-          name: Build
+          name: Build Consumer app
           command: |
             source /home/zondax/.cargo/env
             cd /home/zondax/project
             make
+      - run:
+          name: Build Validator app
+          command: |
+            source /home/zondax/.cargo/env
+            cd /home/zondax/project
+            make build_val
 
   test_zemu:
     machine:
@@ -37,10 +43,6 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init --recursive
-      - run:
-          name: Build Ledger app
-          command: |
-            make
       - run:
           name: Install node + yarn
           command: |
@@ -53,10 +55,23 @@ jobs:
             nvm use 13.12.0
             make zemu_install
       - run:
-          name: Run zemu tests
+          name: Build Ledger Consumer app
+          command: |
+            make
+      - run:
+          name: Run zemu tests for Consumer app
           command: |
             nvm use 13.12.0
             make zemu_test
+      - run:
+          name: Build Ledger Validator app
+          command: |
+            make build_val
+      - run:
+          name: Run zemu tests for Validator app
+          command: |
+            nvm use 13.12.0
+            make zemu_val_test
 
   build_package:
     docker:
