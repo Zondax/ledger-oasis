@@ -22,17 +22,19 @@ TESTS_ZEMU_JS_PACKAGE = "@zondax/ledger-oasis"
 TESTS_ZEMU_JS_DIR = $(CURDIR)/js
 
 ifeq ($(BOLOS_SDK),)
+
 include $(CURDIR)/deps/ledger-zxlib/dockerized_build.mk
 
-build_val: COIN=oasis_validator		# Alternative app purpose
-build_val: build
-	mv $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
-
-
 else
+
 default:
 	$(MAKE) -C app
 %:
 	$(info "Calling app Makefile for target $@")
-	COIN=$(COIN) $(MAKE) -C app $@
+	COIN=$(COIN) $(MAKE) -C app
+
 endif
+
+build_val: COIN=oasis_validator
+build_val: build
+	mv $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
