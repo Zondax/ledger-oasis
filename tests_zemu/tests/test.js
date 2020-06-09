@@ -9,13 +9,14 @@ const APP_PATH = Resolve("../app/bin/app.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
+    press_delay: 500,
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
     //,X11: true
 };
 
-jest.setTimeout(15000)
+jest.setTimeout(20000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
@@ -140,7 +141,7 @@ describe('Basic checks', function () {
             const respRequest = app.showAddressAndPubKey(path);
 
             // We need to wait until the app responds to the APDU
-            await Zemu.sleep(2000);
+            await Zemu.sleep(4000);
 
             // Now navigate the address / path
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
