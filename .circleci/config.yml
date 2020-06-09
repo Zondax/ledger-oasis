@@ -43,8 +43,6 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init --recursive
-      - store_artifacts:
-          path: /home/circleci/repo/tests_zemu/snapshots-tmp/
       - run:
           name: Install node + yarn
           command: |

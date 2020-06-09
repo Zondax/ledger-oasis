@@ -17,7 +17,7 @@ const sim_options = {
 };
 const VOTE_SLEEP = 500;
 
-jest.setTimeout(20000)
+jest.setTimeout(30000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
