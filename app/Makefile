@@ -38,11 +38,13 @@ ifeq ($(COIN),oasis)
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'"
+SCRIPT_LD:=$(CURDIR)/script_con.ld
 
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "474'/474'"
+SCRIPT_LD:=$(CURDIR)/script_val.ld
 
 else
 define error_message
@@ -58,7 +60,6 @@ endif
 APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path $(APPPATH)
 
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-SCRIPT_LD:=$(CURDIR)/script.ld
 ICONNAME:=$(CURDIR)/nanos_icon.gif
 endif
 

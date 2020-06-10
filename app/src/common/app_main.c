@@ -27,6 +27,7 @@
 #include "crypto.h"
 #include "coin.h"
 #include "zxmacros.h"
+#include "vote.h"
 
 unsigned char G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 
@@ -215,7 +216,13 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     view_sign_show();
                     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
-                    app_sign();
+                    if(vote_state.isInitialized) {
+                        app_sign();
+                    } else {
+                        CHECK_APP_CANARY()
+                        view_sign_show();
+                        *flags |= IO_ASYNCH_REPLY;
+                    }
 #else
 #error "APP MODE IS NOT SUPPORTED"
 #endif
@@ -282,6 +289,9 @@ void app_init() {
     USB_power(0);
     USB_power(1);
     view_idle_show(0);
+#ifdef APP_VALIDATOR
+    vote_state_reset();
+#endif
 }
 
 #pragma clang diagnostic push

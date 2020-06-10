@@ -25,6 +25,7 @@ const char context_prefix_entity[] = "oasis-core/registry: register entity";
 
 parser_error_t parser_init_context(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize) {
     ctx->offset = 0;
+    ctx->lastConsumed = 0;
 
     if (bufferSize == 0 || buffer == NULL) {
         // Not available, use defaults
@@ -652,6 +653,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
 
     return parser_ok;
 }
+
 
 parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
     CborValue it;

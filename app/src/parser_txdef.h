@@ -20,6 +20,7 @@
 #include <cbor.h>
 #include <coin.h>
 #include <zxtypes.h>
+#include <vote.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -147,6 +148,7 @@ typedef struct {
     union {
         oasis_tx_t tx;
         oasis_entity_t entity;
+        oasis_tx_vote_t voteTx;
     } oasis;
 
     oasis_blob_type_e type;

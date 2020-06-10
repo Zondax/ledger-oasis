@@ -21,8 +21,29 @@
 #include "apdu_codes.h"
 #include <os_io_seproxyhal.h>
 #include "coin.h"
+#include "vote.h"
+#include "vote_fsm.h"
+#include "stdbool.h"
 
 void app_sign() {
+
+#ifdef APP_VALIDATOR
+    //If vote_state is not initialized, set new valid vote
+    if(!vote_state.isInitialized) {
+        vote_state.vote = vote;
+        vote_state.isInitialized = true;
+        set_code(G_io_apdu_buffer, 0, APDU_CODE_CONDITIONS_NOT_SATISFIED);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+        return;
+    }
+
+    if (!try_state_transition()) {
+        set_code(G_io_apdu_buffer, 0, APDU_CODE_COMMAND_NOT_ALLOWED);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+        return;
+    }
+#endif
+
     uint8_t *signature = G_io_apdu_buffer;
 
     const uint8_t *message = tx_get_buffer() + CRYPTO_BLOB_SKIP_BYTES;

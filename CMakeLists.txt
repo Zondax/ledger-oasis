@@ -43,10 +43,13 @@ file(GLOB_RECURSE LIB_SRC
         #########
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_consumer.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_validator.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bech32.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/segwit_addr.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib/vote_fsm.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib/vote.c
         )
 
 add_library(app_lib STATIC

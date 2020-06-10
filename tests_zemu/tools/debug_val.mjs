@@ -2,7 +2,8 @@ import Zemu from "@zondax/zemu";
 import Oasis from "@zondax/ledger-oasis";
 import path from "path";
 
-const APP_PATH = path.resolve(`./../../app/bin/app.elf`);
+const APP_PATH = path.resolve(`./../../app/bin/app_val.elf`);
+const VOTE_SLEEP = 500;
 
 const seed = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const SIM_OPTIONS = {
@@ -28,7 +29,7 @@ async function beforeEnd() {
 async function debugScenario(sim, app) {
     // Here you can customize what you want to do :)
 
-    const path = [44, 474, 5, 0x80000000, 0x80000003];
+    const path = [474, 474, 5, 0x80000000, 0x80000003];
     const context = "oasis-core/consensus: tx for chain testing";
 
     const txBlob1 = Buffer.from("210801110500000000000000190000000000000000220b088092b8c398feffffff01", "hex",);
@@ -39,15 +40,20 @@ async function debugScenario(sim, app) {
     const txBlob6 = Buffer.from("210801110500000000000000190500000000000000220b088092b8c398feffffff01", "hex",);
 
     let signatureResponse = await app.sign(path, context, txBlob1);
-    console.log(signatureResponse)
+    console.log(signatureResponse);
+    await sleep(VOTE_SLEEP);
     signatureResponse = await app.sign(path, context, txBlob2);
-    console.log(signatureResponse)
+    console.log(signatureResponse);
+    await sleep(VOTE_SLEEP);
     signatureResponse = await app.sign(path, context, txBlob3);
-    console.log(signatureResponse)
+    console.log(signatureResponse);
+    await sleep(VOTE_SLEEP);
     signatureResponse = await app.sign(path, context, txBlob4);
-    console.log(signatureResponse)
+    console.log(signatureResponse);
+    await sleep(VOTE_SLEEP);
     signatureResponse = await app.sign(path, context, txBlob5);
-    console.log(signatureResponse)
+    console.log(signatureResponse);
+    await sleep(VOTE_SLEEP);
     signatureResponse = await app.sign(path, context, txBlob6);
     console.log(signatureResponse)
 }
@@ -76,6 +82,10 @@ async function main() {
         await sim.close();
         await beforeEnd();
     }
+}
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 (async () => {
