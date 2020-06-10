@@ -23,7 +23,7 @@ vote_state_t vote_state;
 vote_t vote;
 
 void vote_state_reset() {
-    explicit_bzero(&vote_state, sizeof(vote_state_t));
+    MEMZERO(&vote_state, sizeof(vote_state_t));
 }
 
 
