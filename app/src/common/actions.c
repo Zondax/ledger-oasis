@@ -21,10 +21,13 @@
 #include "apdu_codes.h"
 #include <os_io_seproxyhal.h>
 #include "coin.h"
+#include "stdbool.h"
+
+#ifdef APP_VALIDATOR
 #include "vote.h"
 #include "vote_fsm.h"
-#include "stdbool.h"
 #include "parser_impl.h"
+#endif
 
 void app_sign() {
 

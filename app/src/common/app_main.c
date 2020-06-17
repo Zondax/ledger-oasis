@@ -27,8 +27,11 @@
 #include "crypto.h"
 #include "coin.h"
 #include "zxmacros.h"
+
+#ifdef APP_VALIDATOR
 #include "vote.h"
 #include "parser_impl.h"
+#endif
 
 unsigned char G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 
