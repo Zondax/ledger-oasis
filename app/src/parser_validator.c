@@ -237,11 +237,28 @@ __Z_INLINE parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
-    CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
+    CHECK_PARSER_ERR(_extractContextSuffixForValidator(&parser_tx_obj))
+
+    switch (parser_tx_obj.type) {
+        case consensusType:
+            CHECK_PARSER_ERR(readVoteTx(ctx, &parser_tx_obj))
+            break;
+        case nodeType:
+            //Do not parse cbor encoded Tx, for now
+            break;
+        default:
+            return parser_context_unknown_prefix;
+    }
+
     return parser_ok;
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
+
+    if(parser_tx_obj.type == nodeType) {
+        //We don't validate anything, for now
+        return parser_ok;
+    }
 
     // Initialize vote values
     vote.Type = 0;
