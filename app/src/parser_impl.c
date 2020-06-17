@@ -22,6 +22,8 @@
 parser_tx_t parser_tx_obj;
 const char context_prefix_tx[] = "oasis-core/consensus: tx for chain ";
 const char context_prefix_entity[] = "oasis-core/registry: register entity";
+const char context_prefix_node[] = "oasis-core/registry: register node";
+const char context_prefix_consensus[] = "oasis-core/consensus";
 
 parser_error_t parser_init_context(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize) {
     ctx->offset = 0;
@@ -570,6 +572,10 @@ const char *_context_expected_prefix(const parser_tx_t *v) {
             return context_prefix_tx;
         case entityType:
             return context_prefix_entity;
+        case nodeType:
+            return context_prefix_node;
+        case consensusType:
+            return context_prefix_consensus;
         default:
             return NULL;
     }
@@ -598,6 +604,40 @@ parser_error_t _extractContextSuffix(parser_tx_t *v) {
     if (strncmp(expectedPrefix, (char *) v->context.ptr, strlen(expectedPrefix)) != 0) {
         return parser_context_mismatch;
     }
+
+    if (v->context.len > strlen(expectedPrefix)) {
+        v->context.suffixPtr = v->context.ptr + strlen(expectedPrefix);
+        v->context.suffixLen = v->context.len - strlen(expectedPrefix);
+    }
+
+    return parser_ok;
+}
+
+parser_error_t _extractContextSuffixForValidator(parser_tx_t *v) {
+    v->context.suffixPtr = NULL;
+    v->context.suffixLen = 0;
+
+    // Check all bytes in context as ASCII within 32..127
+    for (uint8_t i = 0; i < v->context.len; i++) {
+        uint8_t c = *(v->context.ptr + i);
+        if (c < 32 || c > 127) {
+            return parser_context_invalid_chars;
+        }
+    }
+
+    if (strncmp(context_prefix_consensus, (char *) v->context.ptr, strlen(context_prefix_consensus)) == 0) {
+        v->type = consensusType;
+    } else {
+        if (strncmp(context_prefix_node, (char *) v->context.ptr, strlen(context_prefix_node)) == 0) {
+            v->type = nodeType;
+        } else {
+            return parser_context_unknown_prefix;
+        }
+    }
+
+    const char *expectedPrefix = _context_expected_prefix(v);
+    if (expectedPrefix == NULL)
+        return parser_context_unknown_prefix;
 
     if (v->context.len > strlen(expectedPrefix)) {
         v->context.suffixPtr = v->context.ptr + strlen(expectedPrefix);

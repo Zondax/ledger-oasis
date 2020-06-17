@@ -139,7 +139,9 @@ typedef struct {
 typedef enum {
     unknownType,
     txType,
-    entityType
+    entityType,
+    nodeType,
+    consensusType
 } oasis_blob_type_e;
 
 typedef struct {
