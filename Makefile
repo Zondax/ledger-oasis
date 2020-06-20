@@ -31,7 +31,7 @@ default:
 	$(MAKE) -C app
 %:
 	$(info "Calling app Makefile for target $@")
-	COIN=$(COIN) $(MAKE) -C app
+	COIN=$(COIN) $(MAKE) -C app $@
 
 endif
 
