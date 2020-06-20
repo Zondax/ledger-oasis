@@ -25,6 +25,8 @@ extern "C" {
 
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
 
+uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey);
+
 uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t bufferLen);
 
 uint16_t crypto_sign(uint8_t *signature,

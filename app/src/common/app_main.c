@@ -203,10 +203,14 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     if (!process_chunk(tx, rx))
                         THROW(APDU_CODE_OK);
 
+                    zemu_log("-- sign request\n");
+
                     CHECK_APP_CANARY()
 
                     const char *error_msg = tx_parse();
+                    zemu_log("--- tx parsed : Check CANARY\n");
                     CHECK_APP_CANARY()
+                    zemu_log("--- tx parsed\n");
 
                     if (error_msg != NULL) {
                         int error_msg_length = strlen(error_msg);

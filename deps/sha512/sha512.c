@@ -258,15 +258,15 @@ static void mbedtls_sha512_update(mbedtls_sha512_context *ctx,
 
     if (ilen == 0) return;
 
-    left = (unsigned int)(ctx->total[0] & 0x7F);
+    left = (unsigned int) (ctx->total[0] & 0x7F);
     fill = 128 - left;
 
-    ctx->total[0] += (uint64_t)ilen;
+    ctx->total[0] += (uint64_t) ilen;
 
-    if (ctx->total[0] < (uint64_t)ilen) ctx->total[1]++;
+    if (ctx->total[0] < (uint64_t) ilen) ctx->total[1]++;
 
     if (left && ilen >= fill) {
-        memcpy((void *)(ctx->buffer + left), input, fill);
+        memcpy((void *) (ctx->buffer + left), input, fill);
         mbedtls_sha512_process(ctx, ctx->buffer);
         input += fill;
         ilen -= fill;
@@ -279,16 +279,16 @@ static void mbedtls_sha512_update(mbedtls_sha512_context *ctx,
         ilen -= 128;
     }
 
-    if (ilen > 0) memcpy((void *)(ctx->buffer + left), input, ilen);
+    if (ilen > 0) memcpy((void *) (ctx->buffer + left), input, ilen);
 }
 
 static const unsigned char sha512_padding[128] = {
         0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 /*
  * SHA-512 final digest
@@ -305,7 +305,7 @@ static void mbedtls_sha512_finish(mbedtls_sha512_context *ctx,
     PUT_UINT64_BE(high, msglen, 0);
     PUT_UINT64_BE(low, msglen, 8);
 
-    last = (size_t)(ctx->total[0] & 0x7F);
+    last = (size_t) (ctx->total[0] & 0x7F);
     padn = (last < 112) ? (112 - last) : (240 - last);
 
     mbedtls_sha512_update(ctx, sha512_padding, padn);
@@ -331,5 +331,17 @@ void SHA512_256(const uint8_t *in, size_t n, uint8_t out[SHA512_DIGEST_LENGTH]) 
     mbedtls_sha512_starts(&ctx);
     mbedtls_sha512_update(&ctx, in, n);
     mbedtls_sha512_finish(&ctx, out);
-    secure_wipe((uint8_t *)&ctx, sizeof(ctx));
+    secure_wipe((uint8_t *) &ctx, sizeof(ctx));
+}
+
+void SHA512_256_with_context(const uint8_t *in_ctx, size_t n_ctx,
+                             const uint8_t *in, size_t n, uint8_t out[SHA512_DIGEST_LENGTH]) {
+    mbedtls_sha512_context ctx;
+
+    mbedtls_sha512_init(&ctx);
+    mbedtls_sha512_starts(&ctx);
+    mbedtls_sha512_update(&ctx, in_ctx, n_ctx);
+    mbedtls_sha512_update(&ctx, in, n);
+    mbedtls_sha512_finish(&ctx, out);
+    secure_wipe((uint8_t *) &ctx, sizeof(ctx));
 }
