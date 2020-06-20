@@ -22,17 +22,23 @@ jobs:
       # Docker entrypoint is not considered
       - run: git submodule update --init --recursive
       - run:
-          name: Build Consumer app
+          name: Build Standard app
           command: |
             source /home/zondax/.cargo/env
             cd /home/zondax/project
             make
       - run:
+          name: Clean
+          command: |
+            source /home/zondax/.cargo/env
+            cd /home/zondax/project
+            make clean
+      - run:
           name: Build Validator app
           command: |
             source /home/zondax/.cargo/env
             cd /home/zondax/project
-            make build_val
+            COIN=oasis_validator make
 
   test_zemu:
     machine:
@@ -43,6 +49,10 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init --recursive
+      - run:
+          name: Build Ledger app
+          command: |
+            make
       - run:
           name: Install node + yarn
           command: |
@@ -55,10 +65,6 @@ jobs:
             nvm use 13.12.0
             make zemu_install
       - run:
-          name: Build Ledger Consumer app
-          command: |
-            make
-      - run:
           name: Run zemu tests for Consumer app
           command: |
             nvm use 13.12.0
@@ -66,7 +72,7 @@ jobs:
       - run:
           name: Build Ledger Validator app
           command: |
-            make build_val
+            COIN=oasis_validator make
       - run:
           name: Run zemu tests for Validator app
           command: |
@@ -107,7 +113,7 @@ jobs:
           command: |
             source /home/zondax/.cargo/env
             cd /home/zondax/project
-            make
+            COIN=oasis_validator make
       - run:
           name: Rename installer
           command: cp /home/zondax/project/app/pkg/zxtool.sh /home/zondax/project/app/pkg/install_validator_app.sh
@@ -132,7 +138,9 @@ workflows:
                 - master
       - build_package_validator:
           requires:
-            - build_package
+            - build
+            - build_ledger
+            - test_zemu
           filters:
             branches:
               only:
