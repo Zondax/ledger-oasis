@@ -31,10 +31,10 @@ default:
 	$(MAKE) -C app
 %:
 	$(info "Calling app Makefile for target $@")
-	COIN=$(COIN) $(MAKE) -C app
+	COIN=$(COIN) $(MAKE) -C app $@
 
 endif
 
 build_val: COIN=oasis_validator
 build_val: build
-	mv $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
+	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf

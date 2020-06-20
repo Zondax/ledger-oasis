@@ -20,6 +20,8 @@ ifeq ($(BOLOS_SDK),)
 $(error BOLOS_SDK is not set)
 endif
 
+# DEFINES += ZEMU_LOGGING
+
 MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
 include $(BOLOS_SDK)/Makefile.defines
@@ -29,7 +31,7 @@ COIN=oasis
 endif
 
 APPVERSION_M=1
-APPVERSION_N=3
+APPVERSION_N=4
 APPVERSION_P=0
 
 $(info COIN  = [$(COIN)])
@@ -121,7 +123,7 @@ DEFINES       += HAVE_UX_FLOW
 SDK_SOURCE_PATH  += lib_ux
 else
 # Assume Nano S
-DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=128
+DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=64
 DEFINES       += HAVE_BOLOS_UX COMPLIANCE_UX_160 HAVE_UX_LEGACY HAVE_UX_FLOW
 endif
 

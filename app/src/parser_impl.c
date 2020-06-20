@@ -611,8 +611,12 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
+    zemu_log("--- _read START\n");
+
     // validate CBOR canonical order before even trying to parse
     CHECK_CBOR_ERR(cbor_value_validate(&it, CborValidateCanonicalFormat))
+
+    zemu_log("--- _read::cbor_value_validate OK\n");
 
     if (cbor_value_at_end(&it)) {
         return parser_unexpected_buffer_end;
@@ -626,17 +630,23 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue idField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&it, "id", &idField))
 
+    zemu_log("--- _read::cbor_value_map_find_value OK\n");
+
     // default Unknown type
     v->type = unknownType;
     if (cbor_value_get_type(&idField) == CborInvalidType) {
         // READ TX
+        zemu_log("--- _read::_readTx START\n");
         CHECK_PARSER_ERR(_readTx(v, &it))
+        zemu_log("--- _read::_readTx OK\n");
         v->type = txType;
     } else {
         // READ ENTITY
+        zemu_log("--- _read::_readEntity START\n");
         MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
         parser_setCborState(&v->oasis.entity.cborState, &parser, &it);
         CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
+        zemu_log("--- _read::_readEntity OK\n");
         v->type = entityType;
     }
 
@@ -649,7 +659,9 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     }
 
     // Check prefix and enable/disable context
+    zemu_log("--- _read::_extractContextSuffix START\n");
     CHECK_PARSER_ERR(_extractContextSuffix(v))
+    zemu_log("--- _read::_extractContextSuffix OK\n");
 
     return parser_ok;
 }
