@@ -149,9 +149,16 @@ uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
         return 0;
     }
 
-    // extract pubkey and encode as bech32
+    // extract pubkey
     char *addr = (char *) (buffer + PK_LEN_ED25519);
     crypto_extractPublicKey(hdPath, buffer, buffer_len);
+
+    // TODO:
+    //#define COIN_ADDRESS_VERSION    0
+    //#define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
+    //    1 byte <context-version> + first 20 bytes of SHA512-256(<context-identifier> || <pubkey>)
+
+    //  and encode as bech32
     bech32EncodeFromBytes(addr, buffer_len - PK_LEN_ED25519, COIN_HRP, buffer, PK_LEN_ED25519);
     return PK_LEN_ED25519 + strlen(addr);
 }
