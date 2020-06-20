@@ -37,7 +37,6 @@
     "jest": "24",
     "jest-serial-runner": "^1.1.0 ",
     "crypto-js": "3.1.9-1",
-    "tweetnacl": "^1.0.3",
     "js-sha512": "^0.8.0",
     "ed25519-supercop": "^1.2.0"
   }

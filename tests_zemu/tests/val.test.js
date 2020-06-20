@@ -2,8 +2,6 @@ import jest, {expect} from "jest";
 import Zemu from "@zondax/zemu";
 import {OasisValidatorApp} from "@zondax/ledger-oasis";
 
-const tweetnacl = require("tweetnacl");
-
 const Resolve = require("path").resolve;
 const APP_PATH = Resolve("../app/bin/app_val.elf");
 
