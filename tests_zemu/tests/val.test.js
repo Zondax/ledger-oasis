@@ -81,7 +81,6 @@ describe('Basic checks', function () {
             await sim.clickRight();
             await sim.clickRight();
             await sim.clickRight();
-            await sim.clickRight();
             await sim.clickBoth();
 
             let signatureResponse = await signatureRequest;

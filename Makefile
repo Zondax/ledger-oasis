@@ -37,4 +37,4 @@ endif
 
 build_val: COIN=oasis_validator
 build_val: build
-	mv $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
+	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
