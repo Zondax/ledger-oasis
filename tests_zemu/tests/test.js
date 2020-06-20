@@ -13,7 +13,7 @@ const sim_options = {
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
-    //,X11: true
+    ,X11: true
 };
 
 jest.setTimeout(20000)
@@ -115,7 +115,7 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            const expected_bech32_address = "oasis14wjjcrwtsrp0a9hdfsm5rt6qc4e6q5qvp4e6ek3z09wr0jc0zuu8y6jf8";
+            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
             const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
@@ -150,7 +150,6 @@ describe('Basic checks', function () {
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickBoth(`${snapshotPrefixTmp}${snapshotCount++}.png`);
 
             const resp = await respRequest;
@@ -161,7 +160,7 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            const expected_bech32_address = "oasis14wjjcrwtsrp0a9hdfsm5rt6qc4e6q5qvp4e6ek3z09wr0jc0zuu8y6jf8";
+            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
             const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
@@ -200,7 +199,7 @@ describe('Basic checks', function () {
 
             // Reference window
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 7; i++) {
                 await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
             }
             await sim.clickBoth();

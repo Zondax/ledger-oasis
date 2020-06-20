@@ -19,7 +19,6 @@
 #include "zxmacros.h"
 #include "apdu_codes.h"
 #include "coin.h"
-#include "rslib.h"
 #include "sha512.h"
 
 #include <bech32.h>
@@ -28,6 +27,7 @@ uint32_t hdPath[HDPATH_LEN_DEFAULT];
 
 #if defined(TARGET_NANOS) || defined(TARGET_NANOX)
 #include "cx.h"
+#include "rslib.h"
 
 void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
     cx_ecfp_public_key_t cx_publicKey;
@@ -125,6 +125,8 @@ uint16_t crypto_sign(uint8_t *signature,
 
 #else
 
+#define CX_SHA512_SIZE 64
+
 void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
     ///////////////////////////////////////
     // THIS IS ONLY USED FOR TEST PURPOSES
@@ -144,21 +146,52 @@ uint16_t crypto_sign(uint8_t *signature,
 
 #endif
 
+typedef union {
+    //    1 byte <context-version> + first 20 bytes of SHA512-256(<context-identifier> || <pubkey>)
+    uint8_t address[21];
+    struct {
+        uint8_t version;
+        uint8_t address_truncated_hash[20];
+    };
+    struct {
+        uint8_t padding;
+        uint8_t pkHash[CX_SHA512_SIZE];
+    };
+} tmp_address_t;
+
+uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
+    tmp_address_t tmp;
+    tmp.version = COIN_ADDRESS_VERSION;
+
+    SHA512_256_with_context (
+            (uint8_t *) COIN_ADDRESS_CONTEXT, strlen(COIN_ADDRESS_CONTEXT),
+            pubkey, PK_LEN_ED25519,
+            tmp.pkHash
+    );
+
+    //  and encode as bech32
+    zxerr_t err = bech32EncodeFromBytes(
+            addr_out, addr_out_max,
+            COIN_HRP,
+            tmp.address, sizeof_field(tmp_address_t, address), 1);
+
+    if (err != zxerr_ok) {
+        return 0;
+    }
+
+    return strlen(addr_out);
+}
+
 uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
     if (buffer_len < PK_LEN_ED25519 + 50) {
         return 0;
     }
-
-    // extract pubkey
-    char *addr = (char *) (buffer + PK_LEN_ED25519);
     crypto_extractPublicKey(hdPath, buffer, buffer_len);
 
-    // TODO:
-    //#define COIN_ADDRESS_VERSION    0
-    //#define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
-    //    1 byte <context-version> + first 20 bytes of SHA512-256(<context-identifier> || <pubkey>)
+    // format pubkey as oasis bech32 address
+    char *addr_out = (char *) (buffer + PK_LEN_ED25519);
+    const uint16_t addr_out_max =  buffer_len - PK_LEN_ED25519;
+    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
 
-    //  and encode as bech32
-    bech32EncodeFromBytes(addr, buffer_len - PK_LEN_ED25519, COIN_HRP, buffer, PK_LEN_ED25519);
-    return PK_LEN_ED25519 + strlen(addr);
+    return PK_LEN_ED25519 + addr_out_len;
 }

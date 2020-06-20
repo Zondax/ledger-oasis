@@ -17,11 +17,11 @@
 #include "base64.h"
 #include <fmt/core.h>
 #include <crypto.h>
-#include <bech32.h>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <utility>
 #include <parser_impl.h>
+#include "coin_consumer.h"
 
 namespace utils {
     std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {
@@ -129,7 +129,7 @@ namespace utils {
         macaron::Base64::Decode(base64PK, pkBytes);
 
         char buffer[200];
-        bech32EncodeFromBytes(buffer, sizeof(buffer), COIN_HRP, (const uint8_t *) pkBytes.c_str(), PK_LEN_ED25519, 1);
+        crypto_encodeAddress(buffer, sizeof(buffer), (uint8_t *) pkBytes.c_str());
 
         char outBuffer[40];
         pageString(outBuffer, sizeof(outBuffer), buffer, idx, pageCount);
@@ -250,55 +250,54 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["xfer_tokens"].asString()));
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-
-            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy));
-            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy));
-            addTo(answer, "{} | Amount : ROSE {}", itemCount++, FormatAmount(txbody["xfer_tokens"].asString()));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {
             addTo(answer, "{} | Type : Burn", itemCount++);
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["burn_tokens"].asString()));
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Amount : ROSE {}", itemCount++, FormatAmount(txbody["burn_tokens"].asString()));
         }
 
         if (type == "staking.AddEscrow") {
             addTo(answer, "{} | Type : Add escrow", itemCount++);
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["escrow_tokens"].asString()));
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["escrow_account"].asString();
-            addTo(answer, "{} | Escrow [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Escrow [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
-            addTo(answer, "{} | Amount : ROSE {}", itemCount++, FormatAmount(txbody["escrow_tokens"].asString()));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.ReclaimEscrow") {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
+            addTo(answer, "{} | Shares : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["reclaim_shares"].asString()));
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["escrow_account"].asString();
-            addTo(answer, "{} | Escrow [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Escrow [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
-            addTo(answer, "{} | Shares : ROSE {}", itemCount++, FormatAmount(txbody["reclaim_shares"].asString()));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.AmendCommissionSchedule") {
             addTo(answer, "{} | Type : Amend commission schedule", itemCount++);
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
@@ -325,7 +324,7 @@ namespace utils {
         if (type == "registry.RegisterEntity") {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : ROSE {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
