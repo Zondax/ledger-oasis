@@ -99,13 +99,12 @@ jobs:
           name: Build Ledger Validator app
           command: |
             COIN=oasis_validator make
-            mv /home/zondax/project/app/bin/app.elf /home/zondax/project/app/bin/app_val.elf
+            cp /project/app/bin/app.elf /project/app/bin/app_val.elf
       - run:
           name: Run zemu tests for Validator app
           command: |
             nvm use 13.12.0
             make zemu_val_test
-
 
   build_package:
     docker:
