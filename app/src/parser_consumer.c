@@ -458,11 +458,10 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_printSignature(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.raw_signature,
                             outVal, outValLen, pageIdx, pageCount);
-
                 default:
                     return parser_getItemEntity(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
-                            displayIdx - 2,
+                            displayIdx - 5,
                             outKey, outKeyLen, outVal, outValLen,
                             pageIdx, pageCount);
             }

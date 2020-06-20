@@ -324,7 +324,7 @@ namespace utils {
         if (type == "registry.RegisterEntity") {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
             if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : {} {}", itemCount++, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
