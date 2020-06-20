@@ -99,7 +99,7 @@ jobs:
           name: Build Ledger Validator app
           command: |
             COIN=oasis_validator make
-            cp /project/app/bin/app.elf /project/app/bin/app_val.elf
+            cp /home/circleci/repo/app/bin/app.elf /home/circleci/repo/app/bin/app_val.elf
       - run:
           name: Run zemu tests for Validator app
           command: |
