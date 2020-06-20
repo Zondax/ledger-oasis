@@ -16,7 +16,6 @@
 
 #include <stdio.h>
 #include <zxmacros.h>
-#include <bech32.h>
 #include "parser_impl.h"
 #include "bignum.h"
 #include "parser.h"
@@ -34,7 +33,9 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
+    zemu_log("--- parser_init OK\n");
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
+    zemu_log("--- _readContext OK\n");
     return _read(ctx, &parser_tx_obj);
 }
 
@@ -51,6 +52,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     for (uint8_t idx = 0; idx < numItems; idx++) {
         uint8_t pageCount = 0;
         CHECK_PARSER_ERR(parser_getItem(ctx, idx, tmpKey, sizeof(tmpKey), tmpVal, sizeof(tmpVal), 0, &pageCount))
+        CHECK_APP_CANARY()
     }
 
     return parser_ok;
@@ -175,7 +177,11 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
+    zemu_log("--- parser_printPublicKey | crypto_encodeAddress\n");
+    CHECK_APP_CANARY();
     uint16_t addrLen = crypto_encodeAddress(outBuffer, sizeof(outBuffer), (uint8_t *) pk);
+    zemu_log("--- parser_printPublicKey | crypto_encodeAddress OK\n");
+    CHECK_APP_CANARY();
 
     if (addrLen == 0) {
         return parser_invalid_address;
@@ -241,6 +247,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
     // Variable items
     switch (parser_tx_obj.oasis.tx.method) {
         case stakingTransfer:
+            zemu_log("--- parser_getItemTx | stakingTransfer\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -271,6 +278,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case stakingBurn:
+            zemu_log("--- parser_getItemTx | stakingBurn\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -296,6 +304,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case stakingAddEscrow:
+            zemu_log("--- parser_getItemTx | stakingAddEscrow\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -326,6 +335,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case stakingReclaimEscrow:
+            zemu_log("--- parser_getItemTx | stakingReclaimEscrow\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -356,6 +366,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case stakingAmendCommissionSchedule: {
+            zemu_log("--- parser_getItemTx | stakingAmendCommissionSchedule\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -421,16 +432,19 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             break;
         }
         case registryDeregisterEntity:
+            zemu_log("--- parser_getItemTx | registryDeregisterEntity\n");
             *pageCount = 0;
             return parser_no_data;
 
         case registryUnfreezeNode:
+            zemu_log("--- parser_getItemTx | registryUnfreezeNode\n");
             if (displayIdx == 0) {
                 snprintf(outKey, outKeyLen, "Node ID");
                 return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.registryUnfreezeNode.node_id,
                                              outVal, outValLen, pageIdx, pageCount);
             }
         case registryRegisterEntity: {
+            zemu_log("--- parser_getItemTx | registryRegisterEntity\n");
             switch (displayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Type");
@@ -519,6 +533,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
                     snprintf(outKey, outKeyLen, "Type");
                     snprintf(outVal, outValLen, "Entity signing");
                 } else {
+                    zemu_log("--- parser_getItemEntity\n");
                     err = parser_getItemEntity(&parser_tx_obj.oasis.entity,
                                                displayIdx - 1,
                                                outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);

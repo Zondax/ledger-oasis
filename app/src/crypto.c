@@ -170,7 +170,7 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     );
 
     //  and encode as bech32
-    zxerr_t err = bech32EncodeFromBytes(
+    const zxerr_t err = bech32EncodeFromBytes(
             addr_out, addr_out_max,
             COIN_HRP,
             tmp.address, sizeof_field(tmp_address_t, address), 1);

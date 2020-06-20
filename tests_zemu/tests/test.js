@@ -2,7 +2,8 @@ import jest, {expect} from "jest";
 import Zemu from "@zondax/zemu";
 import {OasisApp} from "@zondax/ledger-oasis";
 
-const tweetnacl = require("tweetnacl");
+const ed25519 = require("ed25519-supercop");
+const sha512 = require("js-sha512");
 
 const Resolve = require("path").resolve;
 const APP_PATH = Resolve("../app/bin/app.elf");
@@ -126,6 +127,19 @@ describe('Basic checks', function () {
         }
     });
 
+    it('hash', async function () {
+        const txBlob = Buffer.from(
+            "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+            "base64",
+        );
+        const context = "oasis-core/consensus: tx for chain testing";
+        const hasher = sha512.sha512_256.update(context)
+        hasher.update(txBlob);
+        const hash = Buffer.from(hasher.hex(), "hex")
+        console.log(hash.toString("hex"))
+        expect(hash.toString("hex")).toEqual("86f53ebf15a09c4cd1cf7a52b8b381d74a2142996aca20690d2e750c1d262ec0")
+    });
+
     it('show address', async function () {
         const snapshotPrefixGolden = "snapshots/show-address/";
         const snapshotPrefixTmp = "snapshots-tmp/show-address/";
@@ -212,13 +226,13 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
             // Now verify the signature
-            // FIXME: We cannot verify Zemu/Speculos signatures are Ed25519 is not yet supported in emulation
-            // Related to https://github.com/LedgerHQ/speculos/pull/56
-            // const valid = ed25519.verify(responseSign.signature, msgHash, responsePk.pk);
-            // expect(valid).toEqual(true);
-
-
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
         } finally {
             await sim.close();
         }
