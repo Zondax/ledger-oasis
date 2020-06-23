@@ -48,6 +48,10 @@ parser_error_t _getCommissionBoundStepAtIndex(const parser_context_t *c,
 
 parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_t *node, uint8_t index);
 
+parser_error_t _extractContextSuffix(parser_tx_t *v);
+
+parser_error_t _extractContextSuffixForValidator(parser_tx_t *v);
+
 #ifdef __cplusplus
 }
 #endif
