@@ -10,8 +10,8 @@ const sim_options = {
     press_delay: 500,
     logging: true,
     start_delay: 3000,
-    custom: `-s "${APP_SEED}"`
-    //,X11: true
+    custom: `-s "${APP_SEED}"`,
+    X11: true
 };
 const VOTE_SLEEP = 500;
 
