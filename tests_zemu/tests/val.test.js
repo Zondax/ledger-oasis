@@ -56,9 +56,6 @@ describe('Basic checks', function () {
     });
 
     it('validator sign basic', async function () {
-        const snapshotPrefixGolden = "snapshots/sign-basic/";
-        const snapshotPrefixTmp = "snapshots-tmp/sign-basic/";
-        let snapshotCount = 0;
 
         const sim = new Zemu(APP_PATH);
         try {
@@ -66,7 +63,7 @@ describe('Basic checks', function () {
             const app = new OasisValidatorApp(sim.getTransport());
 
             const path = [474, 474, 5, 0x80000000, 0x80000003];
-            const context = "oasis-core/consensus: tx for chain testing";
+            const context = "oasis-core/tendermint";
 
             const txBlob0 = Buffer.from("210801110500000000000000190000000000000000220b088092b8c398feffffff01", "hex",);
             const txBlob1 = Buffer.from("210801110500000000000000190100000000000000220b088092b8c398feffffff01", "hex",);
