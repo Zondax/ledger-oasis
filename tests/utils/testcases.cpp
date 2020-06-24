@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <utility>
 #include <parser_impl.h>
-#include "coin_consumer.h"
+#include "consumer/coin_consumer.h"
 
 namespace utils {
     std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {

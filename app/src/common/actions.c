@@ -24,8 +24,8 @@
 #include "stdbool.h"
 
 #ifdef APP_VALIDATOR
-#include "vote.h"
-#include "vote_fsm.h"
+#include "validator/vote.h"
+#include "validator/vote_fsm.h"
 #include "parser_impl.h"
 #endif
 

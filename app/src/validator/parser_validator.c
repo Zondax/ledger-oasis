@@ -19,13 +19,13 @@
 #include <stdio.h>
 #include <zxmacros.h>
 #include <bech32.h>
+#include <stdbool.h>
 #include "parser_impl.h"
 #include "bignum.h"
 #include "parser.h"
 #include "parser_txdef.h"
 #include "coin.h"
 #include "vote_fsm.h"
-
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function
@@ -47,6 +47,7 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 
 #define FIELD_NUM(x) ((uint8_t)((x) >> 3u))
 #define WIRE_TYPE(x) ((uint8_t)((x) & 0x7u))
+
 
 __Z_INLINE parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;
@@ -79,7 +80,7 @@ __Z_INLINE parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) 
     return parser_unexpected_buffer_end;
 }
 
- __Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
+__Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;
 
     const uint8_t *p = ctx->buffer + offset;

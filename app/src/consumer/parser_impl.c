@@ -17,9 +17,12 @@
 #include <zxmacros.h>
 #include "parser_impl.h"
 #include "parser_txdef.h"
+
+#if defined(APP_CONSUMER)
 #include "cbor_helper.h"
 
 parser_tx_t parser_tx_obj;
+
 const char context_prefix_tx[] = "oasis-core/consensus: tx for chain ";
 const char context_prefix_entity[] = "oasis-core/registry: register entity";
 const char context_prefix_node[] = "oasis-core/registry: register node";
@@ -894,3 +897,5 @@ parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_
 
     return parser_ok;
 }
+
+#endif

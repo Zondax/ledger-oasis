@@ -14,6 +14,8 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_CONSUMER)
+
 #include <stdio.h>
 #include <zxmacros.h>
 #include "parser_impl.h"
@@ -21,8 +23,6 @@
 #include "parser.h"
 #include "parser_txdef.h"
 #include "coin.h"
-
-#if defined(APP_CONSUMER)
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function

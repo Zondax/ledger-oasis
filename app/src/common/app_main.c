@@ -29,7 +29,7 @@
 #include "zxmacros.h"
 
 #ifdef APP_VALIDATOR
-#include "vote.h"
+#include "validator/vote.h"
 #include "parser_impl.h"
 #endif
 
