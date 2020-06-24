@@ -124,6 +124,12 @@ namespace utils {
         return std::string(outBuffer);
     }
 
+    std::string FormatAddress(const std::string &address, uint8_t idx, uint8_t *pageCount) {
+        char outBuffer[40];
+        pageString(outBuffer, sizeof(outBuffer), address.c_str(), idx, pageCount);
+        return std::string(outBuffer);
+    }
+
     std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t *pageCount) {
         std::string pkBytes;
         macaron::Base64::Decode(base64PK, pkBytes);
@@ -255,8 +261,8 @@ namespace utils {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(txbody["xfer_to"].asString(), 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(txbody["xfer_to"].asString(), 1, &dummy));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["xfer_to"].asString(), 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["xfer_to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {

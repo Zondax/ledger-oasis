@@ -20,11 +20,23 @@ ifeq ($(BOLOS_SDK),)
 $(error BOLOS_SDK is not set)
 endif
 
-# DEFINES += ZEMU_LOGGING
-
 MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
+all: bin/app.elf
+	@echo "#!/usr/bin/env bash" > $(CURDIR)/pkg/zxtool.sh
+	@echo "APPNAME=\"${APPNAME}\"" >> $(CURDIR)/pkg/zxtool.sh
+	@echo "APPVERSION=\"${APPVERSION}\"" >> $(CURDIR)/pkg/zxtool.sh
+	@echo "APPPATH=\""${APPPATH}"\"" >> $(CURDIR)/pkg/zxtool.sh
+	@echo "LOAD_PARAMS=\"${COMMON_LOAD_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
+	@echo "DELETE_PARAMS=\"${COMMON_DELETE_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
+	@echo "APPHEX=\"" >> $(CURDIR)/pkg/zxtool.sh
+	@cat $(CURDIR)/bin/app.hex >> $(CURDIR)/pkg/zxtool.sh
+	@echo "\"" >> $(CURDIR)/pkg/zxtool.sh
+	@cat $(CURDIR)/../deps/ledger-zxlib/scripts/template.sh >> $(CURDIR)/pkg/zxtool.sh
+	@chmod +x $(CURDIR)/pkg/zxtool.sh
+
 include $(BOLOS_SDK)/Makefile.defines
+#DEFINES += ZEMU_LOGGING
 
 ifndef COIN
 COIN=oasis
@@ -47,6 +59,10 @@ DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "474'/474'"
 SCRIPT_LD:=$(CURDIR)/script_val.ld
+
+ifeq ($(TARGET_NAME),TARGET_NANOX)
+$(error "Oasis Validator App is not supported in Nano X")
+endif
 
 else
 define error_message
@@ -73,39 +89,25 @@ ifndef ICONNAME
 $(error ICONNAME is not set)
 endif
 
-all: default
-	@echo "#!/usr/bin/env bash" > $(CURDIR)/pkg/zxtool.sh
-	@echo "APPNAME=\"${APPNAME}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPVERSION=\"${APPVERSION}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPPATH=\""${APPPATH}"\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "LOAD_PARAMS=\"${COMMON_LOAD_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "DELETE_PARAMS=\"${COMMON_DELETE_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPHEX=\"" >> $(CURDIR)/pkg/zxtool.sh
-	@cat $(CURDIR)/bin/app.hex >> $(CURDIR)/pkg/zxtool.sh
-	@echo "\"" >> $(CURDIR)/pkg/zxtool.sh
-	@cat $(CURDIR)/../deps/ledger-zxlib/scripts/template.sh >> $(CURDIR)/pkg/zxtool.sh
-	@chmod +x $(CURDIR)/pkg/zxtool.sh
-
 ############
 # Platform
 
-DEFINES   += UNUSED\(x\)=\(void\)x
-DEFINES   += PRINTF\(...\)=
+DEFINES       += UNUSED\(x\)=\(void\)x
+DEFINES       += PRINTF\(...\)=
 
 APPVERSION=$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)
-DEFINES   += APPVERSION=\"$(APPVERSION)\"
+DEFINES       += APPVERSION=\"$(APPVERSION)\"
 
-DEFINES += OS_IO_SEPROXYHAL
-DEFINES += HAVE_BAGL HAVE_SPRINTF
-DEFINES += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64 HAVE_USB_APDU
+DEFINES       += OS_IO_SEPROXYHAL
+DEFINES       += HAVE_BAGL HAVE_SPRINTF
+DEFINES       += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64 HAVE_USB_APDU
 
-DEFINES += LEDGER_MAJOR_VERSION=$(APPVERSION_M) LEDGER_MINOR_VERSION=$(APPVERSION_N) LEDGER_PATCH_VERSION=$(APPVERSION_P)
+DEFINES       += LEDGER_MAJOR_VERSION=$(APPVERSION_M) LEDGER_MINOR_VERSION=$(APPVERSION_N) LEDGER_PATCH_VERSION=$(APPVERSION_P)
 
-DEFINES   += USB_SEGMENT_SIZE=64
-DEFINES   += HAVE_BOLOS_APP_STACK_CANARY
+DEFINES       += USB_SEGMENT_SIZE=64
+DEFINES       += HAVE_BOLOS_APP_STACK_CANARY
 
-WEBUSB_URL     = www.ledgerwallet.com
-DEFINES       += HAVE_WEBUSB WEBUSB_URL_SIZE_B=$(shell echo -n $(WEBUSB_URL) | wc -c) WEBUSB_URL=$(shell echo -n $(WEBUSB_URL) | sed -e "s/./\\\'\0\\\',/g")
+DEFINES       += HAVE_WEBUSB WEBUSB_URL_SIZE_B=0 WEBUSB_URL=""
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=300
@@ -119,8 +121,6 @@ DEFINES       += HAVE_BAGL_FONT_OPEN_SANS_LIGHT_16PX
 
 DEFINES       += HAVE_UX_FLOW
 
-#SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
-SDK_SOURCE_PATH  += lib_ux
 else
 # Assume Nano S
 DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=64
@@ -182,24 +182,27 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
 #SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
 SDK_SOURCE_PATH  += lib_ux
 
+.PHONY: rust
 rust:
 	@echo "No rust code"
 #	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
 
+# Before linking, we need to be sure rust lib is there
+bin/app.elf: rust
+
+.PHONY: rust_clean
 rust_clean:
 	@echo "No rust code"
 #	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
 
 # load, delete and listvariants are provided to comply with Ledger requirements
+.PHONY: load
 load:
 	python -m ledgerblue.loadApp $(APP_LOAD_PARAMS)
 
+.PHONY: delete
 delete:
 	python -m ledgerblue.deleteApp $(COMMON_DELETE_PARAMS)
-
-.PHONY: rust
-
-all: default rust
 
 # Import generic rules from the SDK
 include $(BOLOS_SDK)/Makefile.rules
@@ -207,6 +210,7 @@ include $(BOLOS_SDK)/Makefile.rules
 #add dependency on custom makefile filename
 dep/%.d: %.c Makefile
 
+.PHONY: listvariants
 listvariants:
 	@echo VARIANTS COIN oasis
 	@echo VARIANTS COIN oasis_validator
