@@ -225,6 +225,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                         {
                             if(vote_state.isInitialized) {
                                 app_sign();
+                                view_status_show();
                             } else {
                                 CHECK_APP_CANARY()
                                 view_sign_show();
@@ -234,7 +235,6 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                         	break;
                         case nodeType:
                             app_sign();
-                            view_status_show();
                             break;
                         default:
                             THROW(APDU_CODE_BAD_KEY_HANDLE);
