@@ -31,8 +31,8 @@ extern "C" {
 
 typedef struct {
     uint8_t Type;
-    int64_t Height;
-    int8_t Round;
+    uint64_t Height;
+    uint64_t Round;
 } vote_t;
 
 typedef struct {
@@ -43,9 +43,7 @@ typedef struct {
 typedef struct {
     const uint8_t *votePtr;
     uint16_t voteLen;
-    uint8_t type;
-    uint64_t height;
-    uint64_t round;
+    vote_t vote;
 } oasis_tx_vote_t;
 
 extern vote_state_t vote_state;

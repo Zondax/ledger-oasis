@@ -83,11 +83,11 @@ void view_status_show() {
     }
 
     // Format height
-    int64_to_str((char *) view_status_tmp, sizeof(view_status_line2), vote_state.vote.Height);
+    uint64_to_str((char *) view_status_tmp, sizeof(view_status_line2), vote_state.vote.Height);
     snprintf(view_status_line2, sizeof(view_status_line2), "H: %s", view_status_tmp);
 
     // Format Round
-    int64_to_str((char *) view_status_tmp, sizeof(view_status_line2), vote_state.vote.Round);
+    uint64_to_str((char *) view_status_tmp, sizeof(view_status_line2), vote_state.vote.Round);
     snprintf(view_status_line3, sizeof(view_status_line3), "R: %s", view_status_tmp);
 
     // Show

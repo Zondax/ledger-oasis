@@ -174,7 +174,7 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                CHECK_PARSER_ERR(readVoteType(ctx, &voteTx->type));
+                CHECK_PARSER_ERR(readVoteType(ctx, &voteTx->vote.Type));
 
                 expected_field = FIELD_HEIGHT;
                 break;
@@ -188,7 +188,7 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                CHECK_PARSER_ERR(readVoteHeight(ctx, &voteTx->height));
+                CHECK_PARSER_ERR(readVoteHeight(ctx, &voteTx->vote.Height));
 
                 expected_field = FIELD_ROUND;
                 break;
@@ -202,12 +202,12 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
                     return parser_unexpected_wire_type;
                 }
 
-                CHECK_PARSER_ERR(readVoteRound(ctx, &voteTx->round));
+                CHECK_PARSER_ERR(readVoteRound(ctx, &voteTx->vote.Round));
 
-                if (val < 0) {
+                if (voteTx->vote.Round < 0) {
                     return parser_unexpected_round_value;
                 }
-                if (val > 255) {
+                if (voteTx->vote.Round > 255) {
                     return parser_unexpected_round_value;
                 }
 
@@ -266,7 +266,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     vote.Height = 0;
 
     // Validate values
-    switch (parser_tx_obj.oasis.voteTx.type) {
+    switch (parser_tx_obj.oasis.voteTx.vote.Type) {
         case TYPE_PREVOTE:
         case TYPE_PRECOMMIT:
         case TYPE_PROPOSAL:
@@ -274,17 +274,17 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
         default:
             return parser_unexpected_type_value;
     }
-    if (parser_tx_obj.oasis.voteTx.height < 0) {
+    if (parser_tx_obj.oasis.voteTx.vote.Height < 0) {
         return parser_unexpected_height_value;
     }
-    if (parser_tx_obj.oasis.voteTx.round < 0) {
+    if (parser_tx_obj.oasis.voteTx.vote.Round < 0) {
         return parser_unexpected_height_value;
     }
 
     //All fields are good, update vote
-    vote.Type = parser_tx_obj.oasis.voteTx.type;
-    vote.Height = parser_tx_obj.oasis.voteTx.height;
-    vote.Round = parser_tx_obj.oasis.voteTx.round;
+    vote.Type = parser_tx_obj.oasis.voteTx.vote.Type;
+    vote.Height = parser_tx_obj.oasis.voteTx.vote.Height;
+    vote.Round = parser_tx_obj.oasis.voteTx.vote.Round;
 
     return parser_ok;
 }
@@ -309,7 +309,7 @@ __Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
         const char *type;
-        switch (parser_tx_obj.oasis.voteTx.type) {
+        switch (parser_tx_obj.oasis.voteTx.vote.Type) {
             case TYPE_PREVOTE:
                 type = "Prevote";
                 break;
@@ -327,14 +327,14 @@ __Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
 
     if (displayIdx == 1) {
         snprintf(outKey, outKeyLen, "Height");
-        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.height);
+        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.vote.Height);
         *pageCount = 1;
         return parser_ok;
     }
 
     if (displayIdx == 2) {
         snprintf(outKey, outKeyLen, "Round");
-        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.round);
+        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.voteTx.vote.Round);
         *pageCount = 1;
         return parser_ok;
     }
