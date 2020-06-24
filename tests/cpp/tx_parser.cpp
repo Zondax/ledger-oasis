@@ -64,8 +64,8 @@ TEST(TxParser, MissingLastByte) {
 TEST(VoteParser, BasicVote) {
     parser_context_t ctx;
 
-    std::string context = "oasis-core/consensus: tx for chain ";
-    char txString[]  = "220801110500000000000000190200000000000000220b088092b8c398feffffff01";
+    std::string context = "oasis-core/tendermint";
+    char txString[]  = "08021152560100000000002a0c08d4d7cdf70510f29ad7e1013232613633346432323234643534396238353630333861636439626461643437363834643133323632";
 
     uint8_t voteData[100];
 
