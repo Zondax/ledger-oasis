@@ -24,8 +24,6 @@
 #include "testcases.h"
 #include "hexutils.h"
 
-#ifdef APP_CONSUMER
-
 // Test some specific corner cases that may not be part of the test vectors
 TEST(TxParser, EmptyBuffer) {
     parser_context_t ctx;
@@ -56,31 +54,3 @@ TEST(TxParser, MissingLastByte) {
     auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
     ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
 }
-
-#endif
-
-#ifdef APP_VALIDATOR
-
-TEST(VoteParser, BasicVote) {
-    parser_context_t ctx;
-
-    std::string context = "oasis-core/tendermint";
-    char txString[]  = "08021152560100000000002a0c08d4d7cdf70510f29ad7e1013232613633346432323234643534396238353630333861636439626461643437363834643133323632";
-
-    uint8_t voteData[100];
-
-    auto len = parseHexString(voteData, sizeof(voteData), txString);
-
-    uint16_t bufferLen = 1 + context.size() + len;
-    auto buffer = std::vector<uint8_t>(bufferLen);
-
-    buffer[0] = context.size();
-    MEMCPY(buffer.data() + 1, context.c_str(), context.size());
-    MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
-
-    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
-
-    ASSERT_EQ(err, parser_ok);
-}
-
-#endif

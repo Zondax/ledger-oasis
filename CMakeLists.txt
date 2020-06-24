@@ -26,8 +26,6 @@ add_subdirectory(cmake/gtest)
 string(APPEND CMAKE_CXX_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 
-add_definitions(-DAPP_CONSUMER)
-
 ##############################################################
 ##############################################################
 #  static libs
@@ -44,6 +42,19 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_consumer.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bech32.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/segwit_addr.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
+        )
+
+file(GLOB_RECURSE LIB_VAL_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/hexutils.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bignum.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/zxmacros.c
+        #########
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_validator.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bech32.c
@@ -57,8 +68,23 @@ add_library(app_lib STATIC
         ${LIB_SRC}
         ${TINYCBOR_SRC}
         )
+target_compile_definitions(app_lib PRIVATE APP_CONSUMER=1)
+
+add_library(app_val_lib STATIC
+        ${LIB_VAL_SRC}
+        )
+target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR=1)
 
 target_include_directories(app_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
+        )
+
+target_include_directories(app_val_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
@@ -75,7 +101,15 @@ file(GLOB_RECURSE TESTS_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/*.cpp
         )
 
+file(GLOB_RECURSE TESTS_VAL_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp_val/*.cpp
+        )
+
 add_executable(unittests ${TESTS_SRC})
+target_compile_definitions(unittests PRIVATE APP_CONSUMER=1)
+add_executable(unittests_val ${TESTS_VAL_SRC})
+target_compile_definitions(unittests_val PRIVATE APP_VALIDATOR=1)
+
 target_include_directories(unittests PUBLIC
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
@@ -85,25 +119,26 @@ target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         )
 
+target_include_directories(unittests_val PUBLIC
+        ${gtest_SOURCE_DIR}/include
+        ${gmock_SOURCE_DIR}/include
+        ${CONAN_INCLUDE_DIRS_FMT}
+        ${CONAN_INCLUDE_DIRS_JSONCPP}
+        )
+
 target_link_libraries(unittests PRIVATE
         gtest_main
         app_lib
         CONAN_PKG::fmt
         CONAN_PKG::jsoncpp)
 
+target_link_libraries(unittests_val PRIVATE
+        gtest_main
+        app_lib
+        CONAN_PKG::fmt
+        CONAN_PKG::jsoncpp)
+
 add_test(unittests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests)
+add_test(unittests_val ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests_val)
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
-
-###############################################################
-# Force tests to depend from app compiling
-###############################################################
-
-#set(DISABLE_DOCKER_BUILDS OFF CACHE BOOL "Disables Docker Builds")
-#
-#if (NOT DISABLE_DOCKER_BUILDS)
-#    add_custom_target(ledger_app
-#            COMMAND make build
-#            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#            )
-#    add_dependencies(unittests ledger_app)
-#endif()
+set_tests_properties(unittests_val PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
