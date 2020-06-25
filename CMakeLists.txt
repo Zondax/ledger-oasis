@@ -51,7 +51,7 @@ file(GLOB_RECURSE LIB_VAL_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_validator.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_impl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_impl_val.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote_fsm.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote.c
         )

@@ -18,7 +18,7 @@
 #if defined(APP_CONSUMER)
 #include "./consumer/parser_impl.h"
 #elif defined(APP_VALIDATOR)
-#include "./validator/parser_impl.h"
+#include "./validator/parser_impl_val.h"
 #else
 #error "APP MODE IS NOT SUPPORTED"
 #endif

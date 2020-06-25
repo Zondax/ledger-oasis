@@ -20,7 +20,7 @@
 #include <zxmacros.h>
 #include <bech32.h>
 #include <stdbool.h>
-#include "parser_impl.h"
+#include "parser_impl_val.h"
 #include "bignum.h"
 #include "parser.h"
 #include "parser_txdef.h"
