@@ -129,7 +129,15 @@ __Z_INLINE parser_error_t readVoteLength(parser_context_t *c, parser_tx_t *v) {
 parser_error_t readVoteType(parser_context_t *ctx, uint8_t* val) {
     parser_error_t err;
 
-    err = readRawVarint(ctx, (uint64_t *) val);
+    uint64_t tmp;
+    err = readRawVarint(ctx, &tmp);
+
+    if(err != parser_ok) {
+        ctx->lastConsumed = 0;
+        return err;
+    }
+
+    *val = (uint8_t) tmp;
 
     ctx->offset += ctx->lastConsumed;
     ctx->lastConsumed = 0;
@@ -155,9 +163,15 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
     uint64_t val;
     bool_t doParse = true;
 
+    voteTx->vote.Height = 0;
+    voteTx->vote.Type = 0;
+    voteTx->vote.Round = 0;
+
     while (doParse && (ctx->offset < ctx->bufferLen)) {
 
         CHECK_PARSER_ERR(readRawVarint(ctx, &val));
+        ctx->offset = ctx->offset + ctx->lastConsumed;
+        ctx->lastConsumed = 0;
 
         const uint8_t field_num = FIELD_NUM(val);
         const uint8_t wire_type = WIRE_TYPE(val);
@@ -230,7 +244,6 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
 }
 
 __Z_INLINE parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
-    CHECK_PARSER_ERR(readVoteLength(ctx, &parser_tx_obj));
     CHECK_PARSER_ERR(vote_amino_parse(ctx, &v->oasis.voteTx));
     return parser_ok;
 }
