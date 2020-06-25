@@ -25,9 +25,11 @@ TEST(VoteParser, BasicVote) {
     parser_context_t ctx;
 
     std::string context = "oasis-core/tendermint";
-    char txString[]  = "08021152560100000000002a0c08d4d7cdf70510f29ad7e1013232613633346432323234643534396238353630333861636439626461643437363834643133323632";
 
-    uint8_t voteData[100];
+
+    char txString[] ="9701080111889601000000000022480a20b96edf9fc64ff6e0a44d4389944451a0a56cc4ef6fa7e8dfee573785ffdebe2512240a20d22611dc07b3a0676a800e552b8d2910dc4e2911c3768fc8e2e16930e44bcd8f10012a0b08b2c9d3f70510a2b4de1032326136333464323232346435343962383536303338616364396264616434373638346431333236326438376531633062386361";
+
+    uint8_t voteData[300];
 
     auto len = parseHexString(voteData, sizeof(voteData), txString);
 
@@ -39,6 +41,7 @@ TEST(VoteParser, BasicVote) {
     MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
 
     auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
-
+    ASSERT_EQ(err, parser_ok);
+    err = parser_validate(&ctx);
     ASSERT_EQ(err, parser_ok);
 }
