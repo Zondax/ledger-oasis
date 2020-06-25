@@ -42,7 +42,7 @@ typedef struct {
 
 typedef struct {
     const uint8_t *votePtr;
-    uint16_t voteLen;
+    size_t voteLen;
     vote_t vote;
 } oasis_tx_vote_t;
 

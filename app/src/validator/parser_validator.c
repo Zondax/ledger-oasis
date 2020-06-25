@@ -120,7 +120,7 @@ __Z_INLINE parser_error_t readVoteLength(parser_context_t *c, parser_tx_t *v) {
     c->offset += c->lastConsumed;
     c->lastConsumed = 0;
 
-    v->oasis.voteTx.voteLen = (uint16_t)_length;
+    v->oasis.voteTx.voteLen = (size_t)_length;
     v->oasis.voteTx.votePtr = c->buffer + c->offset;
 
     return parser_ok;
@@ -244,6 +244,7 @@ parser_error_t vote_amino_parse(parser_context_t *ctx, oasis_tx_vote_t *voteTx) 
 }
 
 __Z_INLINE parser_error_t readVoteTx(parser_context_t *ctx, parser_tx_t *v) {
+    CHECK_PARSER_ERR(readVoteLength(ctx, v))
     CHECK_PARSER_ERR(vote_amino_parse(ctx, &v->oasis.voteTx));
     return parser_ok;
 }
