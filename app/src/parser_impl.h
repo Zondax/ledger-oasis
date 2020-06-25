@@ -16,7 +16,7 @@
 #pragma once
 
 #if defined(APP_CONSUMER)
-#include "./consumer/parser_impl.h"
+#include "./consumer/parser_impl_con.h"
 #elif defined(APP_VALIDATOR)
 #include "./validator/parser_impl_val.h"
 #else

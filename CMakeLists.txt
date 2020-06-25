@@ -42,7 +42,7 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
         )
 
 file(GLOB_RECURSE LIB_VAL_SRC

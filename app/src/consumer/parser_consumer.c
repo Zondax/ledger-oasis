@@ -18,10 +18,10 @@
 
 #include <stdio.h>
 #include <zxmacros.h>
-#include "parser_impl.h"
+#include "parser_impl_con.h"
 #include "bignum.h"
 #include "parser.h"
-#include "parser_txdef.h"
+#include "parser_txdef_con.h"
 #include "coin.h"
 
 #if defined(TARGET_NANOX)

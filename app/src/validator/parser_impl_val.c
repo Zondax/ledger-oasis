@@ -16,7 +16,7 @@
 
 #include <zxmacros.h>
 #include "parser_impl_val.h"
-#include "parser_txdef.h"
+#include "parser_txdef_val.h"
 
 #if defined(APP_VALIDATOR)
 parser_tx_t parser_tx_obj;

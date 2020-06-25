@@ -23,7 +23,7 @@
 #include "parser_impl_val.h"
 #include "bignum.h"
 #include "parser.h"
-#include "parser_txdef.h"
+#include "parser_txdef_val.h"
 #include "coin.h"
 #include "vote_fsm.h"
 

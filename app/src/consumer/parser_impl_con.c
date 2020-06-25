@@ -15,8 +15,8 @@
 ********************************************************************************/
 
 #include <zxmacros.h>
-#include "parser_impl.h"
-#include "parser_txdef.h"
+#include "parser_impl_con.h"
+#include "parser_txdef_con.h"
 
 #if defined(APP_CONSUMER)
 #include "cbor_helper.h"

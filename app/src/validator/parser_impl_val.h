@@ -16,7 +16,7 @@
 #pragma once
 
 #include "parser_common.h"
-#include "parser_txdef.h"
+#include "parser_txdef_val.h"
 #include "crypto.h"
 
 #ifdef __cplusplus
