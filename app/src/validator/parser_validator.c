@@ -87,7 +87,7 @@ __Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *val
     *value = 0;
 
     // Extract value
-    int64_t v = 0;
+    uint64_t v = 0;
     p += 7;
     for (int8_t i = 0; i < 8; i++, p--) {
         v <<= 8;
