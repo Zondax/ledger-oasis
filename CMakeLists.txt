@@ -19,7 +19,6 @@ enable_testing()
 
 cmake_policy(SET CMP0025 NEW)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(cmake/conan/CMakeLists.txt)
 add_subdirectory(cmake/gtest)
