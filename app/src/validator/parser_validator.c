@@ -80,14 +80,14 @@ __Z_INLINE parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) 
     return parser_unexpected_buffer_end;
 }
 
-__Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *value) {
+__Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, int64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;
 
     const uint8_t *p = ctx->buffer + offset;
     *value = 0;
 
     // Extract value
-    uint64_t v = 0;
+    int64_t v = 0;
     p += 7;
     for (int8_t i = 0; i < 8; i++, p--) {
         v <<= 8;
@@ -139,13 +139,13 @@ parser_error_t readVoteType(parser_context_t *ctx, uint8_t* val) {
     return err;
 }
 
-parser_error_t readVoteHeight(parser_context_t *ctx, uint64_t* val) {
+parser_error_t readVoteHeight(parser_context_t *ctx, int64_t* val) {
     parser_error_t err;
     err = read_amino_64bits(ctx, val);
     return err;
 }
 
-parser_error_t readVoteRound(parser_context_t *ctx, uint64_t* val) {
+parser_error_t readVoteRound(parser_context_t *ctx, int64_t* val) {
     parser_error_t err;
     err = read_amino_64bits(ctx, val);
     return err;
@@ -287,7 +287,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
         return parser_unexpected_height_value;
     }
     if (parser_tx_obj.oasis.voteTx.vote.Round < 0) {
-        return parser_unexpected_height_value;
+        return parser_unexpected_round_value;
     }
 
     //All fields are good, update vote

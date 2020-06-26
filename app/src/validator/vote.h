@@ -31,8 +31,8 @@ extern "C" {
 
 typedef struct {
     uint8_t Type;
-    uint64_t Height;
-    uint64_t Round;
+    int64_t Height;
+    int64_t Round;
 } vote_t;
 
 typedef struct {
