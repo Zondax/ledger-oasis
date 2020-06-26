@@ -43,8 +43,16 @@ void app_sign() {
         }
 
         if (!try_state_transition()) {
-            set_code(G_io_apdu_buffer, 0, APDU_CODE_COMMAND_NOT_ALLOWED);
-            io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+            //Return the conflicting vote data
+            MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
+            G_io_apdu_buffer[0] = vote.Type;
+            uint16_t offset = 1;
+            memcpy(&G_io_apdu_buffer[offset], &vote.Height, sizeof(vote.Height));
+            offset += sizeof(vote.Height);
+            memcpy(&G_io_apdu_buffer[offset], &vote.Round, sizeof(vote.Round));
+            offset += sizeof(vote.Round);
+            set_code(G_io_apdu_buffer, offset, APDU_CODE_COMMAND_NOT_ALLOWED);
+            io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, offset + 2);
             return;
         }
 }
