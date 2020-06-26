@@ -87,22 +87,16 @@ __Z_INLINE parser_error_t read_amino_64bits(parser_context_t *ctx, uint64_t *val
     *value = 0;
 
     // Extract value
-    uint16_t shift = 0;
-    for (uint8_t i = 0; i < 8; i++, p++) {
-        const uint64_t tmp = ((*p) & 0x7Fu);
-
-        if (shift == 63 && tmp > 1) {
-            return parser_value_out_of_range;
-        }
-
-        *value += tmp << shift;
-
-        shift += 7;
+    int64_t v = 0;
+    p += 7;
+    for (int8_t i = 0; i < 8; i++, p--) {
+        v <<= 8;
+        v += *p;
     }
 
-    ctx->lastConsumed += 8;
+    *value = v;
 
-    ctx->offset += ctx->lastConsumed;
+    ctx->offset += 8;
     ctx->lastConsumed = 0;
 
     return parser_ok;
