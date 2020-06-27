@@ -57,46 +57,26 @@ describe('Basic checks', function () {
         }
     });
 
-    // it('app info', async function () {
-    //     const sim = new Zemu(APP_PATH);
-    //     try {
-    //         await sim.start(sim_options);
-    //         const app = new OasisApp(sim.getTransport());
-    //         const resp = await app.appInfo();
-    //
-    //         console.log(resp);
-    //
-    //         expect(resp.return_code).toEqual(0x9000);
-    //         expect(resp.error_message).toEqual("No errors");
-    //
-    //         expect(resp).toHaveProperty("appName");
-    //         expect(resp).toHaveProperty("appVersion");
-    //         expect(resp).toHaveProperty("flagLen");
-    //         expect(resp).toHaveProperty("flagsValue");
-    //         expect(resp).toHaveProperty("flag_recovery");
-    //         expect(resp).toHaveProperty("flag_signed_mcu_code");
-    //         expect(resp).toHaveProperty("flag_onboarded");
-    //         expect(resp).toHaveProperty("flag_pin_validated");
-    //     } finally {
-    //         await sim.close();
-    //     }
-    // });
-
-    it('device info', async function () {
+    it('app info', async function () {
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
             const app = new OasisApp(sim.getTransport());
-            const resp = await app.deviceInfo();
+            const resp = await app.appInfo();
 
             console.log(resp);
 
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
-            expect(resp).toHaveProperty("targetId");
-            expect(resp).toHaveProperty("seVersion");
-            expect(resp).toHaveProperty("flag");
-            expect(resp).toHaveProperty("mcuVersion");
+
+            expect(resp).toHaveProperty("appName");
+            expect(resp).toHaveProperty("appVersion");
+            expect(resp).toHaveProperty("flagLen");
+            expect(resp).toHaveProperty("flagsValue");
+            expect(resp).toHaveProperty("flag_recovery");
+            expect(resp).toHaveProperty("flag_signed_mcu_code");
+            expect(resp).toHaveProperty("flag_onboarded");
+            expect(resp).toHaveProperty("flag_pin_validated");
         } finally {
             await sim.close();
         }
@@ -162,8 +142,6 @@ describe('Basic checks', function () {
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickBoth(`${snapshotPrefixTmp}${snapshotCount++}.png`);
 
             const resp = await respRequest;
@@ -197,7 +175,7 @@ describe('Basic checks', function () {
             const path = [44, 474, 5, 0x80000000, 0x80000003];
             const context = "oasis-core/consensus: tx for chain testing";
             const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvVQDHPMABRjQ0kVuj85dRvrfAkFtF62t4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
                 "base64",
             );
 

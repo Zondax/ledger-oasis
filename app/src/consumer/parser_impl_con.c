@@ -233,12 +233,12 @@ __Z_INLINE parser_error_t _readBound(CborValue *value, commissionRateBoundStep_t
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_max", &tmp))
     if (tmp.type != CborInvalidType) {
-        CHECK_CBOR_ERR(_readQuantity(&tmp, &out->rate_max))
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate_max))
     }
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_min", &tmp))
     if (tmp.type != CborInvalidType) {
-        CHECK_CBOR_ERR(_readQuantity(&tmp, &out->rate_min))
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate_min))
     }
 
     return parser_ok;
