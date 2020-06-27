@@ -33,7 +33,7 @@ TEST(TxParser, EmptyBuffer) {
     ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
 }
 
-TEST(TxParser, RandomDataAtEnd) {
+TEST(TxParser, OldAddressFormat) {
     parser_context_t ctx;
 
     std::string context = "oasis-core/consensus: tx for chain ";
@@ -42,7 +42,7 @@ TEST(TxParser, RandomDataAtEnd) {
     buffer.push_back(0);
 
     auto err = parser_parse(&ctx, buffer.data(), buffer.size());
-    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
+    ASSERT_EQ(err, parser_cbor_unexpected) << parser_getErrorDescription(err);
 }
 
 TEST(TxParser, MissingLastByte) {

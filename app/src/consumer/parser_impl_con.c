@@ -199,12 +199,12 @@ __Z_INLINE parser_error_t _readRate(CborValue *value, commissionRateStep_t *out)
 
     CborValue tmp;
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate", &tmp))
-    if (tmp.type != CborInvalidType) {
+    if (cbor_value_is_valid(&tmp)) {
         CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate))
     }
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
-    if (tmp.type != CborInvalidType) {
+    if (cbor_value_is_valid(&tmp)) {
         CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &out->start))
     }
 
@@ -553,8 +553,8 @@ __Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *it) {
     valuesCount++;
 
     CborValue feeField;
-    CHECK_CBOR_ERR(cbor_value_map_find_value(it, "fee", &feeField))
     v->oasis.tx.has_fee = false;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(it, "fee", &feeField))
 
     // We have fee
     if (cbor_value_is_valid(&feeField)) {
@@ -683,7 +683,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
 
     // default Unknown type
     v->type = unknownType;
-    if (cbor_value_get_type(&idField) == CborInvalidType) {
+    if (!cbor_value_is_valid(&idField)) {
         // READ TX
         CHECK_PARSER_ERR(_readTx(v, &it))
         v->type = txType;
