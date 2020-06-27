@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2018 ZondaX GmbH
+*  (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -13,53 +13,38 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
-
-#if defined(APP_VALIDATOR)
-
 #pragma once
+
+#include "parser_common.h"
+#include "parser_txdef_val.h"
+#include "crypto.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <inttypes.h>
-#include <stddef.h>
+extern const char context_prefix_tx[];
+extern const char context_prefix_entity[];
 
-#define TYPE_PREVOTE        0x01
-#define TYPE_PRECOMMIT      0x02
-#define TYPE_PROPOSAL       0x20
+#if defined(APP_VALIDATOR)
 
-typedef struct {
-    uint8_t Type;
-    int64_t Height;
-    int8_t Round;
-} vote_t;
+extern parser_tx_t parser_tx_obj;
 
-typedef struct {
-  int8_t isInitialized;
-  vote_t vote;
-} vote_state_t;
+parser_error_t parser_init(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize);
 
-typedef struct {
-    const uint8_t *votePtr;
-    uint16_t voteLen;
-    uint8_t type;
-    uint64_t height;
-    uint64_t round;
-} oasis_tx_vote_t;
+parser_error_t _read(const parser_context_t *c, parser_tx_t *v);
 
-extern vote_state_t vote_state;
-extern vote_t vote;
+parser_error_t _readContext(parser_context_t *c, parser_tx_t *v);
 
+parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v);
 
-/// Clears the vote buffer
-void vote_state_reset();
+uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v);
+
+parser_error_t _extractContextSuffix(parser_tx_t *v);
+
+parser_error_t _extractContextSuffixForValidator(parser_tx_t *v);
+#endif
 
 #ifdef __cplusplus
 }
 #endif
-
-#else
-typedef struct{} oasis_tx_vote_t;
-
-#endif //APP_VALIDATOR

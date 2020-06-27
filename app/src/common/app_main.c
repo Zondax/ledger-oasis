@@ -27,9 +27,10 @@
 #include "crypto.h"
 #include "coin.h"
 #include "zxmacros.h"
+#include "view_custom.h"
 
 #ifdef APP_VALIDATOR
-#include "vote.h"
+#include "validator/vote.h"
 #include "parser_impl.h"
 #endif
 

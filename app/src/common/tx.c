@@ -74,21 +74,17 @@ uint8_t *tx_get_buffer() {
 }
 
 const char *tx_parse() {
-    zemu_log("--- parser_parse START\n");
     uint8_t err = parser_parse(
         &ctx_parsed_tx,
         tx_get_buffer(),
         tx_get_buffer_length());
-    zemu_log("--- parser_parse OK\n");
 
     if (err != parser_ok) {
         return parser_getErrorDescription(err);
     }
 
-    zemu_log("--- parser_validate START\n");
     err = parser_validate(&ctx_parsed_tx);
     CHECK_APP_CANARY()
-    zemu_log("--- parser_validate OK\n");
 
     if (err != parser_ok) {
         return parser_getErrorDescription(err);

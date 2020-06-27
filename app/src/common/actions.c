@@ -24,8 +24,8 @@
 #include "stdbool.h"
 
 #ifdef APP_VALIDATOR
-#include "vote.h"
-#include "vote_fsm.h"
+#include "validator/vote.h"
+#include "validator/vote_fsm.h"
 #include "parser_impl.h"
 #endif
 
@@ -43,8 +43,23 @@ void app_sign() {
         }
 
         if (!try_state_transition()) {
-            set_code(G_io_apdu_buffer, 0, APDU_CODE_COMMAND_NOT_ALLOWED);
-            io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+            //Return current vote_state along with the conflicting vote data
+            // [vote_state][vote][error]
+            MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
+            G_io_apdu_buffer[0] = vote.Type;
+            uint16_t offset = 1;
+            memcpy(&G_io_apdu_buffer[offset], &vote.Height, sizeof(vote.Height));
+            offset += sizeof(vote.Height);
+            memcpy(&G_io_apdu_buffer[offset], &vote.Round, sizeof(vote.Round));
+            offset += sizeof(vote.Round);
+            G_io_apdu_buffer[offset] = vote_state.vote.Type;
+            offset += 1;
+            memcpy(&G_io_apdu_buffer[offset], &vote_state.vote.Height, sizeof(vote.Height));
+            offset += sizeof(vote.Height);
+            memcpy(&G_io_apdu_buffer[offset], &vote_state.vote.Round, sizeof(vote.Round));
+            offset += sizeof(vote.Round);
+            set_code(G_io_apdu_buffer, offset, APDU_CODE_COMMAND_NOT_ALLOWED);
+            io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, offset + 2);
             return;
         }
 }

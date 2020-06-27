@@ -16,9 +16,9 @@
 #pragma once
 
 #if defined(APP_CONSUMER)
-#include "coin_consumer.h"
+#include "consumer/coin_consumer.h"
 #elif defined(APP_VALIDATOR)
-#include "coin_validator.h"
+#include "validator/coin_validator.h"
 #else
 #error "APP MODE IS NOT SUPPORTED"
 #endif

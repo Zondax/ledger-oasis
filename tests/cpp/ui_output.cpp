@@ -88,13 +88,13 @@ public:
     };
 };
 
-INSTANTIATE_TEST_SUITE_P(
-        Generated,
-        OasisTests,
-        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
-);
-
-TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
+//INSTANTIATE_TEST_SUITE_P(
+//        Generated,
+//        OasisTests,
+//        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
+//);
+//
+//TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -113,10 +113,10 @@ public:
     };
 };
 
-INSTANTIATE_TEST_SUITE_P(
-        Manual,
-        ManualTests,
-        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
-);
-
-TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
+//INSTANTIATE_TEST_SUITE_P(
+//        Manual,
+//        ManualTests,
+//        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
+//);
+//
+//TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }

@@ -1,5 +1,5 @@
 /*******************************************************************************
-*  (c) 2020 Zondax GmbH
+*  (c) 2019 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,10 +15,44 @@
 ********************************************************************************/
 #pragma once
 
-#if defined(APP_CONSUMER)
-#include "./consumer/parser_txdef_con.h"
-#elif defined(APP_VALIDATOR)
-#include "./validator/parser_txdef.h"
-#else
-#error "APP MODE IS NOT SUPPORTED"
+#define CBOR_PARSER_MAX_RECURSIONS 4
+
+#include <coin.h>
+#include <zxtypes.h>
+#include <validator/vote.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdint.h>
+#include <stddef.h>
+
+typedef struct {
+    const uint8_t *ptr;
+    uint8_t len;
+    const uint8_t *suffixPtr;
+    uint8_t suffixLen;
+} context_t;
+
+typedef enum {
+    unknownType,
+    txType,
+    entityType,
+    nodeType,
+    consensusType
+} oasis_blob_type_e;
+
+typedef struct {
+    context_t context;
+
+    union {
+        oasis_tx_vote_t voteTx;
+    } oasis;
+
+    oasis_blob_type_e type;
+} parser_tx_t;
+
+#ifdef __cplusplus
+}
 #endif
