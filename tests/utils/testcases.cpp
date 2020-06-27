@@ -39,6 +39,10 @@ namespace utils {
         uint16_t bufferLen = 1 + context.size() + cborString.size();
         auto bufferAllocation = std::vector<uint8_t>(bufferLen);
 
+        char tmp[1000];
+        array_to_hexstr(tmp, sizeof(tmp), (uint8_t *) cborString.c_str(), cborString.size());
+        std::cout << tmp << std::endl;
+
         bufferAllocation[0] = context.size();
         MEMCPY(bufferAllocation.data() + 1, context.c_str(), context.size());
         MEMCPY(bufferAllocation.data() + 1 + context.size(), cborString.c_str(), cborString.size());
@@ -130,16 +134,9 @@ namespace utils {
         return std::string(outBuffer);
     }
 
-    std::string FormatPKasAddress(const std::string &base64PK, uint8_t idx, uint8_t *pageCount) {
-        std::string pkBytes;
-        macaron::Base64::Decode(base64PK, pkBytes);
-
-        char buffer[200];
-        crypto_encodeAddress(buffer, sizeof(buffer), (uint8_t *) pkBytes.c_str());
-
+    std::string FormatHash(const std::string &hash, uint8_t idx, uint8_t *pageCount) {
         char outBuffer[40];
-        pageString(outBuffer, sizeof(outBuffer), buffer, idx, pageCount);
-
+        pageString(outBuffer, sizeof(outBuffer), hash.c_str(), idx, pageCount);
         return std::string(outBuffer);
     }
 
@@ -215,14 +212,14 @@ namespace utils {
         auto entity = j["entity"];
         uint8_t dummy = 0;
 
-        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatPKasAddress(entity["id"].asString(), 0, &dummy));
-        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatPKasAddress(entity["id"].asString(), 1, &dummy));
+        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatAddress(entity["id"].asString(), 0, &dummy));
+        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatAddress(entity["id"].asString(), 1, &dummy));
 
         int nodeIndex = 0;
         for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
             auto nodeData = entity["nodes"][nodeIndex].asString();
-            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 0, &dummy));
-            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex, FormatPKasAddress(nodeData, 1, &dummy));
+            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex, FormatAddress(nodeData, 0, &dummy));
+            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex, FormatAddress(nodeData, 1, &dummy));
             itemCount++;
         }
 
@@ -283,8 +280,8 @@ namespace utils {
             }
 
             auto escrowAccount = txbody["escrow_account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.ReclaimEscrow") {
@@ -296,8 +293,8 @@ namespace utils {
             }
 
             auto escrowAccount = txbody["escrow_account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatPKasAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatPKasAddress(escrowAccount, 1, &dummy));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.AmendCommissionSchedule") {
@@ -334,8 +331,8 @@ namespace utils {
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
-            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPKasAddress(publicKey, 0, &dummy));
-            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatPKasAddress(publicKey, 1, &dummy));
+            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatAddress(publicKey, 0, &dummy));
+            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatAddress(publicKey, 1, &dummy));
 
             auto signature = txbody["signature"]["signature"].asString();
             addTo(answer, "{} | Signature [1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
@@ -352,7 +349,7 @@ namespace utils {
         return answer;
     }
 
-    std::vector<std::string> GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
+    std::vector<std::string>  GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
         auto answer = std::vector<std::string>();
         uint32_t itemCount = 0;
 
@@ -377,8 +374,10 @@ namespace utils {
 
         auto find1 = context.find(expectedPrefix1);
         if (find1 != std::string::npos) {
+            uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Genesis Hash : {}", itemCount, contextSuffix);
+            addTo(answer, "{} | Genesis Hash [1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+            addTo(answer, "{} | Genesis Hash [2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
         }
 
         auto find2 = context.find(expectedPrefix2);
