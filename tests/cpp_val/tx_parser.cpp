@@ -21,15 +21,13 @@
 #include "common/parser.h"
 #include "hexutils.h"
 
-TEST(VoteParser, BasicVote) {
+TEST(VoteParser, GoodVote) {
     parser_context_t ctx;
 
     std::string context = "oasis-core/tendermint";
+    char txString[] ="21080111c80f0000000000001901000000000000002a0b088092b8c398feffffff01";
 
-
-    char txString[] ="9701080111889601000000000022480a20b96edf9fc64ff6e0a44d4389944451a0a56cc4ef6fa7e8dfee573785ffdebe2512240a20d22611dc07b3a0676a800e552b8d2910dc4e2911c3768fc8e2e16930e44bcd8f10012a0b08b2c9d3f70510a2b4de1032326136333464323232346435343962383536303338616364396264616434373638346431333236326438376531633062386361";
-
-    uint8_t voteData[300];
+    uint8_t voteData[100];
 
     auto len = parseHexString(voteData, sizeof(voteData), txString);
 
@@ -44,4 +42,89 @@ TEST(VoteParser, BasicVote) {
     ASSERT_EQ(err, parser_ok);
     err = parser_validate(&ctx);
     ASSERT_EQ(err, parser_ok);
+}
+
+TEST(VoteParser, NegativeHeight) {
+    parser_context_t ctx;
+
+    std::string context = "oasis-core/tendermint";
+    char txString[] ="21080111ffffffffffffffff1901000000000000002a0b088092b8c398feffffff01";
+
+    uint8_t voteData[100];
+
+    auto len = parseHexString(voteData, sizeof(voteData), txString);
+
+    uint16_t bufferLen = 1 + context.size() + len;
+    auto buffer = std::vector<uint8_t>(bufferLen);
+
+    buffer[0] = context.size();
+    MEMCPY(buffer.data() + 1, context.c_str(), context.size());
+    MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
+
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
+    ASSERT_EQ(err, parser_ok);
+    err = parser_validate(&ctx);
+    ASSERT_EQ(err, parser_unexpected_height_value);
+}
+
+TEST(VoteParser, NegativeRound) {
+    parser_context_t ctx;
+
+    std::string context = "oasis-core/tendermint";
+    char txString[] ="210801110d0000000000000019ffffffffffffffff2a0b088092b8c398feffffff01";
+
+    uint8_t voteData[100];
+
+    auto len = parseHexString(voteData, sizeof(voteData), txString);
+
+    uint16_t bufferLen = 1 + context.size() + len;
+    auto buffer = std::vector<uint8_t>(bufferLen);
+
+    buffer[0] = context.size();
+    MEMCPY(buffer.data() + 1, context.c_str(), context.size());
+    MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
+
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
+    ASSERT_EQ(err, parser_unexpected_round_value);
+}
+
+TEST(VoteParser, Height_Round_Zero) {
+    parser_context_t ctx;
+
+    std::string context = "oasis-core/tendermint";
+    char txString[] ="0f08012a0b088092b8c398feffffff01";
+
+    uint8_t voteData[100];
+
+    auto len = parseHexString(voteData, sizeof(voteData), txString);
+
+    uint16_t bufferLen = 1 + context.size() + len;
+    auto buffer = std::vector<uint8_t>(bufferLen);
+
+    buffer[0] = context.size();
+    MEMCPY(buffer.data() + 1, context.c_str(), context.size());
+    MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
+
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
+    ASSERT_EQ(err, parser_ok);
+}
+
+TEST(VoteParser, MaxValues) {
+    parser_context_t ctx;
+
+    std::string context = "oasis-core/tendermint";
+    char txString[] ="21080111ffffffffffffff7f19ffffffffffffff7f2a0b088092b8c398feffffff01";
+    uint8_t voteData[100];
+
+    auto len = parseHexString(voteData, sizeof(voteData), txString);
+
+    uint16_t bufferLen = 1 + context.size() + len;
+    auto buffer = std::vector<uint8_t>(bufferLen);
+
+    buffer[0] = context.size();
+    MEMCPY(buffer.data() + 1, context.c_str(), context.size());
+    MEMCPY(buffer.data() + 1 + context.size(), voteData, len);
+
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
+    ASSERT_EQ(err, parser_unexpected_round_value);
 }
