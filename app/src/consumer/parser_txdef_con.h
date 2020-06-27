@@ -32,7 +32,7 @@ typedef enum {
     unknownMethod,
     stakingTransfer,
     stakingBurn,
-    stakingAddEscrow,
+    stakingEscrow,
     stakingReclaimEscrow,
     stakingAmendCommissionSchedule,
     registryDeregisterEntity,
@@ -49,6 +49,8 @@ typedef struct {
 
 typedef uint8_t publickey_t[32];
 
+typedef uint8_t address_raw_t[21];
+
 typedef struct {
     uint8_t buffer[64];
     size_t len;
@@ -57,7 +59,7 @@ typedef struct {
 typedef uint8_t raw_signature_t[64];
 
 typedef struct {
-    publickey_t public_key;
+    address_raw_t addressRaw;
     raw_signature_t raw_signature;
 } signature_t;
 
@@ -80,7 +82,7 @@ typedef struct {
 } cbor_parser_state_t;
 
 typedef struct {
-    publickey_t id;
+    address_raw_t id;
     // We are going to read dynamically like for stakingAmendCommissionSchedule
     size_t nodes_length;
     bool allow_entity_signed_nodes;
@@ -90,14 +92,16 @@ typedef struct {
 } oasis_entity_t;
 
 typedef struct {
+    uint64_t nonce;
+    bool has_fee;
     uint64_t fee_gas;
     quantity_t fee_amount;
-    bool has_fee;
+    oasis_methods_e method;
 
     // Union type will depend on method
     union {
         struct {
-            publickey_t xfer_to;
+            address_raw_t xfer_to;
             quantity_t xfer_tokens;
         } stakingTransfer;
 
@@ -106,12 +110,12 @@ typedef struct {
         } stakingBurn;
 
         struct {
-            publickey_t escrow_account;
+            address_raw_t escrow_account;
             quantity_t escrow_tokens;
-        } stakingAddEscrow;
+        } stakingEscrow;
 
         struct {
-            publickey_t escrow_account;
+            address_raw_t escrow_account;
             quantity_t reclaim_shares;
         } stakingReclaimEscrow;
 
@@ -130,9 +134,6 @@ typedef struct {
         } registryRegisterEntity;
 
     } body;
-
-    uint64_t nonce;
-    oasis_methods_e method;
 } oasis_tx_t;
 
 typedef enum {

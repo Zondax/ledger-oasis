@@ -19,6 +19,7 @@
 #include "parser_txdef_con.h"
 
 #if defined(APP_CONSUMER)
+
 #include "cbor_helper.h"
 
 parser_tx_t parser_tx_obj;
@@ -117,6 +118,17 @@ void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, c
     }
 }
 
+__Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
+    CborValue dummy;
+    size_t len = sizeof(address_raw_t);
+    CHECK_CBOR_ERR(cbor_value_copy_byte_string(value, (uint8_t *) out, &len, &dummy))
+    if (len != sizeof(address_raw_t)) {
+        return parser_unexpected_value;
+    }
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readPublicKey(CborValue *value, publickey_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -166,7 +178,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CHECK_PARSER_ERR(_matchKey(&contents, "public_key"))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readPublicKey(&contents, &out->public_key))
+    CHECK_PARSER_ERR(_readAddressRaw(&contents, &out->addressRaw))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     return parser_ok;
@@ -180,21 +192,21 @@ __Z_INLINE parser_error_t _readRate(CborValue *value, commissionRateStep_t *out)
 //  canonical cbor orders keys by length
 // https://tools.ietf.org/html/rfc7049#section-3.9
 
-    CborValue contents;
+    // Keys are optional. Set default values and try to find overriding fields
+    MEMZERO(out, sizeof(commissionRateStep_t));
+
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
-    CHECK_CBOR_MAP_LEN(value, 2)
-    CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CborValue tmp;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "start"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &out->start))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &out->start))
+    }
 
     return parser_ok;
 }
@@ -209,25 +221,25 @@ __Z_INLINE parser_error_t _readBound(CborValue *value, commissionRateBoundStep_t
 // https://tools.ietf.org/html/rfc7049#section-3.9
 
     CborValue contents;
+    MEMZERO(out, sizeof(commissionRateBoundStep_t));
+
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
-    CHECK_CBOR_MAP_LEN(value, 3)
-    CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "start"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &out->start))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CborValue tmp;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_PARSER_ERR(cbor_value_get_uint64(&tmp, &out->start))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate_max"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate_max))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_max", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_CBOR_ERR(_readQuantity(&tmp, &out->rate_max))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate_min"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate_min))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_min", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_CBOR_ERR(_readQuantity(&tmp, &out->rate_min))
+    }
 
     return parser_ok;
 }
@@ -310,7 +322,7 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
 
     CHECK_PARSER_ERR(_matchKey(&contents, "id"))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readPublicKey(&contents, &entity->id))
+    CHECK_PARSER_ERR(_readAddressRaw(&contents, &entity->id))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     CHECK_PARSER_ERR(_matchKey(&contents, "nodes"))
@@ -348,7 +360,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
 
             CHECK_PARSER_ERR(_matchKey(&contents, "xfer_to"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingTransfer.xfer_to))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingTransfer.xfer_to))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "xfer_tokens"))
@@ -367,18 +379,18 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
-        case stakingAddEscrow: {
+        case stakingEscrow: {
             CHECK_CBOR_MAP_LEN(value, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_tokens"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingAddEscrow.escrow_tokens))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingEscrow.escrow_tokens))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingAddEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingEscrow.escrow_account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
@@ -388,7 +400,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingReclaimEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingReclaimEscrow.escrow_account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "reclaim_shares"))
@@ -487,7 +499,7 @@ __Z_INLINE parser_error_t _readMethod(parser_tx_t *v, CborValue *value) {
         v->oasis.tx.method = stakingBurn;
     }
     if (CBOR_KEY_MATCHES(value, "staking.AddEscrow")) {
-        v->oasis.tx.method = stakingAddEscrow;
+        v->oasis.tx.method = stakingEscrow;
     }
     if (CBOR_KEY_MATCHES(value, "staking.ReclaimEscrow")) {
         v->oasis.tx.method = stakingReclaimEscrow;
@@ -654,12 +666,8 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
-    zemu_log("--- _read START\n");
-
     // validate CBOR canonical order before even trying to parse
     CHECK_CBOR_ERR(cbor_value_validate(&it, CborValidateCanonicalFormat))
-
-    zemu_log("--- _read::cbor_value_validate OK\n");
 
     if (cbor_value_at_end(&it)) {
         return parser_unexpected_buffer_end;
@@ -673,23 +681,17 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue idField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&it, "id", &idField))
 
-    zemu_log("--- _read::cbor_value_map_find_value OK\n");
-
     // default Unknown type
     v->type = unknownType;
     if (cbor_value_get_type(&idField) == CborInvalidType) {
         // READ TX
-        zemu_log("--- _read::_readTx START\n");
         CHECK_PARSER_ERR(_readTx(v, &it))
-        zemu_log("--- _read::_readTx OK\n");
         v->type = txType;
     } else {
         // READ ENTITY
-        zemu_log("--- _read::_readEntity START\n");
         MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
         parser_setCborState(&v->oasis.entity.cborState, &parser, &it);
         CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
-        zemu_log("--- _read::_readEntity OK\n");
         v->type = entityType;
     }
 
@@ -702,9 +704,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     }
 
     // Check prefix and enable/disable context
-    zemu_log("--- _read::_extractContextSuffix START\n");
     CHECK_PARSER_ERR(_extractContextSuffix(v))
-    zemu_log("--- _read::_extractContextSuffix OK\n");
 
     return parser_ok;
 }
@@ -737,7 +737,7 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
         case stakingBurn:
             itemCount += 1;
             break;
-        case stakingAddEscrow:
+        case stakingEscrow:
             itemCount += 2;
             break;
         case stakingReclaimEscrow:
@@ -837,6 +837,7 @@ parser_error_t _getCommissionRateStepAtIndex(const parser_context_t *c, commissi
     CHECK_PARSER_ERR(_getRatesContainer(&it, &ratesContainer))
 
     for (int i = 0; i < index; i++) {
+        // Skip values
         CHECK_CBOR_ERR(cbor_value_advance(&ratesContainer))
     }
 
