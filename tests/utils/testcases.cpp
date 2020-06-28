@@ -341,8 +341,8 @@ namespace utils {
             addTo(answer, "{} | Signature [4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
             // Entity (from entity)
-            auto entityAnswer = internalGenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"],
-                                                                          itemCount);
+            auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
+            auto entityAnswer = internalGenerateExpectedUIOutputForEntity(untrusted_raw_value, itemCount);
             answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
         }
 
@@ -359,6 +359,8 @@ namespace utils {
         }
 
         // Entity or tx ?
+        auto kind = j["kind"].asString();
+
         if (j.isMember("tx")) {
             // is tx
             answer = GenerateExpectedUIOutputForTx(j, itemCount);

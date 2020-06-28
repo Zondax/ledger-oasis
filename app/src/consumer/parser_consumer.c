@@ -197,12 +197,8 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    CHECK_APP_CANARY();
-    uint16_t addrLen = crypto_encodeAddress(outBuffer, sizeof(outBuffer), (uint8_t *) pk);
-    CHECK_APP_CANARY();
-
-    if (addrLen == 0) {
-        return parser_invalid_address;
+    if (array_to_hexstr(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 64 ){
+        return parser_unexpected_value;
     }
 
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
@@ -479,8 +475,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 3:
                     snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.addressRaw,
+                    return parser_printPublicKey(
+                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.public_key,
                             outVal, outValLen, pageIdx, pageCount);
                 case 4:
                     snprintf(outKey, outKeyLen, "Signature");

@@ -168,6 +168,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CborValue contents;
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
+
     CHECK_CBOR_MAP_LEN(value, 2)
     CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
@@ -178,7 +179,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CHECK_PARSER_ERR(_matchKey(&contents, "public_key"))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readAddressRaw(&contents, &out->addressRaw))
+    CHECK_PARSER_ERR(_readPublicKey(&contents, &out->public_key))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     return parser_ok;
@@ -317,7 +318,7 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
     CborValue contents;
 
     // expect id, nodes, allow_entity_signed_nodes
-    CHECK_CBOR_MAP_LEN(&value, 3)
+    CHECK_CBOR_MAP_LEN(&value, 4)
     CHECK_CBOR_ERR(cbor_value_enter_container(&value, &contents))
 
     CHECK_PARSER_ERR(_matchKey(&contents, "id"))
