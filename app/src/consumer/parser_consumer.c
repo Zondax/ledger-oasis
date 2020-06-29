@@ -197,12 +197,8 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    CHECK_APP_CANARY();
-    uint16_t addrLen = crypto_encodeAddress(outBuffer, sizeof(outBuffer), (uint8_t *) pk);
-    CHECK_APP_CANARY();
-
-    if (addrLen == 0) {
-        return parser_invalid_address;
+    if (array_to_hexstr(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 64) {
+        return parser_unexpected_value;
     }
 
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
@@ -227,31 +223,39 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
+#define ENTITY_DYNAMIC_OFFSET 3
 
     if (displayIdx == 0) {
+        snprintf(outKey, outKeyLen, "Descr. Ver");
+        uint64_to_str(outVal, outValLen, entity->obj.descriptor_version);
+        *pageCount = 1;
+        return parser_ok;
+    }
+
+    if (displayIdx == 1) {
         snprintf(outKey, outKeyLen, "ID");
-        return parser_printAddress(&entity->id,
-                                   outVal, outValLen, pageIdx, pageCount);
+        return parser_printPublicKey(&entity->obj.id,
+                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    if (displayIdx <= (int) entity->nodes_length) {
-        const int8_t index = displayIdx - 1;
-
-        snprintf(outKey, outKeyLen, "Node [%i]", index);
-
-        publickey_t node;
-        CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
-        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
-    }
-
-    if (displayIdx - entity->nodes_length == 1) {
+    if (displayIdx == 2) {
         snprintf(outKey, outKeyLen, "Allowed");
-        if (entity->allow_entity_signed_nodes) {
+        if (entity->obj.allow_entity_signed_nodes) {
             snprintf(outVal, outValLen, "True");
         } else {
             snprintf(outVal, outValLen, "False");
         }
         return parser_ok;
+    }
+
+    if (displayIdx - ENTITY_DYNAMIC_OFFSET < (int) entity->obj.nodes_length) {
+        const int8_t index = displayIdx - ENTITY_DYNAMIC_OFFSET;
+
+        snprintf(outKey, outKeyLen, "Node [%i]", index + 1);
+
+        publickey_t node;
+        CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
+        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
     }
 
     return parser_no_data;
@@ -414,6 +418,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     case 0: {
                         snprintf(outKey, outKeyLen, "Rates : [%i] start", index);
                         uint64_to_str(outVal, outValLen, rate.start);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
@@ -434,6 +439,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     case 0: {
                         snprintf(outKey, outKeyLen, "Bounds : [%i] start", index);
                         uint64_to_str(outVal, outValLen, bound.start);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
@@ -452,12 +458,31 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             *pageCount = 0;
             return parser_no_data;
 
-        case registryUnfreezeNode:
-            if (displayIdx == 0) {
-                snprintf(outKey, outKeyLen, "Node ID");
-                return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.registryUnfreezeNode.node_id,
-                                             outVal, outValLen, pageIdx, pageCount);
+        case registryUnfreezeNode: {
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 3:
+                    snprintf(outKey, outKeyLen, "Node ID");
+                    return parser_printPublicKey(
+                            &parser_tx_obj.oasis.tx.body.registryUnfreezeNode.node_id,
+                            outVal, outValLen, pageIdx, pageCount);
             }
+        }
         case registryRegisterEntity: {
             switch (displayIdx) {
                 case 0: {
@@ -478,9 +503,9 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_ok;
                 }
                 case 3:
-                    snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.addressRaw,
+                    snprintf(outKey, outKeyLen, "Public key");
+                    return parser_printPublicKey(
+                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.public_key,
                             outVal, outValLen, pageIdx, pageCount);
                 case 4:
                     snprintf(outKey, outKeyLen, "Signature");

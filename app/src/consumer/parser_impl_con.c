@@ -168,6 +168,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CborValue contents;
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
+
     CHECK_CBOR_MAP_LEN(value, 2)
     CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
@@ -178,7 +179,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CHECK_PARSER_ERR(_matchKey(&contents, "public_key"))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readAddressRaw(&contents, &out->addressRaw))
+    CHECK_PARSER_ERR(_readPublicKey(&contents, &out->public_key))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     return parser_ok;
@@ -313,36 +314,44 @@ __Z_INLINE parser_error_t _readFee(parser_tx_t *v, CborValue *value) {
 __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
     /* Not using cbor_value_map_find because Cbor canonical order should be respected */
 
-    CborValue value = entity->cborState.startValue;    // copy to avoid moving the original iterator
-    CborValue contents;
+    CborValue value = entity->cborState.startValue;    // copy to avoid moving the original iteratorCborValue contents;
+    CborValue tmp;
+    MEMZERO(&entity->obj, sizeof(oasis_entity_internal_t));
 
-    // expect id, nodes, allow_entity_signed_nodes
-    CHECK_CBOR_MAP_LEN(&value, 3)
-    CHECK_CBOR_ERR(cbor_value_enter_container(&value, &contents))
+    CHECK_CBOR_TYPE(cbor_value_get_type(&value), CborMapType)
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "id"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readAddressRaw(&contents, &entity->id))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "v", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &entity->obj.descriptor_version))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "nodes"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "id", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(_readPublicKey(&tmp, &entity->obj.id))
+    }
+
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "nodes", &tmp))
     // Only get length
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborArrayType)
-    cbor_value_get_array_length(&contents, &entity->nodes_length);
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_TYPE(cbor_value_get_type(&tmp), CborArrayType)
+        CHECK_CBOR_ERR(cbor_value_get_array_length(&tmp, &entity->obj.nodes_length));
+    }
 
     // too many node ids in the blob to be printed
-    if (entity->nodes_length > MAX_ENTITY_NODES) {
+    if (entity->obj.nodes_length > MAX_ENTITY_NODES) {
         return parser_unexpected_number_items;
     }
 
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "allow_entity_signed_nodes", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(cbor_value_get_boolean(&tmp, &entity->obj.allow_entity_signed_nodes))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "allow_entity_signed_nodes"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborBooleanType)
-    CHECK_CBOR_ERR(cbor_value_get_boolean(&contents, &entity->allow_entity_signed_nodes))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+//    CHECK_PARSER_ERR(_matchKey(&contents, "allow_entity_signed_nodes"))
+//    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+//    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborBooleanType)
+//    CHECK_CBOR_ERR(cbor_value_get_boolean(&contents, &entity->allow_entity_signed_nodes))
+//    CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     return parser_ok;
 }
@@ -422,6 +431,17 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
             break;
         }
         case registryDeregisterEntity: {
+            CHECK_CBOR_MAP_LEN(value, 1)
+            CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "node_id"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.deregisterEntity.node_id))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            break;
+        }
+        case registryUnfreezeNode: {
             CHECK_CBOR_MAP_LEN(value, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
@@ -718,12 +738,18 @@ parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
 }
 
 uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
-    // typical tx: Type, Fee, Gas, + Body
-    uint8_t itemCount = 3;
+    // typical tx: Type, Fee, Gas (exclude Genesis hash)
+    const uint8_t commonElements = 3;
+    // PublicKey + Signature + Descr Ver + ID + Allowed
+    const uint8_t entityFixedElements = 3;
+    // Entity signatures + pubkey
+    const uint8_t entitySignatureElements = 2;
+
+    uint8_t itemCount = commonElements;
 
     // Entity (not a tx)
     if (v->type == entityType) {
-        itemCount = 3 + v->oasis.entity.nodes_length;
+        itemCount = entityFixedElements + v->oasis.entity.obj.nodes_length;
         return itemCount;
     }
 
@@ -755,10 +781,10 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
         case registryUnfreezeNode:
             itemCount += 1;
             break;
-        case registryRegisterEntity:
-            // 2 items for signature plus number of items for entity blob
-            itemCount += 2 + 2 + v->oasis.tx.body.registryRegisterEntity.entity.nodes_length;
+        case registryRegisterEntity: {
+            itemCount +=  entityFixedElements + entitySignatureElements + v->oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
             break;
+        }
         case unknownMethod:
         default:
             break;

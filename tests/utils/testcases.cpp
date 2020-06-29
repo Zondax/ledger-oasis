@@ -117,13 +117,26 @@ namespace utils {
         std::string sigBytes;
         macaron::Base64::Decode(sig, sigBytes);
 
-        std::stringstream ss;
-        for (char sigByte : sigBytes)
-            ss << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) sigByte;
-        std::string sigHex = ss.str();
+        char tmp[1000];
+        MEMZERO(tmp, sizeof(tmp));
+        array_to_hexstr(tmp, sizeof(tmp), (const uint8_t *) sigBytes.c_str(), sigBytes.size());
 
         char outBuffer[40];
-        pageString(outBuffer, sizeof(outBuffer), sigHex.c_str(), idx, pageCount);
+        pageString(outBuffer, sizeof(outBuffer), tmp, idx, pageCount);
+
+        return std::string(outBuffer);
+    }
+
+    std::string FormatPublicKey(const std::string &pk, uint8_t idx, uint8_t *pageCount) {
+        std::string pkBytes;
+        macaron::Base64::Decode(pk, pkBytes);
+
+        char tmp[100];
+        MEMZERO(tmp, sizeof(tmp));
+        array_to_hexstr(tmp, sizeof(tmp), (const uint8_t *) pkBytes.c_str(), pkBytes.size());
+
+        char outBuffer[40];
+        pageString(outBuffer, sizeof(outBuffer), tmp, idx, pageCount);
 
         return std::string(outBuffer);
     }
@@ -207,26 +220,29 @@ namespace utils {
         answer.push_back(fmt::format(format_str, args...));
     }
 
-    std::vector<std::string> internalGenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
+    std::vector<std::string> internalGenerateExpectedUIOutputForEntity(Json::Value entity, uint32_t &itemCount) {
         auto answer = std::vector<std::string>();
-        auto entity = j["entity"];
         uint8_t dummy = 0;
 
-        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatAddress(entity["id"].asString(), 0, &dummy));
-        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatAddress(entity["id"].asString(), 1, &dummy));
+        addTo(answer, "{} | Descr. Ver : {}", itemCount, entity["v"].asInt64(), 0, &dummy);
+        itemCount++;
 
-        int nodeIndex = 0;
-        for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
-            auto nodeData = entity["nodes"][nodeIndex].asString();
-            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex, FormatAddress(nodeData, 0, &dummy));
-            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex, FormatAddress(nodeData, 1, &dummy));
-            itemCount++;
-        }
+        auto entity_id = entity["id"].asString();
+        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
+        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
 
         if (entity["allow_entity_signed_nodes"]) {
             addTo(answer, "{} | Allowed : True", itemCount++);
         } else {
             addTo(answer, "{} | Allowed : False", itemCount++);
+        }
+
+        int nodeIndex = 0;
+        for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
+            auto nodeData = entity["nodes"][nodeIndex].asString();
+            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
+            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
+            itemCount++;
         }
 
         return answer;
@@ -324,6 +340,17 @@ namespace utils {
             }
         }
 
+        if (type == "registry.UnfreezeNode") {
+            addTo(answer, "{} | Type : Unfreeze Node", itemCount++);
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+            auto publicKey = txbody["node_id"].asString();
+            addTo(answer, "{} | Node ID [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Node ID [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
+        }
+
         if (type == "registry.RegisterEntity") {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
             if (tx.isMember("fee")) {
@@ -331,8 +358,8 @@ namespace utils {
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
-            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatAddress(publicKey, 0, &dummy));
-            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatAddress(publicKey, 1, &dummy));
+            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
 
             auto signature = txbody["signature"]["signature"].asString();
             addTo(answer, "{} | Signature [1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
@@ -341,8 +368,8 @@ namespace utils {
             addTo(answer, "{} | Signature [4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
             // Entity (from entity)
-            auto entityAnswer = internalGenerateExpectedUIOutputForEntity(j["tx"]["body"]["untrusted_raw_value"],
-                                                                          itemCount);
+            auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
+            auto entityAnswer = internalGenerateExpectedUIOutputForEntity(untrusted_raw_value, itemCount);
             answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
         }
 
@@ -359,6 +386,8 @@ namespace utils {
         }
 
         // Entity or tx ?
+        auto kind = j["kind"].asString();
+
         if (j.isMember("tx")) {
             // is tx
             answer = GenerateExpectedUIOutputForTx(j, itemCount);

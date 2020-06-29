@@ -59,7 +59,7 @@ typedef struct {
 typedef uint8_t raw_signature_t[64];
 
 typedef struct {
-    address_raw_t addressRaw;
+    publickey_t public_key;
     raw_signature_t raw_signature;
 } signature_t;
 
@@ -82,13 +82,17 @@ typedef struct {
 } cbor_parser_state_t;
 
 typedef struct {
-    address_raw_t id;
+    uint64_t descriptor_version;
+    publickey_t id;
     // We are going to read dynamically like for stakingAmendCommissionSchedule
-    size_t nodes_length;
+    uint64_t nodes_length;
     bool allow_entity_signed_nodes;
+} oasis_entity_internal_t;
 
+typedef struct {
     // We keep parser and iterator
     cbor_parser_state_t cborState;
+    oasis_entity_internal_t obj;
 } oasis_entity_t;
 
 typedef struct {
@@ -127,6 +131,10 @@ typedef struct {
         struct {
             publickey_t node_id;
         } registryUnfreezeNode;
+
+        struct {
+            publickey_t node_id;
+        } deregisterEntity;
 
         struct {
             oasis_entity_t entity;
