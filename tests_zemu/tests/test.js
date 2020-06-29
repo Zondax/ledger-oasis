@@ -57,31 +57,6 @@ describe('Basic checks', function () {
         }
     });
 
-    it('app info', async function () {
-        const sim = new Zemu(APP_PATH);
-        try {
-            await sim.start(sim_options);
-            const app = new OasisApp(sim.getTransport());
-            const resp = await app.appInfo();
-
-            console.log(resp);
-
-            expect(resp.return_code).toEqual(0x9000);
-            expect(resp.error_message).toEqual("No errors");
-
-            expect(resp).toHaveProperty("appName");
-            expect(resp).toHaveProperty("appVersion");
-            expect(resp).toHaveProperty("flagLen");
-            expect(resp).toHaveProperty("flagsValue");
-            expect(resp).toHaveProperty("flag_recovery");
-            expect(resp).toHaveProperty("flag_signed_mcu_code");
-            expect(resp).toHaveProperty("flag_onboarded");
-            expect(resp).toHaveProperty("flag_pin_validated");
-        } finally {
-            await sim.close();
-        }
-    });
-
     it('get address', async function () {
         const sim = new Zemu(APP_PATH);
         try {
