@@ -14,13 +14,17 @@
 *  limitations under the License.
 ********************************************************************************/
 
+#if defined(APP_CONSUMER)
+
 #include <stdio.h>
 #include <zxmacros.h>
+#include <zxerror.h>
 #include <bech32.h>
-#include "parser_impl.h"
+#include "parser_impl_con.h"
 #include "bignum.h"
 #include "parser.h"
-#include "parser_txdef.h"
+#include "parser_txdef_con.h"
+#include "coin.h"
 
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function
@@ -39,8 +43,8 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
 
     // Iterate through all items to check that all can be shown and are valid
-    uint16_t numItems = 0;
-    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems));
+    uint8_t numItems = 0;
+    CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
 
     char tmpKey[40];
     char tmpVal[40];
@@ -48,12 +52,13 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     for (uint8_t idx = 0; idx < numItems; idx++) {
         uint8_t pageCount = 0;
         CHECK_PARSER_ERR(parser_getItem(ctx, idx, tmpKey, sizeof(tmpKey), tmpVal, sizeof(tmpVal), 0, &pageCount))
+        CHECK_APP_CANARY()
     }
 
     return parser_ok;
 }
 
-parser_error_t parser_getNumItems(const parser_context_t *ctx, uint16_t *num_items) {
+parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
     *num_items = _getNumItems(ctx, &parser_tx_obj);
     if (parser_tx_obj.context.suffixLen > 0) {
         (*num_items)++;
@@ -69,7 +74,7 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
         case stakingBurn:
             snprintf(outVal, outValLen, "Burn");
             return parser_ok;
-        case stakingAddEscrow:
+        case stakingEscrow:
             snprintf(outVal, outValLen, "Add escrow");
             return parser_ok;
         case stakingReclaimEscrow:
@@ -113,6 +118,11 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
 
+    // TODO: Change depending on Mainnet / Testnet
+    snprintf(outVal, outValLen, "%s ", COIN_DENOM);
+    outVal += strlen(COIN_DENOM) + 1;
+    outValLen -= strlen(COIN_DENOM) + 1;
+
     char bignum[160];
     union {
         // overlapping arrays to avoid excessive stack usage. Do not use at the same time
@@ -128,6 +138,7 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     }
 
     fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, COIN_AMOUNT_DECIMAL_PLACES);
+    number_inplace_trimming(overlapped.output);
     pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
     return parser_ok;
 }
@@ -160,13 +171,36 @@ __Z_INLINE parser_error_t parser_printRate(const quantity_t *q,
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t parser_printAddress(const address_raw_t *addressRaw,
+                                              char *outVal, uint16_t outValLen,
+                                              uint8_t pageIdx, uint8_t *pageCount) {
+    char outBuffer[128];
+    MEMZERO(outBuffer, sizeof(outBuffer));
+
+    //  and encode as bech32
+    const zxerr_t err = bech32EncodeFromBytes(
+            outBuffer, sizeof(outBuffer),
+            COIN_HRP,
+            (uint8_t *) addressRaw, sizeof(address_raw_t), 1);
+
+    if (err != zxerr_ok) {
+        return parser_invalid_address;
+    }
+
+    pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
                                                 char *outVal, uint16_t outValLen,
                                                 uint8_t pageIdx, uint8_t *pageCount) {
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    bech32EncodeFromBytes(outBuffer, sizeof(outBuffer), COIN_HRP, (uint8_t *) pk, sizeof(publickey_t));
+    if (array_to_hexstr(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 64) {
+        return parser_unexpected_value;
+    }
+
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
     return parser_ok;
 }
@@ -189,26 +223,24 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
+#define ENTITY_DYNAMIC_OFFSET 3
 
     if (displayIdx == 0) {
+        snprintf(outKey, outKeyLen, "Descr. Ver");
+        uint64_to_str(outVal, outValLen, entity->obj.descriptor_version);
+        *pageCount = 1;
+        return parser_ok;
+    }
+
+    if (displayIdx == 1) {
         snprintf(outKey, outKeyLen, "ID");
-        return parser_printPublicKey(&entity->id,
+        return parser_printPublicKey(&entity->obj.id,
                                      outVal, outValLen, pageIdx, pageCount);
     }
 
-    if (displayIdx <= (int) entity->nodes_length) {
-        const int8_t index = displayIdx - 1;
-
-        snprintf(outKey, outKeyLen, "Node [%i]", index);
-
-        publickey_t node;
-        CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
-        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
-    }
-
-    if (displayIdx - entity->nodes_length == 1) {
+    if (displayIdx == 2) {
         snprintf(outKey, outKeyLen, "Allowed");
-        if (entity->allow_entity_signed_nodes) {
+        if (entity->obj.allow_entity_signed_nodes) {
             snprintf(outVal, outValLen, "True");
         } else {
             snprintf(outVal, outValLen, "False");
@@ -216,79 +248,177 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
         return parser_ok;
     }
 
+    if (displayIdx - ENTITY_DYNAMIC_OFFSET < (int) entity->obj.nodes_length) {
+        const int8_t index = displayIdx - ENTITY_DYNAMIC_OFFSET;
+
+        snprintf(outKey, outKeyLen, "Node [%i]", index + 1);
+
+        publickey_t node;
+        CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
+        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
+    }
+
     return parser_no_data;
 }
 
-__Z_INLINE parser_error_t parser_getDynamicItem(const parser_context_t *ctx,
-                                                int8_t displayDynamicIdx,
-                                                char *outKey, uint16_t outKeyLen,
-                                                char *outVal, uint16_t outValLen,
-                                                uint8_t pageIdx, uint8_t *pageCount) {
-
+__Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
+                                           int8_t displayIdx,
+                                           char *outKey, uint16_t outKeyLen,
+                                           char *outVal, uint16_t outValLen,
+                                           uint8_t pageIdx, uint8_t *pageCount) {
     // Variable items
     switch (parser_tx_obj.oasis.tx.method) {
         case stakingTransfer:
-            switch (displayDynamicIdx) {
+            switch (displayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "To");
-                    return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.stakingTransfer.xfer_to,
-                                                 outVal, outValLen, pageIdx, pageCount);
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    snprintf(outKey, outKeyLen, "Tokens");
+                    snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingTransfer.xfer_tokens,
                                                 outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Address");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingTransfer.xfer_to,
+                                               outVal, outValLen, pageIdx, pageCount);
                 }
             }
             break;
         case stakingBurn:
-            switch (displayDynamicIdx) {
+            switch (displayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "Tokens");
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingBurn.burn_tokens,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
             }
             break;
-        case stakingAddEscrow:
-            switch (displayDynamicIdx) {
+        case stakingEscrow:
+            switch (displayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "Escrow");
-                    return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.stakingAddEscrow.escrow_account,
-                                                 outVal, outValLen, pageIdx, pageCount);
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    snprintf(outKey, outKeyLen, "Tokens");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingAddEscrow.escrow_tokens,
+                    snprintf(outKey, outKeyLen, "Amount");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingEscrow.escrow_tokens,
                                                 outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Address");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingEscrow.escrow_account,
+                                               outVal, outValLen, pageIdx, pageCount);
                 }
             }
             break;
         case stakingReclaimEscrow:
-            switch (displayDynamicIdx) {
+            switch (displayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "Escrow");
-                    return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.escrow_account,
-                                                 outVal, outValLen, pageIdx, pageCount);
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    snprintf(outKey, outKeyLen, "Tokens");
+                    snprintf(outKey, outKeyLen, "Shares");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.reclaim_shares,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Address");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.escrow_account,
+                                               outVal, outValLen, pageIdx, pageCount);
+                }
             }
             break;
-        case stakingAmendCommissionSchedule:
-            if (displayDynamicIdx / 2 < (int) parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
-                const int8_t index = displayDynamicIdx / 2;
+        case stakingAmendCommissionSchedule: {
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+            }
+            uint8_t dynDisplayIdx = displayIdx - 3;
+            if (dynDisplayIdx / 2 < (int) parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
+                const int8_t index = dynDisplayIdx / 2;
                 commissionRateStep_t rate;
 
                 CHECK_PARSER_ERR(_getCommissionRateStepAtIndex(ctx, &rate, index))
 
-                switch (displayDynamicIdx % 2) {
+                switch (dynDisplayIdx % 2) {
                     case 0: {
                         snprintf(outKey, outKeyLen, "Rates : [%i] start", index);
                         uint64_to_str(outVal, outValLen, rate.start);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
@@ -297,18 +427,19 @@ __Z_INLINE parser_error_t parser_getDynamicItem(const parser_context_t *ctx,
                     }
                 }
             } else {
-                const int8_t index = (displayDynamicIdx -
+                const int8_t index = (dynDisplayIdx -
                                       parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) / 3;
 
                 // Only keeping one amendment in body at the time
                 commissionRateBoundStep_t bound;
                 CHECK_PARSER_ERR(_getCommissionBoundStepAtIndex(ctx, &bound, index))
 
-                switch ((displayDynamicIdx -
+                switch ((dynDisplayIdx -
                          parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) % 3) {
                     case 0: {
                         snprintf(outKey, outKeyLen, "Bounds : [%i] start", index);
                         uint64_to_str(outVal, outValLen, bound.start);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
@@ -321,35 +452,70 @@ __Z_INLINE parser_error_t parser_getDynamicItem(const parser_context_t *ctx,
                     }
                 }
             }
-
             break;
+        }
         case registryDeregisterEntity:
             *pageCount = 0;
             return parser_no_data;
 
-        case registryUnfreezeNode:
-            if (displayDynamicIdx == 0) {
-                snprintf(outKey, outKeyLen, "Node ID");
-                return parser_printPublicKey(&parser_tx_obj.oasis.tx.body.registryUnfreezeNode.node_id,
-                                             outVal, outValLen, pageIdx, pageCount);
+        case registryUnfreezeNode: {
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 3:
+                    snprintf(outKey, outKeyLen, "Node ID");
+                    return parser_printPublicKey(
+                            &parser_tx_obj.oasis.tx.body.registryUnfreezeNode.node_id,
+                            outVal, outValLen, pageIdx, pageCount);
             }
+        }
         case registryRegisterEntity: {
-            switch (displayDynamicIdx) {
-                case 0:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Gas");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 3:
                     snprintf(outKey, outKeyLen, "Public key");
                     return parser_printPublicKey(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.public_key,
                             outVal, outValLen, pageIdx, pageCount);
-                case 1:
+                case 4:
                     snprintf(outKey, outKeyLen, "Signature");
                     return parser_printSignature(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.raw_signature,
                             outVal, outValLen, pageIdx, pageCount);
-
                 default:
                     return parser_getItemEntity(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
-                            displayDynamicIdx - 2,
+                            displayIdx - 5,
                             outKey, outKeyLen, outVal, outValLen,
                             pageIdx, pageCount);
             }
@@ -363,39 +529,6 @@ __Z_INLINE parser_error_t parser_getDynamicItem(const parser_context_t *ctx,
     return parser_no_data;
 }
 
-__Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
-                                           int8_t displayIdx,
-                                           char *outKey, uint16_t outKeyLen,
-                                           char *outVal, uint16_t outValLen,
-                                           uint8_t pageIdx, uint8_t *pageCount) {
-
-    if (displayIdx == 0) {
-        snprintf(outKey, outKeyLen, "Type");
-        *pageCount = 1;
-        return parser_getType(ctx, outVal, outValLen);
-    }
-
-    if (displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee) {
-        snprintf(outKey, outKeyLen, "Fee Amount");
-        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx, pageCount);
-    }
-
-    if (displayIdx == 2 && parser_tx_obj.oasis.tx.has_fee) {
-        snprintf(outKey, outKeyLen, "Fee Gas");
-        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
-        *pageCount = 1;
-        return parser_ok;
-    }
-
-    uint8_t numberFixedItems = 3;
-    if (!parser_tx_obj.oasis.tx.has_fee)
-        numberFixedItems = 1;
-
-    // Now display dynamic items
-    const int8_t displayDynIdx = displayIdx - numberFixedItems;
-    return parser_getDynamicItem(ctx, displayDynIdx, outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
-}
-
 parser_error_t parser_getItem(const parser_context_t *ctx,
                               uint16_t displayIdx,
                               char *outKey, uint16_t outKeyLen,
@@ -407,7 +540,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     snprintf(outVal, outValLen, " ");
     *pageCount = 0;
 
-    uint16_t numItems = 0;
+    uint8_t numItems = 0;
     CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
     CHECK_APP_CANARY()
 
@@ -454,10 +587,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
 
     ///////////////////////////////
     ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
+    // Add paging values
     if (err == parser_ok && *pageCount > 1) {
         size_t keyLen = strlen(outKey);
         if (keyLen < outKeyLen) {
@@ -466,12 +596,8 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     }
     ///////////////////////////////
     ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
-    ///////////////////////////////
 
     return err;
 }
+
+#endif // APP_CONSUMER

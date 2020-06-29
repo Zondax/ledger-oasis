@@ -15,18 +15,23 @@
 ********************************************************************************/
 
 #include <zxmacros.h>
-#include "parser_impl.h"
-#include "parser_txdef.h"
+#include "parser_impl_con.h"
+#include "parser_txdef_con.h"
+
+#if defined(APP_CONSUMER)
+
 #include "cbor_helper.h"
 
 parser_tx_t parser_tx_obj;
+
 const char context_prefix_tx[] = "oasis-core/consensus: tx for chain ";
 const char context_prefix_entity[] = "oasis-core/registry: register entity";
+const char context_prefix_node[] = "oasis-core/registry: register node";
+const char context_prefix_consensus[] = "oasis-core/tendermint";
 
-parser_error_t parser_init_context(parser_context_t *ctx,
-                                   const uint8_t *buffer,
-                                   uint16_t bufferSize) {
+parser_error_t parser_init_context(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize) {
     ctx->offset = 0;
+    ctx->lastConsumed = 0;
 
     if (bufferSize == 0 || buffer == NULL) {
         // Not available, use defaults
@@ -42,11 +47,8 @@ parser_error_t parser_init_context(parser_context_t *ctx,
 }
 
 parser_error_t parser_init(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize) {
-    parser_error_t err = parser_init_context(ctx, buffer, bufferSize);
-    if (err != parser_ok)
-        return err;
-
-    return err;
+    CHECK_PARSER_ERR(parser_init_context(ctx, buffer, bufferSize));
+    return parser_ok;
 }
 
 const char *parser_getErrorDescription(parser_error_t err) {
@@ -116,6 +118,17 @@ void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, c
     }
 }
 
+__Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
+    CborValue dummy;
+    size_t len = sizeof(address_raw_t);
+    CHECK_CBOR_ERR(cbor_value_copy_byte_string(value, (uint8_t *) out, &len, &dummy))
+    if (len != sizeof(address_raw_t)) {
+        return parser_unexpected_value;
+    }
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readPublicKey(CborValue *value, publickey_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -155,6 +168,7 @@ __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
 
     CborValue contents;
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
+
     CHECK_CBOR_MAP_LEN(value, 2)
     CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
@@ -179,21 +193,21 @@ __Z_INLINE parser_error_t _readRate(CborValue *value, commissionRateStep_t *out)
 //  canonical cbor orders keys by length
 // https://tools.ietf.org/html/rfc7049#section-3.9
 
-    CborValue contents;
+    // Keys are optional. Set default values and try to find overriding fields
+    MEMZERO(out, sizeof(commissionRateStep_t));
+
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
-    CHECK_CBOR_MAP_LEN(value, 2)
-    CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CborValue tmp;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "start"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &out->start))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &out->start))
+    }
 
     return parser_ok;
 }
@@ -208,25 +222,25 @@ __Z_INLINE parser_error_t _readBound(CborValue *value, commissionRateBoundStep_t
 // https://tools.ietf.org/html/rfc7049#section-3.9
 
     CborValue contents;
+    MEMZERO(out, sizeof(commissionRateBoundStep_t));
+
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborMapType)
-    CHECK_CBOR_MAP_LEN(value, 3)
-    CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "start"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &out->start))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CborValue tmp;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_PARSER_ERR(cbor_value_get_uint64(&tmp, &out->start))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate_max"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate_max))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_max", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate_max))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "rate_min"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &out->rate_min))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_min", &tmp))
+    if (tmp.type != CborInvalidType) {
+        CHECK_PARSER_ERR(_readQuantity(&tmp, &out->rate_min))
+    }
 
     return parser_ok;
 }
@@ -300,36 +314,44 @@ __Z_INLINE parser_error_t _readFee(parser_tx_t *v, CborValue *value) {
 __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
     /* Not using cbor_value_map_find because Cbor canonical order should be respected */
 
-    CborValue value = entity->cborState.startValue;    // copy to avoid moving the original iterator
-    CborValue contents;
+    CborValue value = entity->cborState.startValue;    // copy to avoid moving the original iteratorCborValue contents;
+    CborValue tmp;
+    MEMZERO(&entity->obj, sizeof(oasis_entity_internal_t));
 
-    // expect id, nodes, allow_entity_signed_nodes
-    CHECK_CBOR_MAP_LEN(&value, 3)
-    CHECK_CBOR_ERR(cbor_value_enter_container(&value, &contents))
+    CHECK_CBOR_TYPE(cbor_value_get_type(&value), CborMapType)
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "id"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readPublicKey(&contents, &entity->id))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "v", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &entity->obj.descriptor_version))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "nodes"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "id", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(_readPublicKey(&tmp, &entity->obj.id))
+    }
+
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "nodes", &tmp))
     // Only get length
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborArrayType)
-    cbor_value_get_array_length(&contents, &entity->nodes_length);
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_TYPE(cbor_value_get_type(&tmp), CborArrayType)
+        CHECK_CBOR_ERR(cbor_value_get_array_length(&tmp, &entity->obj.nodes_length));
+    }
 
     // too many node ids in the blob to be printed
-    if (entity->nodes_length > MAX_ENTITY_NODES) {
+    if (entity->obj.nodes_length > MAX_ENTITY_NODES) {
         return parser_unexpected_number_items;
     }
 
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "allow_entity_signed_nodes", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        CHECK_CBOR_ERR(cbor_value_get_boolean(&tmp, &entity->obj.allow_entity_signed_nodes))
+    }
 
-    CHECK_PARSER_ERR(_matchKey(&contents, "allow_entity_signed_nodes"))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborBooleanType)
-    CHECK_CBOR_ERR(cbor_value_get_boolean(&contents, &entity->allow_entity_signed_nodes))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+//    CHECK_PARSER_ERR(_matchKey(&contents, "allow_entity_signed_nodes"))
+//    CHECK_CBOR_ERR(cbor_value_advance(&contents))
+//    CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborBooleanType)
+//    CHECK_CBOR_ERR(cbor_value_get_boolean(&contents, &entity->allow_entity_signed_nodes))
+//    CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
     return parser_ok;
 }
@@ -347,7 +369,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
 
             CHECK_PARSER_ERR(_matchKey(&contents, "xfer_to"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingTransfer.xfer_to))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingTransfer.xfer_to))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "xfer_tokens"))
@@ -366,18 +388,18 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
-        case stakingAddEscrow: {
+        case stakingEscrow: {
             CHECK_CBOR_MAP_LEN(value, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_tokens"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingAddEscrow.escrow_tokens))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingEscrow.escrow_tokens))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingAddEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingEscrow.escrow_account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
@@ -387,7 +409,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
 
             CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.stakingReclaimEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingReclaimEscrow.escrow_account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "reclaim_shares"))
@@ -409,6 +431,17 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *value) {
             break;
         }
         case registryDeregisterEntity: {
+            CHECK_CBOR_MAP_LEN(value, 1)
+            CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "node_id"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.deregisterEntity.node_id))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            break;
+        }
+        case registryUnfreezeNode: {
             CHECK_CBOR_MAP_LEN(value, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(value, &contents))
 
@@ -486,7 +519,7 @@ __Z_INLINE parser_error_t _readMethod(parser_tx_t *v, CborValue *value) {
         v->oasis.tx.method = stakingBurn;
     }
     if (CBOR_KEY_MATCHES(value, "staking.AddEscrow")) {
-        v->oasis.tx.method = stakingAddEscrow;
+        v->oasis.tx.method = stakingEscrow;
     }
     if (CBOR_KEY_MATCHES(value, "staking.ReclaimEscrow")) {
         v->oasis.tx.method = stakingReclaimEscrow;
@@ -540,8 +573,8 @@ __Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *it) {
     valuesCount++;
 
     CborValue feeField;
-    CHECK_CBOR_ERR(cbor_value_map_find_value(it, "fee", &feeField))
     v->oasis.tx.has_fee = false;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(it, "fee", &feeField))
 
     // We have fee
     if (cbor_value_is_valid(&feeField)) {
@@ -574,6 +607,10 @@ const char *_context_expected_prefix(const parser_tx_t *v) {
             return context_prefix_tx;
         case entityType:
             return context_prefix_entity;
+        case nodeType:
+            return context_prefix_node;
+        case consensusType:
+            return context_prefix_consensus;
         default:
             return NULL;
     }
@@ -611,6 +648,40 @@ parser_error_t _extractContextSuffix(parser_tx_t *v) {
     return parser_ok;
 }
 
+parser_error_t _extractContextSuffixForValidator(parser_tx_t *v) {
+    v->context.suffixPtr = NULL;
+    v->context.suffixLen = 0;
+
+    // Check all bytes in context as ASCII within 32..127
+    for (uint8_t i = 0; i < v->context.len; i++) {
+        uint8_t c = *(v->context.ptr + i);
+        if (c < 32 || c > 127) {
+            return parser_context_invalid_chars;
+        }
+    }
+
+    if (strncmp(context_prefix_consensus, (char *) v->context.ptr, strlen(context_prefix_consensus)) == 0) {
+        v->type = consensusType;
+    } else {
+        if (strncmp(context_prefix_node, (char *) v->context.ptr, strlen(context_prefix_node)) == 0) {
+            v->type = nodeType;
+        } else {
+            return parser_context_unknown_prefix;
+        }
+    }
+
+    const char *expectedPrefix = _context_expected_prefix(v);
+    if (expectedPrefix == NULL)
+        return parser_context_unknown_prefix;
+
+    if (v->context.len > strlen(expectedPrefix)) {
+        v->context.suffixPtr = v->context.ptr + strlen(expectedPrefix);
+        v->context.suffixLen = v->context.len - strlen(expectedPrefix);
+    }
+
+    return parser_ok;
+}
+
 parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
@@ -632,7 +703,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
 
     // default Unknown type
     v->type = unknownType;
-    if (cbor_value_get_type(&idField) == CborInvalidType) {
+    if (!cbor_value_is_valid(&idField)) {
         // READ TX
         CHECK_PARSER_ERR(_readTx(v, &it))
         v->type = txType;
@@ -658,6 +729,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     return parser_ok;
 }
 
+
 parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
@@ -666,12 +738,18 @@ parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
 }
 
 uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
-    // typical tx: Type, Fee, Gas, + Body
-    uint8_t itemCount = 3;
+    // typical tx: Type, Fee, Gas (exclude Genesis hash)
+    const uint8_t commonElements = 3;
+    // PublicKey + Signature + Descr Ver + ID + Allowed
+    const uint8_t entityFixedElements = 3;
+    // Entity signatures + pubkey
+    const uint8_t entitySignatureElements = 2;
+
+    uint8_t itemCount = commonElements;
 
     // Entity (not a tx)
     if (v->type == entityType) {
-        itemCount = 3 + v->oasis.entity.nodes_length;
+        itemCount = entityFixedElements + v->oasis.entity.obj.nodes_length;
         return itemCount;
     }
 
@@ -685,7 +763,7 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
         case stakingBurn:
             itemCount += 1;
             break;
-        case stakingAddEscrow:
+        case stakingEscrow:
             itemCount += 2;
             break;
         case stakingReclaimEscrow:
@@ -703,10 +781,10 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
         case registryUnfreezeNode:
             itemCount += 1;
             break;
-        case registryRegisterEntity:
-            // 2 items for signature plus number of items for entity blob
-            itemCount += 2 + 2 + v->oasis.tx.body.registryRegisterEntity.entity.nodes_length;
+        case registryRegisterEntity: {
+            itemCount +=  entityFixedElements + entitySignatureElements + v->oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
             break;
+        }
         case unknownMethod:
         default:
             break;
@@ -785,6 +863,7 @@ parser_error_t _getCommissionRateStepAtIndex(const parser_context_t *c, commissi
     CHECK_PARSER_ERR(_getRatesContainer(&it, &ratesContainer))
 
     for (int i = 0; i < index; i++) {
+        // Skip values
         CHECK_CBOR_ERR(cbor_value_advance(&ratesContainer))
     }
 
@@ -845,3 +924,5 @@ parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_
 
     return parser_ok;
 }
+
+#endif

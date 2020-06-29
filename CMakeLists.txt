@@ -1,5 +1,5 @@
 #*******************************************************************************
-#*   (c) 2018 ZondaX GmbH
+#*   (c) 2018 Zondax GmbH
 #*
 #*  Licensed under the Apache License, Version 2.0 (the "License");
 #*  you may not use this file except in compliance with the License.
@@ -35,28 +35,51 @@ file(GLOB_RECURSE TINYCBOR_SRC
         )
 
 file(GLOB_RECURSE LIB_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/hexutils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bignum.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/zxmacros.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
         #########
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/bech32.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/segwit_addr.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
+        )
+
+file(GLOB_RECURSE LIB_VAL_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
+        #########
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_validator.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_impl_val.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote_fsm.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote.c
         )
 
 add_library(app_lib STATIC
         ${LIB_SRC}
         ${TINYCBOR_SRC}
         )
+add_library(app_val_lib STATIC
+        ${LIB_VAL_SRC}
+        )
+
+target_compile_definitions(app_lib PRIVATE APP_CONSUMER)
+target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
 target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/lib
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
+        )
+
+target_include_directories(app_val_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
         )
 
@@ -68,7 +91,15 @@ file(GLOB_RECURSE TESTS_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/*.cpp
         )
 
+file(GLOB_RECURSE TESTS_VAL_SRC
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp_val/*.cpp
+        )
+
 add_executable(unittests ${TESTS_SRC})
+target_compile_definitions(unittests PRIVATE APP_CONSUMER=1)
+add_executable(unittests_val ${TESTS_VAL_SRC})
+target_compile_definitions(unittests_val PRIVATE APP_VALIDATOR=1)
+
 target_include_directories(unittests PUBLIC
         ${gtest_SOURCE_DIR}/include
         ${gmock_SOURCE_DIR}/include
@@ -76,6 +107,18 @@ target_include_directories(unittests PUBLIC
         ${CONAN_INCLUDE_DIRS_JSONCPP}
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
+        )
+
+target_include_directories(unittests_val PUBLIC
+        ${gtest_SOURCE_DIR}/include
+        ${gmock_SOURCE_DIR}/include
+        ${CONAN_INCLUDE_DIRS_FMT}
+        ${CONAN_INCLUDE_DIRS_JSONCPP}
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         )
 
 target_link_libraries(unittests PRIVATE
@@ -84,19 +127,14 @@ target_link_libraries(unittests PRIVATE
         CONAN_PKG::fmt
         CONAN_PKG::jsoncpp)
 
+target_link_libraries(unittests_val PRIVATE
+        gtest_main
+        app_val_lib
+        CONAN_PKG::fmt
+        CONAN_PKG::jsoncpp)
+
 add_test(unittests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests)
+add_test(unittests_val ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unittests_val)
+
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
-
-###############################################################
-# Force tests to depend from app compiling
-###############################################################
-
-#set(DISABLE_DOCKER_BUILDS OFF CACHE BOOL "Disables Docker Builds")
-#
-#if (NOT DISABLE_DOCKER_BUILDS)
-#    add_custom_target(ledger_app
-#            COMMAND make build
-#            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#            )
-#    add_dependencies(unittests ledger_app)
-#endif()
+set_tests_properties(unittests_val PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)

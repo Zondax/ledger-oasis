@@ -1,20 +1,23 @@
-import { expect, test } from "jest";
+import jest, {expect} from "jest";
 import Zemu from "@zondax/zemu";
-import OasisApp from "ledger-oasis-js";
-const tweetnacl = require("tweetnacl");
+import {OasisApp} from "@zondax/ledger-oasis";
+
+const ed25519 = require("ed25519-supercop");
+const sha512 = require("js-sha512");
 
 const Resolve = require("path").resolve;
 const APP_PATH = Resolve("../app/bin/app.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
+    press_delay: 500,
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
-//    ,X11: true
+    ,X11: true
 };
 
-jest.setTimeout(30000)
+jest.setTimeout(20000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
@@ -34,7 +37,7 @@ describe('Basic checks', function () {
         }
     });
 
-    it('get app version', async function () {
+    it('app version', async function () {
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
@@ -68,9 +71,8 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
-            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
-            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
+            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
+            const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
             expect(resp.pk.toString('hex')).toEqual(expected_pk);
@@ -78,6 +80,19 @@ describe('Basic checks', function () {
         } finally {
             await sim.close();
         }
+    });
+
+    it('hash', async function () {
+        const txBlob = Buffer.from(
+            "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+            "base64",
+        );
+        const context = "oasis-core/consensus: tx for chain testing";
+        const hasher = sha512.sha512_256.update(context)
+        hasher.update(txBlob);
+        const hash = Buffer.from(hasher.hex(), "hex")
+        console.log(hash.toString("hex"))
+        expect(hash.toString("hex")).toEqual("86f53ebf15a09c4cd1cf7a52b8b381d74a2142996aca20690d2e750c1d262ec0")
     });
 
     it('show address', async function () {
@@ -95,13 +110,10 @@ describe('Basic checks', function () {
             const respRequest = app.showAddressAndPubKey(path);
 
             // We need to wait until the app responds to the APDU
-            await Zemu.sleep(2000);
+            await Zemu.sleep(4000);
 
             // Now navigate the address / path
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
@@ -115,9 +127,8 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            // FIXME: Zemu/Speculos is not yet handling Ed25519 derivation
-            const expected_bech32_address = "oasis1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzqfyl7w4";
-            const expected_pk = "0000000000000000000000000000000000000000000000000000000000000080";
+            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
+            const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
             expect(resp.pk.toString('hex')).toEqual(expected_pk);
@@ -139,7 +150,7 @@ describe('Basic checks', function () {
             const path = [44, 474, 5, 0x80000000, 0x80000003];
             const context = "oasis-core/consensus: tx for chain testing";
             const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvVQDHPMABRjQ0kVuj85dRvrfAkFtF62t4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
                 "base64",
             );
 
@@ -155,7 +166,7 @@ describe('Basic checks', function () {
 
             // Reference window
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 7; i++) {
                 await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
             }
             await sim.clickBoth();
@@ -168,30 +179,45 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            // Now verify the signature
-            // FIXME: We cannot verify Zemu/Speculos signatures are Ed25519 is not yet supported in emulation
-            // Related to https://github.com/LedgerHQ/speculos/pull/56
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
 
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
         } finally {
             await sim.close();
         }
     });
 
-    it('ed25519', async function () {
+    it('sign basic - invalid', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
 
-        // Now verify the signature
-        let message = Buffer.from("aaa731e500eab8062b5f95830900872a4a4a85560fdf56cecfa0242036299ac7", "hex");
-        let sk = Buffer.from("00000000000000000000000000000000000000000000000000000000000000003b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29", "hex");
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain testing";
+            let invalidMessage = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "base64",
+            );
+            invalidMessage += "1";
 
-        let pair = tweetnacl.sign.keyPair.fromSecretKey( Uint8Array.from(sk) );
-//        console.log(pair)
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
 
-        console.log(Buffer.from(pair.publicKey).toString("hex"))
-        console.log(Buffer.from(pair.secretKey).toString("hex"))
+            // do not wait here..
+            const responseSign = await app.sign(path, context, invalidMessage);
+            console.log(responseSign);
 
-        let sig = tweetnacl.sign(Uint8Array.from(message), Uint8Array.from(sk))
-        console.log(Buffer.from( sig).toString("hex"))
-
-//        const valid = ed25519.verify(signatureResponse.signature.slice(1), prehash, pubKey);
+            expect(responseSign.return_code).toEqual(0x6984);
+            expect(responseSign.error_message).toEqual("Data is invalid : Unexpected data type");
+        } finally {
+            await sim.close();
+        }
     });
 });

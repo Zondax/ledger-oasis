@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - run: git submodule update --init --recursive
-      - run: cmake -DDISABLE_DOCKER_BUILDS=ON -DCMAKE_BUILD_TYPE=Debug . && make
+      - run: cmake -DCMAKE_BUILD_TYPE=Debug . && make
       # Unfortunately need to disable leak sanitizer https://github.com/google/sanitizers/issues/916
       # Still run all other ASAN components
       - run: GTEST_COLOR=1 ASAN_OPTIONS=detect_leaks=0 ctest -VV
@@ -22,11 +22,34 @@ jobs:
       # Docker entrypoint is not considered
       - run: git submodule update --init --recursive
       - run:
-          name: Build
+          name: Build Standard app
           command: |
             source /home/zondax/.cargo/env
             cd /home/zondax/project
             make
+
+  build_ledger_val:
+    docker:
+      - image: zondax/builder-bolos:latest
+    environment:
+      - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
+      - BOLOS_ENV=/opt/bolos
+    steps:
+      - checkout
+      # Docker entrypoint is not considered
+      - run: git submodule update --init --recursive
+      - run:
+          name: Clean
+          command: |
+            source /home/zondax/.cargo/env
+            cd /home/zondax/project
+            make clean
+      - run:
+          name: Build Validator app
+          command: |
+            source /home/zondax/.cargo/env
+            cd /home/zondax/project
+            COIN=oasis_validator make
 
   test_zemu:
     machine:
@@ -53,10 +76,41 @@ jobs:
             nvm use 13.12.0
             make zemu_install
       - run:
-          name: Run zemu tests
+          name: Run zemu tests for Consumer app
           command: |
             nvm use 13.12.0
             make zemu_test
+
+  test_zemu_val:
+    machine:
+      image: ubuntu-1604:201903-01
+    working_directory: ~/repo
+    environment:
+      BASH_ENV: "/opt/circleci/.nvm/nvm.sh"
+    steps:
+      - checkout
+      - run: git submodule update --init --recursive
+      - run:
+          name: Install node + yarn
+          command: |
+            nvm install 13.12.0
+            nvm use 13.12.0
+            npm install -g yarn
+      - run:
+          name: Build/Install build js deps
+          command: |
+            nvm use 13.12.0
+            make zemu_install
+      - run:
+          name: Build Ledger Validator app
+          command: |
+            COIN=oasis_validator make
+            cp /home/circleci/repo/app/bin/app.elf /home/circleci/repo/app/bin/app_val.elf
+      - run:
+          name: Run zemu tests for Validator app
+          command: |
+            nvm use 13.12.0
+            make zemu_val_test
 
   build_package:
     docker:
@@ -73,9 +127,30 @@ jobs:
             source /home/zondax/.cargo/env
             cd /home/zondax/project
             make
-      - store_artifacts:
-          path: /home/zondax/project/app/pkg/zxtool.sh
-      - run: /home/zondax/go/bin/ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(/home/zondax/project/app/pkg/zxtool.sh version) /home/zondax/project/app/pkg/zxtool.sh
+      - run:
+          name: Rename installer
+          command: cp /home/zondax/project/app/pkg/zxtool.sh /home/zondax/project/app/pkg/install_consumer_app.sh
+      - run: /home/zondax/go/bin/ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -replace $(/home/zondax/project/app/pkg/zxtool.sh version) /home/zondax/project/app/pkg/install_consumer_app.sh
+
+  build_package_validator:
+    docker:
+      - image: zondax/builder-bolos:latest
+    environment:
+      - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
+      - BOLOS_ENV=/opt/bolos
+    steps:
+      - checkout
+      - run: git submodule update --init --recursive
+      - run:
+          name: Build
+          command: |
+            source /home/zondax/.cargo/env
+            cd /home/zondax/project
+            COIN=oasis_validator make
+      - run:
+          name: Rename installer
+          command: cp /home/zondax/project/app/pkg/zxtool.sh /home/zondax/project/app/pkg/install_validator_app.sh
+      - run: /home/zondax/go/bin/ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -replace $(/home/zondax/project/app/pkg/zxtool.sh version) /home/zondax/project/app/pkg/install_validator_app.sh
 
 workflows:
   version: 2
@@ -84,12 +159,27 @@ workflows:
     jobs:
       - build
       - build_ledger
+      - build_ledger_val
       - test_zemu
+      - test_zemu_val
       - build_package:
           requires:
             - build
             - build_ledger
+            - build_ledger_val
             - test_zemu
+            - test_zemu_val
+          filters:
+            branches:
+              only:
+                - master
+      - build_package_validator:
+          requires:
+            - build
+            - build_ledger
+            - build_ledger_val
+            - test_zemu
+            - test_zemu_val
           filters:
             branches:
               only:

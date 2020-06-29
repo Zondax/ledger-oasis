@@ -14,16 +14,27 @@
 #*  limitations under the License.
 #********************************************************************************
 
-# We use BOLOS_SDK to determine the develoment environment that is being used
+# We use BOLOS_SDK to determine the development environment that is being used
 # BOLOS_SDK IS  DEFINED	 	We use the plain Makefile for Ledger
 # BOLOS_SDK NOT DEFINED		We use a containerized build approach
 
+TESTS_ZEMU_JS_PACKAGE = "@zondax/ledger-oasis"
+TESTS_ZEMU_JS_DIR = $(CURDIR)/js
+
 ifeq ($(BOLOS_SDK),)
+
 include $(CURDIR)/deps/ledger-zxlib/dockerized_build.mk
+
 else
+
 default:
 	$(MAKE) -C app
 %:
 	$(info "Calling app Makefile for target $@")
-	$(MAKE) -C app $@
+	COIN=$(COIN) $(MAKE) -C app $@
+
 endif
+
+build_val: COIN=oasis_validator
+build_val: build
+	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf

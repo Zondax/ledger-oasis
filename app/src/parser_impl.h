@@ -15,39 +15,10 @@
 ********************************************************************************/
 #pragma once
 
-#include "parser_common.h"
-#include "parser_txdef.h"
-#include "crypto.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern const char context_prefix_tx[];
-extern const char context_prefix_entity[];
-
-extern parser_tx_t parser_tx_obj;
-
-parser_error_t parser_init(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize);
-
-parser_error_t _read(const parser_context_t *c, parser_tx_t *v);
-
-parser_error_t _readContext(parser_context_t *c, parser_tx_t *v);
-
-parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v);
-
-uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v);
-
-parser_error_t _getCommissionRateStepAtIndex(const parser_context_t *c,
-                                             commissionRateStep_t *rate,
-                                             uint8_t index);
-
-parser_error_t _getCommissionBoundStepAtIndex(const parser_context_t *c,
-                                              commissionRateBoundStep_t *bound,
-                                              uint8_t index);
-
-parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_t *node, uint8_t index);
-
-#ifdef __cplusplus
-}
+#if defined(APP_CONSUMER)
+#include "./consumer/parser_impl_con.h"
+#elif defined(APP_VALIDATOR)
+#include "./validator/parser_impl_val.h"
+#else
+#error "APP MODE IS NOT SUPPORTED"
 #endif

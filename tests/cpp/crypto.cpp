@@ -33,5 +33,5 @@ TEST(SHA512_256, API_Check) {
     array_to_hexstr(s, sizeof(s), messageDigest, 32 );
     std::cout << s << std::endl;
 
-    EXPECT_STREQ(s, "AAA731E500EAB8062B5F95830900872A4A4A85560FDF56CECFA0242036299AC7");
+    EXPECT_STREQ(s, "aaa731e500eab8062b5f95830900872a4a4a85560fdf56cecfa0242036299ac7");
 }

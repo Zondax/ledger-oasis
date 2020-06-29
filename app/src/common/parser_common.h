@@ -61,12 +61,19 @@ typedef enum {
     // Required fields
     parser_required_nonce,
     parser_required_method,
+    // Amino related
+    parser_unexpected_wire_type,
+    parser_unexpected_round_value,
+    parser_unexpected_buffer_size,
+    parser_unexpected_type_value,
+    parser_unexpected_height_value,
 } parser_error_t;
 
 typedef struct {
     const uint8_t *buffer;
     uint16_t bufferLen;
     uint16_t offset;
+    uint16_t lastConsumed;
 } parser_context_t;
 
 #ifdef __cplusplus

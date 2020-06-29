@@ -26,11 +26,11 @@ using ::testing::TestWithParam;
 using ::testing::Values;
 
 void check_testcase(const testcase_t &testcase) {
-    auto tc = ReadTestCaseData(testcase.testcases, testcase.index);
+    auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index);
 
     parser_context_t ctx;
 
-    auto buffer = prepareBlob(tc.signature_context, tc.encoded_tx);
+    auto buffer = utils::prepareBlob(tc.signature_context, tc.encoded_tx);
 
     parser_error_t err = parser_parse(&ctx, buffer.data(), buffer.size());
     if (tc.valid) {
@@ -91,14 +91,20 @@ public:
 INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
-        ::testing::ValuesIn(GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
+);
+
+INSTANTIATE_TEST_SUITE_P(
+        GeneratedEntity,
+        OasisTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity.json")), OasisTests::PrintToStringParamName()
 );
 
 TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
 
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 class ManualTests : public ::testing::TestWithParam<testcase_t> {
 public:
@@ -116,7 +122,7 @@ public:
 INSTANTIATE_TEST_SUITE_P(
         Manual,
         ManualTests,
-        ::testing::ValuesIn(GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
 );
 
 TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }

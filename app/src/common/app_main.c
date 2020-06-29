@@ -27,6 +27,12 @@
 #include "crypto.h"
 #include "coin.h"
 #include "zxmacros.h"
+#include "view_custom.h"
+
+#ifdef APP_VALIDATOR
+#include "validator/vote.h"
+#include "parser_impl.h"
+#endif
 
 unsigned char G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 
@@ -210,10 +216,34 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                         THROW(APDU_CODE_DATA_INVALID);
                     }
 
+#if defined(APP_CONSUMER)
                     CHECK_APP_CANARY()
-
                     view_sign_show();
                     *flags |= IO_ASYNCH_REPLY;
+#elif defined(APP_VALIDATOR)
+                    switch(parser_tx_obj.type) {
+                        case consensusType:
+                        {
+                            if(vote_state.isInitialized) {
+                                app_sign();
+                                view_status_show();
+                            } else {
+                                CHECK_APP_CANARY()
+                                view_sign_show();
+                                *flags |= IO_ASYNCH_REPLY;
+                            }
+                        }
+                        	break;
+                        case nodeType:
+                            app_sign();
+                            break;
+                        default:
+                            THROW(APDU_CODE_BAD_KEY_HANDLE);
+                    }
+
+#else
+#error "APP MODE IS NOT SUPPORTED"
+#endif
                     break;
                 }
 
@@ -277,6 +307,9 @@ void app_init() {
     USB_power(0);
     USB_power(1);
     view_idle_show(0);
+#ifdef APP_VALIDATOR
+    vote_state_reset();
+#endif
 }
 
 #pragma clang diagnostic push

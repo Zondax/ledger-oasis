@@ -1,5 +1,5 @@
 /*******************************************************************************
-*  (c) 2019 Zondax GmbH
+*  (c) 2020 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,46 +15,10 @@
 ********************************************************************************/
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdint.h>
-#include <stddef.h>
-
-#define HDPATH_LEN_DEFAULT   5
-
-#define HDPATH_0_DEFAULT     (0x80000000u | 0x2cu)
-#define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
-#define HDPATH_2_DEFAULT     (0x80000000u | 0u)
-#define HDPATH_3_DEFAULT     (0u)
-#define HDPATH_4_DEFAULT     (0u)
-
-#define PK_LEN_ED25519       32u
-
-typedef enum {
-    addr_ed25519 = 0,
-} address_kind_e;
-
-#define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
-#define VIEW_ADDRESS_ITEM_COUNT             2
-#define VIEW_ADDRESS_LAST_PAGE_DEFAULT      0
-
-#define MENU_MAIN_APP_LINE1 "Oasis"
-#define MENU_MAIN_APP_LINE2 "Network"
-#define APPVERSION_LINE1 "Version"
-#define APPVERSION_LINE2 "v"APPVERSION
-
-#define MAX_BECH32_HRP_LEN      83u
-
-#define COIN_HRP            "oasis"
-#define COIN_AMOUNT_DECIMAL_PLACES 9
-#define COIN_RATE_DECIMAL_PLACES 5
-
-#define MAX_RATES           10
-#define MAX_CONTEXT_SIZE    64
-#define MAX_ENTITY_NODES    16
-
-#ifdef __cplusplus
-}
+#if defined(APP_CONSUMER)
+#include "consumer/coin_consumer.h"
+#elif defined(APP_VALIDATOR)
+#include "validator/coin_validator.h"
+#else
+#error "APP MODE IS NOT SUPPORTED"
 #endif

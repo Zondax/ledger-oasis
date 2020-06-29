@@ -2,7 +2,7 @@
     {
         "description": "not_canonical",
         "kind": "Burn",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
         "tx": {
             "nonce": 0,
             "method": "staking.Burn",
@@ -16,7 +16,7 @@
     {
         "description": "with fee",
         "kind": "Burn",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
         "tx": {
             "fee": {
                 "gas": 0,
@@ -34,7 +34,7 @@
     {
         "description": "without fee",
         "kind": "Burn",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
         "tx": {
             "body": {
                 "burn_tokens": "0"
@@ -48,7 +48,7 @@
     {
         "description": "RegisterEntity_Basic",
         "kind": "RegisterEntity",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
         "tx": {
             "fee": {
                 "gas": 0,
@@ -61,7 +61,7 @@
                 },
                 "untrusted_raw_value": {
                     "entity": {
-                        "id": "0000000000000000000000000000000000000000000000000000000000000123",
+                        "id": "000000000000000000000000000000000000000000",
                         "nodes": ["0000000000000000000000000000000000000000000000000000000000000008", "0000000000000000000000000000000000000000000000000000000000000009"],
                         "allow_entity_signed_nodes": true
                     }
@@ -76,9 +76,9 @@
     {
         "description": "signing entity",
         "kind": "Signing",
-        "signature_context": "oasis-core/consensus: tx for chain test-chain-id",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
         "entity": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "id": "000000000000000000000000000000000000000000",
             "nodes": ["0000000000000000000000000000000000000000000000000000000000000001", "0000000000000000000000000000000000000000000000000000000000000002"],
             "allow_entity_signed_nodes": true
         },
