@@ -48,4 +48,24 @@
         "valid": true,
         "encoded_tx_hex": "a364626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
     },
+    {
+        "description": "Manual test case",
+        "kind": "Burn",
+        "signature_context": "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1",
+        "tx": {
+            "nonce": 0,
+            "fee": {
+                "amount": "2000",
+                "gas": 1000
+            },
+            "method": "staking.Transfer",
+            "body": {
+                "xfer_to": "oasis1qr3jc2yfhszpyy0daha2l9xjlkrxnzas0uaje4t3",
+                "xfer_tokens": "170000000000"
+            }
+        },
+        "encoded_tx": "pGNmZWWiY2dhcxkD6GZhbW91bnRCB9BkYm9keaJneGZlcl90b1UA4ywoibwEEhHt7fqvlNL9hmmLsH9reGZlcl90b2tlbnNFJ5TKJABlbm9uY2UHZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+        "valid": true,
+        "encoded_tx_hex": "a364626f6479a16b6275726e5f746f6b656e734100656e6f6e636500666d6574686f646c7374616b696e672e4275726e"
+    }
 ]
