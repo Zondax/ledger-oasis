@@ -32,6 +32,7 @@ __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
 
 #define CHECK_CBOR_ERR(CALL) { \
     CborError err = CALL;  \
+    check_app_canary(); \
     if (err!=CborNoError) return parser_mapCborError(err);}
 
 #define CHECK_CBOR_TYPE(type, expected) {if (type!=expected) return parser_unexpected_type;}

@@ -85,7 +85,7 @@ typedef struct {
     uint64_t descriptor_version;
     publickey_t id;
     // We are going to read dynamically like for stakingAmendCommissionSchedule
-    uint64_t nodes_length;
+    size_t nodes_length;
     bool allow_entity_signed_nodes;
 } oasis_entity_internal_t;
 
@@ -154,13 +154,12 @@ typedef enum {
 
 typedef struct {
     context_t context;
+    oasis_blob_type_e type;
 
     union {
         oasis_tx_t tx;
         oasis_entity_t entity;
     } oasis;
-
-    oasis_blob_type_e type;
 } parser_tx_t;
 
 #ifdef __cplusplus

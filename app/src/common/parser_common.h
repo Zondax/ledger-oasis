@@ -36,6 +36,7 @@ typedef enum {
     parser_display_page_out_of_range,
     parser_unexepected_error,
     // Coin generic
+    parser_root_item_should_be_a_map,
     parser_unexpected_type,
     parser_unexpected_method,
     parser_unexpected_buffer_end,
@@ -61,6 +62,7 @@ typedef enum {
     // Required fields
     parser_required_nonce,
     parser_required_method,
+    parser_required_body,
     // Amino related
     parser_unexpected_wire_type,
     parser_unexpected_round_value,

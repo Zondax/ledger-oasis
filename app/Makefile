@@ -38,6 +38,8 @@ all: bin/app.elf
 include $(BOLOS_SDK)/Makefile.defines
 #DEFINES += ZEMU_LOGGING
 
+DEFINES += NDEBUG
+
 ifndef COIN
 COIN=oasis
 endif
