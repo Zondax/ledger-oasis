@@ -62,7 +62,7 @@ SCRIPT_LD:=$(CURDIR)/script_con.ld
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
-APPPATH = "474'/474'"
+APPPATH = "43'/474'"
 SCRIPT_LD:=$(CURDIR)/script_val.ld
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)

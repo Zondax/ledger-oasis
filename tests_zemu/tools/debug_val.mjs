@@ -29,7 +29,7 @@ async function beforeEnd() {
 async function debugScenario(sim, app) {
     // Here you can customize what you want to do :)
 
-    const path = [474, 474, 5, 0x80000000, 0x80000003];
+    const path = [43, 474, 5, 0x80000000, 0x80000003];
     const context = "oasis-core/consensus: tx for chain testing";
 
     const txBlob1 = Buffer.from("210801110500000000000000190000000000000000220b088092b8c398feffffff01", "hex",);
