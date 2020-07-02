@@ -62,7 +62,7 @@ describe('Basic checks', function () {
             await sim.start(sim_options);
             const app = new OasisValidatorApp(sim.getTransport());
 
-            const path = [474, 474, 5, 0x80000000, 0x80000003];
+            const path = [43, 474, 5, 0x80000000, 0x80000003];
             const context = "oasis-core/tendermint";
 
             const txBlob0 = Buffer.from("96010802114aa701000000000022480a20843c851b4795252c91b61b7f76615a8bce05b0c0c2d3a3da4af2bf7cef34ba3712240a20155d404d4864d503967e2176cb8fbc030c6c4051402870bfebbd82f8084907c910012a0b089b8fd5f70510e3c9fa2232326136333464323232346435343962383536303338616364396264616434373638346431333236326438376531633062386361", "hex",);
