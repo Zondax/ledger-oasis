@@ -635,7 +635,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     v->type = unknownType;      // default Unknown type
 
     // validate CBOR canonical order before even trying to parse
-    CHECK_PARSER_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
+    CHECK_CBOR_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
