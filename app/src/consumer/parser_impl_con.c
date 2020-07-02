@@ -557,30 +557,6 @@ __Z_INLINE parser_error_t _readMethod(parser_tx_t *v, CborValue *rootItem) {
     return parser_unexpected_method;
 }
 
-parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
-    v->context.suffixPtr = NULL;
-    v->context.suffixLen = 0;
-    v->context.len = *(c->buffer + c->offset);
-
-    if (c->offset + v->context.len > c->bufferLen) {
-        return parser_context_unexpected_size;
-    }
-
-    v->context.ptr = (c->buffer + 1);
-    c->offset += 1 + v->context.len;
-
-    return parser_ok;
-}
-
-__Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *rootItem) {
-    CHECK_CBOR_TYPE(cbor_value_get_type(rootItem), CborMapType)
-    CHECK_PARSER_ERR(_readMethod(v, rootItem))
-    CHECK_PARSER_ERR(_readFee(v, rootItem))
-    CHECK_PARSER_ERR(_readNonce(v, rootItem))
-    CHECK_PARSER_ERR(_readBody(v, rootItem))
-    return parser_ok;
-}
-
 const char *_context_expected_prefix(const parser_tx_t *v) {
     switch (v->type) {
         case txType:
@@ -596,35 +572,62 @@ const char *_context_expected_prefix(const parser_tx_t *v) {
     }
 }
 
-parser_error_t _extractContextSuffix(parser_tx_t *v) {
+parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     v->context.suffixPtr = NULL;
     v->context.suffixLen = 0;
 
+    // First byte is the context length
+    v->context.len = *(c->buffer + c->offset);
+
+    if (c->offset + v->context.len > c->bufferLen) {
+        return parser_context_unexpected_size;
+    }
+
+    v->context.ptr = (c->buffer + 1);
+    c->offset += 1 + v->context.len;
+
     // Check all bytes in context as ASCII within 32..127
-    for (uint8_t i = 0; i < v->context.len; i++) {
-        uint8_t c = *(v->context.ptr + i);
-        if (c < 32 || c > 127) {
-            return parser_context_invalid_chars;
+    for (uint16_t i = 0; i < v->context.len; i++) {
+        const uint8_t tmp = v->context.ptr[i];
+        if (tmp < 32 || tmp > 127) {
+            snprintf(custom_err, sizeof(custom_err), "%d %d", tmp, i);
+            return parser_custom_error;
+//            return parser_context_invalid_chars;
         }
     }
 
+    return parser_ok;
+}
+
+parser_error_t _extractContextSuffix(parser_tx_t *v) {
     const char *expectedPrefix = _context_expected_prefix(v);
-    if (expectedPrefix == NULL)
+    if (expectedPrefix == NULL) {
         return parser_context_unknown_prefix;
+    }
 
     // confirm that the context starts with the correct prefix
-    if (v->context.len < strlen(expectedPrefix)) {
+    const size_t prefixLen = strlen(expectedPrefix);
+    if (v->context.len < prefixLen) {
         return parser_context_mismatch;
     }
-    if (strncmp(expectedPrefix, (char *) v->context.ptr, strlen(expectedPrefix)) != 0) {
+    if (strncmp(expectedPrefix, (char *) v->context.ptr, prefixLen) != 0) {
         return parser_context_mismatch;
     }
 
-    if (v->context.len > strlen(expectedPrefix)) {
-        v->context.suffixPtr = v->context.ptr + strlen(expectedPrefix);
-        v->context.suffixLen = v->context.len - strlen(expectedPrefix);
+    if (v->context.len > prefixLen) {
+        v->context.suffixPtr = v->context.ptr + prefixLen;
+        v->context.suffixLen = v->context.len - prefixLen;
     }
 
+    return parser_ok;
+}
+
+__Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *rootItem) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(rootItem), CborMapType)
+    CHECK_PARSER_ERR(_readMethod(v, rootItem))
+    CHECK_PARSER_ERR(_readFee(v, rootItem))
+    CHECK_PARSER_ERR(_readNonce(v, rootItem))
+    CHECK_PARSER_ERR(_readBody(v, rootItem))
     return parser_ok;
 }
 
@@ -633,8 +636,8 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     INIT_CBOR_PARSER(c, rootItem)
     v->type = unknownType;      // default Unknown type
 
-//    // validate CBOR canonical order before even trying to parse
-//    CHECK_PARSER_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
+    // validate CBOR canonical order before even trying to parse
+    CHECK_PARSER_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
@@ -644,22 +647,22 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
         return parser_root_item_should_be_a_map;
     }
 
-//    CborValue tmp;
-//    CHECK_CBOR_ERR(cbor_value_map_find_value(&rootItem, "method", &tmp))
-//    if (cbor_value_is_valid(&tmp)) {
-//        // Read TXs
-//        MEMZERO(&v->oasis.tx, sizeof(oasis_tx_t));
-//        v->type = txType;
-//
-//        CHECK_PARSER_ERR(_readTx(v, &rootItem))
-//    } else {
-//        // Read Entity
-//        MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
-//        v->type = entityType;
-//
-//        parser_setCborState(&v->oasis.entity.cborState, &parser, &rootItem);
-//        CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
-//    }
+    CborValue tmp;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&rootItem, "method", &tmp))
+    if (cbor_value_is_valid(&tmp)) {
+        // Read TXs
+        MEMZERO(&v->oasis.tx, sizeof(oasis_tx_t));
+        v->type = txType;
+
+        CHECK_PARSER_ERR(_readTx(v, &rootItem))
+    } else {
+        // Read Entity
+        MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
+        v->type = entityType;
+
+        parser_setCborState(&v->oasis.entity.cborState, &parser, &rootItem);
+        CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
+    }
 
     return parser_ok;
 }
@@ -733,7 +736,6 @@ __Z_INLINE parser_error_t _getAmendmentContainer(CborValue *value, CborValue *am
     if (cbor_value_at_end(value)) {
         return parser_unexpected_buffer_end;
     }
-
 
     if (!cbor_value_is_map(value)) {
         return parser_unexpected_type;
