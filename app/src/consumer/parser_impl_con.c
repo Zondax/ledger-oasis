@@ -590,9 +590,7 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     for (uint16_t i = 0; i < v->context.len; i++) {
         const uint8_t tmp = v->context.ptr[i];
         if (tmp < 32 || tmp > 127) {
-            snprintf(custom_err, sizeof(custom_err), "%d %d", tmp, i);
-            return parser_custom_error;
-//            return parser_context_invalid_chars;
+            return parser_context_invalid_chars;
         }
     }
 
