@@ -52,7 +52,6 @@ parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_
 
 parser_error_t _extractContextSuffix(parser_tx_t *v);
 
-parser_error_t _extractContextSuffixForValidator(parser_tx_t *v);
 #endif
 
 #ifdef __cplusplus

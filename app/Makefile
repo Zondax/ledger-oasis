@@ -22,6 +22,11 @@ endif
 
 MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
+ifeq ($(APP_TESTING),1)
+DEFINES += APP_TESTING
+DEFINES += ZEMU_LOGGING
+endif
+
 all: bin/app.elf
 	@echo "#!/usr/bin/env bash" > $(CURDIR)/pkg/zxtool.sh
 	@echo "APPNAME=\"${APPNAME}\"" >> $(CURDIR)/pkg/zxtool.sh
@@ -36,7 +41,7 @@ all: bin/app.elf
 	@chmod +x $(CURDIR)/pkg/zxtool.sh
 
 include $(BOLOS_SDK)/Makefile.defines
-#DEFINES += ZEMU_LOGGING
+DEFINES += NDEBUG
 
 ifndef COIN
 COIN=oasis
@@ -44,7 +49,7 @@ endif
 
 APPVERSION_M=1
 APPVERSION_N=5
-APPVERSION_P=0
+APPVERSION_P=1
 
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
@@ -123,7 +128,7 @@ DEFINES       += HAVE_UX_FLOW
 
 else
 # Assume Nano S
-DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=64
+DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=128
 DEFINES       += HAVE_BOLOS_UX COMPLIANCE_UX_160 HAVE_UX_LEGACY HAVE_UX_FLOW
 endif
 

@@ -30,8 +30,8 @@ string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 ##############################################################
 #  static libs
 file(GLOB_RECURSE TINYCBOR_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborparser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborvalidation.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger/cborparser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger/cborvalidation.c
         )
 
 file(GLOB_RECURSE LIB_SRC
@@ -68,7 +68,7 @@ target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
 target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer
@@ -105,7 +105,7 @@ target_include_directories(unittests PUBLIC
         ${gmock_SOURCE_DIR}/include
         ${CONAN_INCLUDE_DIRS_FMT}
         ${CONAN_INCLUDE_DIRS_JSONCPP}
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         )

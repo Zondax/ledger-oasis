@@ -40,8 +40,6 @@ parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v);
 
 uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v);
 
-parser_error_t _extractContextSuffix(parser_tx_t *v);
-
 parser_error_t _extractContextSuffixForValidator(parser_tx_t *v);
 #endif
 

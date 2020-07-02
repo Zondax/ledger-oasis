@@ -10,14 +10,14 @@ const APP_PATH = Resolve("../app/bin/app.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
-    press_delay: 500,
+    press_delay: 700,
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
     ,X11: true
 };
 
-jest.setTimeout(20000)
+jest.setTimeout(40000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
@@ -167,8 +167,10 @@ describe('Basic checks', function () {
             // Reference window
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             for (let i = 0; i < 7; i++) {
+                console.log("CLICK")
                 await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
             }
+            console.log("CLICK")
             await sim.clickBoth();
 
             let resp = await signatureRequest;
@@ -215,7 +217,61 @@ describe('Basic checks', function () {
             console.log(responseSign);
 
             expect(responseSign.return_code).toEqual(0x6984);
-            expect(responseSign.error_message).toEqual("Data is invalid : Unexpected data type");
+            expect(responseSign.error_message).toEqual("Data is invalid : Root item should be a map");
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('sign basic - issue', async function () {
+        const snapshotPrefixGolden = "snapshots/sign-issue01/";
+        const snapshotPrefixTmp = "snapshots-tmp/sign-issue01/";
+        let snapshotCount = 0;
+
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain testing";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcxkD6GZhbW91bnRCB9BkYm9keaJneGZlcl90b1UA4ywoibwEEhHt7fqvlNL9hmmLsH9reGZlcl90b2tlbnNFJ5TKJABlbm9uY2UHZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await Zemu.sleep(2000);
+
+            // Reference window
+            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
+            for (let i = 0; i < 7; i++) {
+                await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
+            }
+            await sim.clickBoth();
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
         } finally {
             await sim.close();
         }

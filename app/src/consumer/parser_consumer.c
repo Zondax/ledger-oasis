@@ -36,7 +36,9 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
-    return _read(ctx, &parser_tx_obj);
+    CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
+    CHECK_PARSER_ERR(_extractContextSuffix(&parser_tx_obj))
+    return parser_ok;
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
