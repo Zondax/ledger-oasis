@@ -10,14 +10,14 @@ const APP_PATH = Resolve("../app/bin/app.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
-    press_delay: 500,
+    press_delay: 700,
     logging: true,
     start_delay: 3000,
     custom: `-s "${APP_SEED}"`
     ,X11: true
 };
 
-jest.setTimeout(20000)
+jest.setTimeout(40000)
 
 function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
     for (let i = 0; i < snapshotCount; i++) {
@@ -167,8 +167,10 @@ describe('Basic checks', function () {
             // Reference window
             await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
             for (let i = 0; i < 7; i++) {
+                console.log("CLICK")
                 await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
             }
+            console.log("CLICK")
             await sim.clickBoth();
 
             let resp = await signatureRequest;
@@ -215,7 +217,7 @@ describe('Basic checks', function () {
             console.log(responseSign);
 
             expect(responseSign.return_code).toEqual(0x6984);
-            expect(responseSign.error_message).toEqual("Data is invalid : Unexpected data type");
+            expect(responseSign.error_message).toEqual("Data is invalid : Root item should be a map");
         } finally {
             await sim.close();
         }
