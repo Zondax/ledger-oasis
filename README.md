@@ -67,7 +67,7 @@ then run:
     - `make deps`
 
 - This project requires Ledger firmware 1.6
-    - The current repository keeps track of Ledger's SDK but it is possible to override it by changing the git submodule.
+    - The current repository keeps track of Ledger's SDK, but it is possible to override it by changing the git submodule.
 
 *Warning*: Some IDEs may not use the same python interpreter or virtual enviroment as the one you used when running `pip`.
 If you see conan is not found, check that you installed the package in the same interpreter as the one that launches `cmake`.
@@ -88,14 +88,14 @@ If you see conan is not found, check that you installed the package in the same 
 
 - Running rust tests (x64)
 
-    If you installed the what is described above, just run:
+    If you installed the software packages described above, just run:
     ```bash
     make rust_test
     ```
 
 - Running C/C++ tests (x64)
 
-    If you installed the what is described above, just run:
+    If you installed the software packages described above, just run:
     ```bash
     make cpp_test
     ```
@@ -116,7 +116,7 @@ If you see conan is not found, check that you installed the package in the same 
 > Repo here: https://github.com/Zondax/zemu
 
 Let's go! First install everything:
-> At this moment, if you change the app you will need to run `make` before running the test again.
+> At this time, if you modify the app you will need to run `make` before running the test again.
 
 ```bash
 make zemu_install
@@ -130,15 +130,15 @@ make zemu_test
 
 To run a single specific test:
 
-> At the moment, the recommendation is to run from the IDE. Remember to run `make` if you change the app.
+> At this time, our recommendation is to run the test from the IDE. Remember to run `make` if you change the app.
 
 ## How to debug a ledger app?
 
-You can use vscode or clion to debug the app. We recommend using CLion but we provide a vscode (unsupported) configuration too.
+You can use vscode or clion to debug the app. We recommend using clion, but we provide a vscode (unsupported) configuration too.
 
 ### Preconditions
 
-If you are using CLion, you need to a configuration file in your home directory: `$HOME/.gdbinit` with the following content:
+If you are using clion, you need to create a configuration file in your home directory: `$HOME/.gdbinit` with the following content:
 
 ```
 set auto-load local-gdbinit on
@@ -147,7 +147,7 @@ add-auto-load-safe-path /
 
 ### Warnings
 
-There are a few things to take into account when enabling Ledger App debugging:
+There are a few things to take into account when enabling Ledger app debugging:
 
 - Once you enable the local .gdbinit that is located in your project workspace. You **will break** local Rust debugging in your host. The reason is that debugging unit tests will use the same `.gdbinit` configuration that sets the environment to ARM. We are looking at some possible fixes. For now, if you want to debug unit tests instead of the ledger app, you need to comment out the lines in `.gdbinit`
 
@@ -173,7 +173,7 @@ There are a few things to take into account when enabling Ledger App debugging:
 
 3. Launch the emulator in debug mode
 
-    > If you didnt install Zemu yet (previous section), then run `make zemu_install`
+    > If you didnt install Zemu yet (see previous section), then run `make zemu_install`
 
     ```bash
     make zemu_debug
@@ -189,7 +189,7 @@ There are a few things to take into account when enabling Ledger App debugging:
 
     Check that the path mappings are correct
 
-5. Start CLion debugger
+5. Start clion debugger
 
     You will hit a breakpoint in main.
     Add breakpoints in other places and continue.
@@ -209,7 +209,7 @@ There are a few things to take into account when enabling Ledger App debugging:
    There are a few additional steps that increase reproducibility and simplify development:
 
 **1 - Ensure your device works in your OS**
-- In Linux hosts it might be necessary to adjust udev rules, etc.
+- In Linux hosts, it might be necessary to adjust udev rules, etc.
 
   Refer to Ledger documentation: https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues
 
@@ -217,7 +217,7 @@ There are a few things to take into account when enabling Ledger App debugging:
 
 Many of our integration tests expect the device to be configured with a known test mnemonic.
 
-- Plug your device while pressing the right button
+- Plug in your device while pressing the right button
 
 - Your device will show "Recovery" in the screen
 
@@ -256,7 +256,7 @@ The Makefile will build the firmware in a docker container and leave the binary 
 
 - Upload to a device
 
-   The following command will upload the application to the ledger:
+   The following command will upload the application to the Ledger device:
 
    _Warning: The application will be deleted before uploading._
    ```
