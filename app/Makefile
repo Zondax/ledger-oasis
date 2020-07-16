@@ -49,7 +49,7 @@ endif
 
 APPVERSION_M=1
 APPVERSION_N=6
-APPVERSION_P=0
+APPVERSION_P=1
 
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
@@ -133,6 +133,9 @@ DEFINES       += HAVE_BOLOS_UX COMPLIANCE_UX_160 HAVE_UX_LEGACY HAVE_UX_FLOW
 endif
 
 # X specific
+
+# App specific
+DEFINES += CBOR_NO_FLOATING_POINT
 
 #Feature temporarily disabled
 DEFINES   += LEDGER_SPECIFIC
