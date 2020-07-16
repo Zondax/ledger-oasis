@@ -138,6 +138,9 @@ endif
 
 # X specific
 
+# App specific
+DEFINES += CBOR_NO_FLOATING_POINT
+
 #Feature temporarily disabled
 DEFINES   += LEDGER_SPECIFIC
 
