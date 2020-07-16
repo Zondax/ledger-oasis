@@ -49,7 +49,9 @@ endif
 
 APPVERSION_M=1
 APPVERSION_N=6
-APPVERSION_P=0
+APPVERSION_P=1
+
+DEFINES += CBOR_NO_FLOATING_POINT
 
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
@@ -217,5 +219,4 @@ dep/%.d: %.c Makefile
 
 .PHONY: listvariants
 listvariants:
-	@echo VARIANTS COIN oasis
-	@echo VARIANTS COIN oasis_validator
+	@echo VARIANTS COIN oasis oasis_validator
