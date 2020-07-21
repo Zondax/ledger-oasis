@@ -276,4 +276,58 @@ describe('Basic checks', function () {
             await sim.close();
         }
     });
+
+    it('sign basic - issue 2', async function () {
+        const snapshotPrefixGolden = "snapshots/sign-issue01/";
+        const snapshotPrefixTmp = "snapshots-tmp/sign-issue01/";
+        let snapshotCount = 0;
+
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain testing";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUMBhqBlc3RhcnQZA+hmYm91bmRzgaNlc3RhcnQZA+hocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZQBmbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await Zemu.sleep(2000);
+
+            // Reference window
+            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
+            for (let i = 0; i < 9; i++) {
+                await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
+            }
+            await sim.clickBoth();
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
 });
