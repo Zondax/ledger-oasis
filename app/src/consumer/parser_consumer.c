@@ -418,13 +418,13 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 
                 switch (dynDisplayIdx % 2) {
                     case 0: {
-                        snprintf(outKey, outKeyLen, "Rates : [%i] start", index);
+                        snprintf(outKey, outKeyLen, "Rates [%d] start", index);
                         uint64_to_str(outVal, outValLen, rate.start);
                         *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
-                        snprintf(outKey, outKeyLen, "Rates : [%i] rate", index);
+                        snprintf(outKey, outKeyLen, "Rates [%d] rate", index);
                         return parser_printRate(&rate.rate, outVal, outValLen, pageIdx, pageCount);
                     }
                 }
@@ -439,17 +439,17 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 switch ((dynDisplayIdx -
                          parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) % 3) {
                     case 0: {
-                        snprintf(outKey, outKeyLen, "Bounds : [%i] start", index);
+                        snprintf(outKey, outKeyLen, "Bounds [%d] start", index);
                         uint64_to_str(outVal, outValLen, bound.start);
                         *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
-                        snprintf(outKey, outKeyLen, "Bounds : [%i] min", index);
+                        snprintf(outKey, outKeyLen, "Bounds [%d] min", index);
                         return parser_printRate(&bound.rate_min, outVal, outValLen, pageIdx, pageCount);
                     }
                     case 2: {
-                        snprintf(outKey, outKeyLen, "Bounds : [%i] max", index);
+                        snprintf(outKey, outKeyLen, "Bounds [%d] max", index);
                         return parser_printRate(&bound.rate_max, outVal, outValLen, pageIdx, pageCount);
                     }
                 }
