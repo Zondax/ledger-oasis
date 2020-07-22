@@ -59,7 +59,9 @@ ifeq ($(COIN),oasis)
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'"
+ifeq ($(TARGET_NAME),TARGET_NANOS)
 SCRIPT_LD:=$(CURDIR)/script_con.ld
+endif
 
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
