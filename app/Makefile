@@ -67,7 +67,9 @@ else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
+ifeq ($(TARGET_NAME),TARGET_NANOS)
 SCRIPT_LD:=$(CURDIR)/script_val.ld
+endif
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 $(error "Oasis Validator App is not supported in Nano X")
