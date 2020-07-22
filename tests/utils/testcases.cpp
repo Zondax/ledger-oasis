@@ -325,7 +325,7 @@ namespace utils {
             while (pageIdx < pageCount) {
                 auto s = FormatRates(txbody["amendment"]["rates"], pageIdx, &pageCount);
                 if (!s.empty())
-                    addTo(answer, "{} | Rates : {}", itemCount, s);
+                    addTo(answer, "{} | Rates {}", itemCount, s);
                 pageIdx++;
                 itemCount++;
             }
@@ -334,7 +334,7 @@ namespace utils {
             while (pageIdx < pageCount) {
                 auto s = FormatBounds(txbody["amendment"]["bounds"], pageIdx, &pageCount);
                 if (!s.empty())
-                    addTo(answer, "{} | Bounds : {}", itemCount, s);
+                    addTo(answer, "{} | Bounds {}", itemCount, s);
                 pageIdx++;
                 itemCount++;
             }

@@ -49,7 +49,7 @@ endif
 
 APPVERSION_M=1
 APPVERSION_N=6
-APPVERSION_P=1
+APPVERSION_P=2
 
 DEFINES += CBOR_NO_FLOATING_POINT
 
@@ -59,13 +59,17 @@ ifeq ($(COIN),oasis)
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'"
+ifeq ($(TARGET_NAME),TARGET_NANOS)
 SCRIPT_LD:=$(CURDIR)/script_con.ld
+endif
 
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
+ifeq ($(TARGET_NAME),TARGET_NANOS)
 SCRIPT_LD:=$(CURDIR)/script_val.ld
+endif
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 $(error "Oasis Validator App is not supported in Nano X")
@@ -135,6 +139,9 @@ DEFINES       += HAVE_BOLOS_UX COMPLIANCE_UX_160 HAVE_UX_LEGACY HAVE_UX_FLOW
 endif
 
 # X specific
+
+# App specific
+DEFINES += CBOR_NO_FLOATING_POINT
 
 #Feature temporarily disabled
 DEFINES   += LEDGER_SPECIFIC
