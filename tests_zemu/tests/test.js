@@ -278,8 +278,8 @@ describe('Basic checks', function () {
     });
 
     it('sign basic - issue 2', async function () {
-        const snapshotPrefixGolden = "snapshots/sign-issue01/";
-        const snapshotPrefixTmp = "snapshots-tmp/sign-issue01/";
+        const snapshotPrefixGolden = "snapshots/sign-issue02/";
+        const snapshotPrefixTmp = "snapshots-tmp/sign-issue02/";
         let snapshotCount = 0;
 
         const sim = new Zemu(APP_PATH);
