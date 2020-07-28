@@ -1,3 +1,19 @@
+/** ******************************************************************************
+ *  (c) 2020 Zondax GmbH
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ******************************************************************************* */
+
 import jest, {expect} from "jest";
 import Zemu from "@zondax/zemu";
 import {OasisApp} from "@zondax/ledger-oasis";
@@ -10,22 +26,14 @@ const APP_PATH = Resolve("../app/bin/app.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
-    press_delay: 700,
+    press_delay: 300,
     logging: true,
-    start_delay: 3000,
+    start_delay: 1000,
     custom: `-s "${APP_SEED}"`
-    ,X11: true
+    , X11: true
 };
 
-jest.setTimeout(40000)
-
-function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
-    for (let i = 0; i < snapshotCount; i++) {
-        const img1 = Zemu.LoadPng2RGB(`${snapshotPrefixTmp}${i}.png`);
-        const img2 = Zemu.LoadPng2RGB(`${snapshotPrefixGolden}${i}.png`);
-        expect(img1).toEqual(img2);
-    }
-}
+jest.setTimeout(80000)
 
 describe('Basic checks', function () {
     it('can start and stop container', async function () {
@@ -96,10 +104,6 @@ describe('Basic checks', function () {
     });
 
     it('show address', async function () {
-        const snapshotPrefixGolden = "snapshots/show-address/";
-        const snapshotPrefixTmp = "snapshots-tmp/show-address/";
-        let snapshotCount = 0;
-
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
@@ -109,20 +113,12 @@ describe('Basic checks', function () {
             const path = [44, 474, 5, 0x80000000, 0x80000003];
             const respRequest = app.showAddressAndPubKey(path);
 
-            // We need to wait until the app responds to the APDU
-            await Zemu.sleep(4000);
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            // Now navigate the address / path
-            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickRight(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            await sim.clickBoth(`${snapshotPrefixTmp}${snapshotCount++}.png`);
+            await sim.compareSnapshotsAndAccept(".", "show_address", 4);
 
             const resp = await respRequest;
             console.log(resp);
-
-            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
 
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
@@ -138,10 +134,6 @@ describe('Basic checks', function () {
     });
 
     it('sign basic', async function () {
-        const snapshotPrefixGolden = "snapshots/sign-basic/";
-        const snapshotPrefixTmp = "snapshots-tmp/sign-basic/";
-        let snapshotCount = 0;
-
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
@@ -150,7 +142,7 @@ describe('Basic checks', function () {
             const path = [44, 474, 5, 0x80000000, 0x80000003];
             const context = "oasis-core/consensus: tx for chain testing";
             const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvVQDHPMABRjQ0kVuj85dRvrfAkFtF62t4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJ0b1UAxzzAAUY0NJFbo/OXUb63wJBbRetmYW1vdW50QGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
                 "base64",
             );
 
@@ -162,21 +154,12 @@ describe('Basic checks', function () {
             // do not wait here..
             const signatureRequest = app.sign(path, context, txBlob);
 
-            await Zemu.sleep(2000);
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            // Reference window
-            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 7; i++) {
-                console.log("CLICK")
-                await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
-            }
-            console.log("CLICK")
-            await sim.clickBoth();
+            await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
 
             let resp = await signatureRequest;
             console.log(resp);
-
-            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
 
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
@@ -223,20 +206,16 @@ describe('Basic checks', function () {
         }
     });
 
-    it('sign basic - issue', async function () {
-        const snapshotPrefixGolden = "snapshots/sign-issue01/";
-        const snapshotPrefixTmp = "snapshots-tmp/sign-issue01/";
-        let snapshotCount = 0;
-
+    it('sign amend schedule', async function () {
         const sim = new Zemu(APP_PATH);
         try {
             await sim.start(sim_options);
             const app = new OasisApp(sim.getTransport());
 
             const path = [44, 474, 5, 0x80000000, 0x80000003];
-            const context = "oasis-core/consensus: tx for chain testing";
+            const context = "oasis-core/consensus: tx for chain testing amend";
             const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcxkD6GZhbW91bnRCB9BkYm9keaJneGZlcl90b1UA4ywoibwEEhHt7fqvlNL9hmmLsH9reGZlcl90b2tlbnNFJ5TKJABlbm9uY2UHZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
+                "pGNmZWWiY2dhcxkD6GZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXOFomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoZmJvdW5kc4WjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRkD6GZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
                 "base64",
             );
 
@@ -248,73 +227,12 @@ describe('Basic checks', function () {
             // do not wait here..
             const signatureRequest = app.sign(path, context, txBlob);
 
-            await Zemu.sleep(2000);
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            // Reference window
-            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 7; i++) {
-                await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
-            }
-            await sim.clickBoth();
+            await sim.compareSnapshotsAndAccept(".", "sign_amend", 30);
 
             let resp = await signatureRequest;
             console.log(resp);
-
-            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
-
-            expect(resp.return_code).toEqual(0x9000);
-            expect(resp.error_message).toEqual("No errors");
-
-            const hasher = sha512.sha512_256.update(context)
-            hasher.update(txBlob);
-            const msgHash = Buffer.from(hasher.hex(), "hex")
-
-            // Now verify the signature
-            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
-            expect(valid).toEqual(true);
-        } finally {
-            await sim.close();
-        }
-    });
-
-    it('sign basic - issue 2', async function () {
-        const snapshotPrefixGolden = "snapshots/sign-issue02/";
-        const snapshotPrefixTmp = "snapshots-tmp/sign-issue02/";
-        let snapshotCount = 0;
-
-        const sim = new Zemu(APP_PATH);
-        try {
-            await sim.start(sim_options);
-            const app = new OasisApp(sim.getTransport());
-
-            const path = [44, 474, 5, 0x80000000, 0x80000003];
-            const context = "oasis-core/consensus: tx for chain testing";
-            const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWlhbWVuZG1lbnSiZXJhdGVzgaJkcmF0ZUMBhqBlc3RhcnQZA+hmYm91bmRzgaNlc3RhcnQZA+hocmF0ZV9tYXhDAYagaHJhdGVfbWluQwGGoGVub25jZQBmbWV0aG9keB9zdGFraW5nLkFtZW5kQ29tbWlzc2lvblNjaGVkdWxl",
-                "base64",
-            );
-
-            const pkResponse = await app.getAddressAndPubKey(path);
-            console.log(pkResponse);
-            expect(pkResponse.return_code).toEqual(0x9000);
-            expect(pkResponse.error_message).toEqual("No errors");
-
-            // do not wait here..
-            const signatureRequest = app.sign(path, context, txBlob);
-
-            await Zemu.sleep(2000);
-
-            // Reference window
-            await sim.snapshot(`${snapshotPrefixTmp}${snapshotCount++}.png`);
-            for (let i = 0; i < 9; i++) {
-                await sim.clickRight(Resolve(`${snapshotPrefixTmp}${snapshotCount++}.png`));
-            }
-            await sim.clickBoth();
-
-            let resp = await signatureRequest;
-            console.log(resp);
-
-            compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount);
 
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
