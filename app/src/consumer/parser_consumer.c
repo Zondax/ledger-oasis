@@ -149,6 +149,35 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t parser_printShares(const quantity_t *q,
+                                             char *outVal, uint16_t outValLen,
+                                             uint8_t pageIdx, uint8_t *pageCount) {
+    // upperbound 2**(64*8)
+    // results in 155 decimal digits => max 78 bcd bytes
+
+    // Too many digits, we cannot format this
+    LESS_THAN_64_DIGIT(q->len)
+    
+    char bignum[160];
+    union {
+        // overlapping arrays to avoid excessive stack usage. Do not use at the same time
+        uint8_t bcd[80];
+        char output[160];
+    } overlapped;
+
+    MEMZERO(overlapped.bcd, sizeof(overlapped.bcd));
+    MEMZERO(bignum, sizeof(bignum));
+
+    if (!format_quantity(q, overlapped.bcd, sizeof(overlapped.bcd), bignum, sizeof(bignum))) {
+        return parser_unexpected_value;
+    }
+
+    fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, 0`);
+    number_inplace_trimming(overlapped.output);
+    pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t parser_printRate(const quantity_t *q,
                                            char *outVal, uint16_t outValLen,
                                            uint8_t pageIdx, uint8_t *pageCount) {
@@ -371,8 +400,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Shares");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.shares,
-                                                outVal, outValLen, pageIdx, pageCount);
+                    return parser_printShares(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.shares,
+                                              outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
                     // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
