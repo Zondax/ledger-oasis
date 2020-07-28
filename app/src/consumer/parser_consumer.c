@@ -83,7 +83,11 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
             snprintf(outVal, outValLen, "Reclaim escrow");
             return parser_ok;
         case stakingAmendCommissionSchedule:
+#if defined(TARGET_NANOS)
+            snprintf(outVal, outValLen, "Amend commission  schedule");
+#else
             snprintf(outVal, outValLen, "Amend commission schedule");
+#endif
             return parser_ok;
         case registryDeregisterEntity:
             snprintf(outVal, outValLen, "Deregister Entity");
