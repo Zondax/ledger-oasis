@@ -269,18 +269,18 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
-            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["xfer_tokens"].asString()));
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["xfer_to"].asString(), 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["xfer_to"].asString(), 1, &dummy));
+            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
+            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {
             addTo(answer, "{} | Type : Burn", itemCount++);
-            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["burn_tokens"].asString()));
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
@@ -289,26 +289,26 @@ namespace utils {
 
         if (type == "staking.AddEscrow") {
             addTo(answer, "{} | Type : Add escrow", itemCount++);
-            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["escrow_tokens"].asString()));
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
-            auto escrowAccount = txbody["escrow_account"].asString();
+            auto escrowAccount = txbody["account"].asString();
             addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
             addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.ReclaimEscrow") {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
-            addTo(answer, "{} | Shares : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["reclaim_shares"].asString()));
+            addTo(answer, "{} | Shares : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
-            auto escrowAccount = txbody["escrow_account"].asString();
+            auto escrowAccount = txbody["account"].asString();
             addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
             addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }

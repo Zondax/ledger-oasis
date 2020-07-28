@@ -105,22 +105,22 @@ typedef struct {
     // Union type will depend on method
     union {
         struct {
-            address_raw_t xfer_to;
-            quantity_t xfer_tokens;
+            address_raw_t to;
+            quantity_t amount;
         } stakingTransfer;
 
         struct {
-            quantity_t burn_tokens;
+            quantity_t amount;
         } stakingBurn;
 
         struct {
-            address_raw_t escrow_account;
-            quantity_t escrow_tokens;
+            address_raw_t account;
+            quantity_t amount;
         } stakingEscrow;
 
         struct {
-            address_raw_t escrow_account;
-            quantity_t reclaim_shares;
+            address_raw_t account;
+            quantity_t shares;
         } stakingReclaimEscrow;
 
         struct {

@@ -370,14 +370,14 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_MAP_LEN(&bodyField, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "xfer_to"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "to"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingTransfer.xfer_to))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingTransfer.to))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "xfer_tokens"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "amount"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingTransfer.xfer_tokens))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingTransfer.amount))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
@@ -385,9 +385,9 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_MAP_LEN(&bodyField, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "burn_tokens"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "amount"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingBurn.burn_tokens))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingBurn.amount))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
@@ -395,14 +395,14 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_MAP_LEN(&bodyField, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "escrow_tokens"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "amount"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingEscrow.escrow_tokens))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingEscrow.amount))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingEscrow.account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
@@ -410,14 +410,14 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_MAP_LEN(&bodyField, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "escrow_account"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "shares"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingReclaimEscrow.escrow_account))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingReclaimEscrow.shares))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "reclaim_shares"))
+            CHECK_PARSER_ERR(_matchKey(&contents, "account"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingReclaimEscrow.reclaim_shares))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingReclaimEscrow.account))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }

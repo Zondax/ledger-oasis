@@ -279,7 +279,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Amount");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingTransfer.xfer_tokens,
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingTransfer.amount,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
@@ -296,7 +296,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingTransfer.xfer_to,
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingTransfer.to,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
             }
@@ -310,7 +310,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Amount");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingBurn.burn_tokens,
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingBurn.amount,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
@@ -336,7 +336,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Amount");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingEscrow.escrow_tokens,
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingEscrow.amount,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
@@ -353,7 +353,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingEscrow.escrow_account,
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingEscrow.account,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
             }
@@ -367,7 +367,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Shares");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.reclaim_shares,
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.shares,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
@@ -384,7 +384,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.escrow_account,
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingReclaimEscrow.account,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
             }
