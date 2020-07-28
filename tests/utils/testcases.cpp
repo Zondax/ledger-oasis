@@ -161,6 +161,14 @@ namespace utils {
         return std::string(buffer);
     }
 
+    std::string FormatShares(const std::string &amount) {
+        char buffer[500];
+        MEMZERO(buffer, sizeof(buffer));
+        fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), 0);
+        number_inplace_trimming(buffer);
+        return std::string(buffer);
+    }
+
     std::string FormatRate(const std::string &rate) {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
@@ -302,7 +310,7 @@ namespace utils {
 
         if (type == "staking.ReclaimEscrow") {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
-            addTo(answer, "{} | Shares : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["shares"].asString()));
+            addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());

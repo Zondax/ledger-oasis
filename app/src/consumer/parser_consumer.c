@@ -157,7 +157,7 @@ __Z_INLINE parser_error_t parser_printShares(const quantity_t *q,
 
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
-    
+
     char bignum[160];
     union {
         // overlapping arrays to avoid excessive stack usage. Do not use at the same time
@@ -172,7 +172,7 @@ __Z_INLINE parser_error_t parser_printShares(const quantity_t *q,
         return parser_unexpected_value;
     }
 
-    fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, 0`);
+    fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, 0);
     number_inplace_trimming(overlapped.output);
     pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
     return parser_ok;
