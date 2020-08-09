@@ -25,9 +25,7 @@
 
 uint32_t hdPath[HDPATH_LEN_DEFAULT];
 
-#if defined(TARGET_NANOS) || defined(TARGET_NANOX)
 #include "cx.h"
-#include "rslib.h"
 
 void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
     cx_ecfp_public_key_t cx_publicKey;
@@ -123,28 +121,7 @@ uint16_t crypto_sign(uint8_t *signature,
     return signatureLength;
 }
 
-#else
-
 #define CX_SHA512_SIZE 64
-
-void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
-    ///////////////////////////////////////
-    // THIS IS ONLY USED FOR TEST PURPOSES
-    ///////////////////////////////////////
-
-    // Empty version for non-Ledger devices
-    MEMZERO(pubKey, pubKeyLen);
-}
-
-uint16_t crypto_sign(uint8_t *signature,
-                     uint16_t signatureMaxlen,
-                     const uint8_t *message,
-                     uint16_t messageLen) {
-    // Empty version for non-Ledger devices
-    return 0;
-}
-
-#endif
 
 typedef union {
     //    1 byte <context-version> + first 20 bytes of SHA512-256(<context-identifier> || <pubkey>)

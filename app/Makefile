@@ -51,8 +51,6 @@ APPVERSION_M=1
 APPVERSION_N=7
 APPVERSION_P=1
 
-DEFINES += CBOR_NO_FLOATING_POINT
-
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
 # Main app configuration
@@ -181,20 +179,17 @@ LDLIBS   += -lm -lgcc -lc
 include $(BOLOS_SDK)/Makefile.glyphs
 
 APP_SOURCE_PATH += $(MY_DIR)/src
-APP_SOURCE_PATH += $(MY_DIR)/rust/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
 APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 
 SDK_SOURCE_PATH += lib_stusb lib_stusb_impl
+SDK_SOURCE_PATH  += lib_ux
 
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
-
-#SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
-SDK_SOURCE_PATH  += lib_ux
 
 .PHONY: rust
 rust:
@@ -208,6 +203,8 @@ bin/app.elf: rust
 rust_clean:
 	@echo "No rust code"
 #	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
+
+clean: rust_clean
 
 # load, delete and listvariants are provided to comply with Ledger requirements
 .PHONY: load
