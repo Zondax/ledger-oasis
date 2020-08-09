@@ -280,7 +280,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
             addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
@@ -291,7 +291,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
         }
 
@@ -300,7 +300,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["account"].asString();
@@ -313,7 +313,7 @@ namespace utils {
             addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["account"].asString();
@@ -325,7 +325,7 @@ namespace utils {
             addTo(answer, "{} | Type : Amend commission schedule", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             uint8_t pageIdx = 0;
@@ -352,7 +352,7 @@ namespace utils {
             addTo(answer, "{} | Type : Unfreeze Node", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["node_id"].asString();
             addTo(answer, "{} | Node ID [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
@@ -363,7 +363,7 @@ namespace utils {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas Limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
             addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
