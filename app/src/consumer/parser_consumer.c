@@ -451,13 +451,13 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
 
                 switch (dynDisplayIdx % 2) {
                     case 0: {
-                        snprintf(outKey, outKeyLen, "Rates [%d] start", index);
+                        snprintf(outKey, outKeyLen, "Rates (%d): start", index + 1);
                         uint64_to_str(outVal, outValLen, rate.start);
                         *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
-                        snprintf(outKey, outKeyLen, "Rates [%d] rate", index);
+                        snprintf(outKey, outKeyLen, "Rates (%d): rate", index + 1);
                         return parser_printRate(&rate.rate, outVal, outValLen, pageIdx, pageCount);
                     }
                 }
@@ -472,17 +472,17 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 switch ((dynDisplayIdx -
                          parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) % 3) {
                     case 0: {
-                        snprintf(outKey, outKeyLen, "Bounds [%d] start", index);
+                        snprintf(outKey, outKeyLen, "Bounds (%d): start", index + 1);
                         uint64_to_str(outVal, outValLen, bound.start);
                         *pageCount = 1;
                         return parser_ok;
                     }
                     case 1: {
-                        snprintf(outKey, outKeyLen, "Bounds [%d] min", index);
+                        snprintf(outKey, outKeyLen, "Bounds (%d): min", index + 1);
                         return parser_printRate(&bound.rate_min, outVal, outValLen, pageIdx, pageCount);
                     }
                     case 2: {
-                        snprintf(outKey, outKeyLen, "Bounds [%d] max", index);
+                        snprintf(outKey, outKeyLen, "Bounds (%d): max", index + 1);
                         return parser_printRate(&bound.rate_max, outVal, outValLen, pageIdx, pageCount);
                     }
                 }
