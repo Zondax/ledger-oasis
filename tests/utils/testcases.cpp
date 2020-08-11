@@ -183,9 +183,9 @@ namespace utils {
             auto r = rates[idx / 2];
             switch (idx % 2) {
                 case 0:
-                    return fmt::format("[{}] start : {}", idx / 2, r["start"].asUInt64());
+                    return fmt::format("({}): start : {}", idx / 2 + 1, r["start"].asUInt64());
                 case 1:
-                    return fmt::format("[{}] rate : {}", idx / 2, FormatRate(r["rate"].asString()));
+                    return fmt::format("({}): rate : {}", idx / 2 + 1, FormatRate(r["rate"].asString()));
             }
         }
 
@@ -198,11 +198,11 @@ namespace utils {
             auto r = bounds[idx / 3];
             switch (idx % 3) {
                 case 0:
-                    return fmt::format("[{}] start : {}", idx / 3, r["start"].asUInt64());
+                    return fmt::format("({}): start : {}", idx / 3 + 1, r["start"].asUInt64());
                 case 1:
-                    return fmt::format("[{}] min : {}", idx / 3, FormatRate(r["rate_min"].asString()));
+                    return fmt::format("({}): min : {}", idx / 3 + 1, FormatRate(r["rate_min"].asString()));
                 case 2:
-                    return fmt::format("[{}] max : {}", idx / 3, FormatRate(r["rate_max"].asString()));
+                    return fmt::format("({}): max : {}", idx / 3 + 1, FormatRate(r["rate_max"].asString()));
             }
         }
 
@@ -280,7 +280,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
             addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
@@ -291,7 +291,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
         }
 
@@ -300,7 +300,7 @@ namespace utils {
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["account"].asString();
@@ -313,7 +313,7 @@ namespace utils {
             addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             auto escrowAccount = txbody["account"].asString();
@@ -325,7 +325,7 @@ namespace utils {
             addTo(answer, "{} | Type : Amend commission schedule", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
 
             uint8_t pageIdx = 0;
@@ -352,7 +352,7 @@ namespace utils {
             addTo(answer, "{} | Type : Unfreeze Node", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["node_id"].asString();
             addTo(answer, "{} | Node ID [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
@@ -363,7 +363,7 @@ namespace utils {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
             addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
@@ -413,8 +413,8 @@ namespace utils {
         if (find1 != std::string::npos) {
             uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Genesis Hash [1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
-            addTo(answer, "{} | Genesis Hash [2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            addTo(answer, "{} | Genesis hash [1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+            addTo(answer, "{} | Genesis hash [2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
         }
 
         auto find2 = context.find(expectedPrefix2);

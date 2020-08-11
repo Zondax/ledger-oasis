@@ -39,7 +39,6 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
         #########
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
         )
@@ -48,7 +47,6 @@ file(GLOB_RECURSE LIB_VAL_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
         #########
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/crypto.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_validator.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_impl_val.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote_fsm.c
