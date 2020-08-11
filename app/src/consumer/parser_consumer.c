@@ -322,7 +322,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 3: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -353,7 +353,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 3: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -379,7 +379,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 3: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -410,7 +410,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 3: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -436,7 +436,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 2: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -506,7 +506,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 2: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -532,7 +532,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 pageCount);
                 }
                 case 2: {
-                    snprintf(outKey, outKeyLen, "Gas Limit");
+                    snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
@@ -591,7 +591,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
 
     if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
-        snprintf(outKey, outKeyLen, "Genesis Hash");
+        snprintf(outKey, outKeyLen, "Genesis hash");
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
                       pageIdx, pageCount);
