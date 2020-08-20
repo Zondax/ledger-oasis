@@ -63,7 +63,7 @@ typedef enum {
 #define MAX_CONTEXT_SIZE    64
 #define MAX_ENTITY_NODES    16
 
-#define COIN_DENOM          "AMBER"
+#define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
 

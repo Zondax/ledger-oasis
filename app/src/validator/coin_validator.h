@@ -26,7 +26,7 @@ extern "C" {
 
 #define HDPATH_LEN_DEFAULT   5
 
-#define HDPATH_0_DEFAULT     (0x80000000u | 0x1da)
+#define HDPATH_0_DEFAULT     (0x80000000u | 0x2b)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
 #define HDPATH_2_DEFAULT     (0x80000000u | 0u)
 #define HDPATH_3_DEFAULT     (0u)
@@ -59,7 +59,7 @@ typedef enum {
 #define MAX_CONTEXT_SIZE    64
 #define MAX_ENTITY_NODES    16
 
-#define COIN_DENOM          "AMBER"
+#define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
 
