@@ -140,8 +140,9 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     tmp_address_t tmp;
     tmp.version = COIN_ADDRESS_VERSION;
 
-    SHA512_256_with_context (
+    SHA512_256_with_context_version (
             (uint8_t *) COIN_ADDRESS_CONTEXT, strlen(COIN_ADDRESS_CONTEXT),
+            COIN_ADDRESS_VERSION,
             pubkey, PK_LEN_ED25519,
             tmp.pkHash
     );
