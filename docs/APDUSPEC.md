@@ -64,7 +64,7 @@ The general structure of commands and responses is as follows:
 
 --------------
 
-### INS_GET_ADDR_ED25519
+### GET_ADDR_ED25519
 
 #### Command
 
