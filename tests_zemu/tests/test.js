@@ -79,7 +79,7 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
+            const expected_bech32_address = "oasis1qphdkldpttpsj2j3l9sde9h26cwpfwqwwuhvruyu";
             const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);
@@ -123,7 +123,7 @@ describe('Basic checks', function () {
             expect(resp.return_code).toEqual(0x9000);
             expect(resp.error_message).toEqual("No errors");
 
-            const expected_bech32_address = "oasis1qp0cnmkjl22gky6p6qeghjytt4v7dkxsrsmueweh";
+            const expected_bech32_address = "oasis1qphdkldpttpsj2j3l9sde9h26cwpfwqwwuhvruyu";
             const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
             expect(resp.bech32_address).toEqual(expected_bech32_address);

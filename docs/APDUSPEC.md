@@ -64,7 +64,7 @@ The general structure of commands and responses is as follows:
 
 --------------
 
-### INS_GET_ADDR_ED25519
+### GET_ADDR_ED25519
 
 #### Command
 
@@ -91,7 +91,7 @@ First three items in the derivation path will be hardened automatically hardened
 | ADDR    | byte (??) | Bech 32 addr          |                          |
 | SW1-SW2 | byte (2)  | Return code           | see list of return codes |
 
-### SIGN_SECP256K1
+### SIGN_ED25519
 
 #### Command
 
