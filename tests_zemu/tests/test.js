@@ -250,7 +250,7 @@ describe('Basic checks', function () {
     });
 });
 
-describe('Issue #64', function () {
+describe('Issue #68', function () {
   it('should sign a transaction two time in a row (issue #68)', async function () {
     const sim = new Zemu(APP_PATH);
     try {
