@@ -69,6 +69,10 @@ typedef enum {
     parser_unexpected_buffer_size,
     parser_unexpected_type_value,
     parser_unexpected_height_value,
+    // Entity Metadata 
+    parser_required_v,
+    parser_invalid_v_value,
+    parser_required_serial,
 } parser_error_t;
 
 typedef struct {

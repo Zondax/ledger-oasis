@@ -25,6 +25,7 @@ extern "C" {
 
 extern const char context_prefix_tx[];
 extern const char context_prefix_entity[];
+extern const char context_prefix_entity_metadata[];
 
 #if defined(APP_CONSUMER)
 
