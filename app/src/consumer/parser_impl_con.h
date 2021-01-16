@@ -53,6 +53,8 @@ parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_
 
 parser_error_t _extractContextSuffix(parser_tx_t *v);
 
+parser_error_t _isValidUrl(url_t *url);
+
 #endif
 
 #ifdef __cplusplus

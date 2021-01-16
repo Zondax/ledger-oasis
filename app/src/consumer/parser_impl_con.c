@@ -115,6 +115,8 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "Invalid v (version format) value";
         case parser_required_serial:
             return "Requiered field serial";
+        case parser_invalid_url_format:
+            return "Invalid url format (expect to start with https:// and not containing query or fragments)";
         default:
             return "Unrecognized error code";
     }
@@ -615,6 +617,32 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
     return parser_ok;
 }
 
+parser_error_t _isValidUrl(url_t *url) {    
+    // Verify they are all printable char
+    for (uint8_t i = 0; i < url->len; i++) {
+        uint8_t c = *(url->buffer + i);
+        if (isprint(c) == 0 || isspace(c) != 0) {
+            return parser_invalid_url_format;
+        }
+    }
+    
+    const char https_prefix[] = "https://";
+    if (strncmp(https_prefix, (const char *) url->buffer, strlen(https_prefix)) != 0)
+      return parser_invalid_url_format;
+      
+    // Dectect query by lookin for the `?` separator
+    char query_separator = '?';
+    if (strchr(url->buffer, query_separator) != NULL)
+      return parser_invalid_url_format;
+    
+    // Dectect fragment by looking for the `#` the fragment identifier
+    char fragment_identifier = '#';
+    if (strchr(url->buffer, fragment_identifier) != NULL)
+      return parser_invalid_url_format;
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     // url: an URL associated with the entity (string, optional, max 64 characters, must be a valid URL using the scheme https without any query or fragments)
     CborValue urlField;
@@ -630,6 +658,7 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (uint8_t *) &v->oasis.entity_metadata.url.buffer, &v->oasis.entity_metadata.url.len, &dummy))
     
     // TODO: verify that it is a correct url
+    CHECK_CBOR_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
