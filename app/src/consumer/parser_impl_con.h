@@ -55,6 +55,10 @@ parser_error_t _extractContextSuffix(parser_tx_t *v);
 
 parser_error_t _isValidUrl(url_t *url);
 
+parser_error_t _isValidEmail(email_t *email);
+
+parser_error_t _isValidHandle(handle_t *handle);
+
 #endif
 
 #ifdef __cplusplus

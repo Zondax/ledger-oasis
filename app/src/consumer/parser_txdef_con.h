@@ -74,12 +74,7 @@ typedef struct {
 typedef struct {
     uint8_t buffer[32];
     size_t len;
-} keybase_t;
-
-typedef struct {
-    uint8_t buffer[32];
-    size_t len;
-} twitter_t;
+} handle_t;
 
 typedef uint8_t raw_signature_t[64];
 
@@ -175,8 +170,8 @@ typedef struct {
   name_t name;
   url_t url;
   email_t email;
-  keybase_t keybase;
-  twitter_t twitter;
+  handle_t keybase;
+  handle_t twitter;
   uint8_t count;
 } oasis_entity_metadata_t;
 

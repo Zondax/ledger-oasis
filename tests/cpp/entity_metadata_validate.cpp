@@ -64,3 +64,73 @@ TEST(EntityMetadataUrl, EntityMetadataUrlsContainsSpace) {
     auto err = _isValidUrl(&url);
     ASSERT_EQ(err, parser_invalid_url_format) << parser_getErrorDescription(err);
 }
+
+TEST(EntityMetadataEmail, EntityMetadataEmailValid) {
+    email_t email;
+    char buffer[] = "me@example.com";
+    MEMZERO(&email, sizeof(email_t));
+    MEMCPY(&email, buffer, strlen(buffer));
+    email.len = strlen(buffer);
+    auto err = _isValidEmail(&email);
+    ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataEmail, EntityMetadataEmail2Arobases) {
+    email_t email;
+    char buffer[] = "me@bug@example.com";
+    MEMZERO(&email, sizeof(email_t));
+    MEMCPY(&email, buffer, strlen(buffer));
+    email.len = strlen(buffer);
+    auto err = _isValidEmail(&email);
+    ASSERT_EQ(err, parser_invalid_email_format) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataEmail, EntityMetadataEmailNotValidDomainName) {
+    email_t email;
+    char buffer[] = "me@example";
+    MEMZERO(&email, sizeof(email_t));
+    MEMCPY(&email, buffer, strlen(buffer));
+    email.len = strlen(buffer);
+    auto err = _isValidEmail(&email);
+    ASSERT_EQ(err, parser_invalid_email_format) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataEmail, EntityMetadataEmailNoArobase) {
+    email_t email;
+    char buffer[] = "me.example.com";
+    MEMZERO(&email, sizeof(email_t));
+    MEMCPY(&email, buffer, strlen(buffer));
+    email.len = strlen(buffer);
+    auto err = _isValidEmail(&email);
+    ASSERT_EQ(err, parser_invalid_email_format) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataHandle, EntityMetadataHandle) {
+    handle_t handle;
+    char buffer[] = "example_com";
+    MEMZERO(&handle, sizeof(handle_t));
+    MEMCPY(&handle, buffer, strlen(buffer));
+    handle.len = strlen(buffer);
+    auto err = _isValidHandle(&handle);
+    ASSERT_EQ(err, parser_ok) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataHandle, EntityMetadataHandleNotAllowChar) {
+    handle_t handle;
+    char buffer[] = "example*com";
+    MEMZERO(&handle, sizeof(handle_t));
+    MEMCPY(&handle, buffer, strlen(buffer));
+    handle.len = strlen(buffer);
+    auto err = _isValidHandle(&handle);
+    ASSERT_EQ(err, parser_invalid_handle_format) << parser_getErrorDescription(err);
+}
+
+TEST(EntityMetadataHandle, EntityMetadataHandleNotAllowChar2) {
+    handle_t handle;
+    char buffer[] = "@examplecom";
+    MEMZERO(&handle, sizeof(handle_t));
+    MEMCPY(&handle, buffer, strlen(buffer));
+    handle.len = strlen(buffer);
+    auto err = _isValidHandle(&handle);
+    ASSERT_EQ(err, parser_invalid_handle_format) << parser_getErrorDescription(err);
+}

@@ -117,6 +117,10 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "Requiered field serial";
         case parser_invalid_url_format:
             return "Invalid url format (expect to start with https:// and not containing query or fragments)";
+        case parser_invalid_email_format:
+            return "Invalid email format";
+        case parser_invalid_handle_format:
+            return "Invalid handle format";
         default:
             return "Unrecognized error code";
     }
@@ -657,10 +661,45 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     v->oasis.entity_metadata.url.len = sizeof_field(url_t, buffer);
     CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (uint8_t *) &v->oasis.entity_metadata.url.buffer, &v->oasis.entity_metadata.url.len, &dummy))
     
-    // TODO: verify that it is a correct url
     CHECK_CBOR_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
 
     v->oasis.entity_metadata.count += 1;
+    return parser_ok;
+}
+
+parser_error_t _isValidEmail(email_t *email) {    
+    uint8_t arobase_count = 0;
+    uint8_t punct_count = 0;
+    
+    for (uint8_t i = 0; i < email->len; i++) {
+        uint8_t c = *(email->buffer + i);
+        // Verify they are all printable char
+        if (isprint(c) == 0 || isspace(c) != 0) {
+            return parser_invalid_email_format;
+        }
+        
+        // Should have exactly one @
+        if (c == '@') {
+          arobase_count++;
+          continue;
+        }
+        
+        // We are in the second part of the email
+        if (arobase_count == 1) {
+          if (c == '.') {
+            punct_count++;
+            continue;
+          }
+          if (isalnum(c) == 0 && c != '-') {
+            return parser_invalid_email_format;
+          }
+        }
+          
+    }
+        
+    if (arobase_count > 1 || punct_count < 1)
+      return parser_invalid_email_format;
+
     return parser_ok;
 }
 
@@ -678,9 +717,21 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     v->oasis.entity_metadata.email.len = sizeof_field(email_t, buffer);
     CHECK_CBOR_ERR(cbor_value_copy_text_string(&emailField, (uint8_t *) &v->oasis.entity_metadata.email.buffer, &v->oasis.entity_metadata.email.len, &dummy))
 
-    // TODO: verify taht is a valid email
-    
+    CHECK_CBOR_ERR(_isValidEmail(&v->oasis.entity_metadata.email))
+
     v->oasis.entity_metadata.count += 1;
+    return parser_ok;
+}
+
+parser_error_t _isValidHandle(handle_t *handle) {    
+    // Verify they are all printable char
+    for (uint8_t i = 0; i < handle->len; i++) {
+        uint8_t c = *(handle->buffer + i);
+        if (isalnum(c) == 0 && c != '-' && c != '_') {
+            return parser_invalid_handle_format;
+        }
+    }
+    
     return parser_ok;
 }
 
@@ -694,11 +745,11 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&keybaseField), CborTextStringType)
-    MEMZERO(&v->oasis.entity_metadata.keybase, sizeof(keybase_t));
-    v->oasis.entity_metadata.keybase.len = sizeof_field(keybase_t, buffer);
+    MEMZERO(&v->oasis.entity_metadata.keybase, sizeof(handle_t));
+    v->oasis.entity_metadata.keybase.len = sizeof_field(handle_t, buffer);
     CHECK_CBOR_ERR(cbor_value_copy_text_string(&keybaseField, (uint8_t *) &v->oasis.entity_metadata.keybase.buffer, &v->oasis.entity_metadata.keybase.len, &dummy))   
     
-    // TODO: verify keybase is correct
+    CHECK_CBOR_ERR(_isValidHandle(&v->oasis.entity_metadata.keybase))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
@@ -714,11 +765,11 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&twitterField), CborTextStringType)
-    MEMZERO(&v->oasis.entity_metadata.twitter, sizeof(twitter_t));
-    v->oasis.entity_metadata.twitter.len = sizeof_field(twitter_t, buffer);
+    MEMZERO(&v->oasis.entity_metadata.twitter, sizeof(handle_t));
+    v->oasis.entity_metadata.twitter.len = sizeof_field(handle_t, buffer);
     CHECK_CBOR_ERR(cbor_value_copy_text_string(&twitterField, (uint8_t *) &v->oasis.entity_metadata.twitter.buffer, &v->oasis.entity_metadata.twitter.len, &dummy))   
   
-    // TODO: verify twitter handle is correct
+    CHECK_CBOR_ERR(_isValidHandle(&v->oasis.entity_metadata.twitter))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
