@@ -56,6 +56,26 @@ typedef struct {
     size_t len;
 } quantity_t;
 
+typedef struct {
+    uint8_t buffer[50];
+    size_t len;
+} name_t;
+
+typedef struct {
+    uint8_t buffer[64];
+    size_t len;
+} url_t;
+
+typedef struct {
+    uint8_t buffer[32];
+    size_t len;
+} email_t;
+
+typedef struct {
+    uint8_t buffer[32];
+    size_t len;
+} handle_t;
+
 typedef uint8_t raw_signature_t[64];
 
 typedef struct {
@@ -144,12 +164,24 @@ typedef struct {
     } body;
 } oasis_tx_t;
 
+typedef struct {
+  uint16_t v;
+  uint64_t serial;
+  name_t name;
+  url_t url;
+  email_t email;
+  handle_t keybase;
+  handle_t twitter;
+  uint8_t count;
+} oasis_entity_metadata_t;
+
 typedef enum {
     unknownType,
     txType,
     entityType,
     nodeType,
-    consensusType
+    consensusType,
+    entityMetadataType
 } oasis_blob_type_e;
 
 typedef struct {
@@ -159,6 +191,7 @@ typedef struct {
     union {
         oasis_tx_t tx;
         oasis_entity_t entity;
+        oasis_entity_metadata_t entity_metadata;
     } oasis;
 } parser_tx_t;
 

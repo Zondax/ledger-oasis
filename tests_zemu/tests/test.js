@@ -249,3 +249,57 @@ describe('Basic checks', function () {
         }
     });
 });
+
+describe('Issue #68', function () {
+  it('should sign a transaction two time in a row (issue #68)', async function () {
+    const sim = new Zemu(APP_PATH);
+    try {
+        await sim.start(sim_options);
+        const app = new OasisApp(sim.getTransport());
+
+        const path = [44, 474, 5, 0x80000000, 0x80000003];
+        const context = "oasis-core/consensus: tx for chain testing";
+        const txBlob = Buffer.from(
+            "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJ0b1UAxzzAAUY0NJFbo/OXUb63wJBbRetmYW1vdW50QGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
+            "base64",
+        );
+
+        const pkResponse = await app.getAddressAndPubKey(path);
+        console.log(pkResponse);
+        expect(pkResponse.return_code).toEqual(0x9000);
+        expect(pkResponse.error_message).toEqual("No errors");
+
+        // do not wait here..
+        const signatureRequest = app.sign(path, context, txBlob);
+
+        await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+        await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
+
+        let resp = await signatureRequest;
+        console.log(resp);
+
+        expect(resp.return_code).toEqual(0x9000);
+        expect(resp.error_message).toEqual("No errors");
+        
+        // Need to wait a bit before signing again.
+        await Zemu.delay(200);
+        
+        // Here we go again
+        const signatureRequestBis = app.sign(path, context, txBlob);
+
+        await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+        await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
+
+        let respBis = await signatureRequestBis;
+        console.log(respBis);
+
+        expect(respBis.return_code).toEqual(0x9000);
+        expect(respBis.error_message).toEqual("No errors");
+
+    } finally {
+        await sim.close();
+    }
+  });
+})
