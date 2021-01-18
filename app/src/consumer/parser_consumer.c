@@ -304,6 +304,8 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
+                                                 
+    uint8_t skipped = 0;
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Version Format");
@@ -317,38 +319,57 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         return parser_ok;
     }
     
-    // REVIEW: THIS IS NOT WORKING !!! BUT TESTS DONT SHOW IT
-    
+    /*
+    {
+      v: 1, --> 0
+      serial: 2, --> 1
+      email: "me@laflemme.lol", --> 2
+      keybase: "rllola" --> 3
+    }
+    */
+        
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
         snprintf(outKey, outKeyLen, "Name");
         snprintf(outVal, outValLen, entity_metadata->name.buffer);
         return parser_ok;
     }
     
-    if (entity_metadata->url.len > 0 && displayIdx < 4) {
+    if (entity_metadata->name.len == 0)
+      skipped++;
+        
+    if (entity_metadata->url.len > 0 && (displayIdx+skipped) < 4) {
       snprintf(outKey, outKeyLen, "Url");
       snprintf(outVal, outValLen, entity_metadata->url.buffer);
       return parser_ok;  
     }
     
-    if (entity_metadata->email.len > 0 && displayIdx < 5) {
+    if (entity_metadata->url.len == 0)
+      skipped++;
+    
+    if (entity_metadata->email.len > 0 && (displayIdx+skipped) < 5) {
       snprintf(outKey, outKeyLen, "Email");
       snprintf(outVal, outValLen, entity_metadata->email.buffer);
       return parser_ok;  
     }
+    
+    if (entity_metadata->email.len == 0)
+      skipped++;
 
-    if (entity_metadata->keybase.len > 0 && displayIdx < 6) {
+    if (entity_metadata->keybase.len > 0 && (displayIdx+skipped) < 6) {
       snprintf(outKey, outKeyLen, "Keybase");
       snprintf(outVal, outValLen, entity_metadata->keybase.buffer);
       return parser_ok;  
     }
     
-    if (entity_metadata->twitter.len > 0 && displayIdx < 7) {
+    if (entity_metadata->keybase.len == 0)
+      skipped++;
+        
+    if (entity_metadata->twitter.len > 0) {
       snprintf(outKey, outKeyLen, "Twitter");
       snprintf(outVal, outValLen, entity_metadata->twitter.buffer);
       return parser_ok;  
     }
-
+    
     return parser_no_data;
 }
 
