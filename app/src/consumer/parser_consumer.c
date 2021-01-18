@@ -36,8 +36,11 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
-    CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
     CHECK_PARSER_ERR(_extractContextSuffix(&parser_tx_obj))
+
+    // Read after we determine context
+    CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
+        
     return parser_ok;
 }
 
@@ -293,6 +296,80 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
         return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
     }
 
+    return parser_no_data;
+}
+
+__Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metadata_t *entity_metadata,
+                                               int8_t displayIdx,
+                                               char *outKey, uint16_t outKeyLen,
+                                               char *outVal, uint16_t outValLen,
+                                               uint8_t pageIdx, uint8_t *pageCount) {
+                                                 
+    uint8_t skipped = 0;
+
+    if (displayIdx == 0) {
+        snprintf(outKey, outKeyLen, "Version Format");
+        uint64_to_str(outVal, outValLen, entity_metadata->v);
+        return parser_ok;
+    }
+
+    if (displayIdx == 1) {
+        snprintf(outKey, outKeyLen, "Serial");
+        uint64_to_str(outVal, outValLen, entity_metadata->serial);
+        return parser_ok;
+    }
+    
+    /*
+    {
+      v: 1, --> 0
+      serial: 2, --> 1
+      email: "me@laflemme.lol", --> 2
+      keybase: "rllola" --> 3
+    }
+    */
+        
+    if (entity_metadata->name.len > 0 && displayIdx < 3) {
+        snprintf(outKey, outKeyLen, "Name");
+        snprintf(outVal, outValLen, entity_metadata->name.buffer);
+        return parser_ok;
+    }
+    
+    if (entity_metadata->name.len == 0)
+      skipped++;
+        
+    if (entity_metadata->url.len > 0 && (displayIdx+skipped) < 4) {
+      snprintf(outKey, outKeyLen, "Url");
+      snprintf(outVal, outValLen, entity_metadata->url.buffer);
+      return parser_ok;  
+    }
+    
+    if (entity_metadata->url.len == 0)
+      skipped++;
+    
+    if (entity_metadata->email.len > 0 && (displayIdx+skipped) < 5) {
+      snprintf(outKey, outKeyLen, "Email");
+      snprintf(outVal, outValLen, entity_metadata->email.buffer);
+      return parser_ok;  
+    }
+    
+    if (entity_metadata->email.len == 0)
+      skipped++;
+
+    if (entity_metadata->keybase.len > 0 && (displayIdx+skipped) < 6) {
+      snprintf(outKey, outKeyLen, "Keybase");
+      snprintf(outVal, outValLen, entity_metadata->keybase.buffer);
+      return parser_ok;  
+    }
+    
+    if (entity_metadata->keybase.len == 0)
+      skipped++;
+        
+    if (entity_metadata->twitter.len > 0) {
+      snprintf(outKey, outKeyLen, "Twitter");
+      snprintf(outVal, outValLen, entity_metadata->twitter.buffer);
+      return parser_ok;  
+    }
+    
     return parser_no_data;
 }
 
@@ -609,6 +686,17 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
                     snprintf(outVal, outValLen, "Entity signing");
                 } else {
                     err = parser_getItemEntity(&parser_tx_obj.oasis.entity,
+                                               displayIdx - 1,
+                                               outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
+                }
+                break;
+            }
+            case entityMetadataType: {
+                if (displayIdx == 0) {
+                    snprintf(outKey, outKeyLen, "Type");
+                    snprintf(outVal, outValLen, "Entity Metadata signing");
+                } else {
+                    err = parser_getItemEntityMetadata(&parser_tx_obj.oasis.entity_metadata,
                                                displayIdx - 1,
                                                outKey, outKeyLen, outVal, outValLen, pageIdx, pageCount);
                 }

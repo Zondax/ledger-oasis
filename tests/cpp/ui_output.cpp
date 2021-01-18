@@ -29,7 +29,7 @@ void check_testcase(const testcase_t &testcase) {
     auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index);
 
     parser_context_t ctx;
-
+  
     auto buffer = utils::prepareBlob(tc.signature_context, tc.encoded_tx);
 
     parser_error_t err = parser_parse(&ctx, buffer.data(), buffer.size());
@@ -88,7 +88,7 @@ public:
     };
 };
 
-INSTANTIATE_TEST_SUITE_P(
+/*INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
@@ -98,6 +98,12 @@ INSTANTIATE_TEST_SUITE_P(
         GeneratedEntity,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity.json")), OasisTests::PrintToStringParamName()
+);*/
+
+INSTANTIATE_TEST_SUITE_P(
+        GeneratedEntityMetadata,
+        OasisTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity_metadata.json")), OasisTests::PrintToStringParamName()
 );
 
 TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }

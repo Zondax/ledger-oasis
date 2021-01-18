@@ -30,7 +30,14 @@ TEST(TxParser, EmptyBuffer) {
     auto buffer = std::vector<uint8_t>();
     buffer.push_back(0);
     auto err = parser_parse(&ctx, buffer.data(), buffer.size());
-    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
+    ASSERT_EQ(err, parser_init_context_empty) << parser_getErrorDescription(err);
+}
+
+TEST(TxParser, EmptyBuffer2) {
+    parser_context_t ctx;
+    auto buffer = std::vector<uint8_t>();
+    auto err = parser_parse(&ctx, buffer.data(), buffer.size());
+    ASSERT_EQ(err, parser_init_context_empty) << parser_getErrorDescription(err);
 }
 
 TEST(TxParser, MissingLastByte) {

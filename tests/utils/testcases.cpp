@@ -61,7 +61,20 @@ namespace utils {
             description = v["kind"].asString();
         }
         description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
-
+        
+        if (v.isMember("entity_meta")) {
+          return {
+                  false,
+                  description,
+                  std::to_string(index),
+                  v["kind"].asString(),
+                  v["signature_context"].asString(),
+                  v["encoded_entity_meta"].asString(),
+                  v["valid"].asBool() && TestcaseIsValid(v),
+                  GenerateExpectedUIOutput(v["signature_context"].asString(), v)
+          };
+        }
+        
         return {
                 false,
                 description,
@@ -383,6 +396,34 @@ namespace utils {
 
         return answer;
     }
+    
+    std::vector<std::string> GenerateExpectedUIOutputForEntityMetadata(Json::Value j, uint32_t &itemCount) {
+        auto answer = std::vector<std::string>();
+
+        auto entity_meta = j["entity_meta"];
+
+        addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
+        addTo(answer, "{} | Version Format : {}", itemCount++, entity_meta["v"].asUInt64());
+        addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
+        
+        if (entity_meta.isMember("name")) {
+            addTo(answer, "{} | Name : {}", itemCount++, entity_meta["name"].asString());
+        }
+        if (entity_meta.isMember("url")) {
+            addTo(answer, "{} | Url : {}", itemCount++, entity_meta["url"].asString());
+        }
+        if (entity_meta.isMember("email")) {
+            addTo(answer, "{} | Email : {}", itemCount++, entity_meta["email"].asString());
+        }
+        if (entity_meta.isMember("keybase")) {
+            addTo(answer, "{} | Keybase : {}", itemCount++, entity_meta["keybase"].asString());
+        }
+        if (entity_meta.isMember("twitter")) {
+            addTo(answer, "{} | Twitter : {}", itemCount++, entity_meta["twitter"].asString());
+        }
+
+        return answer;
+    }
 
     std::vector<std::string>  GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
         auto answer = std::vector<std::string>();
@@ -401,7 +442,11 @@ namespace utils {
             answer = GenerateExpectedUIOutputForTx(j, itemCount);
         } else {
             // is entity
-            answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            if (j.isMember("entity_meta")) {
+                answer = GenerateExpectedUIOutputForEntityMetadata(j, itemCount);
+            } else {
+                answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            }
         }
 
         auto expectedPrefix1 = std::string(context_prefix_tx);
