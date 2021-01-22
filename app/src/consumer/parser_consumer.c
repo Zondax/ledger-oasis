@@ -38,6 +38,8 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
     CHECK_PARSER_ERR(_extractContextSuffix(&parser_tx_obj))
 
+    zemu_log_stack("We have the suffix");
+
     // Read after we determine context
     CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
         
@@ -306,6 +308,8 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
                                                uint8_t pageIdx, uint8_t *pageCount) {
                                                  
     uint8_t skipped = 0;
+    
+    zemu_log_stack("parser_getItemEntityMetadata");
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Version Format");
@@ -318,15 +322,6 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         uint64_to_str(outVal, outValLen, entity_metadata->serial);
         return parser_ok;
     }
-    
-    /*
-    {
-      v: 1, --> 0
-      serial: 2, --> 1
-      email: "me@laflemme.lol", --> 2
-      keybase: "rllola" --> 3
-    }
-    */
         
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
         snprintf(outKey, outKeyLen, "Name");

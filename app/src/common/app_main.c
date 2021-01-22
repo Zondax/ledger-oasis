@@ -206,18 +206,31 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
                     CHECK_APP_CANARY()
 
+                    zemu_log_stack("We have the blob");
+
                     const char *error_msg = tx_parse();
                     CHECK_APP_CANARY()
 
+                    zemu_log_stack("Transaction parsed");
+
                     if (error_msg != NULL) {
+                        zemu_log_stack("We have an error");
+
                         int error_msg_length = strlen(error_msg);
+                        zemu_log_stack("Translating to utf-8");
+
                         MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
+                        zemu_log_stack("Copied into buffer");
+                        
                         *tx += (error_msg_length);
+                        zemu_log_stack("Get the length");
+                        
                         THROW(APDU_CODE_DATA_INVALID);
                     }
 
 #if defined(APP_CONSUMER)
                     CHECK_APP_CANARY()
+                    zemu_log_stack("Show ! The ! Entity Metadata !");
                     view_sign_show();
                     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
