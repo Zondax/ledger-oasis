@@ -111,6 +111,7 @@ tx_error_t tx_getItem(int8_t displayIdx,
 
     uint8_t numItems = 0;
     err = tx_getNumItems(&numItems);
+        
     if (err != tx_no_error) {
         return err;
     }
@@ -118,7 +119,7 @@ tx_error_t tx_getItem(int8_t displayIdx,
     if (displayIdx < 0 || displayIdx > numItems) {
         return tx_no_data;
     }
-
+    
     err = (tx_error_t) parser_getItem(&ctx_parsed_tx,
                                       displayIdx,
                                       outKey, outKeyLen,

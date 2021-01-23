@@ -579,7 +579,7 @@ __Z_INLINE parser_error_t _readFormatVersion(parser_tx_t *v, CborValue *rootItem
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
     // REVIEW: is int same as uint16_t ?
-    CHECK_CBOR_ERR(cbor_value_get_int(&vField, &v->oasis.entity_metadata.v))
+    CHECK_CBOR_ERR(cbor_value_get_int(&vField, (int *) &v->oasis.entity_metadata.v))
     if (v->oasis.entity_metadata.v != ENTITY_METADATA_V)
         return parser_invalid_v_value;
 
@@ -607,55 +607,42 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
     CborValue nameField;
     CborValue dummy;
 
-    zemu_log_stack("Reading name");
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "name", &nameField))
     if (!cbor_value_is_valid(&nameField))
         return parser_ok;
 
-    zemu_log_stack("Valid");
     CHECK_CBOR_TYPE(cbor_value_get_type(&nameField), CborTextStringType)
-    zemu_log_stack("This is ok");
     MEMZERO(&v->oasis.entity_metadata.name, sizeof(name_t));
-    zemu_log_stack("Zeros");
     v->oasis.entity_metadata.name.len = sizeof_field(name_t, buffer);
 
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&nameField, (uint8_t *) &v->oasis.entity_metadata.name.buffer, &v->oasis.entity_metadata.name.len, &dummy))
-    zemu_log_stack("Checked !");
+    CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer, &v->oasis.entity_metadata.name.len, &dummy))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
-parser_error_t _isValidUrl(url_t *url) { 
-    zemu_log_stack("Is it a valid url");
-     
+parser_error_t _isValidUrl(url_t *url) {      
     // Verify they are all printable char
     for (uint8_t i = 0; i < url->len; i++) {
-        zemu_log_stack("PICing");
-        uint8_t c = PIC(*(url->buffer + i));
-        zemu_log_stack("Done PICing");
-        char buffer[100];
-        snprintf(buffer, sizeof(buffer), "Hi!: %c\n", c);
-        zemu_log(buffer);
-        if (isprint(c) == 0 || isspace(c) != 0) {
+        uint8_t c = *(url->buffer + i);
+        // 33  because no space in url
+        if (c < 33 || c > 127) {
             return parser_invalid_url_format;
         }
     }
-    
-    zemu_log_stack("We print");
-    
+            
     const char https_prefix[] = "https://";
     if (strncmp(https_prefix, (const char *) url->buffer, strlen(https_prefix)) != 0)
       return parser_invalid_url_format;
       
     // Dectect query by lookin for the `?` separator
     char query_separator = '?';
-    if (strchr(url->buffer, query_separator) != NULL)
+    if (strchr((const char *) url->buffer, query_separator) != NULL)
       return parser_invalid_url_format;
     
     // Dectect fragment by looking for the `#` the fragment identifier
     char fragment_identifier = '#';
-    if (strchr(url->buffer, fragment_identifier) != NULL)
+    if (strchr((const char *) url->buffer, fragment_identifier) != NULL)
       return parser_invalid_url_format;
 
     return parser_ok;
@@ -666,8 +653,6 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     CborValue urlField;
     CborValue dummy;
 
-    zemu_log_stack("Reading url!!!!!!!!!!!!!!!!!!!!!!");
-
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "url", &urlField))
     if (!cbor_value_is_valid(&urlField))
       return parser_ok;
@@ -675,13 +660,9 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&urlField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.url, sizeof(url_t));
     v->oasis.entity_metadata.url.len = sizeof_field(url_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (uint8_t *) &v->oasis.entity_metadata.url.buffer, &v->oasis.entity_metadata.url.len, &dummy))
-    
-    zemu_log_stack("So far so good");
-    
-    CHECK_CBOR_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
-
-    zemu_log_stack("Url checked !!!");
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (char *) &v->oasis.entity_metadata.url.buffer, &v->oasis.entity_metadata.url.len, &dummy))
+        
+    CHECK_PARSER_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
@@ -692,9 +673,9 @@ parser_error_t _isValidEmail(email_t *email) {
     uint8_t punct_count = 0;
     
     for (uint8_t i = 0; i < email->len; i++) {
-        unsigned char c = PIC(email->buffer[i]);
+        uint8_t c = *(email->buffer + i);
         // Verify they are all printable char
-        if (isprint(c) == 0 || isspace(c) != 0) {
+        if (c < 33 || c > 127) {
             return parser_invalid_email_format;
         }
         
@@ -710,7 +691,7 @@ parser_error_t _isValidEmail(email_t *email) {
             punct_count++;
             continue;
           }
-          if (isalnum(c) == 0 && c != '-') {
+          if ((c < 48 || c > 57) && (c < 65 || c > 90) && (c < 97 || c > 122) && c != '-') {
             return parser_invalid_email_format;
           }
         }
@@ -735,9 +716,9 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&emailField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.email, sizeof(email_t));
     v->oasis.entity_metadata.email.len = sizeof_field(email_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&emailField, (uint8_t *) &v->oasis.entity_metadata.email.buffer, &v->oasis.entity_metadata.email.len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&emailField, (char *) &v->oasis.entity_metadata.email.buffer, &v->oasis.entity_metadata.email.len, &dummy))
 
-    CHECK_CBOR_ERR(_isValidEmail(&v->oasis.entity_metadata.email))
+    CHECK_PARSER_ERR(_isValidEmail(&v->oasis.entity_metadata.email))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
@@ -746,8 +727,8 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
 parser_error_t _isValidHandle(handle_t *handle) {    
     // Verify they are all printable char
     for (uint8_t i = 0; i < handle->len; i++) {
-        unsigned char c = PIC(handle->buffer[i]);
-        if (isalnum(c) == 0 && c != '-' && c != '_') {
+        uint8_t c = *(handle->buffer + i);
+        if ((c < 48 || c > 57) && (c < 65 || c > 90) && (c < 97 || c > 122) && c != '-' && c != '_') {
             return parser_invalid_handle_format;
         }
     }
@@ -767,9 +748,9 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&keybaseField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.keybase, sizeof(handle_t));
     v->oasis.entity_metadata.keybase.len = sizeof_field(handle_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&keybaseField, (uint8_t *) &v->oasis.entity_metadata.keybase.buffer, &v->oasis.entity_metadata.keybase.len, &dummy))   
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&keybaseField, (char *) &v->oasis.entity_metadata.keybase.buffer, &v->oasis.entity_metadata.keybase.len, &dummy))   
     
-    CHECK_CBOR_ERR(_isValidHandle(&v->oasis.entity_metadata.keybase))
+    CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.keybase))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
@@ -787,9 +768,9 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&twitterField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.twitter, sizeof(handle_t));
     v->oasis.entity_metadata.twitter.len = sizeof_field(handle_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&twitterField, (uint8_t *) &v->oasis.entity_metadata.twitter.buffer, &v->oasis.entity_metadata.twitter.len, &dummy))   
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&twitterField, (char *) &v->oasis.entity_metadata.twitter.buffer, &v->oasis.entity_metadata.twitter.len, &dummy))   
   
-    CHECK_CBOR_ERR(_isValidHandle(&v->oasis.entity_metadata.twitter))
+    CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.twitter))
 
     v->oasis.entity_metadata.count += 1;
     return parser_ok;
@@ -899,26 +880,15 @@ __Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *rootItem) {
 }
 
 __Z_INLINE parser_error_t _readEntityMetadata(parser_tx_t *v, CborValue *rootItem) {
-    v->oasis.entity_metadata.count = 0;
-    zemu_log_stack("Read entity");
-        
+    v->oasis.entity_metadata.count = 0;        
     CHECK_CBOR_TYPE(cbor_value_get_type(rootItem), CborMapType)
-    zemu_log_stack("Qué");
     CHECK_PARSER_ERR(_readFormatVersion(v, rootItem))
-    zemu_log_stack("Got format version");
     CHECK_PARSER_ERR(_readSerial(v, rootItem))
-    zemu_log_stack("Got serial");
     CHECK_PARSER_ERR(_readName(v, rootItem))
-    zemu_log_stack("Got name");
     CHECK_PARSER_ERR(_readUrl(v, rootItem))
-    zemu_log_stack("Got url");
     CHECK_PARSER_ERR(_readEmail(v, rootItem))
-    zemu_log_stack("Got email");
     CHECK_PARSER_ERR(_readKeybase(v, rootItem))
-    zemu_log_stack("Got keybase");
     CHECK_PARSER_ERR(_readTwitter(v, rootItem))
-
-    zemu_log_stack("Done reading entity");
 
     return parser_ok;
 }
@@ -926,27 +896,18 @@ __Z_INLINE parser_error_t _readEntityMetadata(parser_tx_t *v, CborValue *rootIte
 parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue rootItem;
     INIT_CBOR_PARSER(c, rootItem)
-    
-    zemu_log_stack("Reading blob");
-    
+      
     // validate CBOR canonical order before even trying to parse
     CHECK_CBOR_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
-
-    zemu_log_stack("Is it valid ?");
-
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
     }
 
-    zemu_log_stack("SI si");
-
     if (!cbor_value_is_map(&rootItem)) {
         return parser_root_item_should_be_a_map;
     }
-    
-    zemu_log_stack("Here we go");
-    
+        
     switch (v->type) {
       case txType:
         // Read TXs

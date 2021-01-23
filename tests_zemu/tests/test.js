@@ -273,7 +273,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            //await sim.compareSnapshotsAndAccept(".", "sign_amend", 30);
+            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata", 8);
 
             let resp = await signatureRequest;
             console.log(resp);
