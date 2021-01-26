@@ -20,6 +20,7 @@
 #include "crypto.h"
 #include "view_internal.h"
 #include <os_io_seproxyhal.h>
+#include <ux.h>
 
 #include <string.h>
 #include <stdio.h>
