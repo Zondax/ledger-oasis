@@ -323,8 +323,7 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
         snprintf(outKey, outKeyLen, "Name");
-        snprintf(outVal, outValLen, "%s", entity_metadata->name.buffer);
-        *pageCount = 1;
+        pageStringExt(outVal, outValLen, entity_metadata->name.buffer, entity_metadata->name.len, pageIdx, pageCount);
         return parser_ok;
     }
     
