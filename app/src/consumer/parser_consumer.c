@@ -308,7 +308,7 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
     uint8_t skipped = 0;
         
     if (displayIdx == 0) {
-        snprintf(outKey, outKeyLen, "Version Format");
+        snprintf(outKey, outKeyLen, "Version");
         uint64_to_str(outVal, outValLen, entity_metadata->v);
         *pageCount = 1;
         return parser_ok;
@@ -323,8 +323,7 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
         snprintf(outKey, outKeyLen, "Name");
-        snprintf(outVal, outValLen, "%s", entity_metadata->name.buffer);
-        *pageCount = 1;
+        pageStringExt(outVal, outValLen, entity_metadata->name.buffer, entity_metadata->name.len, pageIdx, pageCount);
         return parser_ok;
     }
     
@@ -332,9 +331,8 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
       skipped++;
         
     if (entity_metadata->url.len > 0 && (displayIdx+skipped) < 4) {
-      snprintf(outKey, outKeyLen, "Url");
-      snprintf(outVal, outValLen, "%s", entity_metadata->url.buffer);
-      *pageCount = 1;
+      snprintf(outKey, outKeyLen, "URL");
+      pageStringExt(outVal, outValLen, entity_metadata->url.buffer, entity_metadata->url.len, pageIdx, pageCount);
       return parser_ok;  
     }
     

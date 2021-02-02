@@ -403,14 +403,14 @@ namespace utils {
         auto entity_meta = j["entity_meta"];
 
         addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
-        addTo(answer, "{} | Version Format : {}", itemCount++, entity_meta["v"].asUInt64());
+        addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
         addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
         
         if (entity_meta.isMember("name")) {
             addTo(answer, "{} | Name : {}", itemCount++, entity_meta["name"].asString());
         }
         if (entity_meta.isMember("url")) {
-            addTo(answer, "{} | Url : {}", itemCount++, entity_meta["url"].asString());
+            addTo(answer, "{} | URL : {}", itemCount++, entity_meta["url"].asString());
         }
         if (entity_meta.isMember("email")) {
             addTo(answer, "{} | Email : {}", itemCount++, entity_meta["email"].asString());
