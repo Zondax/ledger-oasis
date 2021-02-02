@@ -88,7 +88,7 @@ public:
     };
 };
 
-/*INSTANTIATE_TEST_SUITE_P(
+INSTANTIATE_TEST_SUITE_P(
         Generated,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated.json")), OasisTests::PrintToStringParamName()
@@ -98,7 +98,7 @@ INSTANTIATE_TEST_SUITE_P(
         GeneratedEntity,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity.json")), OasisTests::PrintToStringParamName()
-);*/
+);
 
 INSTANTIATE_TEST_SUITE_P(
         GeneratedEntityMetadata,

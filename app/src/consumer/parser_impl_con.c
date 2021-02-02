@@ -110,9 +110,9 @@ const char *parser_getErrorDescription(parser_error_t err) {
         case parser_required_body:
             return "Required field body";
         case parser_required_v:
-            return "Required field v (version format)";
+            return "Required field v (version)";
         case parser_invalid_v_value:
-            return "Invalid v (version format) value";
+            return "Invalid v (version) value";
         case parser_required_serial:
             return "Requiered field serial";
         case parser_invalid_url_format:

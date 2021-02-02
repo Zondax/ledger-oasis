@@ -292,6 +292,51 @@ describe('Basic checks', function () {
             await sim.close();
         }
     });
+
+    it('sign entity metadata - long url', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-metadata-registry: entity";
+
+            const txBlob = Buffer.from(
+                "a76176016375726c783f68747470733a2f2f6d792e656e746974792f75726c2f746869732f69732f736f6d652f766572792f6c6f6e672f76616c69642f75726c2f75702f746f2f3634646e616d656e4d7920656e74697479206e616d6565656d61696c6d6d7940656e746974792e6f72676673657269616c01676b657962617365716d795f6b6579626173655f68616e646c656774776974746572716d795f747769747465725f68616e646c65",
+                "hex",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata_long", 9);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
 });
 
 describe('Issue #68', function () {
