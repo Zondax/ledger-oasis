@@ -28,6 +28,8 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+#define ENTITY_METADATA_NAME_MAX_CHAR 50
+
 typedef enum {
     unknownMethod,
     stakingTransfer,
@@ -57,7 +59,7 @@ typedef struct {
 } quantity_t;
 
 typedef struct {
-    uint8_t buffer[50];
+    uint8_t buffer[ENTITY_METADATA_NAME_MAX_CHAR];
     size_t len;
 } name_t;
 

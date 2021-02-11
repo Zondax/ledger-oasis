@@ -30,7 +30,7 @@ const sim_options = {
     logging: true,
     start_delay: 1000,
     custom: `-s "${APP_SEED}"`
-    , X11: true
+    //, X11: true
 };
 
 jest.setTimeout(80000)
@@ -115,7 +115,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            await sim.compareSnapshotsAndAccept(".", "show_address", 4);
+            await sim.compareSnapshotsAndAccept(".", "show_address", 3);
 
             const resp = await respRequest;
             console.log(resp);
@@ -156,7 +156,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
+            await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
 
             let resp = await signatureRequest;
             console.log(resp);
@@ -229,7 +229,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            await sim.compareSnapshotsAndAccept(".", "sign_amend", 30);
+            await sim.compareSnapshotsAndAccept(".", "sign_amend", 29);
 
             let resp = await signatureRequest;
             console.log(resp);
@@ -273,7 +273,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata", 8);
+            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata", 7);
 
             let resp = await signatureRequest;
             console.log(resp);
@@ -317,7 +317,7 @@ describe('Basic checks', function () {
 
             await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata_long", 10);
+            await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata_long", 9);
 
             let resp = await signatureRequest;
             console.log(resp);
@@ -332,6 +332,38 @@ describe('Basic checks', function () {
             // Now verify the signature
             const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
             expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('sign entity metadata - too long name', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-metadata-registry: entity";
+
+            const txBlob = Buffer.from(
+                "a76176016375726c7568747470733a2f2f6d792e656e746974792f75726c646e616d6578335468697320697320736f6d6520746f6f6f6f6f6f6f6f6f6f6f6f6f6f6f206c6f6e6720656e74697479206e616d65202835312965656d61696c6d6d7940656e746974792e6f72676673657269616c01676b657962617365716d795f6b6579626173655f68616e646c656774776974746572716d795f747769747465725f68616e646c65",
+                "hex",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x6984);
+            expect(resp.error_message).toEqual("Data is invalid : Invalid name length (max 51 characters)");
         } finally {
             await sim.close();
         }
@@ -363,23 +395,23 @@ describe('Issue #68', function () {
 
         await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-        await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
+        await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
 
         let resp = await signatureRequest;
         console.log(resp);
 
         expect(resp.return_code).toEqual(0x9000);
         expect(resp.error_message).toEqual("No errors");
-        
+
         // Need to wait a bit before signing again.
         await Zemu.delay(200);
-        
+
         // Here we go again
         const signatureRequestBis = app.sign(path, context, txBlob);
 
         await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-        await sim.compareSnapshotsAndAccept(".", "sign_basic", 8);
+        await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
 
         let respBis = await signatureRequestBis;
         console.log(respBis);
