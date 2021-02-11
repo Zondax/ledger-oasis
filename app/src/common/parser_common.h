@@ -74,9 +74,12 @@ typedef enum {
     parser_invalid_v_value,
     parser_required_serial,
     parser_invalid_url_format,
+    parser_invalid_url_length,
     parser_invalid_email_format,
+    parser_invalid_email_length,
     parser_invalid_handle_format,
-    parser_invalid_name_too_long,
+    parser_invalid_handle_length,
+    parser_invalid_name_length,
 } parser_error_t;
 
 typedef struct {

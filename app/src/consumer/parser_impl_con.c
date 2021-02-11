@@ -117,11 +117,17 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "Requiered field serial";
         case parser_invalid_url_format:
             return "Invalid url format (expect to start with https:// and not containing query or fragments)";
+        case parser_invalid_url_length:
+            return "Invalid url length (max 64 characters)";
         case parser_invalid_email_format:
             return "Invalid email format";
+        case parser_invalid_email_length:
+            return "Invalid email length (max 32 characters)";
         case parser_invalid_handle_format:
             return "Invalid handle format";
-        case parser_invalid_name_too_long:
+        case parser_invalid_handle_length:
+            return "Invalid handle length (max 32 characters)";
+        case parser_invalid_name_length:
             return "Invalid name length (max 51 characters)";
         default:
             return "Unrecognized error code";
@@ -620,7 +626,7 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&nameField, &cbor_name_length))
     if (cbor_name_length > ENTITY_METADATA_NAME_MAX_CHAR) {
-        return parser_invalid_name_too_long;
+        return parser_invalid_name_length;
     }
 
     CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer, &v->oasis.entity_metadata.name.len, &dummy))
@@ -660,10 +666,16 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     // url: an URL associated with the entity (string, optional, max 64 characters, must be a valid URL using the scheme https without any query or fragments)
     CborValue urlField;
     CborValue dummy;
+    size_t cbor_url_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "url", &urlField))
     if (!cbor_value_is_valid(&urlField))
       return parser_ok;
+
+    CHECK_PARSER_ERR(cbor_value_get_string_length(&urlField, &cbor_url_length))
+    if (cbor_url_length > ENTITY_METADATA_URL_MAX_CHAR) {
+        return parser_invalid_url_length;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&urlField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.url, sizeof(url_t));
@@ -716,10 +728,17 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     // email: an e-mail address associated with the entity (string, optional, max 32 characters, must be a valid e-mail address)
     CborValue emailField;
     CborValue dummy;
+    size_t cbor_email_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "email", &emailField))
     if (!cbor_value_is_valid(&emailField))
         return parser_ok;
+
+    CHECK_PARSER_ERR(cbor_value_get_string_length(&emailField, &cbor_email_length))
+    if (cbor_email_length > ENTITY_METADATA_EMAIL_MAX_CHAR) {
+        return parser_invalid_email_length;
+    }
+
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&emailField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.email, sizeof(email_t));
@@ -748,10 +767,16 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
     //keybase: a keybase.io handle (string, optional, max 32 characters, must match the regular expression ^[A-Za-z0-9_]+$)
     CborValue keybaseField;
     CborValue dummy;
+    size_t cbor_keybase_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "keybase", &keybaseField))
     if (!cbor_value_is_valid(&keybaseField))
         return parser_ok;
+
+    CHECK_PARSER_ERR(cbor_value_get_string_length(&keybaseField, &cbor_keybase_length))
+    if (cbor_keybase_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
+        return parser_invalid_handle_length;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&keybaseField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.keybase, sizeof(handle_t));
@@ -768,10 +793,16 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
     //twitter: a Twitter handle (string, optional, max 32 characters, must match the regular expression ^[A-Za-z0-9_]+$)
     CborValue twitterField;
     CborValue dummy;
+    size_t cbor_twitter_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "twitter", &twitterField))
     if (!cbor_value_is_valid(&twitterField))
         return parser_ok;
+
+    CHECK_PARSER_ERR(cbor_value_get_string_length(&twitterField, &cbor_twitter_length))
+    if (cbor_twitter_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
+        return parser_invalid_handle_length;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&twitterField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.twitter, sizeof(handle_t));

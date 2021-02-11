@@ -29,6 +29,9 @@ extern "C" {
 #include <stddef.h>
 
 #define ENTITY_METADATA_NAME_MAX_CHAR 50
+#define ENTITY_METADATA_URL_MAX_CHAR 64
+#define ENTITY_METADATA_EMAIL_MAX_CHAR 32
+#define ENTITY_METADATA_HANDLE_MAX_CHAR 32
 
 typedef enum {
     unknownMethod,
@@ -64,17 +67,17 @@ typedef struct {
 } name_t;
 
 typedef struct {
-    uint8_t buffer[64];
+    uint8_t buffer[ENTITY_METADATA_URL_MAX_CHAR];
     size_t len;
 } url_t;
 
 typedef struct {
-    uint8_t buffer[32];
+    uint8_t buffer[ENTITY_METADATA_EMAIL_MAX_CHAR];
     size_t len;
 } email_t;
 
 typedef struct {
-    uint8_t buffer[32];
+    uint8_t buffer[ENTITY_METADATA_HANDLE_MAX_CHAR];
     size_t len;
 } handle_t;
 
