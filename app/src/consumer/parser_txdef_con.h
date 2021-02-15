@@ -62,22 +62,26 @@ typedef struct {
 } quantity_t;
 
 typedef struct {
-    uint8_t buffer[ENTITY_METADATA_NAME_MAX_CHAR];
+    // one more for the zero termination
+    uint8_t buffer[ENTITY_METADATA_NAME_MAX_CHAR+1];
     size_t len;
 } name_t;
 
 typedef struct {
-    uint8_t buffer[ENTITY_METADATA_URL_MAX_CHAR];
+    // one more for the zero termination
+    uint8_t buffer[ENTITY_METADATA_URL_MAX_CHAR+1];
     size_t len;
 } url_t;
 
 typedef struct {
-    uint8_t buffer[ENTITY_METADATA_EMAIL_MAX_CHAR];
+    // one more for the zero termination
+    uint8_t buffer[ENTITY_METADATA_EMAIL_MAX_CHAR+1];
     size_t len;
 } email_t;
 
 typedef struct {
-    uint8_t buffer[ENTITY_METADATA_HANDLE_MAX_CHAR];
+    // one more for the zero termination
+    uint8_t buffer[ENTITY_METADATA_HANDLE_MAX_CHAR+1];
     size_t len;
 } handle_t;
 
@@ -177,7 +181,6 @@ typedef struct {
   email_t email;
   handle_t keybase;
   handle_t twitter;
-  uint8_t count;
 } oasis_entity_metadata_t;
 
 typedef enum {

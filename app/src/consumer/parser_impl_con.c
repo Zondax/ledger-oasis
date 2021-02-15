@@ -591,7 +591,6 @@ __Z_INLINE parser_error_t _readFormatVersion(parser_tx_t *v, CborValue *rootItem
     if (v->oasis.entity_metadata.v != ENTITY_METADATA_V)
         return parser_invalid_v_value;
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -606,7 +605,6 @@ __Z_INLINE parser_error_t _readSerial(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&serialField), CborIntegerType)
     CHECK_CBOR_ERR(cbor_value_get_uint64(&serialField, &v->oasis.entity_metadata.serial))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -617,8 +615,10 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
     size_t cbor_name_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "name", &nameField))
-    if (!cbor_value_is_valid(&nameField))
-        return parser_ok;
+    if (!cbor_value_is_valid(&nameField)) {
+			v->oasis.entity_metadata.name.len = 0;
+      return parser_ok;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&nameField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.name, sizeof(name_t));
@@ -631,7 +631,6 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer, &v->oasis.entity_metadata.name.len, &dummy))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -669,8 +668,10 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     size_t cbor_url_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "url", &urlField))
-    if (!cbor_value_is_valid(&urlField))
+    if (!cbor_value_is_valid(&urlField)) {
+			v->oasis.entity_metadata.url.len = 0;
       return parser_ok;
+		}
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&urlField, &cbor_url_length))
     if (cbor_url_length > ENTITY_METADATA_URL_MAX_CHAR) {
@@ -684,7 +685,6 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -731,8 +731,10 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     size_t cbor_email_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "email", &emailField))
-    if (!cbor_value_is_valid(&emailField))
-        return parser_ok;
+    if (!cbor_value_is_valid(&emailField)) {
+			v->oasis.entity_metadata.email.len = 0;
+			return parser_ok;
+		}
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&emailField, &cbor_email_length))
     if (cbor_email_length > ENTITY_METADATA_EMAIL_MAX_CHAR) {
@@ -747,7 +749,6 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(_isValidEmail(&v->oasis.entity_metadata.email))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -770,8 +771,10 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
     size_t cbor_keybase_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "keybase", &keybaseField))
-    if (!cbor_value_is_valid(&keybaseField))
-        return parser_ok;
+    if (!cbor_value_is_valid(&keybaseField)) {
+			v->oasis.entity_metadata.keybase.len = 0;
+      return parser_ok;
+		}
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&keybaseField, &cbor_keybase_length))
     if (cbor_keybase_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
@@ -785,7 +788,6 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.keybase))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -796,8 +798,10 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
     size_t cbor_twitter_length;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "twitter", &twitterField))
-    if (!cbor_value_is_valid(&twitterField))
-        return parser_ok;
+    if (!cbor_value_is_valid(&twitterField)) {
+				v->oasis.entity_metadata.twitter.len = 0;
+      	return parser_ok;
+		}
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&twitterField, &cbor_twitter_length))
     if (cbor_twitter_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
@@ -811,7 +815,6 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.twitter))
 
-    v->oasis.entity_metadata.count += 1;
     return parser_ok;
 }
 
@@ -919,7 +922,6 @@ __Z_INLINE parser_error_t _readTx(parser_tx_t *v, CborValue *rootItem) {
 }
 
 __Z_INLINE parser_error_t _readEntityMetadata(parser_tx_t *v, CborValue *rootItem) {
-    v->oasis.entity_metadata.count = 0;
     CHECK_CBOR_TYPE(cbor_value_get_type(rootItem), CborMapType)
     CHECK_PARSER_ERR(_readFormatVersion(v, rootItem))
     CHECK_PARSER_ERR(_readSerial(v, rootItem))
@@ -996,7 +998,29 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
     }
 
     if (v->type == entityMetadataType) {
-      return v->oasis.entity_metadata.count + 1;
+      uint8_t metadataEntityCount = 2; // v and serial required
+
+      if (v->oasis.entity_metadata.name.len > 0) {
+          metadataEntityCount += 1;
+      }
+
+      if (v->oasis.entity_metadata.url.len > 0) {
+          metadataEntityCount += 1;
+      }
+
+      if (v->oasis.entity_metadata.email.len > 0) {
+          metadataEntityCount += 1;
+      }
+
+      if (v->oasis.entity_metadata.keybase.len > 0) {
+          metadataEntityCount += 1;
+      }
+
+      if (v->oasis.entity_metadata.twitter.len > 0) {
+          metadataEntityCount += 1;
+      }
+
+      return metadataEntityCount + 1;
     }
 
     if (!v->oasis.tx.has_fee)
