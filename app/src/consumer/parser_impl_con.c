@@ -128,7 +128,7 @@ const char *parser_getErrorDescription(parser_error_t err) {
         case parser_invalid_handle_length:
             return "Invalid handle length (max 32 characters)";
         case parser_invalid_name_length:
-            return "Invalid name length (max 51 characters)";
+            return "Invalid name length (max 50 characters)";
         default:
             return "Unrecognized error code";
     }
