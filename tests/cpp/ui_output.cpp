@@ -23,13 +23,12 @@
 #include "common/parser.h"
 
 using ::testing::TestWithParam;
-using ::testing::Values;
 
 void check_testcase(const testcase_t &testcase) {
     auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index);
 
     parser_context_t ctx;
-  
+
     auto buffer = utils::prepareBlob(tc.signature_context, tc.encoded_tx);
 
     parser_error_t err = parser_parse(&ctx, buffer.data(), buffer.size());
