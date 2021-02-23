@@ -870,11 +870,10 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
 }
 
 parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *type) {
-
     uint8_t expectedLen = 0;
 
     expectedLen = strlen(context_prefix_tx);
-    if (expectedLen <= prefixLen) {
+    if (expectedLen < prefixLen) {
         if (strncmp(context_prefix_tx, prefix, expectedLen) == 0) {
             *type = txType;
             return parser_ok;
@@ -882,7 +881,7 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
     }
 
     expectedLen = strlen(context_prefix_entity);
-    if (expectedLen <= prefixLen) {
+    if (expectedLen < prefixLen) {
         if (strncmp(context_prefix_entity, prefix, expectedLen) == 0) {
             *type = entityType;
             return parser_ok;
@@ -959,6 +958,9 @@ __Z_INLINE parser_error_t _readEntityMetadata(parser_tx_t *v, CborValue *rootIte
 }
 
 parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
+    if (c->bufferLen <= c->offset) {
+        return parser_unexpected_buffer_end;
+    }
     CborValue rootItem;
     INIT_CBOR_PARSER(c, rootItem)
 
