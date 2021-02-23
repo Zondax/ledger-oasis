@@ -869,6 +869,37 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     return parser_ok;
 }
 
+parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *type) {
+
+    uint8_t expectedLen = 0;
+
+    expectedLen = strlen(context_prefix_tx);
+    if (expectedLen <= prefixLen) {
+        if (strncmp(context_prefix_tx, prefix, expectedLen) == 0) {
+            *type = txType;
+            return parser_ok;
+        }
+    }
+
+    expectedLen = strlen(context_prefix_entity);
+    if (expectedLen <= prefixLen) {
+        if (strncmp(context_prefix_entity, prefix, expectedLen) == 0) {
+            *type = entityType;
+            return parser_ok;
+        }
+    }
+
+    expectedLen = strlen(context_prefix_entity_metadata);
+    if (expectedLen <= prefixLen) {
+        if (strncmp(context_prefix_entity_metadata, prefix, expectedLen) == 0) {
+            *type = entityMetadataType;
+            return parser_ok;
+        }
+    }
+
+    return parser_context_unknown_prefix;
+}
+
 parser_error_t _extractContextSuffix(parser_tx_t *v) {
     v->context.suffixPtr = NULL;
     v->context.suffixLen = 0;
@@ -881,19 +912,7 @@ parser_error_t _extractContextSuffix(parser_tx_t *v) {
         }
     }
 
-    if (strncmp(context_prefix_tx, (char *) v->context.ptr, strlen(context_prefix_tx)) == 0) {
-        v->type = txType;
-    } else {
-        if (strncmp(context_prefix_entity, (char *) v->context.ptr, strlen(context_prefix_entity)) == 0) {
-            v->type = entityType;
-        } else {
-            if (strncmp(context_prefix_entity_metadata, (char *) v->context.ptr, strlen(context_prefix_entity_metadata)) == 0) {
-                v->type = entityMetadataType;
-            } else {
-                return parser_context_unknown_prefix;
-            }
-        }
-    }
+    CHECK_PARSER_ERR(matchPrefix((char *) v->context.ptr, v->context.len, &v->type))
 
     const char *expectedPrefix = _context_expected_prefix(v);
     if (expectedPrefix == NULL) {
