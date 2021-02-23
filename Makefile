@@ -32,5 +32,5 @@ default:
 endif
 
 build_val: COIN=oasis_validator
-build_val: build
+build_val: buildS
 	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
