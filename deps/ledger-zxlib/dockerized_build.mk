@@ -65,7 +65,7 @@ endef
 
 all:
 	@$(MAKE) buildS
-	@$(MAKE) buildX
+#	@$(MAKE) buildX
 
 .PHONY: check_python
 check_python:

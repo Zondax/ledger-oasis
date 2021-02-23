@@ -35,7 +35,7 @@ const sim_options = {
 
 jest.setTimeout(80000)
 
-describe('Basic checks', function () {
+describe('Standard', function () {
     it('can start and stop container', async function () {
         const sim = new Zemu(APP_PATH);
         try {
@@ -363,7 +363,7 @@ describe('Basic checks', function () {
             console.log(resp);
 
             expect(resp.return_code).toEqual(0x6984);
-            expect(resp.error_message).toEqual("Data is invalid : Invalid name length (max 51 characters)");
+            expect(resp.error_message).toEqual("Data is invalid : Invalid name length (max 50 characters)");
         } finally {
             await sim.close();
         }
