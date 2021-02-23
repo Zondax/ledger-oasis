@@ -616,8 +616,8 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "name", &nameField))
     if (!cbor_value_is_valid(&nameField)) {
-			v->oasis.entity_metadata.name.len = 0;
-      return parser_ok;
+        v->oasis.entity_metadata.name.len = 0;
+        return parser_ok;
     }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&nameField), CborTextStringType)
@@ -629,7 +629,8 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
         return parser_invalid_name_length;
     }
 
-    CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer, &v->oasis.entity_metadata.name.len, &dummy))
+    CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer,
+                                                 &v->oasis.entity_metadata.name.len, &dummy))
 
     return parser_ok;
 }
@@ -646,17 +647,17 @@ parser_error_t _isValidUrl(url_t *url) {
 
     const char https_prefix[] = "https://";
     if (strncmp(https_prefix, (const char *) url->buffer, strlen(https_prefix)) != 0)
-      return parser_invalid_url_format;
+        return parser_invalid_url_format;
 
     // Dectect query by lookin for the `?` separator
     char query_separator = '?';
     if (strchr((const char *) url->buffer, query_separator) != NULL)
-      return parser_invalid_url_format;
+        return parser_invalid_url_format;
 
     // Dectect fragment by looking for the `#` the fragment identifier
     char fragment_identifier = '#';
     if (strchr((const char *) url->buffer, fragment_identifier) != NULL)
-      return parser_invalid_url_format;
+        return parser_invalid_url_format;
 
     return parser_ok;
 }
@@ -669,9 +670,9 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "url", &urlField))
     if (!cbor_value_is_valid(&urlField)) {
-			v->oasis.entity_metadata.url.len = 0;
-      return parser_ok;
-		}
+        v->oasis.entity_metadata.url.len = 0;
+        return parser_ok;
+    }
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&urlField, &cbor_url_length))
     if (cbor_url_length > ENTITY_METADATA_URL_MAX_CHAR) {
@@ -681,7 +682,8 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&urlField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.url, sizeof(url_t));
     v->oasis.entity_metadata.url.len = sizeof_field(url_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (char *) &v->oasis.entity_metadata.url.buffer, &v->oasis.entity_metadata.url.len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&urlField, (char *) &v->oasis.entity_metadata.url.buffer,
+                                               &v->oasis.entity_metadata.url.len, &dummy))
 
     CHECK_PARSER_ERR(_isValidUrl(&v->oasis.entity_metadata.url))
 
@@ -701,25 +703,25 @@ parser_error_t _isValidEmail(email_t *email) {
 
         // Should have exactly one @
         if (c == '@') {
-          arobase_count++;
-          continue;
+            arobase_count++;
+            continue;
         }
 
         // We are in the second part of the email
         if (arobase_count == 1) {
-          if (c == '.') {
-            punct_count++;
-            continue;
-          }
-          if ((c < 48 || c > 57) && (c < 65 || c > 90) && (c < 97 || c > 122) && c != '-') {
-            return parser_invalid_email_format;
-          }
+            if (c == '.') {
+                punct_count++;
+                continue;
+            }
+            if ((c < 48 || c > 57) && (c < 65 || c > 90) && (c < 97 || c > 122) && c != '-') {
+                return parser_invalid_email_format;
+            }
         }
 
     }
 
     if (arobase_count > 1 || punct_count < 1)
-      return parser_invalid_email_format;
+        return parser_invalid_email_format;
 
     return parser_ok;
 }
@@ -732,9 +734,9 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "email", &emailField))
     if (!cbor_value_is_valid(&emailField)) {
-			v->oasis.entity_metadata.email.len = 0;
-			return parser_ok;
-		}
+        v->oasis.entity_metadata.email.len = 0;
+        return parser_ok;
+    }
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&emailField, &cbor_email_length))
     if (cbor_email_length > ENTITY_METADATA_EMAIL_MAX_CHAR) {
@@ -745,7 +747,8 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&emailField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.email, sizeof(email_t));
     v->oasis.entity_metadata.email.len = sizeof_field(email_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&emailField, (char *) &v->oasis.entity_metadata.email.buffer, &v->oasis.entity_metadata.email.len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&emailField, (char *) &v->oasis.entity_metadata.email.buffer,
+                                               &v->oasis.entity_metadata.email.len, &dummy))
 
     CHECK_PARSER_ERR(_isValidEmail(&v->oasis.entity_metadata.email))
 
@@ -772,9 +775,9 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "keybase", &keybaseField))
     if (!cbor_value_is_valid(&keybaseField)) {
-			v->oasis.entity_metadata.keybase.len = 0;
-      return parser_ok;
-		}
+        v->oasis.entity_metadata.keybase.len = 0;
+        return parser_ok;
+    }
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&keybaseField, &cbor_keybase_length))
     if (cbor_keybase_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
@@ -784,7 +787,8 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&keybaseField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.keybase, sizeof(handle_t));
     v->oasis.entity_metadata.keybase.len = sizeof_field(handle_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&keybaseField, (char *) &v->oasis.entity_metadata.keybase.buffer, &v->oasis.entity_metadata.keybase.len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&keybaseField, (char *) &v->oasis.entity_metadata.keybase.buffer,
+                                               &v->oasis.entity_metadata.keybase.len, &dummy))
 
     CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.keybase))
 
@@ -799,9 +803,9 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "twitter", &twitterField))
     if (!cbor_value_is_valid(&twitterField)) {
-				v->oasis.entity_metadata.twitter.len = 0;
-      	return parser_ok;
-		}
+        v->oasis.entity_metadata.twitter.len = 0;
+        return parser_ok;
+    }
 
     CHECK_PARSER_ERR(cbor_value_get_string_length(&twitterField, &cbor_twitter_length))
     if (cbor_twitter_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
@@ -811,7 +815,8 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&twitterField), CborTextStringType)
     MEMZERO(&v->oasis.entity_metadata.twitter, sizeof(handle_t));
     v->oasis.entity_metadata.twitter.len = sizeof_field(handle_t, buffer);
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(&twitterField, (char *) &v->oasis.entity_metadata.twitter.buffer, &v->oasis.entity_metadata.twitter.len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&twitterField, (char *) &v->oasis.entity_metadata.twitter.buffer,
+                                               &v->oasis.entity_metadata.twitter.len, &dummy))
 
     CHECK_PARSER_ERR(_isValidHandle(&v->oasis.entity_metadata.twitter))
 
@@ -842,8 +847,8 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     // First byte is the context length
     v->context.len = *(c->buffer + c->offset);
 
-    if (v->context.len == 0) {
-      return parser_init_context_empty;
+    if (v->context.len < 2) {
+        return parser_init_context_empty;
     }
 
     if (c->offset + v->context.len > c->bufferLen) {
@@ -854,7 +859,7 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     c->offset += 1 + v->context.len;
 
     // Check all bytes in context as ASCII within 32..127
-    for (uint16_t i = 0; i < v->context.len; i++) {
+    for (uint16_t i = 0; i < v->context.len - 1; i++) {
         const uint8_t tmp = v->context.ptr[i];
         if (tmp < 32 || tmp > 127) {
             return parser_context_invalid_chars;
@@ -869,7 +874,7 @@ parser_error_t _extractContextSuffix(parser_tx_t *v) {
     v->context.suffixLen = 0;
 
     // Check all bytes in context as ASCII within 32..127
-    for (uint8_t i = 0; i < v->context.len; i++) {
+    for (uint8_t i = 0; i < v->context.len - 1; i++) {
         uint8_t c = *(v->context.ptr + i);
         if (c < 32 || c > 127) {
             return parser_context_invalid_chars;
@@ -950,25 +955,25 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     }
 
     switch (v->type) {
-      case txType:
-        // Read TXs
-        MEMZERO(&v->oasis.tx, sizeof(oasis_tx_t));
-        CHECK_PARSER_ERR(_readTx(v, &rootItem))
-        break;
-      case entityType:
-        // Read Entity
-        MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
-        parser_setCborState(&v->oasis.entity.cborState, &parser, &rootItem);
-        CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
-        break;
-      case entityMetadataType:
-        // Read Entity Metadata
-        MEMZERO(&v->oasis.entity_metadata, sizeof(oasis_entity_metadata_t));
-        CHECK_PARSER_ERR(_readEntityMetadata(v, &rootItem))
-        break;
-      default:
-        return parser_context_unknown_prefix;
-      }
+        case txType:
+            // Read TXs
+            MEMZERO(&v->oasis.tx, sizeof(oasis_tx_t));
+            CHECK_PARSER_ERR(_readTx(v, &rootItem))
+            break;
+        case entityType:
+            // Read Entity
+            MEMZERO(&v->oasis.entity, sizeof(oasis_entity_t));
+            parser_setCborState(&v->oasis.entity.cborState, &parser, &rootItem);
+            CHECK_PARSER_ERR(_readEntity(&v->oasis.entity))
+            break;
+        case entityMetadataType:
+            // Read Entity Metadata
+            MEMZERO(&v->oasis.entity_metadata, sizeof(oasis_entity_metadata_t));
+            CHECK_PARSER_ERR(_readEntityMetadata(v, &rootItem))
+            break;
+        default:
+            return parser_context_unknown_prefix;
+    }
 
     return parser_ok;
 }
@@ -998,29 +1003,29 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
     }
 
     if (v->type == entityMetadataType) {
-      uint8_t metadataEntityCount = 2; // v and serial required
+        uint8_t metadataEntityCount = 2; // v and serial required
 
-      if (v->oasis.entity_metadata.name.len > 0) {
-          metadataEntityCount += 1;
-      }
+        if (v->oasis.entity_metadata.name.len > 0) {
+            metadataEntityCount += 1;
+        }
 
-      if (v->oasis.entity_metadata.url.len > 0) {
-          metadataEntityCount += 1;
-      }
+        if (v->oasis.entity_metadata.url.len > 0) {
+            metadataEntityCount += 1;
+        }
 
-      if (v->oasis.entity_metadata.email.len > 0) {
-          metadataEntityCount += 1;
-      }
+        if (v->oasis.entity_metadata.email.len > 0) {
+            metadataEntityCount += 1;
+        }
 
-      if (v->oasis.entity_metadata.keybase.len > 0) {
-          metadataEntityCount += 1;
-      }
+        if (v->oasis.entity_metadata.keybase.len > 0) {
+            metadataEntityCount += 1;
+        }
 
-      if (v->oasis.entity_metadata.twitter.len > 0) {
-          metadataEntityCount += 1;
-      }
+        if (v->oasis.entity_metadata.twitter.len > 0) {
+            metadataEntityCount += 1;
+        }
 
-      return metadataEntityCount + 1;
+        return metadataEntityCount + 1;
     }
 
     if (!v->oasis.tx.has_fee)

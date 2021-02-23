@@ -86,3 +86,4 @@ cmake-build-fuzz/
 /build/*
 /fuzz/corpora
 core
+fuzz-*.log
