@@ -47,5 +47,5 @@ TEST(TxParser, MissingLastByte) {
     std::string cborString = "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy";
     auto buffer = utils::prepareBlob(context, cborString);
     auto err = parser_parse(&ctx, buffer.data(), buffer.size() - 1);
-    ASSERT_EQ(err, parser_cbor_unexpected_EOF) << parser_getErrorDescription(err);
+    ASSERT_EQ(err, parser_context_unknown_prefix) << parser_getErrorDescription(err);
 }
