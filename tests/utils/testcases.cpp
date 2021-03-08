@@ -61,7 +61,7 @@ namespace utils {
             description = v["kind"].asString();
         }
         description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
-        
+
         if (v.isMember("entity_meta")) {
           return {
                   false,
@@ -74,7 +74,7 @@ namespace utils {
                   GenerateExpectedUIOutput(v["signature_context"].asString(), v)
           };
         }
-        
+
         return {
                 false,
                 description,
@@ -93,13 +93,8 @@ namespace utils {
         Json::CharReaderBuilder builder;
         std::shared_ptr<Json::Value> obj(new Json::Value());
 
-        std::ifstream inFile(filename);
-        EXPECT_TRUE(inFile.is_open())
-                            << "\n"
-                            << "******************\n"
-                            << "Check that your working directory points to the tests directory\n"
-                            << "In CLion use $PROJECT_DIR$\\tests\n"
-                            << "******************\n";
+        std::string fullPathJsonFile = std::string(TESTVECTORS_DIR) + filename;
+        std::ifstream inFile(fullPathJsonFile);
         if (!inFile.is_open())
             return answer;
 
@@ -396,7 +391,7 @@ namespace utils {
 
         return answer;
     }
-    
+
     std::vector<std::string> GenerateExpectedUIOutputForEntityMetadata(Json::Value j, uint32_t &itemCount) {
         auto answer = std::vector<std::string>();
 
@@ -405,7 +400,7 @@ namespace utils {
         addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
         addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
         addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
-        
+
         if (entity_meta.isMember("name")) {
             addTo(answer, "{} | Name : {}", itemCount++, entity_meta["name"].asString());
         }

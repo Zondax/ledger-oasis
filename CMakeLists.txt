@@ -39,14 +39,14 @@ if(ENABLE_FUZZING)
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         # require at least clang 3.2
-        if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0)
-            message(FATAL_ERROR "Clang version must be at least 11.0!")
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10.0)
+            message(FATAL_ERROR "Clang version must be at least 10.0!")
         endif()
     else()
         message(FATAL_ERROR
-                "You are using an unsupported compiler! Fuzzing only works with Clang 11.\n"
-                "1. Install clang-11 \n"
-                "2. Pass -DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11")
+                "You are using an unsupported compiler! Fuzzing only works with Clang 10.\n"
+                "1. Install clang-10 \n"
+                "2. Pass -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10")
     endif()
 
     string(APPEND CMAKE_C_FLAGS " -fsanitize=fuzzer-no-link")
@@ -164,6 +164,8 @@ target_include_directories(unittests_val PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         )
+
+add_compile_definitions(TESTVECTORS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/")
 
 target_link_libraries(unittests PRIVATE
         gtest_main

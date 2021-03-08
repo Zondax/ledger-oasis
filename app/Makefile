@@ -1,6 +1,6 @@
 #*******************************************************************************
 #   Ledger App
-#   (c) 2018-2020 Zondax GmbH
+#   (c) 2018-2021 Zondax GmbH
 #   (c) 2017 Ledger
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,34 +22,37 @@ endif
 
 MY_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 
+all: bin/app.elf
+	@echo "#!/usr/bin/env bash" > $(OUTPUT_INSTALLER)
+	@echo "APPNAME=\"${APPNAME}\"" >> $(OUTPUT_INSTALLER)
+	@echo "APPVERSION=\"${APPVERSION}\"" >> $(OUTPUT_INSTALLER)
+	@echo "APPPATH=\""${APPPATH}"\"" >> $(OUTPUT_INSTALLER)
+	@echo "LOAD_PARAMS=\"${COMMON_LOAD_PARAMS}\"" >> $(OUTPUT_INSTALLER)
+	@echo "DELETE_PARAMS=\"${COMMON_DELETE_PARAMS}\"" >> $(OUTPUT_INSTALLER)
+	@echo "APPHEX=\"" >> $(OUTPUT_INSTALLER)
+	@cat $(CURDIR)/bin/app.hex >> $(OUTPUT_INSTALLER)
+	@echo "\"" >> $(OUTPUT_INSTALLER)
+	@cat $(CURDIR)/../deps/ledger-zxlib/scripts/template.sh >> $(OUTPUT_INSTALLER)
+	@chmod +x $(OUTPUT_INSTALLER)
+	@cp $(CURDIR)/bin/* $(CURDIR)/output
+	@cp $(CURDIR)/output/app.elf ${OUTPUT_ELF}
+	@rm $(CURDIR)/output/app.elf
+
+include $(BOLOS_SDK)/Makefile.defines
+
 ifeq ($(APP_TESTING),1)
 DEFINES += APP_TESTING
 DEFINES += ZEMU_LOGGING
+$(info ************  LOGGING ENABLED ************)
 endif
-
-all: bin/app.elf
-	@echo "#!/usr/bin/env bash" > $(CURDIR)/pkg/zxtool.sh
-	@echo "APPNAME=\"${APPNAME}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPVERSION=\"${APPVERSION}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPPATH=\""${APPPATH}"\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "LOAD_PARAMS=\"${COMMON_LOAD_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "DELETE_PARAMS=\"${COMMON_DELETE_PARAMS}\"" >> $(CURDIR)/pkg/zxtool.sh
-	@echo "APPHEX=\"" >> $(CURDIR)/pkg/zxtool.sh
-	@cat $(CURDIR)/bin/app.hex >> $(CURDIR)/pkg/zxtool.sh
-	@echo "\"" >> $(CURDIR)/pkg/zxtool.sh
-	@cat $(CURDIR)/../deps/ledger-zxlib/scripts/template.sh >> $(CURDIR)/pkg/zxtool.sh
-	@chmod +x $(CURDIR)/pkg/zxtool.sh
-
-include $(BOLOS_SDK)/Makefile.defines
-DEFINES += NDEBUG
 
 ifndef COIN
 COIN=oasis
 endif
 
 APPVERSION_M=1
-APPVERSION_N=9
-APPVERSION_P=2
+APPVERSION_N=10
+APPVERSION_P=0
 
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
@@ -58,7 +61,7 @@ DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'"
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-SCRIPT_LD:=$(CURDIR)/script_con.ld
+APP_STACK_SIZE:=2392
 endif
 
 else ifeq ($(COIN),oasis_validator)
@@ -66,7 +69,7 @@ DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-SCRIPT_LD:=$(CURDIR)/script_val.ld
+APP_STACK_SIZE:=1956
 endif
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
@@ -84,16 +87,23 @@ endef
 $(error "$(error_message)")
 endif
 
-APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path $(APPPATH) --tlvraw 9F:01
+APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path ${APPPATH} --tlvraw 9F:01
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
 
 ifeq ($(TARGET_NAME),TARGET_NANOS)
 ICONNAME:=$(CURDIR)/nanos_icon.gif
+OUTPUT_ELF:= $(CURDIR)/output/app_s.elf
+OUTPUT_INSTALLER:= $(CURDIR)/pkg/installer_s.sh
 endif
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 ICONNAME:=$(CURDIR)/nanox_icon.gif
+OUTPUT_ELF:= $(CURDIR)/output/app_x.elf
+OUTPUT_INSTALLER:= $(CURDIR)/pkg/installer_x.sh
 endif
+
+$(info TARGET_NAME  = [$(TARGET_NAME)])
+$(info ICONNAME  = [$(ICONNAME)])
 
 ifndef ICONNAME
 $(error ICONNAME is not set)
@@ -131,6 +141,10 @@ DEFINES       += HAVE_BAGL_FONT_OPEN_SANS_LIGHT_16PX
 
 DEFINES       += HAVE_UX_FLOW
 
+DEFINES       += HAVE_BLE
+DEFINES       += HAVE_BLE_APDU BLE_COMMAND_TIMEOUT_MS=2000
+
+SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
 else
 # Assume Nano S
 DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=128
@@ -178,6 +192,7 @@ LDLIBS   += -lm -lgcc -lc
 
 ##########################
 GLYPH_SRC_DIR = glyphs
+INCLUDES_PATH += $(MY_DIR)/glyphs
 include $(BOLOS_SDK)/Makefile.glyphs
 
 APP_SOURCE_PATH += $(MY_DIR)/src
@@ -197,7 +212,6 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
 .PHONY: rust
 rust:
 	@echo "No rust code"
-#	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
 
 # Before linking, we need to be sure rust lib is there
 bin/app.elf: rust
@@ -205,7 +219,6 @@ bin/app.elf: rust
 .PHONY: rust_clean
 rust_clean:
 	@echo "No rust code"
-#	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
 
 clean: rust_clean
 

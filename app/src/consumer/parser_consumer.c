@@ -40,7 +40,7 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 
     // Read after we determine context
     CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
-        
+
     return parser_ok;
 }
 
@@ -304,9 +304,9 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
-                                                 
+
     uint8_t skipped = 0;
-        
+
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Version");
         uint64_to_str(outVal, outValLen, entity_metadata->v);
@@ -320,32 +320,32 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         *pageCount = 1;
         return parser_ok;
     }
-        
+
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
         snprintf(outKey, outKeyLen, "Name");
-        pageStringExt(outVal, outValLen, entity_metadata->name.buffer, entity_metadata->name.len, pageIdx, pageCount);
+        pageStringExt(outVal, outValLen, (char *) entity_metadata->name.buffer, entity_metadata->name.len, pageIdx, pageCount);
         return parser_ok;
     }
-    
+
     if (entity_metadata->name.len == 0)
       skipped++;
-        
+
     if (entity_metadata->url.len > 0 && (displayIdx+skipped) < 4) {
       snprintf(outKey, outKeyLen, "URL");
-      pageStringExt(outVal, outValLen, entity_metadata->url.buffer, entity_metadata->url.len, pageIdx, pageCount);
-      return parser_ok;  
+      pageStringExt(outVal, outValLen, (char *) entity_metadata->url.buffer, entity_metadata->url.len, pageIdx, pageCount);
+      return parser_ok;
     }
-    
+
     if (entity_metadata->url.len == 0)
       skipped++;
-    
+
     if (entity_metadata->email.len > 0 && (displayIdx+skipped) < 5) {
       snprintf(outKey, outKeyLen, "Email");
       snprintf(outVal, outValLen, "%s", entity_metadata->email.buffer);
       *pageCount = 1;
-      return parser_ok;  
+      return parser_ok;
     }
-    
+
     if (entity_metadata->email.len == 0)
       skipped++;
 
@@ -353,19 +353,19 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
       snprintf(outKey, outKeyLen, "Keybase");
       snprintf(outVal, outValLen, "%s", entity_metadata->keybase.buffer);
       *pageCount = 1;
-      return parser_ok;  
+      return parser_ok;
     }
-    
+
     if (entity_metadata->keybase.len == 0)
       skipped++;
-        
+
     if (entity_metadata->twitter.len > 0) {
       snprintf(outKey, outKeyLen, "Twitter");
       snprintf(outVal, outValLen, "%s", entity_metadata->twitter.buffer);
       *pageCount = 1;
-      return parser_ok;  
+      return parser_ok;
     }
-    
+
     return parser_no_data;
 }
 
@@ -715,7 +715,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     }
     ///////////////////////////////
     ///////////////////////////////
-    
+
     return err;
 }
 
