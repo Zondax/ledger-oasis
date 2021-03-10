@@ -58,7 +58,7 @@ DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'"
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-SCRIPT_LD:=$(CURDIR)/script_con.ld
+APP_STACK_SIZE:=2392
 endif
 
 else ifeq ($(COIN),oasis_validator)
@@ -66,7 +66,7 @@ DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
 ifeq ($(TARGET_NAME),TARGET_NANOS)
-SCRIPT_LD:=$(CURDIR)/script_val.ld
+APP_STACK_SIZE:=1956
 endif
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
