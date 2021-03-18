@@ -76,6 +76,12 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
         case stakingBurn:
             snprintf(outVal, outValLen, "Burn");
             return parser_ok;
+        case stakingWithdraw:
+            snprintf(outVal, outValLen, "Withdraw");
+            return parser_ok;
+        case stakingAllow:
+            snprintf(outVal, outValLen, "Allow");
+            return parser_ok;
         case stakingEscrow:
             snprintf(outVal, outValLen, "Add escrow");
             return parser_ok;
@@ -357,6 +363,69 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
+                }
+            }
+            break;
+        case stakingWithdraw:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Amount");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingWithdraw.amount,
+                                                outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Address");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingWithdraw.from,
+                                               outVal, outValLen, pageIdx, pageCount);
+                }
+            }
+            break;
+        case stakingAllow:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    // FIXME: Handle stakingAllow.is_negative in amount_change
+                    snprintf(outKey, outKeyLen, "Amount");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingAllow.amount_change,
+                                                outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Beneficiary");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingAllow.beneficiary,
+                                               outVal, outValLen, pageIdx, pageCount);
                 }
             }
             break;
