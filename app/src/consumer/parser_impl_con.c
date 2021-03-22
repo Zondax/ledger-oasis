@@ -417,13 +417,19 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
         }
         case stakingAllow: {
 
-            CHECK_CBOR_MAP_LEN(&bodyField, 3)
+            size_t numItems;
+            CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
+            if(numItems < 2 || numItems > 3) return parser_unexpected_number_items;
 
-            CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readBoolean(&contents, &v->oasis.tx.body.stakingAllow.negative))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            if( numItems == 3 ){
+                CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_PARSER_ERR(_readBoolean(&contents, &v->oasis.tx.body.stakingAllow.negative))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            } else {
+                v->oasis.tx.body.stakingAllow.negative = false;
+            }
 
             CHECK_PARSER_ERR(_matchKey(&contents, "beneficiary"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
