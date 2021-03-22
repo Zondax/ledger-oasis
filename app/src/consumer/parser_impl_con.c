@@ -135,12 +135,8 @@ __Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) 
 
 __Z_INLINE parser_error_t _readBoolean(CborValue *value, bool *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborBooleanType)
-    CborValue dummy;
-    size_t len = sizeof(bool);
-    CHECK_CBOR_ERR(cbor_value_copy_byte_string(value, (uint8_t *) out, &len, &dummy))
-    if (len != sizeof(bool)) {
-        return parser_unexpected_value;
-    }
+    CHECK_CBOR_ERR(cbor_value_get_boolean(value, out))
+
     return parser_ok;
 }
 
@@ -424,14 +420,14 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_MAP_LEN(&bodyField, 3)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
+            CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readBoolean(&contents, &v->oasis.tx.body.stakingAllow.negative))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
             CHECK_PARSER_ERR(_matchKey(&contents, "beneficiary"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingAllow.beneficiary))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
-
-            CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readBoolean(&contents, &v->oasis.tx.body.stakingAllow.is_negative))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             CHECK_PARSER_ERR(_matchKey(&contents, "amount_change"))
