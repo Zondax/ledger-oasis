@@ -123,7 +123,7 @@ typedef struct {
         struct {
             address_raw_t beneficiary;
             quantity_t amount_change;
-            bool is_negative;
+            bool negative;
         } stakingAllow;
 
         struct {
