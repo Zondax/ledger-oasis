@@ -374,7 +374,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    snprintf(outKey, outKeyLen, "Address");
+                    snprintf(outKey, outKeyLen, "From");
                     return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingWithdraw.from,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
