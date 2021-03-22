@@ -295,6 +295,42 @@ namespace utils {
             }
         }
 
+        if (type == "staking.Allow") {
+            addTo(answer, "{} | Type : Allow", itemCount++);
+
+            auto allowAccount = txbody["beneficiary"].asString();
+            addTo(answer, "{} | Beneficiary [1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
+            addTo(answer, "{} | Beneficiary [2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
+
+            std::string sign;
+            auto negative = txbody["negative"].asBool();
+            if(negative){
+                sign = "-";
+            }else {
+                sign = "+";
+            }
+            addTo(answer, "{} | Amount : {} {}{}", itemCount++, COIN_DENOM, sign, FormatAmount(txbody["amount_change"].asString()));
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "staking.Withdraw") {
+            addTo(answer, "{} | Type : Withdraw", itemCount++);
+
+            auto withdrawAccount = txbody["from"].asString();
+            addTo(answer, "{} | From [1/2] : {}", itemCount, FormatAddress(withdrawAccount, 0, &dummy));
+            addTo(answer, "{} | From [2/2] : {}", itemCount++, FormatAddress(withdrawAccount, 1, &dummy));
+
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
         if (type == "staking.AddEscrow") {
             addTo(answer, "{} | Type : Add escrow", itemCount++);
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
