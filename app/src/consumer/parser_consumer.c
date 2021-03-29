@@ -446,7 +446,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    snprintf(outKey, outKeyLen, "Amount");
+                    snprintf(outKey, outKeyLen, "Amount change");
                     return parser_printQuantityWithSign(&parser_tx_obj.oasis.tx.body.stakingAllow.amount_change,
                                                         parser_tx_obj.oasis.tx.body.stakingAllow.negative,
                                                         outVal, outValLen, pageIdx, pageCount);
