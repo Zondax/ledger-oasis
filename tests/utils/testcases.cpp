@@ -277,13 +277,13 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
+            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
+            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {
