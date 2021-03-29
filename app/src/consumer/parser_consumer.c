@@ -157,8 +157,8 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
 
 
 __Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, bool is_negative,
-                                               char *outVal, uint16_t outValLen,
-                                               uint8_t pageIdx, uint8_t *pageCount) {
+                                                       char *outVal, uint16_t outValLen,
+                                                       uint8_t pageIdx, uint8_t *pageCount) {
     // upperbound 2**(64*8)
     // results in 155 decimal digits => max 78 bcd bytes
 
@@ -361,7 +361,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -392,7 +391,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -423,7 +421,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -449,14 +446,12 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // FIXME: Handle stakingAllow.is_negative in amount_change
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantityWithSign(&parser_tx_obj.oasis.tx.body.stakingAllow.amount_change,
                                                         parser_tx_obj.oasis.tx.body.stakingAllow.negative,
-                                                outVal, outValLen, pageIdx, pageCount);
+                                                        outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -482,7 +477,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -513,7 +507,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                               outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -539,7 +532,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
