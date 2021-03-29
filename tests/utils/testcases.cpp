@@ -309,7 +309,7 @@ namespace utils {
             }else {
                 sign = "+";
             }
-            addTo(answer, "{} | Amount : {} {}{}", itemCount++, COIN_DENOM, sign, FormatAmount(txbody["amount_change"].asString()));
+            addTo(answer, "{} | Amount change: {} {}{}", itemCount++, COIN_DENOM, sign, FormatAmount(txbody["amount_change"].asString()));
 
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
