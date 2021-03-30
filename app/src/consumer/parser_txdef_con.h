@@ -37,7 +37,9 @@ typedef enum {
     stakingAmendCommissionSchedule,
     registryDeregisterEntity,
     registryUnfreezeNode,
-    registryRegisterEntity
+    registryRegisterEntity,
+    governanceSubmitProposal,
+    governanceCastVote
 } oasis_methods_e;
 
 typedef struct {
@@ -96,6 +98,28 @@ typedef struct {
 } oasis_entity_t;
 
 typedef struct {
+    uint16_t major;
+    uint16_t minor;
+    uint16_t patch;
+} version_t;
+
+typedef struct {
+    version_t runtime_host_protocol;
+    version_t runtime_committee_protocol;
+    version_t consensus_protocol;
+} protocol_version_t;
+
+typedef struct {
+    uint8_t handler[64];
+    protocol_version_t target;
+    epochTime_t epoch;
+} upgrade_descriptor_t;
+
+typedef struct {
+    uint64_t proposal_id;
+} cancel_upgrade_descriptor_t;
+
+typedef struct {
     uint64_t nonce;
     bool has_fee;
     uint64_t fee_gas;
@@ -140,6 +164,16 @@ typedef struct {
             oasis_entity_t entity;
             signature_t signature;
         } registryRegisterEntity;
+
+        struct {
+            upgrade_descriptor_t upgrade;
+            cancel_upgrade_descriptor_t cancel_upgrade;
+        } governanceSubmitProposal;
+
+        struct {
+            uint64_t id;
+            uint8_t vote;
+        } governanceCastVote;
 
     } body;
 } oasis_tx_t;
