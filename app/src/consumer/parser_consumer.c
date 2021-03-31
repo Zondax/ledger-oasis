@@ -98,6 +98,12 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
         case registryRegisterEntity:
             snprintf(outVal, outValLen, "Register Entity");
             return parser_ok;
+        case governanceSubmitProposal:
+            snprintf(outVal, outValLen, "Submit proposal");
+            return parser_ok;
+        case governanceCastVote:
+            snprintf(outVal, outValLen, "Cast Vote");
+            return parser_ok;
         case unknownMethod:
         default:
             break;
@@ -251,6 +257,23 @@ __Z_INLINE parser_error_t parser_printSignature(raw_signature_t *s,
     array_to_hexstr(outBuffer, sizeof(outBuffer), (const uint8_t *) s, sizeof(raw_signature_t));
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
     return parser_ok;
+}
+
+__Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uint16_t outValLen) {
+    switch (vote) {
+        case 1:
+            snprintf(outVal, outValLen, "yes");
+            return parser_ok;
+        case 2:
+            snprintf(outVal, outValLen, "no");
+            return parser_ok;
+        case 3:
+            snprintf(outVal, outValLen, "abstain");
+            return parser_ok;
+        default:
+            break;
+    }
+    return parser_unexpected_value;
 }
 
 __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
@@ -555,6 +578,68 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                             pageIdx, pageCount);
             }
         }
+
+        case governanceCastVote:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Proposal ID");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceCastVote.id);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Vote");
+                    return parser_printVote(parser_tx_obj.oasis.tx.body.governanceCastVote.vote, outVal, outValLen);
+                }
+            }
+            break;
+        case governanceSubmitProposal:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Kind");
+                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
+                        snprintf(outVal, outValLen, "Upgrade");
+                    }
+                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL){
+                        snprintf(outVal, outValLen, "Cancel upgrade");
+                    }
+                }
+                case 2:{
+                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
+                        snprintf(outKey, outKeyLen, "Handler");
+                        // FIXME show handler value
+                    }
+                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL){
+                        snprintf(outKey, outKeyLen, "Proposal ID");
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade->proposal_id);
+                    }
+                }
+                case 3:{
+                    snprintf(outKey, outKeyLen, "Consensus");
+                    // FIXME show Consensus
+                }
+                case 4:{
+                    snprintf(outKey, outKeyLen, "Runtime Host");
+                    // FIXME show Runtime Host
+                }
+                case 5:{
+                    snprintf(outKey, outKeyLen, "Runtime Committee");
+                    // FIXME show Runtime Committee
+                }
+                case 6:{
+                    snprintf(outKey, outKeyLen, "Epoch");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->epoch);
+                }
+            }
+            break;
         case unknownMethod:
         default:
             break;
