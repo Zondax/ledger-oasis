@@ -515,10 +515,11 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
             // FIXME Complete parsing process
             if( _matchKey(&contents, "upgrade" ) == parser_ok ){
+                upgrade_descriptor_t upgradeItem;
                 CborValue upgrade;
                 CHECK_CBOR_ERR(cbor_value_advance(&contents))
                 CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborMapType)
-                CHECK_CBOR_MAP_LEN(&bodyField, 4)
+                CHECK_CBOR_MAP_LEN(&contents, 4)
                 CHECK_CBOR_ERR(cbor_value_enter_container(&contents, &upgrade))
 
                 CHECK_PARSER_ERR(_matchKey(&upgrade, "v"))
@@ -526,37 +527,38 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 // Skip version value
                 CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
 
+                // epoch element is a uint64
+                CHECK_PARSER_ERR(_matchKey(&upgrade, "epoch"))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+                CHECK_PARSER_ERR(_readUint64(&upgrade, &upgradeItem.epoch))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+
                 // Target element is a map
                 CborValue target;
                 CHECK_PARSER_ERR(_matchKey(&upgrade, "target"))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
                 CHECK_CBOR_TYPE(cbor_value_get_type(&upgrade), CborMapType)
-                CHECK_CBOR_MAP_LEN(&bodyField, 3)
+                CHECK_CBOR_MAP_LEN(&upgrade, 3)
                 CHECK_CBOR_ERR(cbor_value_enter_container(&upgrade, &target))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
 
                 // consensus_protocol is an element of target map
                 CHECK_PARSER_ERR(_matchKey(&target, "consensus_protocol"))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
-                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol))
+                CHECK_PARSER_ERR(_readVersion(&target, &upgradeItem.target.consensus_protocol))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
 
                 // runtime_committee_protocol is an element of target map
-                CHECK_PARSER_ERR(_matchKey(&target, "runtime_committee_protocol"))
+                CHECK_PARSER_ERR(_matchKey(&target, "runtime_host_protocol"))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
-                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol))
+                CHECK_PARSER_ERR(_readVersion(&target, &upgradeItem.target.runtime_host_protocol))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
 
                 // runtime_host_protocol is an element of target map
-                CHECK_PARSER_ERR(_matchKey(&target, "runtime_host_protocol"))
+                CHECK_PARSER_ERR(_matchKey(&target, "runtime_committee_protocol"))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
-                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol))
+                CHECK_PARSER_ERR(_readVersion(&target, &upgradeItem.target.runtime_committee_protocol))
                 CHECK_CBOR_ERR(cbor_value_advance(&target))
-
-                // epoch element is a uint64
-                CHECK_PARSER_ERR(_matchKey(&upgrade, "epoch"))
-                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
-                CHECK_PARSER_ERR(_readUint64(&upgrade, &v->oasis.tx.body.governanceSubmitProposal.upgrade->epoch))
-                CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
                 // handler element is a string
                 CHECK_PARSER_ERR(_matchKey(&upgrade, "handler"))
@@ -564,11 +566,20 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 // FIXME Read handler value here
                 CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
 
-
-
                 v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade = NULL;
+                v->oasis.tx.body.governanceSubmitProposal.upgrade = &upgradeItem;
             } else if( _matchKey(&contents, "cancel_upgrade") == parser_ok ){
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                cancel_upgrade_descriptor_t cancelUpgradeItem;
+
+                // epoch element is a uint64
+                CHECK_PARSER_ERR(_matchKey(&contents, "proposal_id"))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_PARSER_ERR(_readUint64(&contents, &cancelUpgradeItem.proposal_id))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
                 v->oasis.tx.body.governanceSubmitProposal.upgrade = NULL;
+                v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade = &cancelUpgradeItem;
             } else {
                 CHECK_PARSER_ERR(parser_unexpected_field);
             }
