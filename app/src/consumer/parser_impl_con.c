@@ -122,6 +122,11 @@ void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, c
     }
 }
 
+__Z_INLINE parser_error_t _readVersion(CborValue *value, version_t *out) {
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -501,10 +506,72 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             break;
         }
         case governanceSubmitProposal: {
-            CHECK_CBOR_MAP_LEN(&bodyField, 1)
+            size_t numItems;
+            CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
+            if(numItems != 1) {
+                return parser_unexpected_number_items;
+            }
 
-            // FIXME parse all values
+            // FIXME Complete parsing process
+            if( _matchKey(&contents, "upgrade" ) == parser_ok ){
+                CborValue upgrade;
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborMapType)
+                CHECK_CBOR_MAP_LEN(&bodyField, 4)
+                CHECK_CBOR_ERR(cbor_value_enter_container(&contents, &upgrade))
+
+                CHECK_PARSER_ERR(_matchKey(&upgrade, "v"))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+                // Skip version value
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+
+                // Target element is a map
+                CborValue target;
+                CHECK_PARSER_ERR(_matchKey(&upgrade, "target"))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+                CHECK_CBOR_TYPE(cbor_value_get_type(&upgrade), CborMapType)
+                CHECK_CBOR_MAP_LEN(&bodyField, 3)
+                CHECK_CBOR_ERR(cbor_value_enter_container(&upgrade, &target))
+
+                // consensus_protocol is an element of target map
+                CHECK_PARSER_ERR(_matchKey(&target, "consensus_protocol"))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+
+                // runtime_committee_protocol is an element of target map
+                CHECK_PARSER_ERR(_matchKey(&target, "runtime_committee_protocol"))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+
+                // runtime_host_protocol is an element of target map
+                CHECK_PARSER_ERR(_matchKey(&target, "runtime_host_protocol"))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+                CHECK_PARSER_ERR(_readVersion(&target, &v->oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol))
+                CHECK_CBOR_ERR(cbor_value_advance(&target))
+
+                // epoch element is a uint64
+                CHECK_PARSER_ERR(_matchKey(&upgrade, "epoch"))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+                CHECK_PARSER_ERR(_readUint64(&upgrade, &v->oasis.tx.body.governanceSubmitProposal.upgrade->epoch))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+                // handler element is a string
+                CHECK_PARSER_ERR(_matchKey(&upgrade, "handler"))
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+                // FIXME Read handler value here
+                CHECK_CBOR_ERR(cbor_value_advance(&upgrade))
+
+
+
+                v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade = NULL;
+            } else if( _matchKey(&contents, "cancel_upgrade") == parser_ok ){
+                v->oasis.tx.body.governanceSubmitProposal.upgrade = NULL;
+            } else {
+                CHECK_PARSER_ERR(parser_unexpected_field);
+            }
             
             break;
         }
