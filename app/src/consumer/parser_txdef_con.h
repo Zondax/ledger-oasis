@@ -42,6 +42,11 @@ typedef enum {
     governanceCastVote
 } oasis_methods_e;
 
+typedef enum{
+    upgrade,
+    cancelUpgrade
+} submit_proposal_type;
+
 typedef struct {
     const uint8_t *ptr;
     uint8_t len;
@@ -166,8 +171,9 @@ typedef struct {
         } registryRegisterEntity;
 
         struct {
-            upgrade_descriptor_t *upgrade;
-            cancel_upgrade_descriptor_t *cancel_upgrade;
+            submit_proposal_type type;
+            upgrade_descriptor_t upgrade;
+            cancel_upgrade_descriptor_t cancel_upgrade;
         } governanceSubmitProposal;
 
         struct {
