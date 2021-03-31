@@ -209,6 +209,26 @@ namespace utils {
         return "";
     }
 
+    std::string FormatVote(uint8_t vote) {
+        switch (vote) {
+            case 1:
+                return "yes";
+            case 2:
+                return "no";
+            case 3:
+                return "abstain";
+        }
+        return "";
+    }
+
+    std::string FormatVersion(const Json::Value &version) {
+        if (version.isMember("major") && version.isMember("minor") && version.isMember("patch")) {
+            return fmt::format("{}.{}.{}", version["major"].asUInt64(),version["minor"].asUInt64(),version["patch"].asUInt64());
+        } else {
+            return "-";
+        }
+    }
+
     bool TestcaseIsValid(const Json::Value &tc) {
         if (tc["kind"] == "AmendCommissionSchedule") {
             auto rates = tc["tx"]["body"]["amendment"]["rates"];
@@ -379,6 +399,36 @@ namespace utils {
             auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
             auto entityAnswer = internalGenerateExpectedUIOutputForEntity(untrusted_raw_value, itemCount);
             answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
+        }
+
+        if (type == "governance.CastVote") {
+            addTo(answer, "{} | Type : Cast vote", itemCount++);
+            addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["id"].asString());
+            addTo(answer, "{} | Vote : {}", itemCount++, FormatVote(txbody["vote"].asUInt()));
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "governance.SubmitProposal") {
+            addTo(answer, "{} | Type : Submit proposal", itemCount++);
+            if(tx.isMember("upgrade")){
+                addTo(answer, "{} | Kind : Upgrade", itemCount++);
+                addTo(answer, "{} | Handler : {}", itemCount++, txbody["upgrade"]["handler"].asString());
+                addTo(answer, "{} | Consensus : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["consensus_protocol"]));
+                addTo(answer, "{} | Runtime Host : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["runtime_host_protocol"]));
+                addTo(answer, "{} | Runtime Committee : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["runtime_committee_protocol"]));
+                addTo(answer, "{} | Epoch : {}", itemCount++, txbody["upgrade"]["epoch"].asUInt64());
+            }
+            if(tx.isMember("cancel_upgrade")){
+                addTo(answer, "{} | Kind : Cancel upgrade", itemCount++);
+                addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["cancel_upgrade"]["id"].asUInt64());
+            }
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
         }
 
         return answer;
