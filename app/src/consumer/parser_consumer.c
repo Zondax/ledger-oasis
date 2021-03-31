@@ -604,6 +604,17 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     snprintf(outKey, outKeyLen, "Vote");
                     return parser_printVote(parser_tx_obj.oasis.tx.body.governanceCastVote.vote, outVal, outValLen);
                 }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
             }
             break;
         case governanceSubmitProposal:
@@ -613,7 +624,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 return parser_getType(ctx, outVal, outValLen);
             }
 
-            if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
+            if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.type == upgrade ){
                 switch (displayIdx) {
                     case 1: {
                         snprintf(outKey, outKeyLen, "Kind");
@@ -627,23 +638,34 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     }
                     case 3:{
                         snprintf(outKey, outKeyLen, "Consensus");
-                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol, outVal, outValLen);
+                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.consensus_protocol, outVal, outValLen);
                     }
                     case 4:{
                         snprintf(outKey, outKeyLen, "Runtime Host");
-                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol, outVal, outValLen);
+                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.runtime_host_protocol, outVal, outValLen);
                     }
                     case 5:{
                         snprintf(outKey, outKeyLen, "Runtime Committee");
-                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol, outVal, outValLen);
+                        return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.runtime_committee_protocol, outVal, outValLen);
                     }
                     case 6:{
                         snprintf(outKey, outKeyLen, "Epoch");
-                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->epoch);
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.epoch);
+                        return parser_ok;
+                    }
+                    case 7: {
+                        snprintf(outKey, outKeyLen, "Fee");
+                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                    pageCount);
+                    }
+                    case 8: {
+                        snprintf(outKey, outKeyLen, "Gas limit");
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                 }
-            } else if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL ){
+            } else if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.type == cancelUpgrade ){
                 switch (displayIdx) {
                     case 1: {
                         snprintf(outKey, outKeyLen, "Kind");
@@ -652,7 +674,18 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     }
                     case 2:{
                         snprintf(outKey, outKeyLen, "Proposal ID");
-                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade->proposal_id);
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade.proposal_id);
+                        return parser_ok;
+                    }
+                    case 3: {
+                        snprintf(outKey, outKeyLen, "Fee");
+                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                    pageCount);
+                    }
+                    case 4: {
+                        snprintf(outKey, outKeyLen, "Gas limit");
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                 }
