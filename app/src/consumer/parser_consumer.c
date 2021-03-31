@@ -606,46 +606,49 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case governanceSubmitProposal:
-            switch (displayIdx) {
-                case 0: {
-                    snprintf(outKey, outKeyLen, "Type");
-                    *pageCount = 1;
-                    return parser_getType(ctx, outVal, outValLen);
-                }
-                case 1: {
-                    snprintf(outKey, outKeyLen, "Kind");
-                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
+            if (displayIdx == 0) {
+                snprintf(outKey, outKeyLen, "Type");
+                *pageCount = 1;
+                return parser_getType(ctx, outVal, outValLen);
+            }
+
+            if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
+                switch (displayIdx) {
+                    case 1: {
+                        snprintf(outKey, outKeyLen, "Kind");
                         snprintf(outVal, outValLen, "Upgrade");
                     }
-                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL){
-                        snprintf(outVal, outValLen, "Cancel upgrade");
+                    case 2:{
+                        snprintf(outKey, outKeyLen, "Handler");
+                        snprintf(outKey, outKeyLen, "FIXME"); // FIXME show handler value
+                    }
+                    case 3:{
+                        snprintf(outKey, outKeyLen, "Consensus");
+                        parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol, outVal, outValLen);
+                    }
+                    case 4:{
+                        snprintf(outKey, outKeyLen, "Runtime Host");
+                        parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol, outVal, outValLen);
+                    }
+                    case 5:{
+                        snprintf(outKey, outKeyLen, "Runtime Committee");
+                        parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol, outVal, outValLen);
+                    }
+                    case 6:{
+                        snprintf(outKey, outKeyLen, "Epoch");
+                        uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->epoch);
                     }
                 }
-                case 2:{
-                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade != NULL ){
-                        snprintf(outKey, outKeyLen, "Handler");
-                        // FIXME show handler value
+            } else if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL ){
+                switch (displayIdx) {
+                    case 1: {
+                        snprintf(outKey, outKeyLen, "Kind");
+                        snprintf(outVal, outValLen, "Cancel upgrade");
                     }
-                    if(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL){
+                    case 2:{
                         snprintf(outKey, outKeyLen, "Proposal ID");
                         uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade->proposal_id);
                     }
-                }
-                case 3:{
-                    snprintf(outKey, outKeyLen, "Consensus");
-                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol, outVal, outValLen);
-                }
-                case 4:{
-                    snprintf(outKey, outKeyLen, "Runtime Host");
-                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol, outVal, outValLen);
-                }
-                case 5:{
-                    snprintf(outKey, outKeyLen, "Runtime Committee");
-                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol, outVal, outValLen);
-                }
-                case 6:{
-                    snprintf(outKey, outKeyLen, "Epoch");
-                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->epoch);
                 }
             }
             break;
