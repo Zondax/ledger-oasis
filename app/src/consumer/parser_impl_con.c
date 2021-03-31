@@ -123,7 +123,7 @@ void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, c
 }
 
 __Z_INLINE parser_error_t _readVersion(CborValue *value, version_t *out) {
-
+    // FIXME parse version field correctly
     return parser_ok;
 }
 

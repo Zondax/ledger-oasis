@@ -276,6 +276,15 @@ __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uin
     return parser_unexpected_value;
 }
 
+__Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal, uint16_t outValLen) {
+    if( ver.major != NULL && ver.minor != NULL && ver.patch != NULL ){
+        snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
+    }else {
+        snprintf(outVal, outValLen, "-");
+    }
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                int8_t displayIdx,
                                                char *outKey, uint16_t outKeyLen,
@@ -624,15 +633,15 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 3:{
                     snprintf(outKey, outKeyLen, "Consensus");
-                    // FIXME show Consensus
+                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.consensus_protocol, outVal, outValLen);
                 }
                 case 4:{
                     snprintf(outKey, outKeyLen, "Runtime Host");
-                    // FIXME show Runtime Host
+                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_host_protocol, outVal, outValLen);
                 }
                 case 5:{
                     snprintf(outKey, outKeyLen, "Runtime Committee");
-                    // FIXME show Runtime Committee
+                    parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade->target.runtime_committee_protocol, outVal, outValLen);
                 }
                 case 6:{
                     snprintf(outKey, outKeyLen, "Epoch");
