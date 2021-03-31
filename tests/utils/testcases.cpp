@@ -413,7 +413,7 @@ namespace utils {
 
         if (type == "governance.SubmitProposal") {
             addTo(answer, "{} | Type : Submit proposal", itemCount++);
-            if(tx.isMember("upgrade")){
+            if(txbody.isMember("upgrade")){
                 addTo(answer, "{} | Kind : Upgrade", itemCount++);
                 addTo(answer, "{} | Handler : {}", itemCount++, txbody["upgrade"]["handler"].asString());
                 addTo(answer, "{} | Consensus : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["consensus_protocol"]));
@@ -421,7 +421,7 @@ namespace utils {
                 addTo(answer, "{} | Runtime Committee : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["runtime_committee_protocol"]));
                 addTo(answer, "{} | Epoch : {}", itemCount++, txbody["upgrade"]["epoch"].asUInt64());
             }
-            if(tx.isMember("cancel_upgrade")){
+            if(txbody.isMember("cancel_upgrade")){
                 addTo(answer, "{} | Kind : Cancel upgrade", itemCount++);
                 addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["cancel_upgrade"]["id"].asUInt64());
             }
