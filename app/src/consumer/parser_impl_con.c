@@ -153,6 +153,20 @@ __Z_INLINE parser_error_t _readQuantity(CborValue *value, quantity_t *out) {
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _readUint64(CborValue *value, uint64_t *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborIntegerType)
+    CHECK_CBOR_ERR(cbor_value_get_uint64(value, out))
+
+    return parser_ok;
+}
+
+__Z_INLINE parser_error_t _readUint8(CborValue *value, uint8_t *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborIntegerType)
+    CHECK_CBOR_ERR(cbor_value_get_simple_type(value, out))
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readRawSignature(CborValue *value, raw_signature_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -486,7 +500,30 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
             break;
         }
+        case governanceSubmitProposal: {
+            CHECK_CBOR_MAP_LEN(&bodyField, 1)
+            CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
 
+            // FIXME parse all values
+            
+            break;
+        }
+        case governanceCastVote: {
+            CHECK_CBOR_MAP_LEN(&bodyField, 2)
+            CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "id"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readUint64(&contents, &v->oasis.tx.body.governanceCastVote.id))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "vote"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readUint8(&contents, &v->oasis.tx.body.governanceCastVote.vote))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            break;
+        }
         case unknownMethod:
         default:
             return parser_unexpected_method;
@@ -551,6 +588,14 @@ __Z_INLINE parser_error_t _readMethod(parser_tx_t *v, CborValue *rootItem) {
     }
     if (CBOR_KEY_MATCHES(&tmp, "registry.RegisterEntity")) {
         v->oasis.tx.method = registryRegisterEntity;
+        return parser_ok;
+    }
+    if (CBOR_KEY_MATCHES(&tmp, "governance.SubmitProposal")) {
+        v->oasis.tx.method = governanceSubmitProposal;
+        return parser_ok;
+    }
+    if (CBOR_KEY_MATCHES(&tmp, "governance.CastVote")) {
+        v->oasis.tx.method = governanceCastVote;
         return parser_ok;
     }
 
@@ -720,6 +765,17 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
         case registryRegisterEntity: {
             itemCount += entityFixedElements + entitySignatureElements +
                          v->oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
+            break;
+        case governanceCastVote:
+                itemCount += 2;
+            break;
+        case governanceSubmitProposal:
+            if( v->oasis.tx.body.governanceSubmitProposal.upgrade != NULL){
+                itemCount += 6;
+            }
+            if(v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade != NULL){
+                itemCount += 2;
+            }
             break;
         }
         case unknownMethod:

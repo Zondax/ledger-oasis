@@ -166,8 +166,8 @@ typedef struct {
         } registryRegisterEntity;
 
         struct {
-            upgrade_descriptor_t upgrade;
-            cancel_upgrade_descriptor_t cancel_upgrade;
+            upgrade_descriptor_t *upgrade;
+            cancel_upgrade_descriptor_t *cancel_upgrade;
         } governanceSubmitProposal;
 
         struct {
