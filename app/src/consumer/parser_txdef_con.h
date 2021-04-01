@@ -103,9 +103,10 @@ typedef struct {
 } oasis_entity_t;
 
 typedef struct {
-    uint16_t *major;
-    uint16_t *minor;
-    uint16_t *patch;
+    bool exists;
+    uint16_t major;
+    uint16_t minor;
+    uint16_t patch;
 } version_t;
 
 typedef struct {

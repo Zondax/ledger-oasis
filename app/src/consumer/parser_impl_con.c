@@ -122,11 +122,6 @@ void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, c
     }
 }
 
-__Z_INLINE parser_error_t _readVersion(CborValue *value, version_t *out) {
-    // FIXME parse version field correctly
-    return parser_ok;
-}
-
 __Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -180,6 +175,37 @@ __Z_INLINE parser_error_t _readRawSignature(CborValue *value, raw_signature_t *o
     if (len != sizeof(raw_signature_t)) {
         return parser_unexpected_value;
     }
+    return parser_ok;
+}
+
+__Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
+    CborValue versions;
+    size_t numItems;
+    CHECK_CBOR_TYPE(cbor_value_get_type(&target), CborMapType)
+    CHECK_CBOR_ERR(cbor_value_get_map_length(&target, &numItems))
+
+    if( numItems == 3){
+        out->exists = true;
+        CHECK_CBOR_ERR(cbor_value_enter_container(&target, &versions))
+
+        CHECK_PARSER_ERR(_matchKey(&versions, "major"))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+        CHECK_PARSER_ERR(_readUint8(&versions, &out->major))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+
+        CHECK_PARSER_ERR(_matchKey(&versions, "minor"))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+        CHECK_PARSER_ERR(_readUint8(&versions, &out->minor))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+
+        CHECK_PARSER_ERR(_matchKey(&versions, "patch"))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+        CHECK_PARSER_ERR(_readUint8(&versions, &out->patch))
+        CHECK_CBOR_ERR(cbor_value_advance(&versions))
+    } else {
+        out->exists = false;
+    }
+
     return parser_ok;
 }
 
