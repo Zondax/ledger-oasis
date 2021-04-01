@@ -175,7 +175,7 @@ __Z_INLINE parser_error_t _readString(CborValue *value, uint8_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
     CborValue dummy;
     size_t len = 64;
-    CHECK_CBOR_ERR(cbor_value_copy_text_string(value, out, &len, &dummy))
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(value, (char *) out, &len, &dummy))
     return parser_ok;
 }
 
