@@ -102,7 +102,7 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
             snprintf(outVal, outValLen, "Submit proposal");
             return parser_ok;
         case governanceCastVote:
-            snprintf(outVal, outValLen, "Cast Vote");
+            snprintf(outVal, outValLen, "Cast vote");
             return parser_ok;
         case unknownMethod:
         default:
@@ -278,7 +278,7 @@ __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uin
 
 __Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal, uint16_t outValLen) {
     if( ver.exists == true ){
-        snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
+        snprintf(outVal, outValLen, "%lu.%lu.%lu", ver.major, ver.minor, ver.patch);
     }else {
         snprintf(outVal, outValLen, "-");
     }
@@ -633,9 +633,10 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     }
                     case 2:{
                         snprintf(outKey, outKeyLen, "Handler");
-                        snprintf(outKey, outKeyLen, "FIXME"); // FIXME show handler value
+                        snprintf(outVal, outValLen, "%s", parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.handler);
                         return parser_ok;
                     }
+
                     case 3:{
                         snprintf(outKey, outKeyLen, "Consensus");
                         return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.consensus_protocol, outVal, outValLen);

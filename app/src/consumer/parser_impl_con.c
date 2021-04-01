@@ -160,13 +160,6 @@ __Z_INLINE parser_error_t _readUint64(CborValue *value, uint64_t *out) {
     return parser_ok;
 }
 
-__Z_INLINE parser_error_t _readUint8(CborValue *value, uint8_t *out) {
-    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_simple_type(value, out))
-
-    return parser_ok;
-}
-
 __Z_INLINE parser_error_t _readRawSignature(CborValue *value, raw_signature_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -178,29 +171,37 @@ __Z_INLINE parser_error_t _readRawSignature(CborValue *value, raw_signature_t *o
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _readString(CborValue *value, uint8_t *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
+    CborValue dummy;
+    size_t len = 64;
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(value, out, &len, &dummy))
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
     CborValue versions;
     size_t numItems;
-    CHECK_CBOR_TYPE(cbor_value_get_type(&target), CborMapType)
-    CHECK_CBOR_ERR(cbor_value_get_map_length(&target, &numItems))
+    CHECK_CBOR_TYPE(cbor_value_get_type(target), CborMapType)
+    CHECK_CBOR_ERR(cbor_value_get_map_length(target, &numItems))
 
     if( numItems == 3){
         out->exists = true;
-        CHECK_CBOR_ERR(cbor_value_enter_container(&target, &versions))
+        CHECK_CBOR_ERR(cbor_value_enter_container(target, &versions))
 
         CHECK_PARSER_ERR(_matchKey(&versions, "major"))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
-        CHECK_PARSER_ERR(_readUint8(&versions, &out->major))
+        CHECK_PARSER_ERR(_readUint64(&versions, &out->major))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
 
         CHECK_PARSER_ERR(_matchKey(&versions, "minor"))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
-        CHECK_PARSER_ERR(_readUint8(&versions, &out->minor))
+        CHECK_PARSER_ERR(_readUint64(&versions, &out->minor))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
 
         CHECK_PARSER_ERR(_matchKey(&versions, "patch"))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
-        CHECK_PARSER_ERR(_readUint8(&versions, &out->patch))
+        CHECK_PARSER_ERR(_readUint64(&versions, &out->patch))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
     } else {
         out->exists = false;
@@ -539,7 +540,6 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 return parser_unexpected_number_items;
             }
 
-            // FIXME Complete parsing process
             if( _matchKey(&contents, "upgrade" ) == parser_ok ){
                 CborValue upgradeVal;
                 CHECK_CBOR_ERR(cbor_value_advance(&contents))
@@ -588,18 +588,22 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 // handler element is a string
                 CHECK_PARSER_ERR(_matchKey(&upgradeVal, "handler"))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
-                // FIXME Read handler value here
+                CHECK_PARSER_ERR(_readString(&upgradeVal,(uint8_t *) &v->oasis.tx.body.governanceSubmitProposal.upgrade.handler));
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
 
                 v->oasis.tx.body.governanceSubmitProposal.type = upgrade;
             } else if( _matchKey(&contents, "cancel_upgrade") == parser_ok ){
+                CborValue cancelUpgradeVal;
                 CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_CBOR_TYPE(cbor_value_get_type(&contents), CborMapType)
+                CHECK_CBOR_MAP_LEN(&contents, 1)
+                CHECK_CBOR_ERR(cbor_value_enter_container(&contents, &cancelUpgradeVal))
 
                 // epoch element is a uint64
-                CHECK_PARSER_ERR(_matchKey(&contents, "proposal_id"))
-                CHECK_CBOR_ERR(cbor_value_advance(&contents))
-                CHECK_PARSER_ERR(_readUint64(&contents, &v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade.proposal_id))
-                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_PARSER_ERR(_matchKey(&cancelUpgradeVal, "proposal_id"))
+                CHECK_CBOR_ERR(cbor_value_advance(&cancelUpgradeVal))
+                CHECK_PARSER_ERR(_readUint64(&cancelUpgradeVal, &v->oasis.tx.body.governanceSubmitProposal.cancel_upgrade.proposal_id))
+                CHECK_CBOR_ERR(cbor_value_advance(&cancelUpgradeVal))
 
                 v->oasis.tx.body.governanceSubmitProposal.type = cancelUpgrade;
             } else {
@@ -619,7 +623,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
             CHECK_PARSER_ERR(_matchKey(&contents, "vote"))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readUint8(&contents, &v->oasis.tx.body.governanceCastVote.vote))
+            CHECK_PARSER_ERR(_readUint64(&contents, &v->oasis.tx.body.governanceCastVote.vote))
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             break;

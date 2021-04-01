@@ -104,9 +104,9 @@ typedef struct {
 
 typedef struct {
     bool exists;
-    uint16_t major;
-    uint16_t minor;
-    uint16_t patch;
+    uint64_t major;
+    uint64_t minor;
+    uint64_t patch;
 } version_t;
 
 typedef struct {
@@ -179,7 +179,7 @@ typedef struct {
 
         struct {
             uint64_t id;
-            uint8_t vote;
+            uint64_t vote;
         } governanceCastVote;
 
     } body;

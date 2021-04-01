@@ -404,7 +404,7 @@ namespace utils {
         if (type == "governance.CastVote") {
             addTo(answer, "{} | Type : Cast vote", itemCount++);
             addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["id"].asString());
-            addTo(answer, "{} | Vote : {}", itemCount++, FormatVote(txbody["vote"].asUInt()));
+            addTo(answer, "{} | Vote : {}", itemCount++,txbody["vote"].asString());
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
@@ -423,7 +423,7 @@ namespace utils {
             }
             if(txbody.isMember("cancel_upgrade")){
                 addTo(answer, "{} | Kind : Cancel upgrade", itemCount++);
-                addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["cancel_upgrade"]["id"].asUInt64());
+                addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["cancel_upgrade"]["proposal_id"].asUInt64());
             }
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
