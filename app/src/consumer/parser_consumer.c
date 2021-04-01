@@ -278,7 +278,7 @@ __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uin
 
 __Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal, uint16_t outValLen) {
     if( ver.exists == true ){
-        snprintf(outVal, outValLen, "%lu.%lu.%lu", ver.major, ver.minor, ver.patch);
+        snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
     }else {
         snprintf(outVal, outValLen, "-");
     }
@@ -598,10 +598,12 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 1: {
                     snprintf(outKey, outKeyLen, "Proposal ID");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceCastVote.id);
+                    *pageCount = 1;
                     return parser_ok;
                 }
                 case 2: {
                     snprintf(outKey, outKeyLen, "Vote");
+                    *pageCount = 1;
                     return parser_printVote(parser_tx_obj.oasis.tx.body.governanceCastVote.vote, outVal, outValLen);
                 }
                 case 3: {
@@ -618,7 +620,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case governanceSubmitProposal:
-            if (displayIdx == 0) {
+            if(displayIdx == 0) {
                 snprintf(outKey, outKeyLen, "Type");
                 *pageCount = 1;
                 return parser_getType(ctx, outVal, outValLen);
@@ -628,29 +630,35 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 switch (displayIdx) {
                     case 1: {
                         snprintf(outKey, outKeyLen, "Kind");
+                        *pageCount = 1;
                         snprintf(outVal, outValLen, "Upgrade");
                         return parser_ok;
                     }
                     case 2:{
                         snprintf(outKey, outKeyLen, "Handler");
+                        *pageCount = 1;
                         snprintf(outVal, outValLen, "%s", parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.handler);
                         return parser_ok;
                     }
 
                     case 3:{
                         snprintf(outKey, outKeyLen, "Consensus");
+                        *pageCount = 1;
                         return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.consensus_protocol, outVal, outValLen);
                     }
                     case 4:{
                         snprintf(outKey, outKeyLen, "Runtime Host");
+                        *pageCount = 1;
                         return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.runtime_host_protocol, outVal, outValLen);
                     }
                     case 5:{
                         snprintf(outKey, outKeyLen, "Runtime Committee");
+                        *pageCount = 1;
                         return parser_printVersion(parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.target.runtime_committee_protocol, outVal, outValLen);
                     }
                     case 6:{
                         snprintf(outKey, outKeyLen, "Epoch");
+                        *pageCount = 1;
                         uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.upgrade.epoch);
                         return parser_ok;
                     }
@@ -670,12 +678,14 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 switch (displayIdx) {
                     case 1: {
                         snprintf(outKey, outKeyLen, "Kind");
+                        *pageCount = 1;
                         snprintf(outVal, outValLen, "Cancel upgrade");
                         return parser_ok;
                     }
                     case 2:{
                         snprintf(outKey, outKeyLen, "Proposal ID");
                         uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.body.governanceSubmitProposal.cancel_upgrade.proposal_id);
+                        *pageCount = 1;
                         return parser_ok;
                     }
                     case 3: {

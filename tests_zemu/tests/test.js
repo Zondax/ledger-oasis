@@ -176,6 +176,221 @@ describe('Basic checks', function () {
         }
     });
 
+    it('submit proposal - upgrade', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWd1cGdyYWRlpGF2AGVlcG9jaABmdGFyZ2V0o3Jjb25zZW5zdXNfcHJvdG9jb2yiZW1pbm9yDGVwYXRjaAF1cnVudGltZV9ob3N0X3Byb3RvY29so2VtYWpvcgFlbWlub3ICZXBhdGNoA3gacnVudGltZV9jb21taXR0ZWVfcHJvdG9jb2yiZW1ham9yGCplcGF0Y2gBZ2hhbmRsZXJyZGVzY3JpcHRvci1oYW5kbGVyZW5vbmNlAWZtZXRob2R4GWdvdmVybmFuY2UuU3VibWl0UHJvcG9zYWw=",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "submit_proposal_upgrade", 12);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('submit proposal - cancel upgrade', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oW5jYW5jZWxfdXBncmFkZaFrcHJvcG9zYWxfaWQb//////////9lbm9uY2UBZm1ldGhvZHgZZ292ZXJuYW5jZS5TdWJtaXRQcm9wb3NhbA==",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "submit_proposal_cancel_upgrade", 8);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('cast vote - abstain', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZABkdm90ZQNlbm9uY2UBZm1ldGhvZHNnb3Zlcm5hbmNlLkNhc3RWb3Rl",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "cast_vote_abstain", 8);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('cast vote - yes', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZBoAmJaAZHZvdGUBZW5vbmNlAWZtZXRob2RzZ292ZXJuYW5jZS5DYXN0Vm90ZQ==",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "cast_vote_yes", 8);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
+    it('cast vote - no', async function () {
+        const sim = new Zemu(APP_PATH);
+        try {
+            await sim.start(sim_options);
+            const app = new OasisApp(sim.getTransport());
+
+            const path = [44, 474, 5, 0x80000000, 0x80000003];
+            const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
+            const txBlob = Buffer.from(
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZBv//////////2R2b3RlAmVub25jZQFmbWV0aG9kc2dvdmVybmFuY2UuQ2FzdFZvdGU=",
+                "base64",
+            );
+
+            const pkResponse = await app.getAddressAndPubKey(path);
+            console.log(pkResponse);
+            expect(pkResponse.return_code).toEqual(0x9000);
+            expect(pkResponse.error_message).toEqual("No errors");
+
+            // do not wait here..
+            const signatureRequest = app.sign(path, context, txBlob);
+
+            await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+            await sim.compareSnapshotsAndAccept(".", "cast_vote_no", 8);
+
+            let resp = await signatureRequest;
+            console.log(resp);
+
+            expect(resp.return_code).toEqual(0x9000);
+            expect(resp.error_message).toEqual("No errors");
+
+            const hasher = sha512.sha512_256.update(context)
+            hasher.update(txBlob);
+            const msgHash = Buffer.from(hasher.hex(), "hex")
+
+            // Now verify the signature
+            const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+            expect(valid).toEqual(true);
+        } finally {
+            await sim.close();
+        }
+    });
+
     it('sign basic - invalid', async function () {
         const sim = new Zemu(APP_PATH);
         try {
