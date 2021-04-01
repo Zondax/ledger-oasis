@@ -171,11 +171,14 @@ __Z_INLINE parser_error_t _readRawSignature(CborValue *value, raw_signature_t *o
     return parser_ok;
 }
 
-__Z_INLINE parser_error_t _readString(CborValue *value, uint8_t *out) {
+__Z_INLINE parser_error_t _readString(CborValue *value, uint8_t *out, size_t maxLen) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
     CborValue dummy;
-    size_t len = 64;
+    size_t len = maxLen;
     CHECK_CBOR_ERR(cbor_value_copy_text_string(value, (char *) out, &len, &dummy))
+    if(len == 0){
+        return parser_unexpected_value;
+    }
     return parser_ok;
 }
 
@@ -185,8 +188,7 @@ __Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(target), CborMapType)
     CHECK_CBOR_ERR(cbor_value_get_map_length(target, &numItems))
 
-    if( numItems == 3){
-        out->exists = true;
+    if( numItems == 3 ){
         CHECK_CBOR_ERR(cbor_value_enter_container(target, &versions))
 
         CHECK_PARSER_ERR(_matchKey(&versions, "major"))
@@ -203,11 +205,10 @@ __Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
         CHECK_PARSER_ERR(_readUint64(&versions, &out->patch))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
-    } else {
-        out->exists = false;
-    }
 
-    return parser_ok;
+        return parser_ok;
+    }
+    return parser_unexpected_value;
 }
 
 __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
@@ -557,6 +558,9 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readUint64(&upgradeVal, &v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
+                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch == 0){
+                    return parser_unexpected_value;
+                }
 
                 // Target element is a map
                 CborValue target;
@@ -588,7 +592,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 // handler element is a string
                 CHECK_PARSER_ERR(_matchKey(&upgradeVal, "handler"))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
-                CHECK_PARSER_ERR(_readString(&upgradeVal,(uint8_t *) &v->oasis.tx.body.governanceSubmitProposal.upgrade.handler));
+                CHECK_PARSER_ERR(_readString(&upgradeVal,(uint8_t *) &v->oasis.tx.body.governanceSubmitProposal.upgrade.handler, HANDLER_MAX_LENGTH));
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
 
                 v->oasis.tx.body.governanceSubmitProposal.type = upgrade;

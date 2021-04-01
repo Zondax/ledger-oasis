@@ -28,6 +28,8 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+#define HANDLER_MAX_LENGTH 32
+
 typedef enum {
     unknownMethod,
     stakingTransfer,
@@ -103,7 +105,6 @@ typedef struct {
 } oasis_entity_t;
 
 typedef struct {
-    bool exists;
     uint64_t major;
     uint64_t minor;
     uint64_t patch;
@@ -116,7 +117,7 @@ typedef struct {
 } protocol_version_t;
 
 typedef struct {
-    uint8_t handler[64];
+    uint8_t handler[HANDLER_MAX_LENGTH];
     protocol_version_t target;
     epochTime_t epoch;
 } upgrade_descriptor_t;

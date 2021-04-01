@@ -277,11 +277,7 @@ __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uin
 }
 
 __Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal, uint16_t outValLen) {
-    if( ver.exists == true ){
-        snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
-    }else {
-        snprintf(outVal, outValLen, "-");
-    }
+    snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
     return parser_ok;
 }
 
