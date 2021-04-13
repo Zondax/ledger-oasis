@@ -54,6 +54,11 @@ namespace utils {
         testcaseData_t answer;
         auto v = (*jsonSource)[index];
         auto description = std::string("");
+        auto valid_tx = true;
+
+        if (v.isMember("valid_tx")) {
+            valid_tx = v["valid_tx"].asBool();
+        }
 
         if (v.isMember("description")) {
             description = v["description"].asString();
@@ -70,6 +75,7 @@ namespace utils {
                 v["signature_context"].asString(),
                 v["encoded_tx"].asString(),
                 v["valid"].asBool() && TestcaseIsValid(v),
+                valid_tx,
                 GenerateExpectedUIOutput(v["signature_context"].asString(), v)
         };
     }
@@ -222,8 +228,24 @@ namespace utils {
     }
 
     std::string FormatVersion(const Json::Value &version) {
-        if (version.isMember("major") && version.isMember("minor") && version.isMember("patch")) {
-            return fmt::format("{}.{}.{}", version["major"].asUInt64(),version["minor"].asUInt64(),version["patch"].asUInt64());
+        auto major = 0;
+        auto minor = 0;
+        auto patch = 0;
+
+        if( version.isMember("major") ){
+            major = version["major"].asUInt64();
+        }
+
+        if( version.isMember("minor") ){
+            minor = version["minor"].asUInt64();
+        }
+
+        if( version.isMember("patch") ){
+            patch = version["patch"].asUInt64();
+        }
+
+        if (major != 0 || minor != 0 || patch != 0) {
+            return fmt::format("{}.{}.{}", major, minor, patch);
         } else {
             return "-";
         }

@@ -188,27 +188,38 @@ __Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(target), CborMapType)
     CHECK_CBOR_ERR(cbor_value_get_map_length(target, &numItems))
 
-    if( numItems == 3 ){
-        CHECK_CBOR_ERR(cbor_value_enter_container(target, &versions))
+    if( numItems == 0 ) {
+        return parser_unexpected_value;
+    }
 
-        CHECK_PARSER_ERR(_matchKey(&versions, "major"))
+    CHECK_CBOR_ERR(cbor_value_enter_container(target, &versions))
+
+    if(_matchKey(&versions, "major") == parser_ok ){
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
         CHECK_PARSER_ERR(_readUint64(&versions, &out->major))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
+    } else {
+        out->major = 0;
+    }
 
-        CHECK_PARSER_ERR(_matchKey(&versions, "minor"))
+    if( _matchKey(&versions, "minor") == parser_ok ){
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
         CHECK_PARSER_ERR(_readUint64(&versions, &out->minor))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
+    } else {
+        out->minor = 0;
+    }
 
-        CHECK_PARSER_ERR(_matchKey(&versions, "patch"))
+    if( _matchKey(&versions, "patch") == parser_ok ) {
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
         CHECK_PARSER_ERR(_readUint64(&versions, &out->patch))
         CHECK_CBOR_ERR(cbor_value_advance(&versions))
-
-        return parser_ok;
+    } else {
+        out->patch = 0;
     }
-    return parser_unexpected_value;
+
+    return parser_ok;
+
 }
 
 __Z_INLINE parser_error_t _readSignature(CborValue *value, signature_t *out) {
@@ -550,15 +561,18 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
                 CHECK_PARSER_ERR(_matchKey(&upgradeVal, "v"))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
-                // Skip version value
+                CHECK_PARSER_ERR(_readUint64(&upgradeVal, &v->oasis.tx.body.governanceSubmitProposal.upgrade.version))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
+                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.version == 0){
+                    return parser_unexpected_value;
+                }
 
                 // epoch element is a uint64
                 CHECK_PARSER_ERR(_matchKey(&upgradeVal, "epoch"))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readUint64(&upgradeVal, &v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
-                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch == 0){
+                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch == 0 || v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch >= EPOCH_MAX_VALUE){
                     return parser_unexpected_value;
                 }
 

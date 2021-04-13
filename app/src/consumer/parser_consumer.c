@@ -30,7 +30,7 @@
 // For some reason NanoX requires this function
 void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
     while(1) {};
-}
+}f
 #endif
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {

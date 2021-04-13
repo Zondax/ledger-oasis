@@ -95,6 +95,12 @@ INSTANTIATE_TEST_SUITE_P(
 );
 
 INSTANTIATE_TEST_SUITE_P(
+        GeneratedGovernance,
+        OasisTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/governance.json")), OasisTests::PrintToStringParamName()
+);
+
+INSTANTIATE_TEST_SUITE_P(
         GeneratedEntity,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity.json")), OasisTests::PrintToStringParamName()

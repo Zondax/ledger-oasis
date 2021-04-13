@@ -29,6 +29,7 @@ extern "C" {
 #include <stddef.h>
 
 #define HANDLER_MAX_LENGTH 32
+#define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
 
 typedef enum {
     unknownMethod,
@@ -120,6 +121,7 @@ typedef struct {
     uint8_t handler[HANDLER_MAX_LENGTH];
     protocol_version_t target;
     epochTime_t epoch;
+    uint64_t version;
 } upgrade_descriptor_t;
 
 typedef struct {
