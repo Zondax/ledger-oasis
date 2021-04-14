@@ -185,7 +185,7 @@ describe('Basic checks', function () {
             const path = [44, 474, 5, 0x80000000, 0x80000003];
             const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
             const txBlob = Buffer.from(
-                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWd1cGdyYWRlpGF2AGVlcG9jaABmdGFyZ2V0o3Jjb25zZW5zdXNfcHJvdG9jb2yiZW1pbm9yDGVwYXRjaAF1cnVudGltZV9ob3N0X3Byb3RvY29so2VtYWpvcgFlbWlub3ICZXBhdGNoA3gacnVudGltZV9jb21taXR0ZWVfcHJvdG9jb2yiZW1ham9yGCplcGF0Y2gBZ2hhbmRsZXJyZGVzY3JpcHRvci1oYW5kbGVyZW5vbmNlAWZtZXRob2R4GWdvdmVybmFuY2UuU3VibWl0UHJvcG9zYWw=",
+                "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWd1cGdyYWRlpGF2AWVlcG9jaBv//////////mZ0YXJnZXSjcmNvbnNlbnN1c19wcm90b2NvbKJlbWlub3IMZXBhdGNoAXVydW50aW1lX2hvc3RfcHJvdG9jb2yjZW1ham9yAWVtaW5vcgJlcGF0Y2gDeBpydW50aW1lX2NvbW1pdHRlZV9wcm90b2NvbKJlbWFqb3IYKmVwYXRjaAFnaGFuZGxlcnJkZXNjcmlwdG9yLWhhbmRsZXJlbm9uY2UAZm1ldGhvZHgZZ292ZXJuYW5jZS5TdWJtaXRQcm9wb3NhbA==",
                 "base64",
             );
 
