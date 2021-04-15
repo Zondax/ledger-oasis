@@ -277,7 +277,15 @@ __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uin
 }
 
 __Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal, uint16_t outValLen) {
-    snprintf(outVal, outValLen, "%d.%d.%d", ver.major, ver.minor, ver.patch);
+    char majorStr[5];
+    char minorStr[5];
+    char patchStr[5];
+
+    uint64_to_str(majorStr, 5, ver.major);
+    uint64_to_str(minorStr, 5, ver.minor);
+    uint64_to_str(patchStr, 5, ver.patch);
+
+    snprintf(outVal, outValLen, "%s.%s.%s", majorStr, minorStr, patchStr);
     return parser_ok;
 }
 

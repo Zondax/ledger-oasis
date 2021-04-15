@@ -572,7 +572,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readUint64(&upgradeVal, &v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch))
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
-                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch == 0 || v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch >= EPOCH_MAX_VALUE){
+                if(v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch < 1 || v->oasis.tx.body.governanceSubmitProposal.upgrade.epoch >= EPOCH_MAX_VALUE){
                     return parser_unexpected_value;
                 }
 
@@ -608,6 +608,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readString(&upgradeVal,(uint8_t *) &v->oasis.tx.body.governanceSubmitProposal.upgrade.handler, HANDLER_MAX_LENGTH));
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
+
 
                 v->oasis.tx.body.governanceSubmitProposal.type = upgrade;
             } else if( _matchKey(&contents, "cancel_upgrade") == parser_ok ){
