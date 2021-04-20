@@ -38,13 +38,13 @@ all: bin/app.elf
 	@cp $(CURDIR)/output/app.elf ${OUTPUT_ELF}
 	@rm $(CURDIR)/output/app.elf
 
-include $(BOLOS_SDK)/Makefile.defines
-
 ifeq ($(APP_TESTING),1)
 DEFINES += APP_TESTING
 DEFINES += ZEMU_LOGGING
 $(info ************  LOGGING ENABLED ************)
 endif
+
+include $(BOLOS_SDK)/Makefile.defines
 
 ifndef COIN
 COIN=oasis

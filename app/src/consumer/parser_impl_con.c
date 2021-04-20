@@ -409,6 +409,9 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "v", &tmp))
     if (cbor_value_is_valid(&tmp)) {
+        if (!cbor_value_is_unsigned_integer(&tmp)) {
+            return parser_unexpected_type;
+        }
         CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &entity->obj.descriptor_version))
     }
 

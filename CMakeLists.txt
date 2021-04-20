@@ -81,14 +81,13 @@ string(APPEND CMAKE_LINKER_FLAGS " -fsanitize=address -fno-omit-frame-pointer")
 ##############################################################
 #  static libs
 file(GLOB_RECURSE TINYCBOR_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger/cborparser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger/cborvalidation.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborparser.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src/cborvalidation.c
         )
 
 file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
-        #########
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
@@ -117,7 +116,7 @@ target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
 target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer
@@ -154,7 +153,7 @@ target_include_directories(unittests PUBLIC
         ${gmock_SOURCE_DIR}/include
         ${CONAN_INCLUDE_DIRS_FMT}
         ${CONAN_INCLUDE_DIRS_JSONCPP}
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor-ledger
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         )
@@ -200,8 +199,7 @@ if(ENABLE_FUZZING)
         )
 
     foreach(target ${FUZZ_TARGETS})
-        add_executable(fuzz-${target}
-                ${CMAKE_CURRENT_SOURCE_DIR}/fuzz/${target}.cpp)
+        add_executable(fuzz-${target} ${CMAKE_CURRENT_SOURCE_DIR}/fuzz/${target}.cpp)
         target_include_directories(fuzz-${target} PUBLIC deps/PicoSHA2)
         target_link_libraries(fuzz-${target} PRIVATE app_lib)
         target_link_options(fuzz-${target} PRIVATE "-fsanitize=fuzzer")
