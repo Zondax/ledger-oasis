@@ -65,19 +65,13 @@ namespace utils {
         } else {
             description = v["kind"].asString();
         }
+
         description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
 
+        auto encoded_tx = v["encoded_tx"].asString();
+
         if (v.isMember("entity_meta")) {
-          return {
-                  false,
-                  description,
-                  std::to_string(index),
-                  v["kind"].asString(),
-                  v["signature_context"].asString(),
-                  v["encoded_entity_meta"].asString(),
-                  v["valid"].asBool() && TestcaseIsValid(v),
-                  GenerateExpectedUIOutput(v["signature_context"].asString(), v)
-          };
+            encoded_tx = v["encoded_entity_meta"].asString();
         }
 
         return {
@@ -86,7 +80,7 @@ namespace utils {
                 std::to_string(index),
                 v["kind"].asString(),
                 v["signature_context"].asString(),
-                v["encoded_tx"].asString(),
+                encoded_tx,
                 v["valid"].asBool() && TestcaseIsValid(v),
                 valid_tx,
                 GenerateExpectedUIOutput(v["signature_context"].asString(), v)
