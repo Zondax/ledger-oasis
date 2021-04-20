@@ -25,7 +25,7 @@ function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount
     }
 }
 
-describe('Basic checks', function () {
+describe('Validator', function () {
     it('can start and stop container', async function () {
         const sim = new Zemu(APP_PATH);
         try {

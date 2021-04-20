@@ -23,7 +23,6 @@
 #include "common/parser.h"
 
 using ::testing::TestWithParam;
-using ::testing::Values;
 
 void check_testcase(const testcase_t &testcase) {
     auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index);
@@ -104,6 +103,12 @@ INSTANTIATE_TEST_SUITE_P(
         GeneratedEntity,
         OasisTests,
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity.json")), OasisTests::PrintToStringParamName()
+);
+
+INSTANTIATE_TEST_SUITE_P(
+        GeneratedEntityMetadata,
+        OasisTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity_metadata.json")), OasisTests::PrintToStringParamName()
 );
 
 TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }

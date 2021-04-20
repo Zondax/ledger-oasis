@@ -67,6 +67,19 @@ namespace utils {
         }
         description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
 
+        if (v.isMember("entity_meta")) {
+          return {
+                  false,
+                  description,
+                  std::to_string(index),
+                  v["kind"].asString(),
+                  v["signature_context"].asString(),
+                  v["encoded_entity_meta"].asString(),
+                  v["valid"].asBool() && TestcaseIsValid(v),
+                  GenerateExpectedUIOutput(v["signature_context"].asString(), v)
+          };
+        }
+
         return {
                 false,
                 description,
@@ -86,13 +99,8 @@ namespace utils {
         Json::CharReaderBuilder builder;
         std::shared_ptr<Json::Value> obj(new Json::Value());
 
-        std::ifstream inFile(filename);
-        EXPECT_TRUE(inFile.is_open())
-                            << "\n"
-                            << "******************\n"
-                            << "Check that your working directory points to the tests directory\n"
-                            << "In CLion use $PROJECT_DIR$\\tests\n"
-                            << "******************\n";
+        std::string fullPathJsonFile = std::string(TESTVECTORS_DIR) + filename;
+        std::ifstream inFile(fullPathJsonFile);
         if (!inFile.is_open())
             return answer;
 
@@ -319,17 +327,53 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
+            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
+            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {
             addTo(answer, "{} | Type : Burn", itemCount++);
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "staking.Allow") {
+            addTo(answer, "{} | Type : Allow", itemCount++);
+
+            auto allowAccount = txbody["beneficiary"].asString();
+            addTo(answer, "{} | Beneficiary [1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
+            addTo(answer, "{} | Beneficiary [2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
+
+            std::string sign;
+            auto negative = txbody["negative"].asBool();
+            if(negative){
+                sign = "-";
+            }else {
+                sign = "+";
+            }
+            addTo(answer, "{} | Amount change : {} {}{}", itemCount++, COIN_DENOM, sign, FormatAmount(txbody["amount_change"].asString()));
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "staking.Withdraw") {
+            addTo(answer, "{} | Type : Withdraw", itemCount++);
+
+            auto withdrawAccount = txbody["from"].asString();
+            addTo(answer, "{} | From [1/2] : {}", itemCount, FormatAddress(withdrawAccount, 0, &dummy));
+            addTo(answer, "{} | From [2/2] : {}", itemCount++, FormatAddress(withdrawAccount, 1, &dummy));
+
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
@@ -456,6 +500,34 @@ namespace utils {
         return answer;
     }
 
+    std::vector<std::string> GenerateExpectedUIOutputForEntityMetadata(Json::Value j, uint32_t &itemCount) {
+        auto answer = std::vector<std::string>();
+
+        auto entity_meta = j["entity_meta"];
+
+        addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
+        addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
+        addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
+
+        if (entity_meta.isMember("name")) {
+            addTo(answer, "{} | Name : {}", itemCount++, entity_meta["name"].asString());
+        }
+        if (entity_meta.isMember("url")) {
+            addTo(answer, "{} | URL : {}", itemCount++, entity_meta["url"].asString());
+        }
+        if (entity_meta.isMember("email")) {
+            addTo(answer, "{} | Email : {}", itemCount++, entity_meta["email"].asString());
+        }
+        if (entity_meta.isMember("keybase")) {
+            addTo(answer, "{} | Keybase : {}", itemCount++, entity_meta["keybase"].asString());
+        }
+        if (entity_meta.isMember("twitter")) {
+            addTo(answer, "{} | Twitter : {}", itemCount++, entity_meta["twitter"].asString());
+        }
+
+        return answer;
+    }
+
     std::vector<std::string>  GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
         auto answer = std::vector<std::string>();
         uint32_t itemCount = 0;
@@ -473,7 +545,11 @@ namespace utils {
             answer = GenerateExpectedUIOutputForTx(j, itemCount);
         } else {
             // is entity
-            answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            if (j.isMember("entity_meta")) {
+                answer = GenerateExpectedUIOutputForEntityMetadata(j, itemCount);
+            } else {
+                answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            }
         }
 
         auto expectedPrefix1 = std::string(context_prefix_tx);
