@@ -154,6 +154,13 @@ __Z_INLINE parser_error_t _readAddressRaw(CborValue *value, address_raw_t *out) 
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _readBoolean(CborValue *value, bool *out) {
+    CHECK_CBOR_TYPE(cbor_value_get_type(value), CborBooleanType)
+    CHECK_CBOR_ERR(cbor_value_get_boolean(value, out))
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readPublicKey(CborValue *value, publickey_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
     CborValue dummy;
@@ -412,6 +419,51 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
             break;
         }
+        case stakingWithdraw: {
+
+            CHECK_CBOR_MAP_LEN(&bodyField, 2)
+            CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "from"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingWithdraw.from))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "amount"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingWithdraw.amount))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            break;
+        }
+        case stakingAllow: {
+
+            size_t numItems;
+            CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
+            CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
+            if(numItems < 2 || numItems > 3) return parser_unexpected_number_items;
+
+            if( numItems == 3 ){
+                CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+                CHECK_PARSER_ERR(_readBoolean(&contents, &v->oasis.tx.body.stakingAllow.negative))
+                CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            } else {
+                v->oasis.tx.body.stakingAllow.negative = false;
+            }
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "beneficiary"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.tx.body.stakingAllow.beneficiary))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            CHECK_PARSER_ERR(_matchKey(&contents, "amount_change"))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+            CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.tx.body.stakingAllow.amount_change))
+            CHECK_CBOR_ERR(cbor_value_advance(&contents))
+
+            break;
+        }
         case stakingEscrow: {
             CHECK_CBOR_MAP_LEN(&bodyField, 2)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
@@ -548,6 +600,14 @@ __Z_INLINE parser_error_t _readMethod(parser_tx_t *v, CborValue *rootItem) {
     }
     if (CBOR_KEY_MATCHES(&tmp, "staking.Burn")) {
         v->oasis.tx.method = stakingBurn;
+        return parser_ok;
+    }
+    if (CBOR_KEY_MATCHES(&tmp, "staking.Withdraw")) {
+        v->oasis.tx.method = stakingWithdraw;
+        return parser_ok;
+    }
+    if (CBOR_KEY_MATCHES(&tmp, "staking.Allow")) {
+        v->oasis.tx.method = stakingAllow;
         return parser_ok;
     }
     if (CBOR_KEY_MATCHES(&tmp, "staking.AddEscrow")) {
@@ -1058,6 +1118,12 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
             break;
         case stakingBurn:
             itemCount += 1;
+            break;
+        case stakingWithdraw:
+            itemCount += 2;
+            break;
+        case stakingAllow:
+            itemCount += 2;
             break;
         case stakingEscrow:
             itemCount += 2;

@@ -37,6 +37,8 @@ typedef enum {
     unknownMethod,
     stakingTransfer,
     stakingBurn,
+    stakingWithdraw,
+    stakingAllow,
     stakingEscrow,
     stakingReclaimEscrow,
     stakingAmendCommissionSchedule,
@@ -141,6 +143,17 @@ typedef struct {
         struct {
             quantity_t amount;
         } stakingBurn;
+
+        struct {
+            address_raw_t from;
+            quantity_t amount;
+        } stakingWithdraw;
+
+        struct {
+            address_raw_t beneficiary;
+            quantity_t amount_change;
+            bool negative;
+        } stakingAllow;
 
         struct {
             address_raw_t account;

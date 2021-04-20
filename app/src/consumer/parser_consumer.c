@@ -79,6 +79,12 @@ __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outV
         case stakingBurn:
             snprintf(outVal, outValLen, "Burn");
             return parser_ok;
+        case stakingWithdraw:
+            snprintf(outVal, outValLen, "Withdraw");
+            return parser_ok;
+        case stakingAllow:
+            snprintf(outVal, outValLen, "Allow");
+            return parser_ok;
         case stakingEscrow:
             snprintf(outVal, outValLen, "Add escrow");
             return parser_ok;
@@ -131,6 +137,45 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     snprintf(outVal, outValLen, "%s ", COIN_DENOM);
     outVal += strlen(COIN_DENOM) + 1;
     outValLen -= strlen(COIN_DENOM) + 1;
+
+    char bignum[160];
+    union {
+        // overlapping arrays to avoid excessive stack usage. Do not use at the same time
+        uint8_t bcd[80];
+        char output[160];
+    } overlapped;
+
+    MEMZERO(overlapped.bcd, sizeof(overlapped.bcd));
+    MEMZERO(bignum, sizeof(bignum));
+
+    if (!format_quantity(q, overlapped.bcd, sizeof(overlapped.bcd), bignum, sizeof(bignum))) {
+        return parser_unexpected_value;
+    }
+
+    fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, COIN_AMOUNT_DECIMAL_PLACES);
+    number_inplace_trimming(overlapped.output);
+    pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
+    return parser_ok;
+}
+
+
+__Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, bool is_negative,
+                                                       char *outVal, uint16_t outValLen,
+                                                       uint8_t pageIdx, uint8_t *pageCount) {
+    // upperbound 2**(64*8)
+    // results in 155 decimal digits => max 78 bcd bytes
+
+    // Too many digits, we cannot format this
+    LESS_THAN_64_DIGIT(q->len)
+
+    // TODO: Change depending on Mainnet / Testnet
+    if(is_negative){
+        snprintf(outVal, outValLen, "%s -", COIN_DENOM);
+    } else {
+        snprintf(outVal, outValLen, "%s +", COIN_DENOM);
+    }
+    outVal += strlen(COIN_DENOM) + 2;
+    outValLen -= strlen(COIN_DENOM) + 2;
 
     char bignum[160];
     union {
@@ -389,7 +434,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -420,12 +464,72 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
                 }
                 case 3: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+            }
+            break;
+        case stakingWithdraw:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "From");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingWithdraw.from,
+                                               outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Amount");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingWithdraw.amount,
+                                                outVal, outValLen, pageIdx, pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 4: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+            }
+            break;
+        case stakingAllow:
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1: {
+                    snprintf(outKey, outKeyLen, "Beneficiary");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingAllow.beneficiary,
+                                               outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Amount change");
+                    return parser_printQuantityWithSign(&parser_tx_obj.oasis.tx.body.stakingAllow.amount_change,
+                                                        parser_tx_obj.oasis.tx.body.stakingAllow.negative,
+                                                        outVal, outValLen, pageIdx, pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
@@ -446,7 +550,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -477,7 +580,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                               outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
@@ -503,7 +605,6 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
