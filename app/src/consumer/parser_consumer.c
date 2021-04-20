@@ -429,25 +429,25 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     return parser_getType(ctx, outVal, outValLen);
                 }
                 case 1: {
+                    snprintf(outKey, outKeyLen, "To");
+                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingTransfer.to,
+                                               outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingTransfer.amount,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
-                case 2: {
+                case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
                 }
-                case 3: {
+                case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
-                }
-                case 4: {
-                    snprintf(outKey, outKeyLen, "Address");
-                    return parser_printAddress(&parser_tx_obj.oasis.tx.body.stakingTransfer.to,
-                                               outVal, outValLen, pageIdx, pageCount);
                 }
             }
             break;
