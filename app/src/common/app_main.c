@@ -307,7 +307,7 @@ void app_init() {
     io_seproxyhal_init();
     USB_power(0);
     USB_power(1);
-    view_idle_show(0);
+    view_idle_show(0, NULL);
 #ifdef APP_VALIDATOR
     vote_state_reset();
 #endif

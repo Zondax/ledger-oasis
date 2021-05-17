@@ -144,7 +144,7 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     }
 
     fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, COIN_AMOUNT_DECIMAL_PLACES);
-    number_inplace_trimming(overlapped.output);
+    number_inplace_trimming(overlapped.output, 1);
     pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
     return parser_ok;
 }
@@ -173,7 +173,7 @@ __Z_INLINE parser_error_t parser_printShares(const quantity_t *q,
     }
 
     fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, 0);
-    number_inplace_trimming(overlapped.output);
+    number_inplace_trimming(overlapped.output, 1);
     pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
     return parser_ok;
 }
