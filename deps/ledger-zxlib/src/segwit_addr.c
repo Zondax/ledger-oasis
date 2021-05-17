@@ -25,7 +25,7 @@
 #include "segwit_addr.h"
 
 uint32_t bech32_polymod_step(uint32_t pre) {
-     uint8_t b = pre >> 25u;
+    uint8_t b = pre >> 25u;
     return ((pre & 0x1FFFFFFu) << 5u) ^
            (-((b >> 0u) & 1u) & 0x3b6a57b2UL) ^
            (-((b >> 1u) & 1u) & 0x26508e6dUL) ^

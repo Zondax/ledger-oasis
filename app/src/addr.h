@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 Zondax GmbH
+*   (c) 2020 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -13,19 +13,22 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
+
 #pragma once
 
-#include <stdint.h>
-#include "zxerror.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern uint16_t action_addrResponseLen;
+/// Return the number of items in the address view
+zxerr_t addr_getNumItems(uint8_t *num_items);
 
-void app_sign();
+/// Gets an specific item from the address view (including paging)
+zxerr_t addr_getItem(int8_t displayIdx,
+                     char *outKey, uint16_t outKeyLen,
+                     char *outValue, uint16_t outValueLen,
+                     uint8_t pageIdx, uint8_t *pageCount);
 
-zxerr_t app_fill_address();
-
-void app_reject();
-
-void app_reply_address();
-
-void app_reply_error();
+#ifdef __cplusplus
+}
+#endif

@@ -25,18 +25,6 @@
 #include <string.h>
 #include <stdio.h>
 
-view_error_t view_printAddr() {
-    snprintf(viewdata.addr, MAX_CHARS_ADDR, "%s", (char *) (G_io_apdu_buffer + VIEW_ADDRESS_OFFSET_ED25519));
-    splitValueField();
-    return view_no_error;
-}
-
-view_error_t view_printPath() {
-    bip32_to_str(viewdata.addr, MAX_CHARS_ADDR, hdPath, HDPATH_LEN_DEFAULT);
-    splitValueField();
-    return view_no_error;
-}
-
 #if defined(APP_VALIDATOR)
 #if defined(TARGET_NANOS)
 

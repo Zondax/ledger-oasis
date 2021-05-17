@@ -1,5 +1,6 @@
 /*******************************************************************************
-*   (c) 2019 Zondax GmbH
+*   (c) 2016 Ledger
+*   (c) 2018 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -14,18 +15,23 @@
 *  limitations under the License.
 ********************************************************************************/
 #pragma once
+#include "zxmacros.h"
+#include "stdbool.h"
 
-#include <stdint.h>
-#include "zxerror.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern uint16_t action_addrResponseLen;
+void app_mode_reset();
 
-void app_sign();
+bool app_mode_expert();
 
-zxerr_t app_fill_address();
+void app_mode_set_expert(uint8_t val);
 
-void app_reject();
+bool app_mode_secret();
 
-void app_reply_address();
+void app_mode_set_secret(uint8_t val);
 
-void app_reply_error();
+#ifdef __cplusplus
+}
+#endif

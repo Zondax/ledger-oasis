@@ -36,7 +36,7 @@ bool_t bignumLittleEndian_bcdprint(char *outBuffer, uint16_t outBufferLen,
             if (started || (*inBCD >> 4u) != 0) {
                 *outBuffer = hexchars[*inBCD >> 4u];
                 outBuffer++;
-             }
+            }
             *outBuffer = hexchars[*inBCD & 0x0Fu];
             outBuffer++;
             started = 1;

@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 Zondax GmbH
+*   (c) 2020 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,17 +15,15 @@
 ********************************************************************************/
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <inttypes.h>
 #include <stdint.h>
-#include "zxerror.h"
 
-extern uint16_t action_addrResponseLen;
+uint16_t base64_encode(char *out, uint16_t outlen, const uint8_t *in, uint16_t inlen);
 
-void app_sign();
-
-zxerr_t app_fill_address();
-
-void app_reject();
-
-void app_reply_address();
-
-void app_reply_error();
+#ifdef __cplusplus
+}
+#endif

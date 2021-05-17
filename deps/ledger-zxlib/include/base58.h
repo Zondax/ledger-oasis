@@ -1,5 +1,7 @@
 /*******************************************************************************
+*   Ledger App - Bitcoin Wallet
 *   (c) 2019 Zondax GmbH
+*   (c) 2016-2019 Ledger
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -13,19 +15,24 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
+
 #pragma once
 
+#include <stdlib.h>
 #include <stdint.h>
-#include "zxerror.h"
 
-extern uint16_t action_addrResponseLen;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-void app_sign();
+int decode_base58(const char *in, size_t length,
+                  unsigned char *out, size_t *outlen);
 
-zxerr_t app_fill_address();
+int encode_base58(const unsigned char *in, size_t length,
+                  unsigned char *out, size_t *outlen);
 
-void app_reject();
+char encode_base58_clip(unsigned char v);
 
-void app_reply_address();
-
-void app_reply_error();
+#ifdef __cplusplus
+}
+#endif

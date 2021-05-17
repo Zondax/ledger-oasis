@@ -704,7 +704,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             } else {
                 CHECK_PARSER_ERR(parser_unexpected_field);
             }
-            
+
             break;
         }
         case governanceCastVote: {
@@ -1232,6 +1232,8 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
 
 
 parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
+    UNUSED(v);
+
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
@@ -1239,6 +1241,8 @@ parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
 }
 
 uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
+    UNUSED(c);
+
     // typical tx: Type, Fee, Gas (exclude Genesis hash)
     const uint8_t commonElements = 3;
     // PublicKey + Signature + Descr Ver + ID + Allowed

@@ -1,5 +1,5 @@
 /*******************************************************************************
-*   (c) 2019 Zondax GmbH
+*   (c) 2018 Zondax GmbH
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -15,17 +15,24 @@
 ********************************************************************************/
 #pragma once
 
-#include <stdint.h>
-#include "zxerror.h"
+#if !defined (TARGET_NANOS) && !defined(TARGET_NANOX)
 
-extern uint16_t action_addrResponseLen;
+#define MEMMOVE memmove
+#define MEMSET memset
+#define MEMCPY memcpy
+#define MEMCMP memcmp
+#define MEMCPY_NV memcpy
 
-void app_sign();
+#define PIC(x) (x)
+#define CHECK_APP_CANARY() {}
+//#define CX_ECCINFO_PARITY_ODD 1u
+//#define CX_ECCINFO_xGTn 2u
 
-zxerr_t app_fill_address();
+#ifndef __APPLE__
+#define MEMZERO explicit_bzero
+#else
+__Z_INLINE void __memzero(void *buffer, size_t s) { memset(buffer, 0, s); }
+#define MEMZERO __memzero
+#endif
 
-void app_reject();
-
-void app_reply_address();
-
-void app_reply_error();
+#endif

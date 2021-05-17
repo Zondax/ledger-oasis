@@ -72,6 +72,8 @@ parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_item
 }
 
 __Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outVal, uint16_t outValLen) {
+    UNUSED(ctx);
+
     switch (parser_tx_obj.oasis.tx.method) {
         case stakingTransfer:
             snprintf(outVal, outValLen, "Transfer");
@@ -198,7 +200,7 @@ __Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, bool
     }
 
     fpstr_to_str(overlapped.output, sizeof(overlapped.output), bignum, COIN_AMOUNT_DECIMAL_PLACES);
-    number_inplace_trimming(overlapped.output);
+    number_inplace_trimming(overlapped.output, 1);
     pageString(outVal, outValLen, overlapped.output, pageIdx, pageCount);
     return parser_ok;
 }
