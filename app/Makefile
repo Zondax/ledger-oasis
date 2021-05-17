@@ -38,20 +38,20 @@ all: bin/app.elf
 	@cp $(CURDIR)/output/app.elf ${OUTPUT_ELF}
 	@rm $(CURDIR)/output/app.elf
 
+include $(BOLOS_SDK)/Makefile.defines
+
 ifeq ($(APP_TESTING),1)
 DEFINES += APP_TESTING
 DEFINES += ZEMU_LOGGING
 $(info ************  LOGGING ENABLED ************)
 endif
 
-include $(BOLOS_SDK)/Makefile.defines
-
 ifndef COIN
 COIN=oasis
 endif
 
-APPVERSION_M=1
-APPVERSION_N=10
+APPVERSION_M=2
+APPVERSION_N=0
 APPVERSION_P=0
 
 $(info COIN  = [$(COIN)])
@@ -91,6 +91,7 @@ APP_LOAD_PARAMS = --appFlags 0x200 --delete $(COMMON_LOAD_PARAMS) --path ${APPPA
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
 
 ifeq ($(TARGET_NAME),TARGET_NANOS)
+APP_STACK_SIZE:=1892
 ICONNAME:=$(CURDIR)/nanos_icon.gif
 OUTPUT_ELF:= $(CURDIR)/output/app_s.elf
 OUTPUT_INSTALLER:= $(CURDIR)/pkg/installer_s.sh
@@ -148,7 +149,6 @@ SDK_SOURCE_PATH  += lib_blewbxx lib_blewbxx_impl
 else
 # Assume Nano S
 DEFINES       += IO_SEPROXYHAL_BUFFER_SIZE_B=128
-DEFINES       += COMPLIANCE_UX_160 HAVE_UX_LEGACY HAVE_UX_FLOW
 endif
 
 # X specific
@@ -163,8 +163,8 @@ DEFINES   += LEDGER_SPECIFIC
 
 ifneq ($(BOLOS_ENV),)
 $(info BOLOS_ENV is $(BOLOS_ENV))
-CLANGPATH := $(BOLOS_ENV)/clang-arm-fropi/bin/
-GCCPATH := $(BOLOS_ENV)/gcc-arm-none-eabi-5_3-2016q1/bin/
+CLANGPATH := /usr/bin/
+GCCPATH := /usr/bin/
 else
 $(info BOLOS_ENV is not set: falling back to CLANGPATH and GCCPATH)
 endif
@@ -180,7 +180,7 @@ endif
 #########################
 
 CC := $(CLANGPATH)clang
-CFLAGS += -O3 -Os -Wno-unknown-pragmas
+CFLAGS += -O3 -Os -Wno-unknown-pragmas -Wno-implicit-fallthrough
 
 AS := $(GCCPATH)arm-none-eabi-gcc
 AFLAGS +=
@@ -208,6 +208,7 @@ SDK_SOURCE_PATH  += lib_ux
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
+
 
 .PHONY: rust
 rust:

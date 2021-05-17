@@ -377,28 +377,31 @@ namespace utils {
 
         if (type == "staking.AddEscrow") {
             addTo(answer, "{} | Type : Add escrow", itemCount++);
+
+            auto escrowAccount = txbody["account"].asString();
+            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
+
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-
-            auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.ReclaimEscrow") {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
+
+            auto escrowAccount = txbody["account"].asString();
+            addTo(answer, "{} | From [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | From [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+
             addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-
-            auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.AmendCommissionSchedule") {
