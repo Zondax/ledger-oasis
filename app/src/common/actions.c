@@ -106,9 +106,9 @@ zxerr_t app_fill_address() {
 }
 
 void app_reply_address() {
-    const uint8_t replyLen = app_fill_address();
-    set_code(G_io_apdu_buffer, replyLen, APDU_CODE_OK);
-    io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, replyLen + 2);
+    zxerr_t zxerr = app_fill_address();
+    set_code(G_io_apdu_buffer, action_addrResponseLen, APDU_CODE_OK);
+    io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, action_addrResponseLen + 2);
 }
 
 void app_reply_error() {
