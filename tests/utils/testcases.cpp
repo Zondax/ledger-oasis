@@ -165,7 +165,7 @@ namespace utils {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
         fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
-        number_inplace_trimming(buffer);
+        number_inplace_trimming(buffer, 1);
         return std::string(buffer);
     }
 
@@ -173,7 +173,7 @@ namespace utils {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
         fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), 0);
-        number_inplace_trimming(buffer);
+        number_inplace_trimming(buffer, 1);
         return std::string(buffer);
     }
 

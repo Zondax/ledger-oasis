@@ -25,8 +25,8 @@
 
 #define PIC(x) (x)
 #define CHECK_APP_CANARY() {}
-//#define CX_ECCINFO_PARITY_ODD 1u
-//#define CX_ECCINFO_xGTn 2u
+#define CX_ECCINFO_PARITY_ODD 1u
+#define CX_ECCINFO_xGTn 2u
 
 #ifndef __APPLE__
 #define MEMZERO explicit_bzero
