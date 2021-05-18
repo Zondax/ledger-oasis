@@ -30,8 +30,7 @@ const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow su
 const defaultOptions = {
   ...DEFAULT_START_OPTIONS,
   logging: true,
-  custom: `-s "${APP_SEED}"`,
-  X11: true,
+  custom: `-s "${APP_SEED}"`
 };
 
 jest.setTimeout(60000)
@@ -203,7 +202,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_basic_allow", 9);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic_allow`, 9);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -260,7 +259,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -303,7 +302,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "submit_proposal_upgrade", 12);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, 12);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -346,7 +345,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "submit_proposal_cancel_upgrade", 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -390,7 +389,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "cast_vote_abstain", 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -433,7 +432,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "cast_vote_yes", 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -476,7 +475,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "cast_vote_no", 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -549,7 +548,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_amend", 29);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend`, 29);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -593,7 +592,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata", 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -637,7 +636,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_entity_metadata_long", 9);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_long`, 9);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -716,7 +715,7 @@ describe('Issue #68', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -732,7 +731,7 @@ describe('Issue #68', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", "sign_basic", 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
 
       let respBis = await signatureRequestBis;
       console.log(respBis);
