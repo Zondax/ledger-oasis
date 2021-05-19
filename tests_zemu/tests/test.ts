@@ -519,7 +519,7 @@ describe('Standard', function () {
       console.log(responseSign);
 
       expect(responseSign.return_code).toEqual(0x6984);
-      expect(responseSign.error_message).toEqual("Data is invalid : Root item should be a map");
+      expect(responseSign.error_message).toEqual("Data is invalid : Unexpected field");
     } finally {
       await sim.close();
     }
