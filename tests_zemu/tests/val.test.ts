@@ -1,5 +1,7 @@
-import jest, {expect} from "jest";
+import jest from "jest";
 import Zemu from "@zondax/zemu";
+
+// @ts-ignore
 import {OasisValidatorApp} from "@zondax/ledger-oasis";
 
 const Resolve = require("path").resolve;
@@ -7,17 +9,19 @@ const APP_PATH = Resolve("../app/bin/app_val.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
-    press_delay: 500,
+    pressDelay: 500,
     logging: true,
-    start_delay: 3000,
+    startDelay: 3000,
     custom: `-s "${APP_SEED}"`,
-    X11: true
+    X11: true,
+    model: "nanos"
 };
 const VOTE_SLEEP = 500;
 
+// @ts-ignore
 jest.setTimeout(30000)
 
-function compareSnapshots(snapshotPrefixTmp, snapshotPrefixGolden, snapshotCount) {
+function compareSnapshots(snapshotPrefixTmp: string, snapshotPrefixGolden: string, snapshotCount: number) {
     for (let i = 0; i < snapshotCount; i++) {
         const img1 = Zemu.LoadPng2RGB(`${snapshotPrefixTmp}${i}.png`);
         const img2 = Zemu.LoadPng2RGB(`${snapshotPrefixGolden}${i}.png`);
