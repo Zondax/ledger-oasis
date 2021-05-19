@@ -960,18 +960,6 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
         }
     }
 
-    ///////////////////////////////
-    ///////////////////////////////
-    // Add paging values
-    if (err == parser_ok && *pageCount > 1) {
-        size_t keyLen = strlen(outKey);
-        if (keyLen < outKeyLen) {
-            snprintf(outKey + keyLen, outKeyLen - keyLen, " [%d/%d]", pageIdx + 1, *pageCount);
-        }
-    }
-    ///////////////////////////////
-    ///////////////////////////////
-
     return err;
 }
 
