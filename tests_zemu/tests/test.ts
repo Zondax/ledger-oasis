@@ -36,8 +36,8 @@ const defaultOptions = {
 jest.setTimeout(60000)
 
 export const models: DeviceModel[] = [
-  {name: 'nanos', prefix: 'S', path: APP_PATH_S},
-  //{name: 'nanox', prefix: 'X', path: APP_PATH_X}
+  //{name: 'nanos', prefix: 'S', path: APP_PATH_S},
+  {name: 'nanox', prefix: 'X', path: APP_PATH_X}
 ]
 
 describe('Standard', function () {
@@ -302,7 +302,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, 11);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, m.name === "nanos" ? 11 : 12);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -345,7 +345,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -389,7 +389,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -432,7 +432,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -475,7 +475,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -548,7 +548,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend`, 29);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend`, m.name === "nanos" ? 29 : 30);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -592,7 +592,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -636,7 +636,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_long`, 9);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_long`, m.name === "nanos" ? 9 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
