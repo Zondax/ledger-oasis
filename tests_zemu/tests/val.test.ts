@@ -1,4 +1,3 @@
-import jest from "jest";
 import Zemu from "@zondax/zemu";
 
 // @ts-ignore
@@ -13,12 +12,11 @@ const sim_options = {
     logging: true,
     startDelay: 3000,
     custom: `-s "${APP_SEED}"`,
-    X11: true,
+    X11: false,
     model: "nanos"
 };
 const VOTE_SLEEP = 500;
 
-// @ts-ignore
 jest.setTimeout(30000)
 
 function compareSnapshots(snapshotPrefixTmp: string, snapshotPrefixGolden: string, snapshotCount: number) {
