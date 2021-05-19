@@ -29,6 +29,9 @@
 #include "coin.h"
 #include "app_main.h"
 
+#include "parser_txdef.h"
+#include "parser_impl.h"
+
 void extractHDPath(uint32_t rx, uint32_t offset) {
     if ((rx - offset) < sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
         THROW(APDU_CODE_WRONG_LENGTH);
