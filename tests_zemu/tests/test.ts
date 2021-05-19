@@ -37,7 +37,7 @@ jest.setTimeout(60000)
 
 export const models: DeviceModel[] = [
   {name: 'nanos', prefix: 'S', path: APP_PATH_S},
-  {name: 'nanox', prefix: 'X', path: APP_PATH_X}
+  //{name: 'nanox', prefix: 'X', path: APP_PATH_X}
 ]
 
 describe('Standard', function () {
@@ -202,7 +202,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic_allow`, 9);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic_allow`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -302,7 +302,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, 12);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, 11);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -345,7 +345,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -389,7 +389,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -432,7 +432,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -475,7 +475,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
