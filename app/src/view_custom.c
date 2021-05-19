@@ -83,5 +83,8 @@ void view_status_show() {
     UX_DISPLAY(view_status, NULL);
 }
 
+
+void view_sign_show() {}
+
 #endif
 #endif
