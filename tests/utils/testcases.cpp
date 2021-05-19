@@ -280,8 +280,8 @@ namespace utils {
         itemCount++;
 
         auto entity_id = entity["id"].asString();
-        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
-        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
+        addTo(answer, "{} | ID[1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
+        addTo(answer, "{} | ID[2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
 
         if (entity["allow_entity_signed_nodes"]) {
             addTo(answer, "{} | Allowed : True", itemCount++);
@@ -292,8 +292,8 @@ namespace utils {
         int nodeIndex = 0;
         for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
             auto nodeData = entity["nodes"][nodeIndex].asString();
-            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
-            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
+            addTo(answer, "{} | Node [{}][1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
+            addTo(answer, "{} | Node [{}][2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
             itemCount++;
         }
 
@@ -321,8 +321,8 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
-            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
-            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
+            addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
+            addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
@@ -343,8 +343,8 @@ namespace utils {
             addTo(answer, "{} | Type : Allow", itemCount++);
 
             auto allowAccount = txbody["beneficiary"].asString();
-            addTo(answer, "{} | Beneficiary [1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
-            addTo(answer, "{} | Beneficiary [2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
+            addTo(answer, "{} | Beneficiary[1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
+            addTo(answer, "{} | Beneficiary[2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
 
             std::string sign;
             auto negative = txbody["negative"].asBool();
@@ -365,8 +365,8 @@ namespace utils {
             addTo(answer, "{} | Type : Withdraw", itemCount++);
 
             auto withdrawAccount = txbody["from"].asString();
-            addTo(answer, "{} | From [1/2] : {}", itemCount, FormatAddress(withdrawAccount, 0, &dummy));
-            addTo(answer, "{} | From [2/2] : {}", itemCount++, FormatAddress(withdrawAccount, 1, &dummy));
+            addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(withdrawAccount, 0, &dummy));
+            addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(withdrawAccount, 1, &dummy));
 
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
@@ -379,8 +379,8 @@ namespace utils {
             addTo(answer, "{} | Type : Add escrow", itemCount++);
 
             auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | To [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | To [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+            addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
 
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
 
@@ -394,8 +394,8 @@ namespace utils {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
 
             auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | From [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | From [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+            addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
 
             addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
@@ -438,8 +438,8 @@ namespace utils {
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["node_id"].asString();
-            addTo(answer, "{} | Node ID [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
-            addTo(answer, "{} | Node ID [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
+            addTo(answer, "{} | Node ID[1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Node ID[2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
         }
 
         if (type == "registry.RegisterEntity") {
@@ -449,14 +449,14 @@ namespace utils {
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
-            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
-            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
+            addTo(answer, "{} | Public key[1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Public key[2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
 
             auto signature = txbody["signature"]["signature"].asString();
-            addTo(answer, "{} | Signature [1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
-            addTo(answer, "{} | Signature [2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
-            addTo(answer, "{} | Signature [3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
-            addTo(answer, "{} | Signature [4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
+            addTo(answer, "{} | Signature[1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
+            addTo(answer, "{} | Signature[2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
+            addTo(answer, "{} | Signature[3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
+            addTo(answer, "{} | Signature[4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
             // Entity (from entity)
             auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
@@ -558,8 +558,8 @@ namespace utils {
         if (find1 != std::string::npos) {
             uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Genesis hash [1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
-            addTo(answer, "{} | Genesis hash [2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            addTo(answer, "{} | Genesis hash[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+            addTo(answer, "{} | Genesis hash[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
         }
 
         auto find2 = context.find(expectedPrefix2);
