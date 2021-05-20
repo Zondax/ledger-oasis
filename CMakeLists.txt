@@ -112,6 +112,7 @@ add_library(app_val_lib STATIC
         )
 
 target_compile_definitions(app_lib PRIVATE APP_CONSUMER)
+target_compile_definitions(app_lib PRIVATE NO_DISPLAY)
 target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
 target_include_directories(app_lib PUBLIC
