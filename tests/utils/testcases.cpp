@@ -54,13 +54,25 @@ namespace utils {
         testcaseData_t answer;
         auto v = (*jsonSource)[index];
         auto description = std::string("");
+        auto valid_tx = true;
+
+        if (v.isMember("valid_tx")) {
+            valid_tx = v["valid_tx"].asBool();
+        }
 
         if (v.isMember("description")) {
             description = v["description"].asString();
         } else {
             description = v["kind"].asString();
         }
+
         description.erase(remove_if(description.begin(), description.end(), isspace), description.end());
+
+        auto encoded_tx = v["encoded_tx"].asString();
+
+        if (v.isMember("entity_meta")) {
+            encoded_tx = v["encoded_entity_meta"].asString();
+        }
 
         return {
                 false,
@@ -68,8 +80,9 @@ namespace utils {
                 std::to_string(index),
                 v["kind"].asString(),
                 v["signature_context"].asString(),
-                v["encoded_tx"].asString(),
+                encoded_tx,
                 v["valid"].asBool() && TestcaseIsValid(v),
+                valid_tx,
                 GenerateExpectedUIOutput(v["signature_context"].asString(), v)
         };
     }
@@ -80,13 +93,8 @@ namespace utils {
         Json::CharReaderBuilder builder;
         std::shared_ptr<Json::Value> obj(new Json::Value());
 
-        std::ifstream inFile(filename);
-        EXPECT_TRUE(inFile.is_open())
-                            << "\n"
-                            << "******************\n"
-                            << "Check that your working directory points to the tests directory\n"
-                            << "In CLion use $PROJECT_DIR$\\tests\n"
-                            << "******************\n";
+        std::string fullPathJsonFile = std::string(TESTVECTORS_DIR) + filename;
+        std::ifstream inFile(fullPathJsonFile);
         if (!inFile.is_open())
             return answer;
 
@@ -157,7 +165,7 @@ namespace utils {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
         fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
-        number_inplace_trimming(buffer);
+        number_inplace_trimming(buffer, 1);
         return std::string(buffer);
     }
 
@@ -165,7 +173,7 @@ namespace utils {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
         fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), 0);
-        number_inplace_trimming(buffer);
+        number_inplace_trimming(buffer, 1);
         return std::string(buffer);
     }
 
@@ -209,6 +217,42 @@ namespace utils {
         return "";
     }
 
+    std::string FormatVote(uint8_t vote) {
+        switch (vote) {
+            case 1:
+                return "yes";
+            case 2:
+                return "no";
+            case 3:
+                return "abstain";
+        }
+        return "";
+    }
+
+    std::string FormatVersion(const Json::Value &version) {
+        auto major = 0;
+        auto minor = 0;
+        auto patch = 0;
+
+        if( version.isMember("major") ){
+            major = version["major"].asUInt64();
+        }
+
+        if( version.isMember("minor") ){
+            minor = version["minor"].asUInt64();
+        }
+
+        if( version.isMember("patch") ){
+            patch = version["patch"].asUInt64();
+        }
+
+        if (major != 0 || minor != 0 || patch != 0) {
+            return fmt::format("{}.{}.{}", major, minor, patch);
+        } else {
+            return "-";
+        }
+    }
+
     bool TestcaseIsValid(const Json::Value &tc) {
         if (tc["kind"] == "AmendCommissionSchedule") {
             auto rates = tc["tx"]["body"]["amendment"]["rates"];
@@ -236,8 +280,8 @@ namespace utils {
         itemCount++;
 
         auto entity_id = entity["id"].asString();
-        addTo(answer, "{} | ID [1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
-        addTo(answer, "{} | ID [2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
+        addTo(answer, "{} | ID[1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
+        addTo(answer, "{} | ID[2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
 
         if (entity["allow_entity_signed_nodes"]) {
             addTo(answer, "{} | Allowed : True", itemCount++);
@@ -248,8 +292,8 @@ namespace utils {
         int nodeIndex = 0;
         for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
             auto nodeData = entity["nodes"][nodeIndex].asString();
-            addTo(answer, "{} | Node [{}] [1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
-            addTo(answer, "{} | Node [{}] [2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
+            addTo(answer, "{} | Node [{}][1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
+            addTo(answer, "{} | Node [{}][2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
             itemCount++;
         }
 
@@ -277,13 +321,13 @@ namespace utils {
 
         if (type == "staking.Transfer") {
             addTo(answer, "{} | Type : Transfer", itemCount++);
+            addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
+            addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(txbody["to"].asString(), 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(txbody["to"].asString(), 1, &dummy));
         }
 
         if (type == "staking.Burn") {
@@ -295,30 +339,69 @@ namespace utils {
             }
         }
 
-        if (type == "staking.AddEscrow") {
-            addTo(answer, "{} | Type : Add escrow", itemCount++);
+        if (type == "staking.Allow") {
+            addTo(answer, "{} | Type : Allow", itemCount++);
+
+            auto allowAccount = txbody["beneficiary"].asString();
+            addTo(answer, "{} | Beneficiary[1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
+            addTo(answer, "{} | Beneficiary[2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
+
+            std::string sign;
+            auto negative = txbody["negative"].asBool();
+            if(negative){
+                sign = "-";
+            }else {
+                sign = "+";
+            }
+            addTo(answer, "{} | Amount change : {} {}{}", itemCount++, COIN_DENOM, sign, FormatAmount(txbody["amount_change"].asString()));
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "staking.Withdraw") {
+            addTo(answer, "{} | Type : Withdraw", itemCount++);
+
+            auto withdrawAccount = txbody["from"].asString();
+            addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(withdrawAccount, 0, &dummy));
+            addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(withdrawAccount, 1, &dummy));
+
             addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
+        }
+
+        if (type == "staking.AddEscrow") {
+            addTo(answer, "{} | Type : Add escrow", itemCount++);
 
             auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+            addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+
+            addTo(answer, "{} | Amount : {} {}", itemCount++, COIN_DENOM, FormatAmount(txbody["amount"].asString()));
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
         }
 
         if (type == "staking.ReclaimEscrow") {
             addTo(answer, "{} | Type : Reclaim escrow", itemCount++);
+
+            auto escrowAccount = txbody["account"].asString();
+            addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
+            addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
+
             addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-
-            auto escrowAccount = txbody["account"].asString();
-            addTo(answer, "{} | Address [1/2] : {}", itemCount, FormatAddress(escrowAccount, 0, &dummy));
-            addTo(answer, "{} | Address [2/2] : {}", itemCount++, FormatAddress(escrowAccount, 1, &dummy));
         }
 
         if (type == "staking.AmendCommissionSchedule") {
@@ -355,8 +438,8 @@ namespace utils {
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["node_id"].asString();
-            addTo(answer, "{} | Node ID [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
-            addTo(answer, "{} | Node ID [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
+            addTo(answer, "{} | Node ID[1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Node ID[2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
         }
 
         if (type == "registry.RegisterEntity") {
@@ -366,19 +449,77 @@ namespace utils {
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
             auto publicKey = txbody["signature"]["public_key"].asString();
-            addTo(answer, "{} | Public key [1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
-            addTo(answer, "{} | Public key [2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
+            addTo(answer, "{} | Public key[1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
+            addTo(answer, "{} | Public key[2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
 
             auto signature = txbody["signature"]["signature"].asString();
-            addTo(answer, "{} | Signature [1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
-            addTo(answer, "{} | Signature [2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
-            addTo(answer, "{} | Signature [3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
-            addTo(answer, "{} | Signature [4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
+            addTo(answer, "{} | Signature[1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
+            addTo(answer, "{} | Signature[2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
+            addTo(answer, "{} | Signature[3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
+            addTo(answer, "{} | Signature[4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
 
             // Entity (from entity)
             auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
             auto entityAnswer = internalGenerateExpectedUIOutputForEntity(untrusted_raw_value, itemCount);
             answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
+        }
+
+        if (type == "governance.CastVote") {
+            addTo(answer, "{} | Type : Cast vote", itemCount++);
+            addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["id"].asString());
+            addTo(answer, "{} | Vote : {}", itemCount++,txbody["vote"].asString());
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        if (type == "governance.SubmitProposal") {
+            addTo(answer, "{} | Type : Submit proposal", itemCount++);
+            if(txbody.isMember("upgrade")){
+                addTo(answer, "{} | Kind : Upgrade", itemCount++);
+                addTo(answer, "{} | Handler : {}", itemCount++, txbody["upgrade"]["handler"].asString());
+                addTo(answer, "{} | Consensus : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["consensus_protocol"]));
+                addTo(answer, "{} | Runtime Host : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["runtime_host_protocol"]));
+                addTo(answer, "{} | Runtime Committee : {}", itemCount++, FormatVersion(txbody["upgrade"]["target"]["runtime_committee_protocol"]));
+                addTo(answer, "{} | Epoch : {}", itemCount++, txbody["upgrade"]["epoch"].asUInt64());
+            }
+            if(txbody.isMember("cancel_upgrade")){
+                addTo(answer, "{} | Kind : Cancel upgrade", itemCount++);
+                addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["cancel_upgrade"]["proposal_id"].asUInt64());
+            }
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
+        return answer;
+    }
+
+    std::vector<std::string> GenerateExpectedUIOutputForEntityMetadata(Json::Value j, uint32_t &itemCount) {
+        auto answer = std::vector<std::string>();
+
+        auto entity_meta = j["entity_meta"];
+
+        addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
+        addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
+        addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
+
+        if (entity_meta.isMember("name")) {
+            addTo(answer, "{} | Name : {}", itemCount++, entity_meta["name"].asString());
+        }
+        if (entity_meta.isMember("url")) {
+            addTo(answer, "{} | URL : {}", itemCount++, entity_meta["url"].asString());
+        }
+        if (entity_meta.isMember("email")) {
+            addTo(answer, "{} | Email : {}", itemCount++, entity_meta["email"].asString());
+        }
+        if (entity_meta.isMember("keybase")) {
+            addTo(answer, "{} | Keybase : {}", itemCount++, entity_meta["keybase"].asString());
+        }
+        if (entity_meta.isMember("twitter")) {
+            addTo(answer, "{} | Twitter : {}", itemCount++, entity_meta["twitter"].asString());
         }
 
         return answer;
@@ -401,7 +542,11 @@ namespace utils {
             answer = GenerateExpectedUIOutputForTx(j, itemCount);
         } else {
             // is entity
-            answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            if (j.isMember("entity_meta")) {
+                answer = GenerateExpectedUIOutputForEntityMetadata(j, itemCount);
+            } else {
+                answer = GenerateExpectedUIOutputForEntity(j, itemCount);
+            }
         }
 
         auto expectedPrefix1 = std::string(context_prefix_tx);
@@ -413,8 +558,8 @@ namespace utils {
         if (find1 != std::string::npos) {
             uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Genesis hash [1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
-            addTo(answer, "{} | Genesis hash [2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            addTo(answer, "{} | Genesis hash[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+            addTo(answer, "{} | Genesis hash[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
         }
 
         auto find2 = context.find(expectedPrefix2);

@@ -50,6 +50,7 @@ typedef enum {
 
 #define MENU_MAIN_APP_LINE1 "Oasis"
 #define MENU_MAIN_APP_LINE2 "Ready"
+#define MENU_MAIN_APP_LINE2_SECRET          "???"
 #define APPVERSION_LINE1 "Version"
 #define APPVERSION_LINE2 APPVERSION
 
@@ -66,6 +67,8 @@ typedef enum {
 #define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
+
+#define ENTITY_METADATA_V 1
 
 #ifdef __cplusplus
 }

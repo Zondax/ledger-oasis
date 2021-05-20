@@ -18,7 +18,7 @@
 #if defined(APP_CONSUMER)
 #include "./consumer/parser_txdef_con.h"
 #elif defined(APP_VALIDATOR)
-#include "./validator/parser_txdef.h"
+#include "./validator/parser_txdef_val.h"
 #else
 #error "APP MODE IS NOT SUPPORTED"
 #endif

@@ -25,6 +25,7 @@ extern "C" {
 
 extern const char context_prefix_tx[];
 extern const char context_prefix_entity[];
+extern const char context_prefix_entity_metadata[];
 
 #if defined(APP_CONSUMER)
 
@@ -51,6 +52,12 @@ parser_error_t _getCommissionBoundStepAtIndex(const parser_context_t *c,
 parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_t *node, uint8_t index);
 
 parser_error_t _extractContextSuffix(parser_tx_t *v);
+
+parser_error_t _isValidUrl(url_t *url);
+
+parser_error_t _isValidEmail(email_t *email);
+
+parser_error_t _isValidHandle(handle_t *handle);
 
 #endif
 
