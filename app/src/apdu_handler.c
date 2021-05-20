@@ -135,7 +135,8 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
                                 view_status_show();
                             } else {
                                 CHECK_APP_CANARY()
-                                view_sign_show();
+                                view_review_init(tx_getItem, tx_getNumItems, app_sign);
+                                view_review_show();
                                 *flags |= IO_ASYNCH_REPLY;
                             }
                         }
