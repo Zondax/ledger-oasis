@@ -754,7 +754,7 @@ describe('Standard-3Path', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 0];
+      const path = "m/44'/474'/0'";
       const context = "oasis-metadata-registry: entity";
 
       const txBlob = Buffer.from(
