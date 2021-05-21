@@ -42,7 +42,7 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
         TRY {
 
             int mode = HDW_NORMAL;
-            if(hdPathLen == HDPATH_LEN_3){
+            if(hdPathLen == HDPATH_LEN_ADR0008){
                 mode = HDW_ED25519_SLIP10;
             }
 
@@ -103,7 +103,7 @@ zxerr_t crypto_sign(uint8_t *signature,
         {
 
             int mode = HDW_NORMAL;
-            if(hdPathLen == HDPATH_LEN_3){
+            if(hdPathLen == HDPATH_LEN_ADR0008){
                 mode = HDW_ED25519_SLIP10;
             }
             // Generate keys

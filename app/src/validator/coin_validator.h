@@ -25,7 +25,7 @@ extern "C" {
 #define CLA                  0xF5
 
 #define HDPATH_LEN_DEFAULT     5
-#define HDPATH_LEN_3           3
+#define HDPATH_LEN_ADR0008     3
 
 #define HDPATH_0_DEFAULT     (0x80000000u | 0x2b)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)

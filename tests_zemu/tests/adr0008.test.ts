@@ -40,7 +40,7 @@ export const models: DeviceModel[] = [
   {name: 'nanox', prefix: 'X', path: APP_PATH_X}
 ]
 
-describe('Standard-3Path', function () {
+describe('Standard-Adr0008', function () {
   test.each(models)('can start and stop container', async function (m) {
     const sim = new Zemu(m.path);
     try {
@@ -54,7 +54,7 @@ describe('Standard-3Path', function () {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-mainmenu`, 3);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-mainmenu`, 3);
     } finally {
       await sim.close();
     }
@@ -117,7 +117,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-show_address`, m.name === "nanos" ? 2 : 2);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-show_address`, m.name === "nanos" ? 2 : 2);
 
       const resp = await respRequest;
       console.log(resp);
@@ -158,7 +158,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_basic_withdraw`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_basic_withdraw`, m.name === "nanos" ? 8 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -202,7 +202,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_basic_allow`, 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_basic_allow`, 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -259,7 +259,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_basic`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_basic`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -302,7 +302,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-submit_proposal_upgrade`, m.name === "nanos" ? 11 : 12);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-submit_proposal_upgrade`, m.name === "nanos" ? 11 : 12);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -345,7 +345,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-submit_proposal_cancel_upgrade`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-submit_proposal_cancel_upgrade`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -390,7 +390,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-add_escrow`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-add_escrow`, m.name === "nanos" ? 8 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -435,7 +435,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-reclaim_escrow`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-reclaim_escrow`, m.name === "nanos" ? 8 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -480,7 +480,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-transfer`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-transfer`, m.name === "nanos" ? 8 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -524,7 +524,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-cast_vote_abstain`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-cast_vote_abstain`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -568,7 +568,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-cast_vote_yes`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-cast_vote_yes`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -611,7 +611,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-cast_vote_no`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-cast_vote_no`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -684,7 +684,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_amend`, m.name === "nanos" ? 29 : 30);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_amend`, m.name === "nanos" ? 29 : 30);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -728,7 +728,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_entity_metadata`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_entity_metadata`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -772,7 +772,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_entity_metadata_utf8`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_entity_metadata_utf8`, m.name === "nanos" ? 7 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -816,7 +816,7 @@ describe('Standard-3Path', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_entity_metadata_long`, m.name === "nanos" ? 9 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_entity_metadata_long`, m.name === "nanos" ? 9 : 8);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -895,7 +895,7 @@ describe('Issue #68', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_basic`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_basic`, 7);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -911,7 +911,7 @@ describe('Issue #68', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_basic`, 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-sign_basic`, 7);
 
       let respBis = await signatureRequestBis;
       console.log(respBis);

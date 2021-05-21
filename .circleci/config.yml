@@ -87,7 +87,7 @@ jobs:
             export PATH=~/.cargo/bin:$PATH
             make zemu_test
 
-  test_zemu_3path:
+  test_zemu_adr0008:
     machine:
       image: ubuntu-2004:202101-01
     resource_class: large
@@ -121,7 +121,7 @@ jobs:
           command: |
             nvm use 14.4.0
             export PATH=~/.cargo/bin:$PATH
-            COIN=3path make zemu_test
+            COIN=adr0008 make zemu_test
 
   test_zemu_val:
     machine:
@@ -199,7 +199,7 @@ workflows:
       - build_ledger
       - build_ledger_val
       - test_zemu
-      - test_zemu_3path
+      - test_zemu_adr0008
       - test_zemu_val
       - build_package:
           requires:
@@ -208,7 +208,7 @@ workflows:
             - build_ledger_val
             - test_zemu
             - test_zemu_val
-            - test_zemu_3path
+            - test_zemu_adr0008
           filters:
             branches:
               only:
@@ -219,7 +219,7 @@ workflows:
             - build_ledger
             - build_ledger_val
             - test_zemu
-            - test_zemu_3path
+            - test_zemu_adr0008
             - test_zemu_val
           filters:
             branches:

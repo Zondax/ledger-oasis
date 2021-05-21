@@ -33,8 +33,8 @@
 #include "parser_impl.h"
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
-    if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_3) {
-        hdPathLen = HDPATH_LEN_3;
+    if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_ADR0008) {
+        hdPathLen = HDPATH_LEN_ADR0008;
     } else if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
         hdPathLen = HDPATH_LEN_DEFAULT;
     } else {
