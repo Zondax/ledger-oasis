@@ -125,7 +125,7 @@ describe('Standard-Adr0008-0', function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const expected_bech32_address = "oasis1qz0cxkl3mftumy9l4g663fmwg69vmtc675xh8exw";
+      const expected_bech32_address = "oasis1qqjkrr643qv7yzem6g4m8rrtceh42n46usfscpcf";
       const expected_pk = "45601f761af17dba50243529e629732f1c58d08ffddaa8491238540475729d85";
 
       expect(resp.bech32_address).toEqual(expected_bech32_address);
