@@ -78,12 +78,12 @@ export class OasisAppBase {
 
     if( typeof path === "string") {
       if (!path.startsWith("m"))
-        throw new Error('Path should start with "m" (e.g "m/44\'/461\'/5\'/0/3")');
+        throw new Error('Path should start with "m" (e.g "m/44\'/474\'/5\'/0/3")');
 
       const pathArray = path.split("/");
 
       if (pathArray.length !== 6 && pathArray.length !== 4)
-        throw new Error("Invalid path. (e.g \"m/44'/461'/5'/0/3\" or \"m/44'/461'/5'\")");
+        throw new Error("Invalid path. (e.g \"m/44'/474'/5'/0/3\" or \"m/44'/474'/5'\")");
 
       const buf = Buffer.alloc(pathArray.length === 4 ? 12 : 20);
 
@@ -98,7 +98,7 @@ export class OasisAppBase {
         const childNumber = Number(child);
 
         if (Number.isNaN(childNumber)) {
-          throw new Error(`Invalid path : ${child} is not a number. (e.g "m/44'/461'/5'/0/3")`);
+          throw new Error(`Invalid path : ${child} is not a number. (e.g "m/44'/474'/5'/0/3")`);
         }
 
         if (childNumber >= HARDENED) {
@@ -113,7 +113,7 @@ export class OasisAppBase {
       return buf;
     }
 
-    throw new Error("Path should be a string (e.g \"m/44'/461'/5'/0/3\") or an Array (e.g \"m/44'/474'/5'/0'/3'\")");
+    throw new Error("Path should be a string (e.g \"m/44'/474'/5'/0/3\") or an Array (e.g \"m/44'/474'/5'/0'/3'\")");
   }
 
   static prepareChunks(serializedPathBuffer, context, message) {
