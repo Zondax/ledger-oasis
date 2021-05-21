@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "test": "jest --detectOpenHandles -t 'Standard'",
-    "testadr0008": "jest --detectOpenHandles -t 'Standard-Adr0008'",
+    "testadr0008-5": "jest --detectOpenHandles -t 'Standard-Adr0008-5'",
+    "testadr0008-0": "jest --detectOpenHandles -t 'Standard-Adr0008-0'",
     "testval": "jest --detectOpenHandles -t 'Validator'"
   },
   "dependencies": {
