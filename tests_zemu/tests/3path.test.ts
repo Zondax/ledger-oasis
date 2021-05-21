@@ -40,7 +40,7 @@ export const models: DeviceModel[] = [
   {name: 'nanox', prefix: 'X', path: APP_PATH_X}
 ]
 
-describe('Standard', function () {
+describe('Standard-3Path', function () {
   test.each(models)('can start and stop container', async function (m) {
     const sim = new Zemu(m.path);
     try {
