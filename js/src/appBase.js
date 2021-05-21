@@ -56,16 +56,22 @@ export class OasisAppBase {
   }
 
   async serializePath(path) {
-    if (!path || path.length !== 5) {
+    if (!path || ( path.length !== 5 && path.length !== 3 )) {
       throw new Error("Invalid path.");
     }
 
-    const buf = Buffer.alloc(20);
+    let buf = Buffer.alloc(12);
     buf.writeUInt32LE(0x80000000 + path[0], 0);
     buf.writeUInt32LE(0x80000000 + path[1], 4);
     buf.writeUInt32LE(0x80000000 + path[2], 8);
-    buf.writeUInt32LE(path[3], 12);
-    buf.writeUInt32LE(path[4], 16);
+
+    if(path.length === 5){
+      let bufAux = Buffer.alloc(20);
+      buf.copy(bufAux);
+      bufAux.writeUInt32LE(path[3], 12);
+      bufAux.writeUInt32LE(path[4], 16);
+      buf = bufAux;
+    }
 
     return buf;
   }
