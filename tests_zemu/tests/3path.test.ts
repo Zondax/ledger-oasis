@@ -748,6 +748,50 @@ describe('Standard-3Path', function () {
     }
   });
 
+  test.each(models)('sign entity metadata - utf8', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const path = [44, 474, 0];
+      const context = "oasis-metadata-registry: entity";
+
+      const txBlob = Buffer.from(
+          "A76176016375726C7568747470733A2F2F6D792E656E746974792F75726C646E616D656868C3A96CC3A86E6565656D61696C6D6D7940656E746974792E6F72676673657269616C01676B657962617365716D795F6B6579626173655F68616E646C656774776974746572716D795F747769747465725F68616E646C65",
+          "hex",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-3path-sign_entity_metadata_utf8`, m.name === "nanos" ? 7 : 8);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.each(models)('sign entity metadata - long url', async function (m) {
     const sim = new Zemu(m.path);
     try {
