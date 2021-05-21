@@ -27,6 +27,7 @@ extern "C" {
 #include <zxerror.h>
 
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
+extern uint8_t hdPathLen;
 
 uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey);
 

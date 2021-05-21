@@ -24,6 +24,7 @@
 #include <bech32.h>
 
 uint32_t hdPath[HDPATH_LEN_DEFAULT];
+uint8_t hdPathLen;
 
 #include "cx.h"
 
@@ -39,12 +40,18 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
     BEGIN_TRY
     {
         TRY {
+
+            int mode = HDW_NORMAL;
+            if(hdPathLen == HDPATH_LEN_3){
+                mode = HDW_ED25519_SLIP10;
+            }
+
             // Generate keys
             os_perso_derive_node_bip32_seed_key(
-                    HDW_NORMAL,
+                    mode,
                     CX_CURVE_Ed25519,
                     path,
-                    HDPATH_LEN_DEFAULT,
+                    hdPathLen,
                     privateKeyData,
                     NULL,
                     NULL,
@@ -94,12 +101,17 @@ zxerr_t crypto_sign(uint8_t *signature,
     {
         TRY
         {
+
+            int mode = HDW_NORMAL;
+            if(hdPathLen == HDPATH_LEN_3){
+                mode = HDW_ED25519_SLIP10;
+            }
             // Generate keys
             os_perso_derive_node_bip32_seed_key(
-                    HDW_NORMAL,
+                    mode,
                     CX_CURVE_Ed25519,
                     hdPath,
-                    HDPATH_LEN_DEFAULT,
+                    hdPathLen,
                     privateKeyData,
                     NULL,
                     NULL,

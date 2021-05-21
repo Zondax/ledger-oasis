@@ -33,11 +33,19 @@
 #include "parser_impl.h"
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
-    if ((rx - offset) < sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
+    if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_3) {
+        hdPathLen = HDPATH_LEN_3;
+    } else if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
+        hdPathLen = HDPATH_LEN_DEFAULT;
+    } else {
         THROW(APDU_CODE_WRONG_LENGTH);
     }
 
-    MEMCPY(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * HDPATH_LEN_DEFAULT);
+    char buffer[15];
+    snprintf(buffer, sizeof(buffer), "Path len: %d", hdPathLen);
+    zemu_log_stack(buffer);
+
+    MEMCPY(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * hdPathLen);
 
     const bool mainnet = hdPath[0] == HDPATH_0_DEFAULT &&
                          hdPath[1] == HDPATH_1_DEFAULT;
