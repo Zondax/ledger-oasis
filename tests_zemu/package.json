@@ -17,6 +17,7 @@
     "test": "jest --detectOpenHandles -t 'Standard'",
     "testadr0008-5": "jest --detectOpenHandles -t 'Standard-Adr0008-5'",
     "testadr0008-0": "jest --detectOpenHandles -t 'Standard-Adr0008-0'",
+    "testadr0008-0-oasis": "jest --detectOpenHandles -t 'Standard-Adr0008-0-Oasis'",
     "testval": "jest --detectOpenHandles -t 'Validator'"
   },
   "dependencies": {
