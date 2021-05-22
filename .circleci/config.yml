@@ -271,7 +271,9 @@ workflows:
       - build_ledger
       - build_ledger_val
       - test_zemu
-      - test_zemu_adr0008
+      - test_zemu_adr0008-0
+      - test_zemu_adr0008-5
+      - test_zemu_adr0008-0-oasis
       - test_zemu_val
       - build_package:
           requires:
@@ -280,7 +282,9 @@ workflows:
             - build_ledger_val
             - test_zemu
             - test_zemu_val
-            - test_zemu_adr0008
+            - test_zemu_adr0008-0
+            - test_zemu_adr0008-5
+            - test_zemu_adr0008-0-oasis
           filters:
             branches:
               only:
@@ -291,7 +295,9 @@ workflows:
             - build_ledger
             - build_ledger_val
             - test_zemu
-            - test_zemu_adr0008
+            - test_zemu_adr0008-0
+            - test_zemu_adr0008-5
+            - test_zemu_adr0008-0-oasis
             - test_zemu_val
           filters:
             branches:
