@@ -87,6 +87,114 @@ jobs:
             export PATH=~/.cargo/bin:$PATH
             make zemu_test
 
+  test_zemu_adr0008-0:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: large
+    working_directory: ~/repo
+    environment:
+      BASH_ENV: "/opt/circleci/.nvm/nvm.sh"
+    steps:
+      - checkout
+      - run: git submodule update --init --recursive
+      - run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+      - run:
+          name: Install node + yarn
+          command: |
+            nvm install 14.4.0
+            nvm use 14.4.0
+            npm install -g yarn
+      - run:
+          name: Build Ledger app
+          command: |
+            make buildS
+            make clean
+            make buildX
+      - run:
+          name: Build/Install build js deps
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            make zemu_install
+      - run:
+          name: Run zemu tests
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            COIN=adr0008-0 make zemu_test
+
+  test_zemu_adr0008-0-oasis:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: large
+    working_directory: ~/repo
+    environment:
+      BASH_ENV: "/opt/circleci/.nvm/nvm.sh"
+    steps:
+      - checkout
+      - run: git submodule update --init --recursive
+      - run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+      - run:
+          name: Install node + yarn
+          command: |
+            nvm install 14.4.0
+            nvm use 14.4.0
+            npm install -g yarn
+      - run:
+          name: Build Ledger app
+          command: |
+            make buildS
+            make clean
+            make buildX
+      - run:
+          name: Build/Install build js deps
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            make zemu_install
+      - run:
+          name: Run zemu tests
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            COIN=adr0008-0-oasis make zemu_test
+
+  test_zemu_adr0008-5:
+    machine:
+      image: ubuntu-2004:202101-01
+    resource_class: large
+    working_directory: ~/repo
+    environment:
+      BASH_ENV: "/opt/circleci/.nvm/nvm.sh"
+    steps:
+      - checkout
+      - run: git submodule update --init --recursive
+      - run: sudo apt-get update -y && sudo apt-get install -y libusb-1.0.0 libudev-dev
+      - run:
+          name: Install node + yarn
+          command: |
+            nvm install 14.4.0
+            nvm use 14.4.0
+            npm install -g yarn
+      - run:
+          name: Build Ledger app
+          command: |
+            make buildS
+            make clean
+            make buildX
+      - run:
+          name: Build/Install build js deps
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            make zemu_install
+      - run:
+          name: Run zemu tests
+          command: |
+            nvm use 14.4.0
+            export PATH=~/.cargo/bin:$PATH
+            COIN=adr0008-5 make zemu_test
+
   test_zemu_val:
     machine:
       image: ubuntu-2004:202101-01
@@ -163,6 +271,9 @@ workflows:
       - build_ledger
       - build_ledger_val
       - test_zemu
+      - test_zemu_adr0008-0
+      - test_zemu_adr0008-5
+      - test_zemu_adr0008-0-oasis
       - test_zemu_val
       - build_package:
           requires:
@@ -171,6 +282,9 @@ workflows:
             - build_ledger_val
             - test_zemu
             - test_zemu_val
+            - test_zemu_adr0008-0
+            - test_zemu_adr0008-5
+            - test_zemu_adr0008-0-oasis
           filters:
             branches:
               only:
@@ -181,6 +295,9 @@ workflows:
             - build_ledger
             - build_ledger_val
             - test_zemu
+            - test_zemu_adr0008-0
+            - test_zemu_adr0008-5
+            - test_zemu_adr0008-0-oasis
             - test_zemu_val
           filters:
             branches:

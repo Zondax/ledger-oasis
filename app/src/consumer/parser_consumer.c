@@ -405,8 +405,11 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
     }
 
     if (entity_metadata->name.len > 0 && displayIdx < 3) {
+        zemu_log_stack((char *) entity_metadata->name.buffer);
+        size_t len = asciify((char *) entity_metadata->name.buffer);
+
         snprintf(outKey, outKeyLen, "Name");
-        pageStringExt(outVal, outValLen, (char *) entity_metadata->name.buffer, entity_metadata->name.len, pageIdx, pageCount);
+        pageStringExt(outVal, outValLen, (char *) entity_metadata->name.buffer, len, pageIdx, pageCount);
         return parser_ok;
     }
 

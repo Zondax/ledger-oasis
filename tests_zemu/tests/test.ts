@@ -86,7 +86,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const resp = await app.getAddressAndPubKey(path);
 
       console.log(resp)
@@ -112,7 +112,7 @@ describe('Standard', function () {
       const app = new OasisApp(sim.getTransport());
 
       // Derivation path. First 3 items are automatically hardened!
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const respRequest = app.showAddressAndPubKey(path);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
@@ -141,7 +141,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omRmcm9tVQAGaeylE0pICHuqRvArp3IYjeXN22ZhbW91bnRAZW5vbmNlAGZtZXRob2Rwc3Rha2luZy5XaXRoZHJhdw==",
@@ -185,7 +185,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omtiZW5lZmljaWFyeVUA8PesI5mFWUkMVHwStQ6Fieb4bsFtYW1vdW50X2NoYW5nZUBlbm9uY2UBZm1ldGhvZG1zdGFraW5nLkFsbG93",
@@ -242,7 +242,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain testing";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJ0b1UAxzzAAUY0NJFbo/OXUb63wJBbRetmYW1vdW50QGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
@@ -285,7 +285,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oWd1cGdyYWRlpGF2AWVlcG9jaBv//////////mZ0YXJnZXSjcmNvbnNlbnN1c19wcm90b2NvbKJlbWlub3IMZXBhdGNoAXVydW50aW1lX2hvc3RfcHJvdG9jb2yjZW1ham9yAWVtaW5vcgJlcGF0Y2gDeBpydW50aW1lX2NvbW1pdHRlZV9wcm90b2NvbKJlbWFqb3IYKmVwYXRjaAFnaGFuZGxlcnJkZXNjcmlwdG9yLWhhbmRsZXJlbm9uY2UAZm1ldGhvZHgZZ292ZXJuYW5jZS5TdWJtaXRQcm9wb3NhbA==",
@@ -328,7 +328,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5oW5jYW5jZWxfdXBncmFkZaFrcHJvcG9zYWxfaWQb//////////9lbm9uY2UBZm1ldGhvZHgZZ292ZXJuYW5jZS5TdWJtaXRQcm9wb3NhbA==",
@@ -372,7 +372,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1";
       const txBlob = Buffer.from(
           "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omZhbW91bnRCA+hnYWNjb3VudFUAWjuJqnaIaHy9a5gyaOTU0hR4ladlbm9uY2UAZm1ldGhvZHFzdGFraW5nLkFkZEVzY3Jvdw==",
@@ -417,7 +417,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1";
       const txBlob = Buffer.from(
           "pGNmZWWiY2dhcxkD6GZhbW91bnRAZGJvZHmiZnNoYXJlc0BnYWNjb3VudFUAcFT2Pq0X0FM7dpOkrzN8jWLiu4Blbm9uY2UBZm1ldGhvZHVzdGFraW5nLlJlY2xhaW1Fc2Nyb3c=",
@@ -462,7 +462,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain bc1c715319132305795fa86bd32e93291aaacbfb5b5955f3ba78bdba413af9e1";
       const txBlob = Buffer.from(
           "pGNmZWWiY2dhcxkD6GZhbW91bnRAZGJvZHmiYnRvVQDHPMABRjQ0kVuj85dRvrfAkFtF62ZhbW91bnRAZW5vbmNlCmZtZXRob2Rwc3Rha2luZy5UcmFuc2Zlcg==",
@@ -507,7 +507,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZABkdm90ZQNlbm9uY2UBZm1ldGhvZHNnb3Zlcm5hbmNlLkNhc3RWb3Rl",
@@ -551,7 +551,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZBoAmJaAZHZvdGUBZW5vbmNlAWZtZXRob2RzZ292ZXJuYW5jZS5DYXN0Vm90ZQ==",
@@ -594,7 +594,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain 31baebfc917e608ab5d26d8e072d70627cdef4df342b98bb61fe3683e4e4b2ac";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZBv//////////2R2b3RlAmVub25jZQFmbWV0aG9kc2dvdmVybmFuY2UuQ2FzdFZvdGU=",
@@ -637,7 +637,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain testing";
       let invalidMessage = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omd4ZmVyX3RvWCBkNhaFWEyIEubmS3EVtRLTanD3U+vDV5fke4Obyq83CWt4ZmVyX3Rva2Vuc0Blbm9uY2UAZm1ldGhvZHBzdGFraW5nLlRyYW5zZmVy",
@@ -667,7 +667,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain testing amend";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcxkD6GZhbW91bnRAZGJvZHmhaWFtZW5kbWVudKJlcmF0ZXOFomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoomRyYXRlQicQZXN0YXJ0GQPoZmJvdW5kc4WjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEKNlc3RhcnQZA+hocmF0ZV9tYXhCJxBocmF0ZV9taW5CJxCjZXN0YXJ0GQPoaHJhdGVfbWF4QicQaHJhdGVfbWluQicQo2VzdGFydBkD6GhyYXRlX21heEInEGhyYXRlX21pbkInEGVub25jZRkD6GZtZXRob2R4H3N0YWtpbmcuQW1lbmRDb21taXNzaW9uU2NoZWR1bGU=",
@@ -710,7 +710,7 @@ describe('Standard', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-metadata-registry: entity";
 
       const txBlob = Buffer.from(
@@ -748,13 +748,57 @@ describe('Standard', function () {
     }
   });
 
+  test.each(models)('sign entity metadata - utf8', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const path = "m/44'/474'/5'/0'/3'";
+      const context = "oasis-metadata-registry: entity";
+
+      const txBlob = Buffer.from(
+          "A76176016375726C7568747470733A2F2F6D792E656E746974792F75726C646E616D656868C3A96CC3A86E6565656D61696C6D6D7940656E746974792E6F72676673657269616C01676B657962617365716D795F6B6579626173655F68616E646C656774776974746572716D795F747769747465725F68616E646C65",
+          "hex",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_utf8`, m.name === "nanos" ? 7 : 8);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.each(models)('sign entity metadata - long url', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-metadata-registry: entity";
 
       const txBlob = Buffer.from(
@@ -791,6 +835,7 @@ describe('Standard', function () {
       await sim.close();
     }
   });
+  
 
   test.each(models)('sign entity metadata - long name', async function (m) {
     const sim = new Zemu(m.path);
@@ -799,7 +844,7 @@ describe('Standard', function () {
 
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-metadata-registry: entity";
 
       const txBlob = Buffer.from(
@@ -834,7 +879,7 @@ describe('Issue #68', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = [44, 474, 5, 0x80000000, 0x80000003];
+      const path = "m/44'/474'/5'/0'/3'";
       const context = "oasis-core/consensus: tx for chain testing";
       const txBlob = Buffer.from(
         "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJ0b1UAxzzAAUY0NJFbo/OXUb63wJBbRetmYW1vdW50QGVub25jZQBmbWV0aG9kcHN0YWtpbmcuVHJhbnNmZXI=",
