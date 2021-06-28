@@ -13,7 +13,7 @@ jobs:
 
   build_ledger:
     docker:
-      - image: zondax/builder-bolos:latest
+      - image: zondax/builder-bolos@sha256:979f4893b07ab8c37cc96e70c78124a5bbcf665cc9aa510b89e0ec317527b47f
     environment:
       - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
       - BOLOS_ENV=/opt/bolos
@@ -30,7 +30,7 @@ jobs:
 
   build_ledger_val:
     docker:
-      - image: zondax/builder-bolos:latest
+      - image: zondax/builder-bolos@sha256:979f4893b07ab8c37cc96e70c78124a5bbcf665cc9aa510b89e0ec317527b47f
     environment:
       - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
       - BOLOS_ENV=/opt/bolos
@@ -114,7 +114,7 @@ jobs:
 
   build_package:
     docker:
-      - image: zondax/builder-bolos:latest
+      - image: zondax/builder-bolos@sha256:979f4893b07ab8c37cc96e70c78124a5bbcf665cc9aa510b89e0ec317527b47f
     environment:
       - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
       - BOLOS_ENV=/opt/bolos
@@ -134,7 +134,7 @@ jobs:
 
   build_package_validator:
     docker:
-      - image: zondax/builder-bolos:latest
+      - image: zondax/builder-bolos@sha256:979f4893b07ab8c37cc96e70c78124a5bbcf665cc9aa510b89e0ec317527b47f
     environment:
       - BOLOS_SDK=/home/zondax/project/deps/nanos-secure-sdk
       - BOLOS_ENV=/opt/bolos
