@@ -406,10 +406,6 @@ namespace utils {
 
         if (type == "staking.AmendCommissionSchedule") {
             addTo(answer, "{} | Type : Amend commission schedule", itemCount++);
-            if (tx.isMember("fee")) {
-                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
-                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
-            }
 
             uint8_t pageIdx = 0;
             uint8_t pageCount = 1;
@@ -428,6 +424,11 @@ namespace utils {
                     addTo(answer, "{} | Bounds {}", itemCount, s);
                 pageIdx++;
                 itemCount++;
+            }
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
         }
 
