@@ -1,4 +1,4 @@
-import Zemu from "@zondax/zemu";
+import Zemu, {DEFAULT_START_OPTIONS} from "@zondax/zemu";
 
 // @ts-ignore
 import {OasisValidatorApp} from "@zondax/ledger-oasis";
@@ -8,6 +8,7 @@ const APP_PATH = Resolve("../app/bin/app_val.elf");
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
+    ...DEFAULT_START_OPTIONS,
     pressDelay: 500,
     logging: true,
     startDelay: 3000,

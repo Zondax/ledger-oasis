@@ -14,15 +14,16 @@
     "Ledger"
   ],
   "scripts": {
-    "test": "jest --detectOpenHandles -t 'Standard'",
-    "testadr0008-5": "jest --detectOpenHandles -t 'Standard-Adr0008-5'",
-    "testadr0008-0": "jest --detectOpenHandles -t 'Standard-Adr0008-0'",
-    "testadr0008-0-oasis": "jest --detectOpenHandles -t 'Standard-Adr0008-0-Oasis'",
-    "testval": "jest --detectOpenHandles -t 'Validator'"
+    "test_all": "jest",
+    "test": "jest -t 'Standard'",
+    "testadr0008-5": "jest -t 'Standard-Adr0008-5'",
+    "testadr0008-0": "jest -t 'Standard-Adr0008-0'",
+    "testadr0008-0-oasis": "jest -t 'Standard-Adr0008-0-Oasis'",
+    "testval": "jest -t 'Validator'"
   },
   "dependencies": {
     "@zondax/ledger-oasis": "file:../js",
-    "@zondax/zemu": "^0.13.0"
+    "@zondax/zemu": "^0.16.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
