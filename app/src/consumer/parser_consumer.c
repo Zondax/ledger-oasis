@@ -641,67 +641,72 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         case stakingAmendCommissionSchedule: {
-            switch (displayIdx) {
-                case 0: {
-                    snprintf(outKey, outKeyLen, "Type");
-                    *pageCount = 1;
-                    return parser_getType(ctx, outVal, outValLen);
+            if(displayIdx == 0){
+                snprintf(outKey, outKeyLen, "Type");
+                *pageCount = 1;
+                return parser_getType(ctx, outVal, outValLen);
+            }
+
+            uint8_t dynDisplayIdx = displayIdx - 1;
+            if( dynDisplayIdx < parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 5 ){
+                if (dynDisplayIdx / 2 < (int) parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
+                    const int8_t index = dynDisplayIdx / 2;
+                    commissionRateStep_t rate;
+
+                    CHECK_PARSER_ERR(_getCommissionRateStepAtIndex(ctx, &rate, index))
+
+                    switch (dynDisplayIdx % 2) {
+                        case 0: {
+                            snprintf(outKey, outKeyLen, "Rates (%d): start", index + 1);
+                            uint64_to_str(outVal, outValLen, rate.start);
+                            *pageCount = 1;
+                            return parser_ok;
+                        }
+                        case 1: {
+                            snprintf(outKey, outKeyLen, "Rates (%d): rate", index + 1);
+                            return parser_printRate(&rate.rate, outVal, outValLen, pageIdx, pageCount);
+                        }
+                    }
+                } else {
+                    const int8_t index = (dynDisplayIdx -
+                                          parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) / 3;
+
+                    // Only keeping one amendment in body at the time
+                    commissionRateBoundStep_t bound;
+                    CHECK_PARSER_ERR(_getCommissionBoundStepAtIndex(ctx, &bound, index))
+
+                    switch ((dynDisplayIdx -
+                             parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) % 3) {
+                        case 0: {
+                            snprintf(outKey, outKeyLen, "Bounds (%d): start", index + 1);
+                            uint64_to_str(outVal, outValLen, bound.start);
+                            *pageCount = 1;
+                            return parser_ok;
+                        }
+                        case 1: {
+                            snprintf(outKey, outKeyLen, "Bounds (%d): min", index + 1);
+                            return parser_printRate(&bound.rate_min, outVal, outValLen, pageIdx, pageCount);
+                        }
+                        case 2: {
+                            snprintf(outKey, outKeyLen, "Bounds (%d): max", index + 1);
+                            return parser_printRate(&bound.rate_max, outVal, outValLen, pageIdx, pageCount);
+                        }
+                    }
                 }
-                case 1: {
+            }
+
+            uint8_t lastDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 5;
+            switch (lastDisplayIdx) {
+                case 0: {
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
                 }
-                case 2: {
+                case 1: {
                     snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
-                }
-            }
-            uint8_t dynDisplayIdx = displayIdx - 3;
-            if (dynDisplayIdx / 2 < (int) parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
-                const int8_t index = dynDisplayIdx / 2;
-                commissionRateStep_t rate;
-
-                CHECK_PARSER_ERR(_getCommissionRateStepAtIndex(ctx, &rate, index))
-
-                switch (dynDisplayIdx % 2) {
-                    case 0: {
-                        snprintf(outKey, outKeyLen, "Rates (%d): start", index + 1);
-                        uint64_to_str(outVal, outValLen, rate.start);
-                        *pageCount = 1;
-                        return parser_ok;
-                    }
-                    case 1: {
-                        snprintf(outKey, outKeyLen, "Rates (%d): rate", index + 1);
-                        return parser_printRate(&rate.rate, outVal, outValLen, pageIdx, pageCount);
-                    }
-                }
-            } else {
-                const int8_t index = (dynDisplayIdx -
-                                      parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) / 3;
-
-                // Only keeping one amendment in body at the time
-                commissionRateBoundStep_t bound;
-                CHECK_PARSER_ERR(_getCommissionBoundStepAtIndex(ctx, &bound, index))
-
-                switch ((dynDisplayIdx -
-                         parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) % 3) {
-                    case 0: {
-                        snprintf(outKey, outKeyLen, "Bounds (%d): start", index + 1);
-                        uint64_to_str(outVal, outValLen, bound.start);
-                        *pageCount = 1;
-                        return parser_ok;
-                    }
-                    case 1: {
-                        snprintf(outKey, outKeyLen, "Bounds (%d): min", index + 1);
-                        return parser_printRate(&bound.rate_min, outVal, outValLen, pageIdx, pageCount);
-                    }
-                    case 2: {
-                        snprintf(outKey, outKeyLen, "Bounds (%d): max", index + 1);
-                        return parser_printRate(&bound.rate_max, outVal, outValLen, pageIdx, pageCount);
-                    }
                 }
             }
             break;
