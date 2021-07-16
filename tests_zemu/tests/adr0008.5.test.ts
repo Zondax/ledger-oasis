@@ -748,6 +748,50 @@ describe('Standard-Adr0008-5', function () {
     }
   });
 
+  test.each(models)('sign entity register', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const path = "m/44'/474'/5'/0'/3'";
+      const context = "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5";
+
+      const txBlob = Buffer.from(
+          "pGNmZWWiY2dhcxkD6GZhbW91bnRCB9BkYm9keaJpc2lnbmF0dXJlomlzaWduYXR1cmVYQIowyMFe9jaYImkskeKzH3sXZrQn0YeFUwapDHhPA+70gPwLSzK/ZoHK95PT0ZVPes63r2tFuwairDdYzNGqCghqcHVibGljX2tleVggl+cuboPsOeuY1+kYlROrpmKgiiELmXSw9xl0WEg8cWFzdW50cnVzdGVkX3Jhd192YWx1ZVgpomF2AmJpZFggl+cuboPsOeuY1+kYlROrpmKgiiELmXSw9xl0WEg8cWFlbm9uY2UYKmZtZXRob2R3cmVnaXN0cnkuUmVnaXN0ZXJFbnRpdHk=",
+          "base64",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_register`, m.name === "nanos" ? 14 : 15);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.each(models)('sign entity metadata - utf8', async function (m) {
     const sim = new Zemu(m.path);
     try {
