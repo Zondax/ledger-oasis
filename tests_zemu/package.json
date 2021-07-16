@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@zondax/ledger-oasis": "file:../js",
-    "@zondax/zemu": "^0.16.5"
+    "@zondax/zemu": "^0.16.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
