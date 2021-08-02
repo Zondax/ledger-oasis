@@ -96,6 +96,8 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "context unexpected size";
         case parser_context_invalid_chars:
             return "context invalid chars";
+        case parser_context_unknown_prefix:
+            return "context uknown prefix";
             // Required fields error
         case parser_required_nonce:
             return "Required field nonce";
