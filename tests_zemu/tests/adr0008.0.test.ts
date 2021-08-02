@@ -758,7 +758,7 @@ describe('Standard-Adr0008-0', function () {
       const context = "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5";
 
       const txBlob = Buffer.from(
-          "pGNmZWWiY2dhcxkD6GZhbW91bnRCB9BkYm9keaJpc2lnbmF0dXJlomlzaWduYXR1cmVYQIowyMFe9jaYImkskeKzH3sXZrQn0YeFUwapDHhPA+70gPwLSzK/ZoHK95PT0ZVPes63r2tFuwairDdYzNGqCghqcHVibGljX2tleVggl+cuboPsOeuY1+kYlROrpmKgiiELmXSw9xl0WEg8cWFzdW50cnVzdGVkX3Jhd192YWx1ZVgpomF2AmJpZFggl+cuboPsOeuY1+kYlROrpmKgiiELmXSw9xl0WEg8cWFlbm9uY2UYKmZtZXRob2R3cmVnaXN0cnkuUmVnaXN0ZXJFbnRpdHk=",
+          "pGNmZWWiY2dhcxkD6GZhbW91bnRCEJJkYm9keaJpc2lnbmF0dXJlomlzaWduYXR1cmVYQOMUbqcZ88wjPfkp9/poVJJKrxD/UN7qvEQQi5O5D7IFD7ujuBsfaCkbuXtFUMIrlAbsC9RuvLPcsPQqm5jIWApqcHVibGljX2tleVgg3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6NzdW50cnVzdGVkX3Jhd192YWx1ZVjao2F2AmJpZFgg3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6Nlbm9kZXOFWCB45nhPM7JsZvqGq/ODtQGz93xlsv51iRbAQP+5dCy/ZVggnc1QiTMP4HFSTpiEiEtnFDRtYxKRc85PTTR8SlH1g8JYIKx4PngeJJhJb+tTC7IR/BWh5mTB+uJOLY04HFA3DwGcWCCZkWVMaW1btF+krrmppVsALHVwxbj5pu0nj6HgADbN91ggobWw+PHovNp7UxCZ0yw8lbbs5jTvV5vY3zu7yrVxVD9lbm9uY2Ub//////////9mbWV0aG9kd3JlZ2lzdHJ5LlJlZ2lzdGVyRW50aXR5",
           "base64",
       );
 
