@@ -772,7 +772,7 @@ describe('Standard-Adr0008-5', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_register`, m.name === "nanos" ? 14 : 14);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_register`, m.name === "nanos" ? 24 : 24);
 
       let resp = await signatureRequest;
       console.log(resp);
