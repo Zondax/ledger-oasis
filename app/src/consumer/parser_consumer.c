@@ -362,7 +362,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
     if (displayIdx - ENTITY_DYNAMIC_OFFSET < (int) entity->obj.nodes_length) {
         const int8_t index = displayIdx - ENTITY_DYNAMIC_OFFSET;
 
-        snprintf(outKey, outKeyLen, "Node [%i]", index + 1);
+        snprintf(outKey, outKeyLen, "Node [%d]", index + 1);
 
         publickey_t node;
         CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
