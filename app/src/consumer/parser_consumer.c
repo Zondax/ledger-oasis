@@ -344,7 +344,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
-#define ENTITY_DYNAMIC_OFFSET 3
+#define ENTITY_DYNAMIC_OFFSET 2
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Descr. Ver");
