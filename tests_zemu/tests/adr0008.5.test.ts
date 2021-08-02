@@ -754,7 +754,7 @@ describe('Standard-Adr0008-5', function () {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = "m/44'/474'/5'/0'/3'";
+      const path ="m/44'/474'/5'";
       const context = "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5";
 
       const txBlob = Buffer.from(
@@ -792,13 +792,57 @@ describe('Standard-Adr0008-5', function () {
     }
   });
 
+  test.each(models)('sign entity register without nodes', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const path ="m/44'/474'/5'";
+      const context = "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5";
+
+      const txBlob = Buffer.from(
+          "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omlzaWduYXR1cmWiaXNpZ25hdHVyZVhACXa0AUpgRcGA0PHYSaX7p+tMiVqo6NkQH5TY9WuGz84SuZCYpzoNsijTTzCQYp5Xc6T9b2Ew9TIoz9E7JvvSBmpwdWJsaWNfa2V5WCDfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLo3N1bnRydXN0ZWRfcmF3X3ZhbHVlWCmiYXYCYmlkWCDfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLo2Vub25jZQBmbWV0aG9kd3JlZ2lzdHJ5LlJlZ2lzdGVyRW50aXR5",
+          "base64",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_register_no_nodes`, m.name === "nanos" ? 14 : 14);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.each(models)('sign entity metadata - utf8', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
       const app = new OasisApp(sim.getTransport());
 
-      const path = "m/44'/474'/0'";
+      const path = "m/44'/474'/5'";
       const context = "oasis-metadata-registry: entity";
 
       const txBlob = Buffer.from(
