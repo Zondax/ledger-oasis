@@ -1109,7 +1109,7 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
     }
 
     expectedLen = strlen(context_prefix_entity);
-    if (expectedLen < prefixLen) {
+    if (expectedLen == prefixLen) {
         if (strncmp(context_prefix_entity, prefix, expectedLen) == 0) {
             *type = entityType;
             return parser_ok;
@@ -1117,7 +1117,7 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
     }
 
     expectedLen = strlen(context_prefix_entity_metadata);
-    if (expectedLen <= prefixLen) {
+    if (expectedLen == prefixLen) {
         if (strncmp(context_prefix_entity_metadata, prefix, expectedLen) == 0) {
             *type = entityMetadataType;
             return parser_ok;
