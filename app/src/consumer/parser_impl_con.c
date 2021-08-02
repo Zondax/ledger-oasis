@@ -1240,8 +1240,8 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
 
     // typical tx: Type, Fee, Gas (exclude Genesis hash)
     const uint8_t commonElements = 3;
-    // PublicKey + Signature + Descr Ver + ID + Allowed
-    const uint8_t entityFixedElements = 3;
+    // PublicKey + Signature + Descr Ver + ID
+    const uint8_t entityFixedElements = 2;
     // Entity signatures + pubkey
     const uint8_t entitySignatureElements = 2;
 
