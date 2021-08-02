@@ -359,16 +359,6 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                      outVal, outValLen, pageIdx, pageCount);
     }
 
-    if (displayIdx == 2) {
-        snprintf(outKey, outKeyLen, "Allowed");
-        if (entity->obj.allow_entity_signed_nodes) {
-            snprintf(outVal, outValLen, "True");
-        } else {
-            snprintf(outVal, outValLen, "False");
-        }
-        return parser_ok;
-    }
-
     if (displayIdx - ENTITY_DYNAMIC_OFFSET < (int) entity->obj.nodes_length) {
         const int8_t index = displayIdx - ENTITY_DYNAMIC_OFFSET;
 

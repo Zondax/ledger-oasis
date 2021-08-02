@@ -432,11 +432,6 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
         return parser_unexpected_number_items;
     }
 
-    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "allow_entity_signed_nodes", &tmp))
-    if (cbor_value_is_valid(&tmp)) {
-        CHECK_CBOR_ERR(cbor_value_get_boolean(&tmp, &entity->obj.allow_entity_signed_nodes))
-    }
-
     return parser_ok;
 }
 

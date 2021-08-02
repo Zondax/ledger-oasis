@@ -283,12 +283,6 @@ namespace utils {
         addTo(answer, "{} | ID[1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
         addTo(answer, "{} | ID[2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
 
-        if (entity["allow_entity_signed_nodes"]) {
-            addTo(answer, "{} | Allowed : True", itemCount++);
-        } else {
-            addTo(answer, "{} | Allowed : False", itemCount++);
-        }
-
         int nodeIndex = 0;
         for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
             auto nodeData = entity["nodes"][nodeIndex].asString();
