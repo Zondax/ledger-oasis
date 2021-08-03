@@ -296,6 +296,20 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t parser_printPublicKey_b64(const publickey_t *pk,
+                                                char *outVal, uint16_t outValLen,
+                                                uint8_t pageIdx, uint8_t *pageCount) {
+    char outBuffer[128];
+    MEMZERO(outBuffer, sizeof(outBuffer));
+
+    if (base64_encode(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 24) {
+        return parser_unexpected_value;
+    }
+
+    pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t parser_printSignature(raw_signature_t *s,
                                                 char *outVal, uint16_t outValLen,
                                                 uint8_t pageIdx, uint8_t *pageCount) {
@@ -348,7 +362,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "ID");
-        return parser_printPublicKey(&entity->obj.id,
+        return parser_printPublicKey_b64(&entity->obj.id,
                                      outVal, outValLen, pageIdx, pageCount);
     }
 
@@ -359,7 +373,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
 
         publickey_t node;
         CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
-        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
+        return parser_printPublicKey_b64(&node, outVal, outValLen, pageIdx, pageCount);
     }
 
     return parser_no_data;
@@ -731,7 +745,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
 
             int8_t dynDisplayIdx = displayIdx - 1;
-            if(dynDisplayIdx < (int) parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length ){
+            if(dynDisplayIdx < ( (int) parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length + ENTITY_DYNAMIC_OFFSET ) ){
                 return parser_getItemEntity(
                             &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
                             dynDisplayIdx,
@@ -739,7 +753,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                             pageIdx, pageCount);
             }
 
-            dynDisplayIdx -= parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
+            dynDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length - ENTITY_DYNAMIC_OFFSET;
             switch (dynDisplayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Fee");
