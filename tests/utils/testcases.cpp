@@ -149,6 +149,20 @@ namespace utils {
         return std::string(outBuffer);
     }
 
+    std::string FormatPublicKey_B64(const std::string &pk, uint8_t idx, uint8_t *pageCount) {
+        std::string pkBytes;
+        macaron::Base64::Decode(pk, pkBytes);
+
+        char tmp[100];
+        MEMZERO(tmp, sizeof(tmp));
+        base64_encode(tmp, sizeof(tmp), (const uint8_t *) pkBytes.c_str(), pkBytes.size());
+
+        char outBuffer[40];
+        pageString(outBuffer, sizeof(outBuffer), tmp, idx, pageCount);
+
+        return std::string(outBuffer);
+    }
+
     std::string FormatAddress(const std::string &address, uint8_t idx, uint8_t *pageCount) {
         char outBuffer[40];
         pageString(outBuffer, sizeof(outBuffer), address.c_str(), idx, pageCount);
@@ -276,9 +290,6 @@ namespace utils {
         auto answer = std::vector<std::string>();
         uint8_t dummy = 0;
 
-        addTo(answer, "{} | Descr. Ver : {}", itemCount, entity["v"].asInt64(), 0, &dummy);
-        itemCount++;
-
         auto entity_id = entity["id"].asString();
         addTo(answer, "{} | ID[1/2] : {}", itemCount, FormatPublicKey(entity_id, 0, &dummy));
         addTo(answer, "{} | ID[2/2] : {}", itemCount++, FormatPublicKey(entity_id, 1, &dummy));
@@ -288,6 +299,25 @@ namespace utils {
             auto nodeData = entity["nodes"][nodeIndex].asString();
             addTo(answer, "{} | Node [{}][1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 0, &dummy));
             addTo(answer, "{} | Node [{}][2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey(nodeData, 1, &dummy));
+            itemCount++;
+        }
+
+        return answer;
+    }
+
+    std::vector<std::string> internalGenerateExpectedUIOutputForEntity_B64(Json::Value entity, uint32_t &itemCount) {
+        auto answer = std::vector<std::string>();
+        uint8_t dummy = 0;
+
+        auto entity_id = entity["id"].asString();
+        addTo(answer, "{} | ID[1/2] : {}", itemCount, FormatPublicKey_B64(entity_id, 0, &dummy));
+        addTo(answer, "{} | ID[2/2] : {}", itemCount++, FormatPublicKey_B64(entity_id, 1, &dummy));
+
+        int nodeIndex = 0;
+        for (nodeIndex = 0; nodeIndex < entity["nodes"].size(); nodeIndex++) {
+            auto nodeData = entity["nodes"][nodeIndex].asString();
+            addTo(answer, "{} | Node [{}][1/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey_B64(nodeData, 0, &dummy));
+            addTo(answer, "{} | Node [{}][2/2] : {}", itemCount, nodeIndex + 1, FormatPublicKey_B64(nodeData, 1, &dummy));
             itemCount++;
         }
 
@@ -439,24 +469,16 @@ namespace utils {
 
         if (type == "registry.RegisterEntity") {
             addTo(answer, "{} | Type : Register Entity", itemCount++);
+
+            // Entity (from entity)
+            auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
+            auto entityAnswer = internalGenerateExpectedUIOutputForEntity_B64(untrusted_raw_value, itemCount);
+            answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
+
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
                 addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
             }
-            auto publicKey = txbody["signature"]["public_key"].asString();
-            addTo(answer, "{} | Public key[1/2] : {}", itemCount, FormatPublicKey(publicKey, 0, &dummy));
-            addTo(answer, "{} | Public key[2/2] : {}", itemCount++, FormatPublicKey(publicKey, 1, &dummy));
-
-            auto signature = txbody["signature"]["signature"].asString();
-            addTo(answer, "{} | Signature[1/4] : {}", itemCount, FormatSignature(signature, 0, &dummy));
-            addTo(answer, "{} | Signature[2/4] : {}", itemCount, FormatSignature(signature, 1, &dummy));
-            addTo(answer, "{} | Signature[3/4] : {}", itemCount, FormatSignature(signature, 2, &dummy));
-            addTo(answer, "{} | Signature[4/4] : {}", itemCount++, FormatSignature(signature, 3, &dummy));
-
-            // Entity (from entity)
-            auto untrusted_raw_value = j["tx"]["body"]["untrusted_raw_value"];
-            auto entityAnswer = internalGenerateExpectedUIOutputForEntity(untrusted_raw_value, itemCount);
-            answer.insert(answer.end(), entityAnswer.begin(), entityAnswer.end());
         }
 
         if (type == "governance.CastVote") {
