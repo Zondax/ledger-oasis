@@ -1244,8 +1244,9 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
     const uint8_t commonElements = 3;
     // PublicKey + Signature + Descr Ver + ID
     const uint8_t entityFixedElements = 2;
-    // Entity signatures + pubkey
-    const uint8_t entitySignatureElements = 2;
+
+    // Just the ID
+    const uint8_t registerEntityFixedElements = 1;
 
     uint8_t itemCount = commonElements;
 
@@ -1316,8 +1317,7 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
             itemCount += 1;
             break;
         case registryRegisterEntity: {
-            itemCount += entityFixedElements + entitySignatureElements +
-                         v->oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
+            itemCount += registerEntityFixedElements + v->oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
             break;
         case governanceCastVote:
                 itemCount += 2;

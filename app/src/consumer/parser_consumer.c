@@ -344,16 +344,9 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
-#define ENTITY_DYNAMIC_OFFSET 2
+#define ENTITY_DYNAMIC_OFFSET 1
 
     if (displayIdx == 0) {
-        snprintf(outKey, outKeyLen, "Descr. Ver");
-        uint64_to_str(outVal, outValLen, entity->obj.descriptor_version);
-        *pageCount = 1;
-        return parser_ok;
-    }
-
-    if (displayIdx == 1) {
         snprintf(outKey, outKeyLen, "ID");
         return parser_printPublicKey(&entity->obj.id,
                                      outVal, outValLen, pageIdx, pageCount);
@@ -731,40 +724,34 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
         }
         case registryRegisterEntity: {
-            switch (displayIdx) {
+            if(displayIdx == 0){
+                snprintf(outKey, outKeyLen, "Type");
+                *pageCount = 1;
+                return parser_getType(ctx, outVal, outValLen);
+            }
+
+            int8_t dynDisplayIdx = displayIdx - 1;
+            if(dynDisplayIdx < (int) parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length ){
+                return parser_getItemEntity(
+                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
+                            dynDisplayIdx,
+                            outKey, outKeyLen, outVal, outValLen,
+                            pageIdx, pageCount);
+            }
+
+            dynDisplayIdx -= parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length;
+            switch (dynDisplayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "Type");
-                    *pageCount = 1;
-                    return parser_getType(ctx, outVal, outValLen);
-                }
-                case 1: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
                 }
-                case 2: {
+                case 1: {
                     snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
                 }
-                case 3:
-                    snprintf(outKey, outKeyLen, "Public key");
-                    return parser_printPublicKey(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.public_key,
-                            outVal, outValLen, pageIdx, pageCount);
-                case 4:
-                    snprintf(outKey, outKeyLen, "Signature");
-                    return parser_printSignature(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.raw_signature,
-                            outVal, outValLen, pageIdx, pageCount);
-                default:
-                    return parser_getItemEntity(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
-                            displayIdx - 5,
-                            outKey, outKeyLen, outVal, outValLen,
-                            pageIdx, pageCount);
             }
         }
 
