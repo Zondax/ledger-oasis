@@ -148,17 +148,13 @@ namespace utils {
 
         return std::string(outBuffer);
     }
-
+    
     std::string FormatPublicKey_B64(const std::string &pk, uint8_t idx, uint8_t *pageCount) {
         std::string pkBytes;
         macaron::Base64::Decode(pk, pkBytes);
 
-        char tmp[100];
-        MEMZERO(tmp, sizeof(tmp));
-        base64_encode(tmp, sizeof(tmp), (const uint8_t *) pkBytes.c_str(), pkBytes.size());
-
         char outBuffer[40];
-        pageString(outBuffer, sizeof(outBuffer), tmp, idx, pageCount);
+        pageString(outBuffer, sizeof(outBuffer), pk.c_str(), idx, pageCount);
 
         return std::string(outBuffer);
     }
