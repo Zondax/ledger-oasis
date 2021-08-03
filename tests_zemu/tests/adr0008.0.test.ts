@@ -791,7 +791,7 @@ describe('Standard-Adr0008-0', function () {
     }
   });
 
-  test.each(models)('sign entity register', async function (m) {
+  test.each(models)('sign entity register with nodes', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
@@ -859,7 +859,7 @@ describe('Standard-Adr0008-0', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_entity_descriptor`, m.name === "nanos" ? 1 : 1);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_entity_descriptor`, m.name === "nanos" ? 1 : 2);
 
       let resp = await signatureRequest;
       console.log(resp);
