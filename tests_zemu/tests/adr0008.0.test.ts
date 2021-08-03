@@ -791,7 +791,7 @@ describe('Standard-Adr0008-0', function () {
     }
   });
 
-  test.each(models)('sign entity register with nodes', async function (m) {
+  test.each(models)('sign register entity with nodes', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
@@ -815,7 +815,7 @@ describe('Standard-Adr0008-0', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_entity_register`, m.name === "nanos" ? 24 : 24);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_register_entity`, m.name === "nanos" ? 24 : 24);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -879,7 +879,7 @@ describe('Standard-Adr0008-0', function () {
     }
   });
 
-  test.each(models)('sign entity register without nodes', async function (m) {
+  test.each(models)('sign register entity without nodes', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
@@ -903,7 +903,7 @@ describe('Standard-Adr0008-0', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_entity_register_no_nodes`, m.name === "nanos" ? 14 : 14);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-0-sign_register_entity_no_nodes`, m.name === "nanos" ? 14 : 14);
 
       let resp = await signatureRequest;
       console.log(resp);
