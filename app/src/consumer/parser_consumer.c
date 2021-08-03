@@ -344,7 +344,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
-#define ENTITY_DYNAMIC_OFFSET 3
+#define ENTITY_DYNAMIC_OFFSET 2
 
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Descr. Ver");
@@ -359,20 +359,10 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                      outVal, outValLen, pageIdx, pageCount);
     }
 
-    if (displayIdx == 2) {
-        snprintf(outKey, outKeyLen, "Allowed");
-        if (entity->obj.allow_entity_signed_nodes) {
-            snprintf(outVal, outValLen, "True");
-        } else {
-            snprintf(outVal, outValLen, "False");
-        }
-        return parser_ok;
-    }
-
     if (displayIdx - ENTITY_DYNAMIC_OFFSET < (int) entity->obj.nodes_length) {
         const int8_t index = displayIdx - ENTITY_DYNAMIC_OFFSET;
 
-        snprintf(outKey, outKeyLen, "Node [%i]", index + 1);
+        snprintf(outKey, outKeyLen, "Node [%d]", index + 1);
 
         publickey_t node;
         CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
@@ -648,7 +638,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
 
             uint8_t dynDisplayIdx = displayIdx - 1;
-            if( dynDisplayIdx < parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 5 ){
+            if( dynDisplayIdx < (int) ( parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2 + parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3 ) ){
                 if (dynDisplayIdx / 2 < (int) parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
                     const int8_t index = dynDisplayIdx / 2;
                     commissionRateStep_t rate;
@@ -695,7 +685,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
             }
 
-            uint8_t lastDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 5;
+            uint8_t lastDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2 - parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3;
             switch (lastDisplayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Fee");

@@ -100,6 +100,8 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "context prefix is invalid";
         case parser_context_unexpected_size:
             return "context unexpected size";
+        case parser_context_unknown_prefix:
+            return "context unknown prefix";
         case parser_context_invalid_chars:
             return "context invalid chars";
             // Required fields error
@@ -430,11 +432,6 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
     // too many node ids in the blob to be printed
     if (entity->obj.nodes_length > MAX_ENTITY_NODES) {
         return parser_unexpected_number_items;
-    }
-
-    CHECK_CBOR_ERR(cbor_value_map_find_value(&value, "allow_entity_signed_nodes", &tmp))
-    if (cbor_value_is_valid(&tmp)) {
-        CHECK_CBOR_ERR(cbor_value_get_boolean(&tmp, &entity->obj.allow_entity_signed_nodes))
     }
 
     return parser_ok;
@@ -1112,7 +1109,7 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
     }
 
     expectedLen = strlen(context_prefix_entity);
-    if (expectedLen < prefixLen) {
+    if (expectedLen == prefixLen) {
         if (strncmp(context_prefix_entity, prefix, expectedLen) == 0) {
             *type = entityType;
             return parser_ok;
@@ -1120,7 +1117,7 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
     }
 
     expectedLen = strlen(context_prefix_entity_metadata);
-    if (expectedLen <= prefixLen) {
+    if (expectedLen == prefixLen) {
         if (strncmp(context_prefix_entity_metadata, prefix, expectedLen) == 0) {
             *type = entityMetadataType;
             return parser_ok;
@@ -1245,8 +1242,8 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
 
     // typical tx: Type, Fee, Gas (exclude Genesis hash)
     const uint8_t commonElements = 3;
-    // PublicKey + Signature + Descr Ver + ID + Allowed
-    const uint8_t entityFixedElements = 3;
+    // PublicKey + Signature + Descr Ver + ID
+    const uint8_t entityFixedElements = 2;
     // Entity signatures + pubkey
     const uint8_t entitySignatureElements = 2;
 

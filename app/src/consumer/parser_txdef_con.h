@@ -127,7 +127,6 @@ typedef struct {
     publickey_t id;
     // We are going to read dynamically like for stakingAmendCommissionSchedule
     size_t nodes_length;
-    bool allow_entity_signed_nodes;
 } oasis_entity_internal_t;
 
 typedef struct {
