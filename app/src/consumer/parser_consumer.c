@@ -20,6 +20,7 @@
 #include <zxmacros.h>
 #include <zxerror.h>
 #include <bech32.h>
+#include <base64.h>
 #include "parser_impl_con.h"
 #include "bignum.h"
 #include "parser.h"
@@ -302,7 +303,7 @@ __Z_INLINE parser_error_t parser_printPublicKey_b64(const publickey_t *pk,
     char outBuffer[128];
     MEMZERO(outBuffer, sizeof(outBuffer));
 
-    if (base64_encode(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 24) {
+    if (base64_encode(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 44) {
         return parser_unexpected_value;
     }
 
