@@ -20,6 +20,7 @@
 #include <zxmacros.h>
 #include <zxerror.h>
 #include <bech32.h>
+#include <base64.h>
 #include "parser_impl_con.h"
 #include "bignum.h"
 #include "parser.h"
@@ -296,6 +297,20 @@ __Z_INLINE parser_error_t parser_printPublicKey(const publickey_t *pk,
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t parser_printPublicKey_b64(const publickey_t *pk,
+                                                char *outVal, uint16_t outValLen,
+                                                uint8_t pageIdx, uint8_t *pageCount) {
+    char outBuffer[128];
+    MEMZERO(outBuffer, sizeof(outBuffer));
+
+    if (base64_encode(outBuffer, sizeof(outBuffer), (uint8_t *) pk, 32) != 44) {
+        return parser_unexpected_value;
+    }
+
+    pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t parser_printSignature(raw_signature_t *s,
                                                 char *outVal, uint16_t outValLen,
                                                 uint8_t pageIdx, uint8_t *pageCount) {
@@ -344,18 +359,11 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
-#define ENTITY_DYNAMIC_OFFSET 2
+#define ENTITY_DYNAMIC_OFFSET 1
 
     if (displayIdx == 0) {
-        snprintf(outKey, outKeyLen, "Descr. Ver");
-        uint64_to_str(outVal, outValLen, entity->obj.descriptor_version);
-        *pageCount = 1;
-        return parser_ok;
-    }
-
-    if (displayIdx == 1) {
         snprintf(outKey, outKeyLen, "ID");
-        return parser_printPublicKey(&entity->obj.id,
+        return parser_printPublicKey_b64(&entity->obj.id,
                                      outVal, outValLen, pageIdx, pageCount);
     }
 
@@ -366,7 +374,7 @@ __Z_INLINE parser_error_t parser_getItemEntity(const oasis_entity_t *entity,
 
         publickey_t node;
         CHECK_PARSER_ERR(_getEntityNodesIdAtIndex(entity, &node, index))
-        return parser_printPublicKey(&node, outVal, outValLen, pageIdx, pageCount);
+        return parser_printPublicKey_b64(&node, outVal, outValLen, pageIdx, pageCount);
     }
 
     return parser_no_data;
@@ -731,40 +739,34 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
         }
         case registryRegisterEntity: {
-            switch (displayIdx) {
+            if(displayIdx == 0){
+                snprintf(outKey, outKeyLen, "Type");
+                *pageCount = 1;
+                return parser_getType(ctx, outVal, outValLen);
+            }
+
+            int8_t dynDisplayIdx = displayIdx - 1;
+            if(dynDisplayIdx < ( (int) parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length + ENTITY_DYNAMIC_OFFSET ) ){
+                return parser_getItemEntity(
+                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
+                            dynDisplayIdx,
+                            outKey, outKeyLen, outVal, outValLen,
+                            pageIdx, pageCount);
+            }
+
+            dynDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity.obj.nodes_length - ENTITY_DYNAMIC_OFFSET;
+            switch (dynDisplayIdx) {
                 case 0: {
-                    snprintf(outKey, outKeyLen, "Type");
-                    *pageCount = 1;
-                    return parser_getType(ctx, outVal, outValLen);
-                }
-                case 1: {
-                    // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
                                                 pageCount);
                 }
-                case 2: {
+                case 1: {
                     snprintf(outKey, outKeyLen, "Gas limit");
                     uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
                     *pageCount = 1;
                     return parser_ok;
                 }
-                case 3:
-                    snprintf(outKey, outKeyLen, "Public key");
-                    return parser_printPublicKey(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.public_key,
-                            outVal, outValLen, pageIdx, pageCount);
-                case 4:
-                    snprintf(outKey, outKeyLen, "Signature");
-                    return parser_printSignature(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.signature.raw_signature,
-                            outVal, outValLen, pageIdx, pageCount);
-                default:
-                    return parser_getItemEntity(
-                            &parser_tx_obj.oasis.tx.body.registryRegisterEntity.entity,
-                            displayIdx - 5,
-                            outKey, outKeyLen, outVal, outValLen,
-                            pageIdx, pageCount);
             }
         }
 
