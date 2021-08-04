@@ -947,7 +947,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_deregister_entity`, m.name === "nanos" ? 7 : 7);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_deregister_entity`, m.name === "nanos" ? 5 : 6);
 
       let resp = await signatureRequest;
       console.log(resp);
