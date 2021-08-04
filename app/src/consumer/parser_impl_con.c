@@ -438,6 +438,10 @@ __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
 }
 
 __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
+    if (v->oasis.tx.method == registryDeregisterEntity) {
+        // This method doesn't have a body
+        return parser_ok;
+    }
 
     CborValue bodyField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
@@ -559,7 +563,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             break;
-        }
+        }/*
         case registryDeregisterEntity: {
             CHECK_CBOR_MAP_LEN(&bodyField, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
@@ -570,7 +574,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
             break;
-        }
+        }*/
         case registryUnfreezeNode: {
             CHECK_CBOR_MAP_LEN(&bodyField, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
@@ -1307,7 +1311,7 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
             itemCount += v->oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3;
             break;
         case registryDeregisterEntity:
-            itemCount += 1;
+            itemCount += 0;
             break;
         case registryUnfreezeNode:
             itemCount += 1;
