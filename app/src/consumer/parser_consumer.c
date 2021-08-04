@@ -709,9 +709,32 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             }
             break;
         }
-        case registryDeregisterEntity:
-            *pageCount = 0;
-            return parser_no_data;
+        case registryDeregisterEntity:{
+            switch (displayIdx) {
+                case 0: {
+                    snprintf(outKey, outKeyLen, "Type");
+                    *pageCount = 1;
+                    return parser_getType(ctx, outVal, outValLen);
+                }
+                case 1:{
+                    snprintf(outKey, outKeyLen, "Node ID");
+                    return parser_printPublicKey(
+                            &parser_tx_obj.oasis.tx.body.deregisterEntity.node_id,
+                            outVal, outValLen, pageIdx, pageCount);
+                }
+                case 2: {
+                    snprintf(outKey, outKeyLen, "Fee");
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
+                                                pageCount);
+                }
+                case 3: {
+                    snprintf(outKey, outKeyLen, "Gas limit");
+                    uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.tx.fee_gas);
+                    *pageCount = 1;
+                    return parser_ok;
+                }
+            }
+        }
 
         case registryUnfreezeNode: {
             switch (displayIdx) {
