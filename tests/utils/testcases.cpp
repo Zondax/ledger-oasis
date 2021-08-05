@@ -478,7 +478,7 @@ namespace utils {
         }
 
         if (type == "registry.DeregisterEntity") {
-            addTo(answer, "{} | Type : DeregisterEntity Entity", itemCount++);
+            addTo(answer, "{} | Type : Deregister Entity", itemCount++);
 
             if (tx.isMember("fee")) {
                 addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
