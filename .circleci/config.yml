@@ -65,8 +65,8 @@ jobs:
       - run:
           name: Install node + yarn
           command: |
-            nvm install 14.4.0
-            nvm use 14.4.0
+            nvm install 14.15.0
+            nvm use 14.15.0
             npm install -g yarn
       - run:
           name: Build Ledger app
@@ -77,13 +77,13 @@ jobs:
       - run:
           name: Build/Install build js deps
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_install
       - run:
           name: Run zemu tests
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_test
 
@@ -101,8 +101,8 @@ jobs:
       - run:
           name: Install node + yarn
           command: |
-            nvm install 14.4.0
-            nvm use 14.4.0
+            nvm install 14.15.0
+            nvm use 14.15.0
             npm install -g yarn
       - run:
           name: Build Ledger app
@@ -113,13 +113,13 @@ jobs:
       - run:
           name: Build/Install build js deps
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_install
       - run:
           name: Run zemu tests
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             COIN=adr0008-0 make zemu_test
 
@@ -137,8 +137,8 @@ jobs:
       - run:
           name: Install node + yarn
           command: |
-            nvm install 14.4.0
-            nvm use 14.4.0
+            nvm install 14.15.0
+            nvm use 14.15.0
             npm install -g yarn
       - run:
           name: Build Ledger app
@@ -149,13 +149,13 @@ jobs:
       - run:
           name: Build/Install build js deps
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_install
       - run:
           name: Run zemu tests
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             COIN=adr0008-0-oasis make zemu_test
 
@@ -173,8 +173,8 @@ jobs:
       - run:
           name: Install node + yarn
           command: |
-            nvm install 14.4.0
-            nvm use 14.4.0
+            nvm install 14.15.0
+            nvm use 14.15.0
             npm install -g yarn
       - run:
           name: Build Ledger app
@@ -185,13 +185,13 @@ jobs:
       - run:
           name: Build/Install build js deps
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_install
       - run:
           name: Run zemu tests
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             COIN=adr0008-5 make zemu_test
 
@@ -208,13 +208,13 @@ jobs:
       - run:
           name: Install node + yarn
           command: |
-            nvm install 14.4.0
-            nvm use 14.4.0
+            nvm install 14.15.0
+            nvm use 14.15.0
             npm install -g yarn
       - run:
           name: Build/Install build js deps
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             make zemu_install
       - run:
@@ -224,7 +224,7 @@ jobs:
       - run:
           name: Run zemu tests for Validator app
           command: |
-            nvm use 14.4.0
+            nvm use 14.15.0
             export PATH=~/.cargo/bin:$PATH
             COIN=val make zemu_test
 
