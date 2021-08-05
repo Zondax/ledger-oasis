@@ -991,7 +991,7 @@ describe('Standard-Adr0008-5', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_metadata_utf8`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_metadata_utf8`, m.name === "nanos" ? 8 : 9);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -1035,7 +1035,7 @@ describe('Standard-Adr0008-5', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_metadata_long`, m.name === "nanos" ? 9 : 8);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_entity_metadata_long`, m.name === "nanos" ? 10 : 9);
 
       let resp = await signatureRequest;
       console.log(resp);
