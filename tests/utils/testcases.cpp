@@ -323,7 +323,7 @@ namespace utils {
     std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
         auto answer = std::vector<std::string>();
 
-        addTo(answer, "{} | Type : Entity signing", itemCount++);
+        addTo(answer, "{} | Type : Sign Entity", itemCount++);
         auto answerEntity = internalGenerateExpectedUIOutputForEntity(std::move(j), itemCount);
         answer.insert(answer.end(), answerEntity.begin(), answerEntity.end());
 
@@ -524,7 +524,7 @@ namespace utils {
 
         auto entity_meta = j["entity_meta"];
 
-        addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
+        addTo(answer, "{} | Type : Sign Entity metadata", itemCount++);
         addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
         addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
 

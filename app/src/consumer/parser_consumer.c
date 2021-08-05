@@ -951,8 +951,9 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
             }
             case entityType: {
                 if (displayIdx == 0) {
-                    snprintf(outKey, outKeyLen, "Type");
-                    snprintf(outVal, outValLen, "Entity signing");
+                    snprintf(outKey, outKeyLen, " ");
+                    *pageCount = 1;
+                    snprintf(outVal, outValLen, "Sign Entity");
                 } else {
                     err = parser_getItemEntity(&parser_tx_obj.oasis.entity,
                                                displayIdx - 1,
@@ -962,8 +963,9 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
             }
             case entityMetadataType: {
                 if (displayIdx == 0) {
-                    snprintf(outKey, outKeyLen, "Type");
-                    snprintf(outVal, outValLen, "Entity Metadata signing");
+                    snprintf(outKey, outKeyLen, " ");
+                    *pageCount = 1;
+                    snprintf(outVal, outValLen, "Sign Entity metadata");
                 } else {
                     err = parser_getItemEntityMetadata(&parser_tx_obj.oasis.entity_metadata,
                                                displayIdx - 1,

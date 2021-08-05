@@ -799,7 +799,7 @@ describe('Standard', function () {
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
 
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_descriptor`, m.name === "nanos" ? 2 : 2);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_descriptor`, m.name === "nanos" ? 3 : 3);
 
       let resp = await signatureRequest;
       console.log(resp);
