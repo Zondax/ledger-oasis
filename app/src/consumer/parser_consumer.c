@@ -963,9 +963,9 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
             }
             case entityMetadataType: {
                 if (displayIdx == 0) {
-                    snprintf(outKey, outKeyLen, " ");
+                    snprintf(outKey, outKeyLen, "Sign");
                     *pageCount = 1;
-                    snprintf(outVal, outValLen, "Sign Entity metadata");
+                    snprintf(outVal, outValLen, " Entity metadata");
                 } else {
                     err = parser_getItemEntityMetadata(&parser_tx_obj.oasis.entity_metadata,
                                                displayIdx - 1,
