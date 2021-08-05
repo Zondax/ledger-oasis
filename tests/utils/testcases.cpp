@@ -524,7 +524,7 @@ namespace utils {
 
         auto entity_meta = j["entity_meta"];
 
-        addTo(answer, "{} | Type : Sign Entity metadata", itemCount++);
+        addTo(answer, "{} | Sign :  Entity metadata", itemCount++);
         addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
         addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
 
