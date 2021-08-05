@@ -564,17 +564,6 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
             break;
         }
-        case registryDeregisterEntity: {
-            CHECK_CBOR_MAP_LEN(&bodyField, 1)
-            CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
-
-            CHECK_PARSER_ERR(_matchKey(&contents, "node_id"))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
-            CHECK_PARSER_ERR(_readPublicKey(&contents, &v->oasis.tx.body.deregisterEntity.node_id))
-            CHECK_CBOR_ERR(cbor_value_advance(&contents))
-
-            break;
-        }
         case registryUnfreezeNode: {
             CHECK_CBOR_MAP_LEN(&bodyField, 1)
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
@@ -1242,7 +1231,7 @@ uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
 
     // typical tx: Type, Fee, Gas (exclude Genesis hash)
     const uint8_t commonElements = 3;
-    // PublicKey + Signature + Descr Ver + ID
+    // Type + ID
     const uint8_t entityFixedElements = 2;
 
     // Just the ID

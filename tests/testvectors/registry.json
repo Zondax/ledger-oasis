@@ -150,6 +150,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "0VtsSFyAhJdCJ06h6+fqICjY0fDi0nwOzLI93mhrmQ9C52MI/wOprBww4bVPpQMKRRvW2fvyvuFd/7lNXV8GCQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA0VtsSFyAhJdCJ06h6+fqICjY0fDi0nwOzLI93mhrmQ9C52MI/wOprBww4bVPpQMKRRvW2fvyvuFd/7lNXV8GCWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWDyjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlAGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -325,6 +350,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQFmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "cxLG6JwECTsUtee6q5/+6vs8y8+AwL1zI2DvJcqdx6Y8zTSwjIcJqVkrOx98zbV7Zue+QPJQ83+jIGndPWsjCw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQFmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAcxLG6JwECTsUtee6q5/+6vs8y8+AwL1zI2DvJcqdx6Y8zTSwjIcJqVkrOx98zbV7Zue+QPJQ83+jIGndPWsjC2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWDyjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlAWZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -504,6 +554,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "sNID02YLiS74DxA0UltRDfz0q3sJ0qLUl40V5LHHeAnCRFf940Js84audYenl8VBtMlGLxF8eg8mFBM3gB7ZAw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZQpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAsNID02YLiS74DxA0UltRDfz0q3sJ0qLUl40V5LHHeAnCRFf940Js84audYenl8VBtMlGLxF8eg8mFBM3gB7ZA2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWDyjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlCmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -679,6 +754,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 42,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRgqZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "qTLG4ISPRP216fsa1H2g4XJBMQFGJd6EeJHNN/v2n9YuekqrcewU+fbbk+fewHk8NtJHMnUFkfbr6lkoUOphDw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRgqZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAqTLG4ISPRP216fsa1H2g4XJBMQFGJd6EeJHNN/v2n9YuekqrcewU+fbbk+fewHk8NtJHMnUFkfbr6lkoUOphD2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD2jY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlGCpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -858,6 +958,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRkD6GZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "7MzqX7f0mOh1RqIjrttQ2WlQiSlkIQOg2jJ3kuzYkMuA4ATp+NXK8cZ3JlocHLgGMQ0hC8jrvTBL1cFteOwLBA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRkD6GZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA7MzqX7f0mOh1RqIjrttQ2WlQiSlkIQOg2jJ3kuzYkMuA4ATp+NXK8cZ3JlocHLgGMQ0hC8jrvTBL1cFteOwLBGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD6jY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlGQPoZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -1033,6 +1158,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000000,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRoAD0JAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "0xPoMObgjawSTVFzs7hHnLMOTkweaDCyaLDZiSQBS6Hn3xBedYq2RFfNTwbCtCXPkAce1hvHqYci5WiTEm/OBw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRoAD0JAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA0xPoMObgjawSTVFzs7hHnLMOTkweaDCyaLDZiSQBS6Hn3xBedYq2RFfNTwbCtCXPkAce1hvHqYci5WiTEm/OB2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlGgAPQkBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -1212,6 +1362,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10000000,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRoAmJaAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "5lAri/uH15mP5+fFfNGCmd7mr9Z6NWV43MABAV2MFckEBRxHyQ2H0rpEs6yrlzXCIDpy7OR5yWveD3173vurCA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRoAmJaAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA5lAri/uH15mP5+fFfNGCmd7mr9Z6NWV43MABAV2MFckEBRxHyQ2H0rpEs6yrlzXCIDpy7OR5yWveD3173vurCGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlGgCYloBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -1387,6 +1562,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "0",
+        "gas": 0
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRv//////////2ZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "HNd39r3Q76Om7aJyiWh92VDQBW3ea4ZYb3ImAraNG6ScPOlOCZGm2+6h/Fk4HLpHeCIiUE6NKrALxDmGl3ZYCg=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcwBmYW1vdW50QGVub25jZRv//////////2ZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAHNd39r3Q76Om7aJyiWh92VDQBW3ea4ZYb3ImAraNG6ScPOlOCZGm2+6h/Fk4HLpHeCIiUE6NKrALxDmGl3ZYCmpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWESjY2ZlZaJjZ2FzAGZhbW91bnRAZW5vbmNlG///////////Zm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -1566,6 +1766,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "+ifzQzuqShMWpZp+mTmWiJK9YenYgbB3IadlJhOybSpGESbsUARUNUMMeR5luzaAdNdLDn5EOAGbPM/jE3FUCA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA+ifzQzuqShMWpZp+mTmWiJK9YenYgbB3IadlJhOybSpGESbsUARUNUMMeR5luzaAdNdLDn5EOAGbPM/jE3FUCGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlAGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -1741,6 +1966,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQFmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "i1XPLgzzRIlgOKpeVUyjmADbOPeretNM/TZU/1YRlijp7+YNw7jZ7hk7/y8q1QRMvsvl9i4ADt59UZR5uXHUBQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQFmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAi1XPLgzzRIlgOKpeVUyjmADbOPeretNM/TZU/1YRlijp7+YNw7jZ7hk7/y8q1QRMvsvl9i4ADt59UZR5uXHUBWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlAWZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -1920,6 +2170,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "nTO/uj95PW3maZeeAdz3tt4y5YAn3uHBIe7tW0W+NzHAxOfGlyUJ1FZQUQ4td+2+Z9wabhp6sGOFHVypepuHAQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZQpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAnTO/uj95PW3maZeeAdz3tt4y5YAn3uHBIe7tW0W+NzHAxOfGlyUJ1FZQUQ4td+2+Z9wabhp6sGOFHVypepuHAWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlCmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -2095,6 +2370,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 42,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRgqZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "kN7ml2oLCeXkDFXpz0m9vkl72Yxn8i69VOV+3TTJTsZEbcrfz1KnyuZsqYNTMcQSX7vPrnlCuK1kgIlOmjCDBQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRgqZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAkN7ml2oLCeXkDFXpz0m9vkl72Yxn8i69VOV+3TTJTsZEbcrfz1KnyuZsqYNTMcQSX7vPrnlCuK1kgIlOmjCDBWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEOjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlGCpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -2274,6 +2574,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRkD6GZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "8xOfPjezFkp444EvZ2644rczShgob5PpnZF1Kwmg+maPEp+QORiqNXJsHO3kwbtzwSNkJS6aKMvGBqM5GwlEBQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRkD6GZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA8xOfPjezFkp444EvZ2644rczShgob5PpnZF1Kwmg+maPEp+QORiqNXJsHO3kwbtzwSNkJS6aKMvGBqM5GwlEBWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWESjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlGQPoZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -2449,6 +2774,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000000,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRoAD0JAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "lktYZgqS2Eh689BXQzfDJ2APfHGd5UkeMEF9sZrX5jrg4vADkJtA72dn0n05qYDEld3kqL5wVV/NQ7fJedouAg=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRoAD0JAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAlktYZgqS2Eh689BXQzfDJ2APfHGd5UkeMEF9sZrX5jrg4vADkJtA72dn0n05qYDEld3kqL5wVV/NQ7fJedouAmpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEajY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlGgAPQkBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -2628,6 +2978,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10000000,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRoAmJaAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "L7MbRc/L4Nky2WvYEHg06BWxGwFBQBLpZ4IKHKHLsqvFdlJkNWkbo42Y2P4qp+Dl7HKpWQc0KbCwJcPiPldaCA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRoAmJaAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAL7MbRc/L4Nky2WvYEHg06BWxGwFBQBLpZ4IKHKHLsqvFdlJkNWkbo42Y2P4qp+Dl7HKpWQc0KbCwJcPiPldaCGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEajY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlGgCYloBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -2803,6 +3178,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "100000000",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRv//////////2ZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "yIAV20XxeDqEC4X7jMTjUwvA+m/y1OdL6lFpMFU8TtKoDjEtLb8LFNTm3bGHFQ80RgxOlUokTME5ij9Esjk8BA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnREBfXhAGVub25jZRv//////////2ZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAyIAV20XxeDqEC4X7jMTjUwvA+m/y1OdL6lFpMFU8TtKoDjEtLb8LFNTm3bGHFQ80RgxOlUokTME5ij9Esjk8BGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEqjY2ZlZaJjZ2FzGQPoZmFtb3VudEQF9eEAZW5vbmNlG///////////Zm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -2982,6 +3382,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlAGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "2Z4qgtxuursmx+qDty5ss54S/YB86AShIISy2ZcWEeoWRwPchqoa9bBiiwojXE9Gz4uMB+h8i97CUZ58zc7fDw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlAGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA2Z4qgtxuursmx+qDty5ss54S/YB86AShIISy2ZcWEeoWRwPchqoa9bBiiwojXE9Gz4uMB+h8i97CUZ58zc7fD2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD6jY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -3157,6 +3582,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlAWZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "vd+STUtJjKJ8GlJJ3UDGoyPUQ7kWZ8YzqUN0mPQxFXxAaECWZs/m/h1PAZx3Oj++bjE2Kxgx1r6DIx7HxcJ9CA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlAWZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAvd+STUtJjKJ8GlJJ3UDGoyPUQ7kWZ8YzqUN0mPQxFXxAaECWZs/m/h1PAZx3Oj++bjE2Kxgx1r6DIx7HxcJ9CGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD6jY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UBZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -3336,6 +3786,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlCmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "/TIUUwcDfH9OorDFUUTs8AYiixNLMrvjidXZtgjOhJPCjJ1RoLhrtv2Lq9wLm8hhCIYkkV+gauRE3RMdzlHpCQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlCmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA/TIUUwcDfH9OorDFUUTs8AYiixNLMrvjidXZtgjOhJPCjJ1RoLhrtv2Lq9wLm8hhCIYkkV+gauRE3RMdzlHpCWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD6jY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UKZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -3511,6 +3986,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 42,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGCpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "FGukgDZtD/3INLeVmjRW/dN6pslp4FMwI9GqWgiArZ4hQLBHHZGnbxJoPFdTpVoSwuV6qEQ8FzzthHCFJ18jBQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGCpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAFGukgDZtD/3INLeVmjRW/dN6pslp4FMwI9GqWgiArZ4hQLBHHZGnbxJoPFdTpVoSwuV6qEQ8FzzthHCFJ18jBWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWD+jY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UYKmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -3690,6 +4190,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGQPoZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "Gxmgt93UNxy1ew/vKUYFYcV7xxCit2NvCT4xDSwEpFa5jiNZ0Jn8FUZdCrNDnfqeNOfY19BrS9AUh2Z0w1eMCA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGQPoZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAGxmgt93UNxy1ew/vKUYFYcV7xxCit2NvCT4xDSwEpFa5jiNZ0Jn8FUZdCrNDnfqeNOfY19BrS9AUh2Z0w1eMCGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UZA+hmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -3865,6 +4390,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000000,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGgAPQkBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "F/Ye29mHJzdaMGX9tkm9y+65pQPmBmw3IKUqAHMU1Z9OyfGMhCpYQO8ogc8NAaMc5qODTsAHlZAszZG+0nvSCg=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGgAPQkBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAF/Ye29mHJzdaMGX9tkm9y+65pQPmBmw3IKUqAHMU1Z9OyfGMhCpYQO8ogc8NAaMc5qODTsAHlZAszZG+0nvSCmpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UaAA9CQGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -4044,6 +4594,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10000000,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGgCYloBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "HcwXuh5sX8mX3lAutkh7ztXnOeP1k7Et/VLrshqsORK+EhLjBjOgKMcej9DDbDGYLj/P/xWWRk1pEry/COQcDg=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlGgCYloBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAHcwXuh5sX8mX3lAutkh7ztXnOeP1k7Et/VLrshqsORK+EhLjBjOgKMcej9DDbDGYLj/P/xWWRk1pEry/COQcDmpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2UaAJiWgGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -4219,6 +4794,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "0",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlG///////////Zm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "+buxBCFGSpCx0aBEonhNrNWwp6XdaDa7V6Bnj6WGUlQuHGWmeQY7b2FbQ/aVjQFh6gIMn54IYJA+nL9mxmJrCA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRAZW5vbmNlG///////////Zm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA+buxBCFGSpCx0aBEonhNrNWwp6XdaDa7V6Bnj6WGUlQuHGWmeQY7b2FbQ/aVjQFh6gIMn54IYJA+nL9mxmJrCGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEajY2ZlZaJjZ2FzGQPoZmFtb3VudEBlbm9uY2Ub//////////9mbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -4398,6 +4998,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 0,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "Ldcx2347oUn3N1dlbiddJEU+7M4eFqwYqGjYeNzdpTetauVgEpRYoUkjdAEdidMTJ8e0hAGybqmZMh9tZxQnAw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhALdcx2347oUn3N1dlbiddJEU+7M4eFqwYqGjYeNzdpTetauVgEpRYoUkjdAEdidMTJ8e0hAGybqmZMh9tZxQnA2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZQBmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -4573,6 +5198,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UBZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "I5kSwpCE+uhOUZrb0zdNkh+JHnH79qE+9IQKbj6vsoLkHt3+AfezTHQrSqFgD2R0qFX9i9g/u9T+R8CH082BAQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UBZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAI5kSwpCE+uhOUZrb0zdNkh+JHnH79qE+9IQKbj6vsoLkHt3+AfezTHQrSqFgD2R0qFX9i9g/u9T+R8CH082BAWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZQFmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -4752,6 +5402,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UKZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "n9NR8KhfKxJdk+3dnNbjAFeDrSPjMrVMGPZ41SL5675j1gMRJKqIjBe5qvS4NXABglPGf6vx6Z8oUl7R4c4UAQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UKZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAn9NR8KhfKxJdk+3dnNbjAFeDrSPjMrVMGPZ41SL5675j1gMRJKqIjBe5qvS4NXABglPGf6vx6Z8oUl7R4c4UAWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWECjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZQpmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -4927,6 +5602,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 42,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UYKmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "4BMjMoGpBtdpH6qK6Gyra5F9xC9oUX7lI+E26P5kkZTw2lf+9+UBAfqwyc8Zv7CQ5gDsR2Cl68Z318SVB80gDQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UYKmZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhA4BMjMoGpBtdpH6qK6Gyra5F9xC9oUX7lI+E26P5kkZTw2lf+9+UBAfqwyc8Zv7CQ5gDsR2Cl68Z318SVB80gDWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEGjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZRgqZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -5106,6 +5806,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UZA+hmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "a2PsVQ7RBPoRl19YzqQyCDiXNeYZkc4KnlPgHeDJJ3jZ+2AZxwx1yH+CrL1Lorr695KQuZwJSP6crVeT4ZEgDQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UZA+hmbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAa2PsVQ7RBPoRl19YzqQyCDiXNeYZkc4KnlPgHeDJJ3jZ+2AZxwx1yH+CrL1Lorr695KQuZwJSP6crVeT4ZEgDWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEKjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZRkD6GZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -5281,6 +6006,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 1000000,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UaAA9CQGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "Rt055hMPG/91/g1iBx0/rmoek2RJY+GCd3j2QV7q/L9Jw/gRbItbmMo2lBGNBPpRiRBTS8v/sjdNqUiRzUo5DA=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UaAA9CQGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhARt055hMPG/91/g1iBx0/rmoek2RJY+GCd3j2QV7q/L9Jw/gRbItbmMo2lBGNBPpRiRBTS8v/sjdNqUiRzUo5DGpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWESjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZRoAD0JAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",
@@ -5460,6 +6210,31 @@
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
   },
   {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 10000000,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UaAJiWgGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "D/o5EbxAaD+C6Y1Vewl8zwOLHqHI73zYDlP8NPUXi+VEYro6rFRXqBJhmJgTEcw5FYWJwjYzt9enMqtA1QzNAQ=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2UaAJiWgGZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAD/o5EbxAaD+C6Y1Vewl8zwOLHqHI73zYDlP8NPUXi+VEYro6rFRXqBJhmJgTEcw5FYWJwjYzt9enMqtA1QzNAWpwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWESjY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZRoAmJaAZm1ldGhvZHgZcmVnaXN0cnkuRGVyZWdpc3RlckVudGl0eQ==",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
+  },
+  {
     "kind": "UnfreezeNode",
     "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
     "tx": {
@@ -5635,6 +6410,31 @@
     "valid": true,
     "signer_private_key": "4TbuYynAAAgCTpZ6w8z54cQdwIFBU1y2rFQ/trocHmrfA1L+8Wv+qrLqgCqAHN6xZQyFkHsLwOcIQPhP80rLow==",
     "signer_public_key": "3wNS/vFr/qqy6oAqgBzesWUMhZB7C8DnCED4T/NKy6M="
+  },
+  {
+    "kind": "DeregisterEntity",
+    "signature_context": "oasis-core/consensus: tx for chain 265bbfc4e631486af2d846e8dfb3aa67ab379e18eb911a056e7ab38e3934a9a5",
+    "tx": {
+      "nonce": 18446744073709551615,
+      "fee": {
+        "amount": "4242",
+        "gas": 1000
+      },
+      "method": "registry.DeregisterEntity",
+      "body": {}
+    },
+    "signed_tx": {
+      "untrusted_raw_value": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2Ub//////////9mbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+      "signature": {
+        "public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE=",
+        "signature": "v92fyIrm52CoHqo1fSUHsF+QiiA6nsfdEO2Fhm1IzNkyxZEEP9g/L5r3Qgba138a2LbVE6FZiq2Q7pwCi+XWAw=="
+      }
+    },
+    "encoded_tx": "o2NmZWWiY2dhcxkD6GZhbW91bnRCEJJlbm9uY2Ub//////////9mbWV0aG9keBlyZWdpc3RyeS5EZXJlZ2lzdGVyRW50aXR5",
+    "encoded_signed_tx": "omlzaWduYXR1cmWiaXNpZ25hdHVyZVhAv92fyIrm52CoHqo1fSUHsF+QiiA6nsfdEO2Fhm1IzNkyxZEEP9g/L5r3Qgba138a2LbVE6FZiq2Q7pwCi+XWA2pwdWJsaWNfa2V5WCCUEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8XN1bnRydXN0ZWRfcmF3X3ZhbHVlWEijY2ZlZaJjZ2FzGQPoZmFtb3VudEIQkmVub25jZRv//////////2ZtZXRob2R4GXJlZ2lzdHJ5LkRlcmVnaXN0ZXJFbnRpdHk=",
+    "valid": true,
+    "signer_private_key": "2yogtxDAN+gJ14URy9cQ3DSIBxZsx17+b0j/Jmv5MK6UEMtWvo2UHFOKAbx2mc2+1JUvUvrgu8hGHrq9NETV8Q==",
+    "signer_public_key": "lBDLVr6NlBxTigG8dpnNvtSVL1L64LvIRh66vTRE1fE="
   },
   {
     "kind": "UnfreezeNode",

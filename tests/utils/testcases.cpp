@@ -323,7 +323,7 @@ namespace utils {
     std::vector<std::string> GenerateExpectedUIOutputForEntity(Json::Value j, uint32_t &itemCount) {
         auto answer = std::vector<std::string>();
 
-        addTo(answer, "{} | Type : Entity signing", itemCount++);
+        addTo(answer, "{} | Sign : Entity", itemCount++);
         auto answerEntity = internalGenerateExpectedUIOutputForEntity(std::move(j), itemCount);
         answer.insert(answer.end(), answerEntity.begin(), answerEntity.end());
 
@@ -477,6 +477,15 @@ namespace utils {
             }
         }
 
+        if (type == "registry.DeregisterEntity") {
+            addTo(answer, "{} | Type : Deregister Entity", itemCount++);
+
+            if (tx.isMember("fee")) {
+                addTo(answer, "{} | Fee : {} {}", itemCount++, COIN_DENOM, FormatAmount(tx["fee"]["amount"].asString()));
+                addTo(answer, "{} | Gas limit : {}", itemCount++, tx["fee"]["gas"].asUInt64());
+            }
+        }
+
         if (type == "governance.CastVote") {
             addTo(answer, "{} | Type : Cast vote", itemCount++);
             addTo(answer, "{} | Proposal ID : {}", itemCount++, txbody["id"].asString());
@@ -515,7 +524,7 @@ namespace utils {
 
         auto entity_meta = j["entity_meta"];
 
-        addTo(answer, "{} | Type : Entity Metadata signing", itemCount++);
+        addTo(answer, "{} | Sign : Entity metadata", itemCount++);
         addTo(answer, "{} | Version : {}", itemCount++, entity_meta["v"].asUInt64());
         addTo(answer, "{} | Serial : {}", itemCount++, entity_meta["serial"].asUInt64());
 
