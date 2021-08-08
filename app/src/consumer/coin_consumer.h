@@ -24,7 +24,8 @@ extern "C" {
 
 #define CLA                  0x05
 
-#define HDPATH_LEN_DEFAULT   5
+#define HDPATH_LEN_DEFAULT     5
+#define HDPATH_LEN_ADR0008     3
 
 #define HDPATH_0_DEFAULT     (0x80000000u | 0x2cu)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
@@ -50,6 +51,7 @@ typedef enum {
 
 #define MENU_MAIN_APP_LINE1 "Oasis"
 #define MENU_MAIN_APP_LINE2 "Ready"
+#define MENU_MAIN_APP_LINE2_SECRET          "???"
 #define APPVERSION_LINE1 "Version"
 #define APPVERSION_LINE2 APPVERSION
 
@@ -66,6 +68,8 @@ typedef enum {
 #define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
+
+#define ENTITY_METADATA_V 1
 
 #ifdef __cplusplus
 }

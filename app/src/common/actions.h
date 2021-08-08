@@ -16,10 +16,15 @@
 #pragma once
 
 #include <stdint.h>
+#include "zxerror.h"
+
+extern uint16_t action_addrResponseLen;
 
 void app_sign();
 
-uint8_t app_fill_address();
+zxerr_t app_fill_address();
+
+void app_reject();
 
 void app_reply_address();
 

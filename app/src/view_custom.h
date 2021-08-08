@@ -17,6 +17,7 @@
 #pragma once
 
 #if defined(APP_VALIDATOR)
-void view_status_show();
+    void view_status_show();
+    void view_sign_show();
 #endif
 
