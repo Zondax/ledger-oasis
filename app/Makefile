@@ -52,7 +52,7 @@ endif
 
 APPVERSION_M=2
 APPVERSION_N=3
-APPVERSION_P=0
+APPVERSION_P=1
 
 $(info COIN  = [$(COIN)])
 ifeq ($(COIN),oasis)
