@@ -37,6 +37,7 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
         return zxerr_invalid_crypto_settings;
     }
 
+    zxerr_t err = zxerr_ok;
     BEGIN_TRY
     {
         TRY {
@@ -60,10 +61,18 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
             cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey);
             cx_ecfp_init_public_key(CX_CURVE_Ed25519, NULL, 0, &cx_publicKey);
             cx_ecfp_generate_pair(CX_CURVE_Ed25519, &cx_publicKey, &cx_privateKey, 1);
+
+            // Format pubkey
+            for (int i = 0; i < 32; i++) {
+                pubKey[i] = cx_publicKey.W[64 - i];
+            }
+
+            if ((cx_publicKey.W[32] & 1) != 0) {
+                pubKey[31] |= 0x80;
+            }
         }
-        CATCH_OTHER(e) {
-            CLOSE_TRY;
-            return zxerr_ledger_api_error;
+        CATCH_ALL {
+            err = zxerr_ledger_api_error;
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
@@ -72,16 +81,7 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
     }
     END_TRY;
 
-    // Format pubkey
-    for (int i = 0; i < 32; i++) {
-        pubKey[i] = cx_publicKey.W[64 - i];
-    }
-
-    if ((cx_publicKey.W[32] & 1) != 0) {
-        pubKey[31] |= 0x80;
-    }
-
-    return zxerr_ok;
+    return err;
 }
 
 zxerr_t crypto_sign(uint8_t *signature,
@@ -96,6 +96,8 @@ zxerr_t crypto_sign(uint8_t *signature,
     uint8_t privateKeyData[32];
     int signatureLength;
     unsigned int info = 0;
+
+    zxerr_t err = zxerr_ok;
 
     BEGIN_TRY
     {
@@ -129,6 +131,10 @@ zxerr_t crypto_sign(uint8_t *signature,
                                             signature,
                                             signatureMaxlen,
                                             &info);
+            *sigSize = signatureLength;
+        }
+        CATCH_ALL {
+            err = zxerr_ledger_api_error;
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
@@ -137,8 +143,7 @@ zxerr_t crypto_sign(uint8_t *signature,
     }
     END_TRY;
 
-    *sigSize = signatureLength;
-    return zxerr_ok;
+    return err;
 }
 
 #define CX_SHA512_SIZE 64
