@@ -226,4 +226,8 @@ dep/%.d: %.c Makefile
 
 .PHONY: listvariants
 listvariants:
+ifneq ($(TARGET_NAME),TARGET_NANOX)
 	@echo VARIANTS COIN oasis oasis_validator
+else
+	@echo VARIANTS COIN oasis
+endif
