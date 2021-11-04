@@ -19,6 +19,7 @@
 
 #include "os.h"
 #include "cx.h"
+#include "os_io_seproxyhal.h"
 
 #define MEMCPY_NV nvm_write
 
@@ -35,7 +36,6 @@
     #define MEMZERO explicit_bzero
 #else
     #include "ux.h"
-    #include "os_io_seproxyhal.h"
     #define NV_CONST
     #define NV_VOLATILE
     #define IS_UX_ALLOWED (G_ux_params.len != BOLOS_UX_IGNORE && G_ux_params.len != BOLOS_UX_CONTINUE)
