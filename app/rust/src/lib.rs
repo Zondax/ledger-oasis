@@ -23,6 +23,5 @@ mod tests {
     use crate::*;
 
     #[test]
-    fn test_helloworld() {
-    }
+    fn test_helloworld() {}
 }
