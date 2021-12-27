@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <zxmacros.h>
 #include <zxerror.h>
+#include <zxformat.h>
 #include <bech32.h>
 #include <base64.h>
 #include "parser_impl_con.h"
