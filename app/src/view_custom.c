@@ -21,6 +21,7 @@
 #include "view_internal.h"
 #include <os_io_seproxyhal.h>
 #include <ux.h>
+#include <zxformat.h>
 
 #include <string.h>
 #include <stdio.h>
