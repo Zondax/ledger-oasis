@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <zxmacros.h>
+#include <zxformat.h>
 #include <bech32.h>
 #include <stdbool.h>
 #include "parser_impl_val.h"
