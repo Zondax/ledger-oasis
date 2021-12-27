@@ -31,6 +31,8 @@
 #include "app_mode.h"
 #include "zxerror.h"
 
+#include "os_io_seproxyhal.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
