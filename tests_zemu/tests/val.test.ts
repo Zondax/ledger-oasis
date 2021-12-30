@@ -14,19 +14,12 @@ const sim_options = {
     startDelay: 3000,
     custom: `-s "${APP_SEED}"`,
     X11: false,
-    model: "nanos"
+    model: "nanos",
+    startText: 'Validator'
 };
 const VOTE_SLEEP = 500;
 
 jest.setTimeout(30000)
-
-function compareSnapshots(snapshotPrefixTmp: string, snapshotPrefixGolden: string, snapshotCount: number) {
-    for (let i = 0; i < snapshotCount; i++) {
-        const img1 = Zemu.LoadPng2RGB(`${snapshotPrefixTmp}${i}.png`);
-        const img2 = Zemu.LoadPng2RGB(`${snapshotPrefixGolden}${i}.png`);
-        expect(img1).toEqual(img2);
-    }
-}
 
 describe('Validator', function () {
     it('can start and stop container', async function () {

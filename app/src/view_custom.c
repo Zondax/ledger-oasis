@@ -21,6 +21,7 @@
 #include "view_internal.h"
 #include <os_io_seproxyhal.h>
 #include <ux.h>
+#include <zxformat.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -52,6 +53,8 @@ static unsigned int view_status_button(
         unsigned int button_mask,
         unsigned int button_mask_counter) {
     // Ignore buttons
+    UNUSED(button_mask);
+    UNUSED(button_mask_counter);
     return 0;
 }
 

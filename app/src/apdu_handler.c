@@ -22,6 +22,7 @@
 #include <ux.h>
 
 #include "view.h"
+#include "view_custom.h"
 #include "actions.h"
 #include "tx.h"
 #include "addr.h"

@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <zxmacros.h>
+#include <zxformat.h>
 #include <bech32.h>
 #include <stdbool.h>
 #include "parser_impl_val.h"
@@ -263,7 +264,7 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-
+    UNUSED(ctx);
     if(parser_tx_obj.type == nodeType) {
         //We don't validate anything, for now
         return parser_ok;
@@ -299,7 +300,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
 }
 
 parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
-
+    UNUSED(ctx);
     if(vote_state.isInitialized) {
         *num_items = 0;
         return parser_ok;
@@ -315,6 +316,8 @@ __Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
                                            char *outKey, uint16_t outKeyLen,
                                            char *outVal, uint16_t outValLen,
                                            uint8_t pageIdx, uint8_t *pageCount) {
+    UNUSED(ctx);
+    UNUSED(pageIdx);
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
         const char *type;

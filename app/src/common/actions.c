@@ -107,6 +107,9 @@ zxerr_t app_fill_address() {
 
 void app_reply_address() {
     zxerr_t zxerr = app_fill_address();
+    if (zxerr != zxerr_ok) {
+        THROW(APDU_CODE_DATA_INVALID);
+    }
     set_code(G_io_apdu_buffer, action_addrResponseLen, APDU_CODE_OK);
     io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, action_addrResponseLen + 2);
 }
