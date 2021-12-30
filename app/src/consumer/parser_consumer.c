@@ -31,6 +31,10 @@
 #if defined(TARGET_NANOX)
 // For some reason NanoX requires this function
 void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
+    UNUSED(assertion);
+    UNUSED(file);
+    UNUSED(line);
+    UNUSED(function);
     while(1) {};
 }
 #endif

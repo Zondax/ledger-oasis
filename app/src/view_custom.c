@@ -53,6 +53,8 @@ static unsigned int view_status_button(
         unsigned int button_mask,
         unsigned int button_mask_counter) {
     // Ignore buttons
+    UNUSED(button_mask);
+    UNUSED(button_mask_counter);
     return 0;
 }
 

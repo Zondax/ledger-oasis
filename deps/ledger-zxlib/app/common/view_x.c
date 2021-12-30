@@ -236,6 +236,7 @@ void h_secret_click() {
 //////////////////////////
 
 void view_idle_show_impl(uint8_t item_idx, char *statusString) {
+    UNUSED(item_idx);
     if (statusString == NULL ) {
         if (app_mode_secret()) {
             snprintf(viewdata.key, MAX_CHARS_PER_KEY_LINE, "%s", MENU_MAIN_APP_LINE2_SECRET);
