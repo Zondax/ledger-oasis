@@ -25,6 +25,7 @@ typedef struct {
     std::string signature_context;
     std::string encoded_tx;
     bool valid;
+    bool valid_tx;
     std::vector<std::string> expected_ui_output;
 } testcaseData_t;
 

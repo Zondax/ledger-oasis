@@ -24,27 +24,35 @@
 #include <bech32.h>
 
 uint32_t hdPath[HDPATH_LEN_DEFAULT];
+uint8_t hdPathLen;
 
 #include "cx.h"
 
-void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
+zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
     cx_ecfp_public_key_t cx_publicKey;
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];
 
     if (pubKeyLen < PK_LEN_ED25519) {
-        return;
+        return zxerr_invalid_crypto_settings;
     }
 
+    zxerr_t err = zxerr_ok;
     BEGIN_TRY
     {
         TRY {
+
+            int mode = HDW_NORMAL;
+            if(hdPathLen == HDPATH_LEN_ADR0008){
+                mode = HDW_ED25519_SLIP10;
+            }
+
             // Generate keys
             os_perso_derive_node_bip32_seed_key(
-                    HDW_NORMAL,
+                    mode,
                     CX_CURVE_Ed25519,
                     path,
-                    HDPATH_LEN_DEFAULT,
+                    hdPathLen,
                     privateKeyData,
                     NULL,
                     NULL,
@@ -53,6 +61,18 @@ void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *p
             cx_ecfp_init_private_key(CX_CURVE_Ed25519, privateKeyData, 32, &cx_privateKey);
             cx_ecfp_init_public_key(CX_CURVE_Ed25519, NULL, 0, &cx_publicKey);
             cx_ecfp_generate_pair(CX_CURVE_Ed25519, &cx_publicKey, &cx_privateKey, 1);
+
+            // Format pubkey
+            for (int i = 0; i < 32; i++) {
+                pubKey[i] = cx_publicKey.W[64 - i];
+            }
+
+            if ((cx_publicKey.W[32] & 1) != 0) {
+                pubKey[31] |= 0x80;
+            }
+        }
+        CATCH_ALL {
+            err = zxerr_ledger_api_error;
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
@@ -61,20 +81,14 @@ void crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *p
     }
     END_TRY;
 
-    // Format pubkey
-    for (int i = 0; i < 32; i++) {
-        pubKey[i] = cx_publicKey.W[64 - i];
-    }
-
-    if ((cx_publicKey.W[32] & 1) != 0) {
-        pubKey[31] |= 0x80;
-    }
+    return err;
 }
 
-uint16_t crypto_sign(uint8_t *signature,
+zxerr_t crypto_sign(uint8_t *signature,
                      uint16_t signatureMaxlen,
                      const uint8_t *message,
-                     uint16_t messageLen) {
+                     uint16_t messageLen,
+                    uint16_t *sigSize) {
     uint8_t messageDigest[CX_SHA512_SIZE];
     SHA512_256(message, messageLen, messageDigest);
 
@@ -83,16 +97,23 @@ uint16_t crypto_sign(uint8_t *signature,
     int signatureLength;
     unsigned int info = 0;
 
+    zxerr_t err = zxerr_ok;
+
     BEGIN_TRY
     {
         TRY
         {
+
+            int mode = HDW_NORMAL;
+            if(hdPathLen == HDPATH_LEN_ADR0008){
+                mode = HDW_ED25519_SLIP10;
+            }
             // Generate keys
             os_perso_derive_node_bip32_seed_key(
-                    HDW_NORMAL,
+                    mode,
                     CX_CURVE_Ed25519,
                     hdPath,
-                    HDPATH_LEN_DEFAULT,
+                    hdPathLen,
                     privateKeyData,
                     NULL,
                     NULL,
@@ -110,6 +131,10 @@ uint16_t crypto_sign(uint8_t *signature,
                                             signature,
                                             signatureMaxlen,
                                             &info);
+            *sigSize = signatureLength;
+        }
+        CATCH_ALL {
+            err = zxerr_ledger_api_error;
         }
         FINALLY {
             MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
@@ -118,7 +143,7 @@ uint16_t crypto_sign(uint8_t *signature,
     }
     END_TRY;
 
-    return signatureLength;
+    return err;
 }
 
 #define CX_SHA512_SIZE 64
@@ -160,10 +185,12 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     return strlen(addr_out);
 }
 
-uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
+zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
     if (buffer_len < PK_LEN_ED25519 + 50) {
         return 0;
     }
+    MEMZERO(buffer, buffer_len);
+
     crypto_extractPublicKey(hdPath, buffer, buffer_len);
 
     // format pubkey as oasis bech32 address
@@ -171,5 +198,6 @@ uint16_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len) {
     const uint16_t addr_out_max =  buffer_len - PK_LEN_ED25519;
     const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
 
-    return PK_LEN_ED25519 + addr_out_len;
+    *addrLen = PK_LEN_ED25519 + addr_out_len;
+    return zxerr_ok;
 }

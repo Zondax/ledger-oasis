@@ -4,40 +4,46 @@
   "license": "Apache-2.0",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest -f ./tests/test.js --detectOpenHandles",
-    "test_val": "jest -f ./tests/val.test.js --detectOpenHandles"
-  },
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Zondax/ledger-oasis"
   },
   "keywords": [
-    "zondax"
+    "Zondax",
+    "Ledger"
   ],
+  "scripts": {
+    "test_all": "jest",
+    "test": "jest -t 'Standard'",
+    "testadr0008-5": "jest -t 'Standard-Adr0008-5'",
+    "testadr0008-0": "jest -t 'Standard-Adr0008-0'",
+    "testadr0008-0-oasis": "jest -t 'Standard-Adr0008-0-Oasis'",
+    "testval": "jest -t 'Validator'"
+  },
   "dependencies": {
     "@zondax/ledger-oasis": "file:../js",
-    "@zondax/zemu": "^0.7.0"
+    "@zondax/zemu": "^0.21.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/node": "^7.10.5",
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "26.3.0",
-    "crypto-js": "4.0.0",
+    "@types/jest": "^26.0.24",
+    "@types/ledgerhq__hw-transport": "^4.21.4",
+    "@types/secp256k1": "^4.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "blakejs": "^1.1.1",
+    "crypto-js": "4.1.1",
     "ed25519-supercop": "^2.0.1",
-    "eslint": "^7.8.1",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^24.0.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "26.4.2",
-    "jest-serial-runner": "^1.1.0",
-    "js-sha512": "^0.8.0"
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
+    "js-sha512": "^0.8.0",
+    "prettier": "^2.0.4",
+    "secp256k1": "^4.0.2",
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.3.5"
   }
 }
