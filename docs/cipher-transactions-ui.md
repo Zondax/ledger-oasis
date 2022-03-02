@@ -12,22 +12,38 @@ with few additions.
 
 ### Deposit
 
-Deposit is always performed to `oasis1` account on ParaTime but the UI must
-also support showing Ethereum's `0x` address. In this case, the `0x` address
-is submitted to Ledger and it needs to perform translation to `oasis1` address
-in order to sign the transaction(s).
+Deposit operation consists of two transactions: the allowance transaction which
+permits the ParaTime to move the tokens from the user's account to the ParaTime
+address; and the actual deposit transaction.
 
 ```ledger
-|     Type     > | <   To (1/1)  > | <   Amount    > | <     Fee     > | <  Gas limit  > | < ParaTime ID (1/1) > | <             > | <               |
-|   Deposit      | <OASIS1 OR 0x   | <AMOUNT IN      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     <RUNTIME ID>      |     APPROVE     |      REJECT     |
-|                |  ADDRESS>       |  ROSE> ROSE     |  ROSE           |                 |                       |                 |                 |
+|     Type     > | <   To (1/1)   > | <   Amount    > | <     Fee     > | <  Gas limit  > | < Genesis Hash (1/1) > | <             > | <               |
+|   Allowance    | <RUNTIME OASIS1  |  <AMOUNT IN     |  <FEE IN ROSE>  |   <GAS LIMIT>   |     <GENESIS HASH>     |     APPROVE     |      REJECT     |
+|                |    ADDRESS>      |   ROSE> ROSE    |  ROSE           |                 |                        |                 |                 |
 ```
 
+The deposit transaction is always performed to `oasis1` account on the
+ParaTime. However, because we also run an EVM-compatible ParaTime, the ethereum-
+style `0x`addresses are common there. To help dApps developers to overcome this,
+we use a [mapping function] from `0x` to the corresponding `oasis1` address.
+This way, the end user can generate their address with an ECDSA keypair and all
+the apps will show their Ethereum's address. In the background however, the
+tokens are always transferred to the corresponding `oasis1` address. Ledger
+should also take a similar approach and use the `0x` address as a base and show
+it to the user, but then perform a translation to `oasis1` address in the
+background in order to sign the transaction(s).
+
+```ledger
+|     Type     > | <   To (1/1)  > | <   Amount    > | < ParaTime ID (1/1) > | <     Fee     > | <  Gas limit  > | <             > | <               |
+|   Deposit      | <OASIS1 OR 0x   | <AMOUNT IN      |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
+|                |  ADDRESS>       |  ROSE> ROSE     |                       |  ROSE           |                 |                 |                 |
+```
+
+[mapping function]: https://github.com/oasisprotocol/oasis-sdk/blob/e566b326ab1c34f3d811b50f96c53c3a79a91826/client-sdk/go/types/address.go#L125-L149
 ### Withdrawal
 
-Withdrawal is always performed to `oasis1` address, but can be signed with
-either `ECDSA` ("Ethereum") or `ed25519` key. This detail is hidden from the
-user.
+Withdrawal is always performed to `oasis1` address, but **can be signed with
+either `ECDSA` ("Ethereum") or `ed25519` key!**
 
 ```ledger
 |     Type     > | <    To (1/1)  > | <   Amount    > | <     Fee     > | <  Gas limit  > | < Genesis Hash (1/1) > | <             > | <               |
@@ -45,12 +61,15 @@ In contrast to EVM, deploying to Cipher is a two-step process. First, the code
 is uploaded:
 
 ```ledger
-| Review Contract > | < Signature (1/1) | < ParaTime ID (1/1) > | <     Fee     > | <  Gas limit  > | <             > | <               |
-|     Upload        |    <CONTRACT      |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
-|                   |     SIGNATURE>    |                       |   ROSE          |                 |                 |                 |
+| Review Contract > | < Contract hash (1/1) | < ParaTime ID (1/1) > | <     Fee     > | <  Gas limit  > | <             > | <               |
+|     Upload        |    <CONTRACT HASH>    |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
+|                   |                       |                       |   ROSE          |                 |                 |                 |
 ```
 
-This returns a `CODE ID` which we use to instantiate the actual smart contract.
+`CONTRACT HASH` is a sha256 sum of the WASM-compiled smart contract file.
+
+The transaction returns a `CODE ID` which we use to instantiate the actual
+smart contract next.
 
 ```ledger
 |  Review Contract > | < Code ID (1/1) > | < ParaTime ID (1/1) > |  <     Fee     > | <  Gas limit  > | <             > | <               |
@@ -133,3 +152,10 @@ on testnet Cipher the Ledger screens would be the following:
 1. The proposed UI favors ParaTime ID instead of the Genesis root hash. This
    is because the ParaTime ID is more common (e.g. on the block explorer,
    network parameters page). Is this fine?
+2. The underlying transaction for making a Deposit to a ParaTime is actually of
+   type `Withdraw`, because the ParaTime "withdraws" tokens from the user's
+   consensus address to the ParaTime. How do we discriminate between ParaTime's
+   withdraw which is actually a deposit and any other general consensus
+   withdraw transactions?
+3. Deposit requires two transactions (allowance + deposit). Could we unify the
+   UI on Ledger to sign both transactions with a single user intervention?
