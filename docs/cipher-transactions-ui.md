@@ -40,6 +40,7 @@ background in order to sign the transaction(s).
 ```
 
 [mapping function]: https://github.com/oasisprotocol/oasis-sdk/blob/e566b326ab1c34f3d811b50f96c53c3a79a91826/client-sdk/go/types/address.go#L125-L149
+
 ### Withdrawal
 
 Withdrawal is always performed to `oasis1` address, but **can be signed with
@@ -51,7 +52,32 @@ either `ECDSA` ("Ethereum") or `ed25519` key!**
 |                |                  |   ROSE> ROSE    |  ROSE           |                 |                        |                 |                 |
 ```
 
-### TODO: Example
+### Example
+
+User wants to make allowance and deposit 100 ROSE to
+`0x90adE3B7065fa715c7a150313877dF1d33e777D5` account on emerald ParaTime on the
+Mainnet.
+
+```ledger
+|     Type     > | <   To (1/2)   > | <   To (2/2)   > | <   Amount    > | <     Fee     > | <  Gas limit  > | < Genesis Hash (1/2) > | < Genesis Hash (2/2) > | <             > | <              |
+|   Allowance    | oasis1qrnu9yhwza | 86hwhycchkhvt8   |  +100.00 ROSE   |     0.0 ROSE    |      1278       | 53852332637bacb61b91b6 | c3f82448438826f23898   |     APPROVE     |     REJECT     |
+|                | p7rqh6tdcdcpz0zf |                  |                 |                 |                 | 411ab4095168ba02a50be4 |                        |                 |                |
+```
+
+```ledger
+|     Type     > | <   To (1/2)  > | <    To (2/2)   > | <   Amount    > | < ParaTime ID (1/2) > | < ParaTime ID (2/2) > | <     Fee     > | <  Gas limit  > | <             > | <               |
+|   Deposit      | 0x90adE3B7065fa | dF1d33e777D5      |   100.00 ROSE   | 000000000000000000000 | 000000e2eaa99fc008f87 |    0.00 ROSE    |      11286      |     APPROVE     |      REJECT     |
+|                | 715c7a150313877 |                   |                 | 000000000000000000000 | f                     |                 |                 |                 |                 |
+```
+
+Then, user wants to withdraw the same amount of tokens (minus the fee) back to
+the Mainnet.
+
+```ledger
+|     Type     > | <    To (1/2)  > | <    To (2/2)   > | <   Amount    > | <     Fee     > | <  Gas limit  > | < Genesis Hash (1/2) > | < Genesis Hash (2/2) > | <             > | <               |
+|   Withdraw     | oasis1qrec770vre | 504k68svq7kzve    |  99.99985 ROSE  |   0.00015 ROSE  |      11286      | 53852332637bacb61b91b6 | c3f82448438826f23898   |     APPROVE     |      REJECT     |
+|                | k0a9a5lcrv0zvt22 |                   |                 |                 |                 | 411ab4095168ba02a50be4 |                        |                 |                 |
+```
 
 ## Smart contract transactions on Cipher
 
@@ -130,9 +156,9 @@ To upload, instantiate and execute the [hello world example](https://docs.oasis.
 on testnet Cipher the Ledger screens would be the following:
 
 ```ledger
-| Review Contract > | < Signature (1/2) > | < Signature (2/2) > | < ParaTime ID (1/2) > | < ParaTime ID (2/2) > | <    Fee    > | <  Gas limit  > | <             > | <               |
-|     Upload        | MJ2XCjkj132C9YWpDUS | wE1Bg=              | 000000000000000000000 | 000000000000000000000 |   0.0 ROSE    |     182343      |     APPROVE     |      REJECT     |
-|                   | QFjkCTI8bSw8bi0w9Ew |                     | 000000000000000000000 | 0                     |               |                 |                 |                 |
+| Review Contract > | < Contract hash (1/2) > | < Contract hash (2/2) > | < ParaTime ID (1/2) > | < ParaTime ID (2/2) > | <    Fee    > | <  Gas limit  > | <             > | <               |
+|     Upload        | a8fc73270dff2bbd2bc7a15 | 6b69847e90b782e781      | 000000000000000000000 | 000000000000000000000 |   0.0 ROSE    |     182343      |     APPROVE     |      REJECT     |
+|                   | cf4c1ec6375e6deefc5f2d5 |                         | 000000000000000000000 | 0                     |               |                 |                 |                 |
 ```
 
 ```ledger
@@ -159,3 +185,9 @@ on testnet Cipher the Ledger screens would be the following:
    withdraw transactions?
 3. Deposit requires two transactions (allowance + deposit). Could we unify the
    UI on Ledger to sign both transactions with a single user intervention?
+4. Is the memory size on Ledger sufficient to decode the original CBOR
+   transaction, decouple smart contract call arguments in JSON and build a menu
+   tree to walk through the function arguments recursively?
+5. For the Allowance transaction, how can user check, if the show ParaTime
+   wallet address is the real ParaTime wallet address? This information is not
+   shown on the Network Parameters page.
