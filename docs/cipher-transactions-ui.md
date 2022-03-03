@@ -1,9 +1,9 @@
 # Design doc: UI for signing ParaTime transactions
 
-This document proposes UI on the Ledger devices for:
-1. signing deposit/withdrawal ROSE transaction to/from ParaTime
-2. deploying smart contracts on Cipher
-3. executing smart contract transaction on Cipher
+This document proposes UI/UX on the Ledger devices for:
+1. signing deposit/withdrawal ROSE transaction to/from ParaTime,
+2. signing the smart contract upload, instantiate and call transaction on
+   Cipher ParaTime.
 
 ## Signing deposit/withdrawal ROSE to/from ParaTime
 
@@ -35,7 +35,7 @@ background in order to sign the transaction(s).
 
 ```ledger
 |     Type     > | <   To (1/1)  > | <   Amount    > | < ParaTime ID (1/1) > | <     Fee     > | <  Gas limit  > | <             > | <               |
-|   Deposit      | <OASIS1 OR 0x   | <AMOUNT IN      |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
+|    Deposit     | <OASIS1 OR 0x   | <AMOUNT IN      |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
 |                |  ADDRESS>       |  ROSE> ROSE     |                       |  ROSE           |                 |                 |                 |
 ```
 
@@ -43,14 +43,20 @@ background in order to sign the transaction(s).
 
 ### Withdrawal
 
-Withdrawal is always performed to `oasis1` address, but **can be signed with
-either `ECDSA` ("Ethereum") or `ed25519` key!**
+Withdrawal is always performed to `oasis1` address, but **can be signed either
+with `Secp256k1` ("Ethereum") or `ed25519` key!** The Secp256k1 key is derived
+from the standard Ethereum [BIP44] path and the ed25519 key from the Oasis
+[ADR8] path. User chooses the account to sign the transaction with
+beforehand.
 
 ```ledger
 |     Type     > | <    To (1/1)  > | <   Amount    > | <     Fee     > | <  Gas limit  > | < Genesis Hash (1/1) > | <             > | <               |
 |   Withdraw     | <OASIS1 ADDRESS> |  <AMOUNT IN     |  <FEE IN ROSE>  |   <GAS LIMIT>   |     <GENESIS HASH>     |     APPROVE     |      REJECT     |
 |                |                  |   ROSE> ROSE    |  ROSE           |                 |                        |                 |                 |
 ```
+
+[BIP44]: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+[ADR8]: https://github.com/oasisprotocol/oasis-core/blob/master/docs/adr/0008-standard-account-key-generation.md
 
 ### Example
 
@@ -83,8 +89,8 @@ the Mainnet.
 
 ### Deploying smart contracts on Cipher
 
-In contrast to EVM, deploying to Cipher is a two-step process. First, the code
-is uploaded:
+Deploying smart contractss to Cipher is done in two steps. First, the code is
+uploaded:
 
 ```ledger
 | Review Contract > | < Contract hash (1/1) | < ParaTime ID (1/1) > | <     Fee     > | <  Gas limit  > | <             > | <               |
@@ -92,7 +98,11 @@ is uploaded:
 |                   |                       |                       |   ROSE          |                 |                 |                 |
 ```
 
-`CONTRACT HASH` is a sha256 sum of the WASM-compiled smart contract file.
+`CONTRACT HASH` is a hash computed on Ledger of the complete WASM contract. The
+user compares this hash to the hash they compute separately e.g. by running
+`sha256sum my_contract.wasm`. `RUNTIME ID` is a ParaTime ID (determines Cipher,
+Emerald, Mainnet, Testnet etc.) and a user can compare it to the one from the
+Oasis Docs [Network parameters] page.
 
 The transaction returns a `CODE ID` which we use to instantiate the actual
 smart contract next.
@@ -104,6 +114,8 @@ smart contract next.
 ```
 
 When deploying a smart contract the `INSTANCE ID` is obtained.
+
+[Network parameters]: https://docs.oasis.dev/general/oasis-network/network-parameters
 
 ### Executing smart contract transaction on Cipher
 
@@ -191,3 +203,8 @@ on testnet Cipher the Ledger screens would be the following:
 5. For the Allowance transaction, how can user check, if the show ParaTime
    wallet address is the real ParaTime wallet address? This information is not
    shown on the Network Parameters page.
+6. Currently we never show infromation where are tokens send/deposited/withdrawn
+   **from**. This seems to be common in other projects as well (e.g. Metamask).
+   Should we add:
+   - the source address for all transactions,
+   - the source genesis hash or ParaTime ID for all cross-chain transactions?
