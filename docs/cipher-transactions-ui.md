@@ -32,8 +32,9 @@ variant:
 - `oasis1qzvlg0grjxwgjj58tx2xvmv26era6t2csqn22pte`: `Emerald (Mainnet)`
 - `oasis1qr629x0tg9gm5fyhedgs9lw5eh3d8ycdnsxf0run`: `Emerald (Testnet)`
 
-The addresses above can be hardcoded into Oasis App. To learn more about
-how the addresses above were derived, check the [staking document].
+The addresses above can be hardcoded into Oasis Ledger App. They were
+derived from the ParaTime ID using the scheme described in the [staking
+document].
 
 The second transaction is the deposit transaction.
 
@@ -230,13 +231,16 @@ on testnet Cipher the Ledger screens would be the following:
    ParaTime transactions. Is this sufficient security-wise? Is there a threat
    that someone registers a ParaTime with the same ID on a different network
    and consumes users' tokens this way?
-2. (Ledger) Currently, we never show information where are tokens send/deposited/withdrawn
-   **from**. Why is this so common on Ledger (e.g. Metamask)? Isn't there a
-   security issue, that the app picks a wrong account ID to send the tokens?
+2. (Ledger) Currently, we never show information where the tokens were
+   sent/deposited/withdrawn **from**. This is the same in Ethereum Ledger App.
+   Isn't there a security issue, that the app could pick a wrong account ID to
+   send the tokens and the user wouldn't know it?
    Should we add:
-   - the from address for all transactions,
+   - the from address for all Oasis transactions,
    - the originating genesis hash and ParaTime ID for all cross-chain transactions?
-3. (Ledger) ParaTime Deposit requires two transactions (allowance + deposit).
+4. (Ledger) ParaTime Deposit requires two transactions (allowance + deposit).
    Could we simplify the UI on Ledger by batching them and signing them both in
    a single user intervention? Or is double-click mandatory to access the Ledger's
    private key each time?
+5. (Ledger) Would there be any issues with Ledger when parsing JSON to
+   recursively build a UI for browsing the function arguments?
