@@ -150,8 +150,9 @@ when this is possible.
 Where `SMART CONTRACT FUNCTION NAME` is a function name without information on
 argument count, types and names.
 
-One Argument screen `Argument 1`, `Argument 2`, ..., `Argument N`
-exists for each function argument. `ARGUMENT VALUE` in each argument screen
+Function arguments are sent in CBOR format to Ledger. To represent those to the
+user, there should be one Argument screen `Argument 1`, `Argument 2`, ...,
+`Argument N` for each function argument. `ARGUMENT VALUE` on each screen
 represents standard JSON values:
 - string
 - number (integer, float)
@@ -242,5 +243,5 @@ on testnet Cipher the Ledger screens would be the following:
    Could we simplify the UI on Ledger by batching them and signing them both in
    a single user intervention? Or is double-click mandatory to access the Ledger's
    private key each time?
-5. (Ledger) Would there be any issues with Ledger when parsing JSON to
+5. (Ledger) Would there be any issues with Ledger when parsing CBOR to
    recursively build a UI for browsing the function arguments?
