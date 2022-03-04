@@ -1,3 +1,5 @@
+TODO: Move to gist.
+
 # Design doc: UI for signing ParaTime transactions
 
 This document proposes UI/UX on the Ledger devices for:
@@ -11,6 +13,9 @@ The UI behaves similar to the existing interface for regular ROSE transfers
 with few additions.
 
 ### Deposit
+
+TODO: In the future, "roothash submit message" transaction will replace allowance+deposit tranasction.
+See incoming messages oasis-core ADR.
 
 Deposit operation consists of two transactions. First, we submit the allowance
 transaction which permits the ParaTime to move the tokens from the user's
@@ -105,6 +110,15 @@ the Mainnet.
 
 ## Smart contract transactions on Cipher
 
+TODO: This is not actually Cipher-related, but these are general Oasis ParaTime SDK calls. See
+https://github.com/oasisprotocol/oasis-sdk/blob/main/runtime-sdk/src/types/transaction.rs
+
+TODO: Add contract upgrade transaction.
+
+TODO: Could we make a generic UI for any ParaTime transaction (npr. governance, delete) so
+in the future we wouldn't need to release new version of Oasis Ledger App for each new
+ParaTime transaction?
+
 ### Deploying smart contracts on Cipher
 
 Deploying smart contracts to Cipher is done in two steps. First, the code is
@@ -115,6 +129,12 @@ uploaded:
 |     Upload        |    <CONTRACT HASH>    |     <RUNTIME ID>      |  <FEE IN ROSE>  |   <GAS LIMIT>   |     APPROVE     |      REJECT     |
 |                   |                       |                       |   ROSE          |                 |                 |                 |
 ```
+
+TODO: Signing complete smart contract probably won't work in practice (500kB+ size).
+Maybe in the future, if only the root hash of the wasm contract would be contained
+in the transaction (and signed), this could work (ethereum 2.x does it like this).
+Let's ditch contract upload signing on Ledger for now and call it officially
+unsupported.
 
 `CONTRACT HASH` is a hash of the WASM contract file. The purpose of this hash
 is that the user can check whether the correct file is being signed. It can be
@@ -232,6 +252,7 @@ on testnet Cipher the Ledger screens would be the following:
    ParaTime transactions. Is this sufficient security-wise? Is there a threat
    that someone registers a ParaTime with the same ID on a different network
    and consumes users' tokens this way?
+   1. => NO, genesis should be shown
 2. (Ledger) Currently, we never show information where the tokens were
    sent/deposited/withdrawn **from**. This is the same in Ethereum Ledger App.
    Isn't there a security issue, that the app could pick a wrong account ID to
@@ -239,9 +260,19 @@ on testnet Cipher the Ledger screens would be the following:
    Should we add:
    - the from address for all Oasis transactions,
    - the originating genesis hash and ParaTime ID for all cross-chain transactions?
-4. (Ledger) ParaTime Deposit requires two transactions (allowance + deposit).
+3. (Ledger) ParaTime Deposit requires two transactions (allowance + deposit).
    Could we simplify the UI on Ledger by batching them and signing them both in
    a single user intervention? Or is double-click mandatory to access the Ledger's
    private key each time?
-5. (Ledger) Would there be any issues with Ledger when parsing CBOR to
+4. (Ledger) Would there be any issues with Ledger when parsing CBOR to
    recursively build a UI for browsing the function arguments?
+
+TODO: Hide Gas limit info, because it's not relevant for signing.
+
+TODO: Ledger should store denomination symbol and number of decimals for common
+ParaTimes (Emerald, Cipher), so it shows the correct fee and amount values.
+What to do, if the base unit is not known?
+
+TODO: See how transaction is defined
+https://github.com/oasisprotocol/oasis-sdk/blob/main/runtime-sdk/src/types/transaction.rs
+Document it in oasis sdk docs.
