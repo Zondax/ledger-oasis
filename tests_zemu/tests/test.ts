@@ -22,8 +22,9 @@ const ed25519 = require("ed25519-supercop");
 const sha512 = require("js-sha512");
 
 const Resolve = require("path").resolve;
-const APP_PATH_S = Resolve("../app/output/app_s.elf");
-const APP_PATH_X = Resolve("../app/output/app_x.elf");
+const APP_PATH_S = Resolve('../app/output/app_s.elf')
+const APP_PATH_X = Resolve('../app/output/app_x.elf')
+const APP_PATH_SP = Resolve('../app/output/app_s2.elf')
 
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 
@@ -36,8 +37,9 @@ const defaultOptions = {
 jest.setTimeout(60000)
 
 export const models: DeviceModel[] = [
-  {name: 'nanos', prefix: 'S', path: APP_PATH_S},
-  {name: 'nanox', prefix: 'X', path: APP_PATH_X}
+  { name: 'nanos', prefix: 'S', path: APP_PATH_S },
+  { name: 'nanox', prefix: 'X', path: APP_PATH_X },
+  { name: 'nanosp', prefix: 'SP', path: APP_PATH_SP },
 ]
 
 // Derivation path. First 3 items are automatically hardened!
@@ -1033,7 +1035,7 @@ describe('Standard', function () {
       await sim.close();
     }
   });
-  
+
 
   test.each(models)('sign entity metadata - long name', async function (m) {
     const sim = new Zemu(m.path);
