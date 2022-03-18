@@ -31,8 +31,6 @@
 #include "app_mode.h"
 #include "zxerror.h"
 
-#include "os_io_seproxyhal.h"
-
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -61,6 +59,11 @@ void h_error_accept(__Z_UNUSED unsigned int _) {
     view_idle_show(0, NULL);
     UX_WAIT();
     app_reply_error();
+}
+
+void h_initialize(__Z_UNUSED unsigned int _) {
+    view_idle_show(0, NULL);
+    UX_WAIT();
 }
 
 ///////////////////////////////////
@@ -187,6 +190,16 @@ zxerr_t h_review_update_data() {
         zemu_log_stack("h_review_update_data - GetNumItems==NULL");
         return zxerr_no_data;
     }
+    if (viewdata.viewfuncGetItem == NULL) {
+        zemu_log_stack("h_review_update_data - GetItem==NULL");
+        return zxerr_no_data;
+    }
+
+    if (viewdata.viewfuncGetItem == NULL) {
+        zemu_log_stack("h_review_update_data - GetItem==NULL");
+        return zxerr_no_data;
+    }
+
     if (viewdata.viewfuncGetItem == NULL) {
         zemu_log_stack("h_review_update_data - GetItem==NULL");
         return zxerr_no_data;

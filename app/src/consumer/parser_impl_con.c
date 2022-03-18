@@ -1217,18 +1217,14 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
 }
 
 
-parser_error_t _validateTx(const parser_context_t *c, const parser_tx_t *v) {
-    UNUSED(v);
-
+parser_error_t _validateTx(const parser_context_t *c, __Z_UNUSED const parser_tx_t *v) {
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
     return parser_ok;
 }
 
-uint8_t _getNumItems(const parser_context_t *c, const parser_tx_t *v) {
-    UNUSED(c);
-
+uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v) {
     // typical tx: Type, Fee, Gas (exclude Genesis hash)
     const uint8_t commonElements = 3;
     // Type + ID

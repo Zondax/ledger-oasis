@@ -37,9 +37,7 @@
 
 unsigned char G_io_seproxyhal_spi_buffer[IO_SEPROXYHAL_BUFFER_SIZE_B];
 
-unsigned char io_event(unsigned char channel) {
-    UNUSED(channel);
-
+unsigned char io_event(__Z_UNUSED unsigned char channel) {
     switch (G_io_seproxyhal_spi_buffer[0]) {
         case SEPROXYHAL_TAG_FINGER_EVENT: //
             UX_FINGER_EVENT(G_io_seproxyhal_spi_buffer);
