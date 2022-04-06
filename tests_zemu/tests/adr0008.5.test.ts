@@ -418,7 +418,7 @@ describe('Standard-Adr0008-5', function () {
       // do not wait here..
       const signatureRequest = app.sign(path, context, txBlob);
 
-      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot();
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot());
       await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-adr0008-5-reclaim_escrow`);
 
       let resp = await signatureRequest;
@@ -663,7 +663,7 @@ describe('Standard-Adr0008-5', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_amend`);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_amend`, m.name === "nanos" ? 29 : 30);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -705,7 +705,7 @@ describe('Standard-Adr0008-5', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_amend_issue_130`);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-adr0008-5-sign_amend_issue_130`, m.name === "nanos" ? 20 : 21);
 
       let resp = await signatureRequest;
       console.log(resp);
