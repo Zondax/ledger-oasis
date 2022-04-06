@@ -650,7 +650,8 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_amend`);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend`, m.name === "nanos" ? 29 : 30);
+
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -691,7 +692,8 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_amend_issue_130`);
+      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend_issue_130`, m.name === "nanos" ? 20 : 21);
+
 
       let resp = await signatureRequest;
       console.log(resp);
