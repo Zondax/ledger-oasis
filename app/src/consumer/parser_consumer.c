@@ -937,9 +937,15 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
         snprintf(outKey, outKeyLen, "Network");
+        if(MEMCMP((const char *) parser_tx_obj.context.suffixPtr, MAINNET_GENESIS_HASH,
+                   parser_tx_obj.context.suffixLen) == 0) {
+            *pageCount = 1;
+            snprintf(outVal, outValLen, "Mainnet");
+        } else {
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
                       pageIdx, pageCount);
+        }
     } else {
         switch (parser_tx_obj.type) {
             case txType: {
