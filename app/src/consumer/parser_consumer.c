@@ -936,7 +936,7 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
 
     if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
-        snprintf(outKey, outKeyLen, "Genesis hash");
+        snprintf(outKey, outKeyLen, "Network");
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
                       pageIdx, pageCount);
