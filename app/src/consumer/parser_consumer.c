@@ -28,13 +28,9 @@
 #include "parser_txdef_con.h"
 #include "coin.h"
 
-#if defined(TARGET_NANOX)
+#if defined(TARGET_NANOX) || defined(TARGET_NANOS2)
 // For some reason NanoX requires this function
-void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
-    UNUSED(assertion);
-    UNUSED(file);
-    UNUSED(line);
-    UNUSED(function);
+void __assert_fail(__Z_UNUSED const char * assertion, __Z_UNUSED const char * file, __Z_UNUSED unsigned int line, __Z_UNUSED const char * function){
     while(1) {};
 }
 #endif
@@ -77,9 +73,7 @@ parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_item
     return parser_ok;
 }
 
-__Z_INLINE parser_error_t parser_getType(const parser_context_t *ctx, char *outVal, uint16_t outValLen) {
-    UNUSED(ctx);
-
+__Z_INLINE parser_error_t parser_getType(__Z_UNUSED const parser_context_t *ctx, char *outVal, uint16_t outValLen) {
     switch (parser_tx_obj.oasis.tx.method) {
         case stakingTransfer:
             snprintf(outVal, outValLen, "Transfer");

@@ -28,7 +28,7 @@
 #include "coin.h"
 #include "vote_fsm.h"
 
-#if defined(TARGET_NANOX)
+#if defined(TARGET_NANOX) || defined(TARGET_NANOS2)
 // For some reason NanoX requires this function
 void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
     while(1) {};
@@ -263,8 +263,8 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
     return parser_ok;
 }
 
-parser_error_t parser_validate(const parser_context_t *ctx) {
-    UNUSED(ctx);
+parser_error_t parser_validate(__Z_UNUSED const parser_context_t *ctx) {
+    // UNUSED(ctx);
     if(parser_tx_obj.type == nodeType) {
         //We don't validate anything, for now
         return parser_ok;
@@ -299,8 +299,7 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
     return parser_ok;
 }
 
-parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
-    UNUSED(ctx);
+parser_error_t parser_getNumItems(__Z_UNUSED const parser_context_t *ctx, uint8_t *num_items) {
     if(vote_state.isInitialized) {
         *num_items = 0;
         return parser_ok;
@@ -311,13 +310,11 @@ parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_item
     return parser_ok;
 }
 
-__Z_INLINE parser_error_t parser_getItemVote(const parser_context_t *ctx,
+__Z_INLINE parser_error_t parser_getItemVote(__Z_UNUSED const parser_context_t *ctx,
                                            int8_t displayIdx,
                                            char *outKey, uint16_t outKeyLen,
                                            char *outVal, uint16_t outValLen,
-                                           uint8_t pageIdx, uint8_t *pageCount) {
-    UNUSED(ctx);
-    UNUSED(pageIdx);
+                                           __Z_UNUSED uint8_t pageIdx, uint8_t *pageCount) {
     if (displayIdx == 0) {
         snprintf(outKey, outKeyLen, "Type");
         const char *type;

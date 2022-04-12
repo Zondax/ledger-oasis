@@ -86,3 +86,4 @@ cmake-build-fuzz/
 !\deps/tinycbor-ledger
 \fuzz-*.log
 \fuzz/corpora/*
+.vscode

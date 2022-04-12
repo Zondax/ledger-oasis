@@ -17,13 +17,10 @@
 import Zemu, {DEFAULT_START_OPTIONS, DeviceModel} from "@zondax/zemu";
 // @ts-ignore
 import {OasisApp} from "@zondax/ledger-oasis";
+import { models } from "./common";
 
 const ed25519 = require("ed25519-supercop");
 const sha512 = require("js-sha512");
-
-const Resolve = require("path").resolve;
-const APP_PATH_S = Resolve("../app/output/app_s.elf");
-const APP_PATH_X = Resolve("../app/output/app_x.elf");
 
 const APP_SEED = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
 
@@ -34,11 +31,6 @@ const defaultOptions = {
 };
 
 jest.setTimeout(60000)
-
-export const models: DeviceModel[] = [
-  {name: 'nanos', prefix: 'S', path: APP_PATH_S},
-  {name: 'nanox', prefix: 'X', path: APP_PATH_X}
-]
 
 describe('Standard-Adr0008-0-Oasis', function () {
 
