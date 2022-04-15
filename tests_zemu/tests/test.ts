@@ -108,8 +108,7 @@ describe('Standard', function () {
       const respRequest = app.showAddressAndPubKey(path);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-show_address`, m.name === "nanos" ? 2 : 2);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-show_address`);
 
       const resp = await respRequest;
       console.log(resp);
@@ -148,8 +147,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic_withdraw`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic_withdraw`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -191,8 +189,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic_allow`, 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic_allow`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -247,8 +244,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -289,8 +285,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`, m.name === "nanos" ? 11 : 12);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-submit_proposal_upgrade`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -331,8 +326,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-submit_proposal_cancel_upgrade`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -375,8 +369,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-add_escrow`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-add_escrow`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -419,8 +412,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-reclaim_escrow`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-reclaim_escrow`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -463,8 +455,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-transfer`, m.name === "nanos" ? 8 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-transfer`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -506,8 +497,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-cast_vote_abstain`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -549,8 +539,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_yes`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-cast_vote_yes`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -591,8 +580,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-cast_vote_no`, m.name === "nanos" ? 7 : 8);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-cast_vote_no`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -662,8 +650,8 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
       await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend`, m.name === "nanos" ? 29 : 30);
+
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -704,8 +692,8 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
       await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_amend_issue_130`, m.name === "nanos" ? 20 : 21);
+
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -747,8 +735,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata`, m.name === "nanos" ? 8 : 9);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_entity_metadata`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -790,8 +777,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_descriptor`, m.name === "nanos" ? 3 : 3);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_entity_descriptor`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -833,8 +819,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_register_entity`, m.name === "nanos" ? 17 : 12);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_register_entity`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -876,8 +861,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_register_entity_no_nodes`, m.name === "nanos" ? 7 : 7);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_register_entity_no_nodes`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -919,8 +903,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_deregister_entity`, m.name === "nanos" ? 5 : 6);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_deregister_entity`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -962,8 +945,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_utf8`, m.name === "nanos" ? 8 : 9);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_utf8`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -1005,8 +987,7 @@ describe('Standard', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_long`, m.name === "nanos" ? 10 : 9);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_entity_metadata_long`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -1083,8 +1064,7 @@ describe('Issue #68', function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic`);
 
       let resp = await signatureRequest;
       console.log(resp);
@@ -1099,8 +1079,7 @@ describe('Issue #68', function () {
       const signatureRequestBis = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-
-      await sim.compareSnapshotsAndAccept(".", `${m.prefix.toLowerCase()}-sign_basic`, 7);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic`);
 
       let respBis = await signatureRequestBis;
       console.log(respBis);
@@ -1108,6 +1087,88 @@ describe('Issue #68', function () {
       expect(respBis.return_code).toEqual(0x9000);
       expect(respBis.error_message).toEqual("No errors");
 
+    } finally {
+      await sim.close();
+    }
+  });
+
+  test.each(models)('sign basic - mainnet', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const context = "oasis-core/consensus: tx for chain 53852332637bacb61b91b6411ab4095168ba02a50be4c3f82448438826f23898";
+      const txBlob = Buffer.from(
+        "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omtiZW5lZmljaWFyeVUA8PesI5mFWUkMVHwStQ6Fieb4bsFtYW1vdW50X2NoYW5nZUBlbm9uY2UBZm1ldGhvZG1zdGFraW5nLkFsbG93",
+        "base64",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-sign_basic_allow_mainnet`);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
+  test.each(models)('cast vote - yes mainnet', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const context = "oasis-core/consensus: tx for chain 53852332637bacb61b91b6411ab4095168ba02a50be4c3f82448438826f23898";
+      const txBlob = Buffer.from(
+        "pGNmZWWiY2dhcwBmYW1vdW50QGRib2R5omJpZBoAmJaAZHZvdGUBZW5vbmNlAWZtZXRob2RzZ292ZXJuYW5jZS5DYXN0Vm90ZQ==",
+        "base64",
+      );
+
+      const pkResponse = await app.getAddressAndPubKey(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.sign(path, context, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-cast_vote_yes_mainnet`);
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(context)
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex")
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
     } finally {
       await sim.close();
     }
