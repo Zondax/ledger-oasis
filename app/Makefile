@@ -52,9 +52,7 @@ ifndef COIN
 COIN=oasis
 endif
 
-APPVERSION_M=2
-APPVERSION_N=3
-APPVERSION_P=5
+include $(CURDIR)/Makefile.version
 
 $(info COIN  = [$(COIN)])
 
