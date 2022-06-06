@@ -581,8 +581,8 @@ namespace utils {
         if (find1 != std::string::npos) {
             uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Genesis hash[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
-            addTo(answer, "{} | Genesis hash[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            addTo(answer, "{} | Network[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+            addTo(answer, "{} | Network[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
         }
 
         auto find2 = context.find(expectedPrefix2);

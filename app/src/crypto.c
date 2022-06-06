@@ -191,7 +191,7 @@ zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrL
     }
     MEMZERO(buffer, buffer_len);
 
-    crypto_extractPublicKey(hdPath, buffer, buffer_len);
+    CHECK_ZXERR(crypto_extractPublicKey(hdPath, buffer, buffer_len))
 
     // format pubkey as oasis bech32 address
     char *addr_out = (char *) (buffer + PK_LEN_ED25519);
