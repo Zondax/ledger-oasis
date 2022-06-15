@@ -941,6 +941,10 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
                    parser_tx_obj.context.suffixLen) == 0) {
             *pageCount = 1;
             snprintf(outVal, outValLen, "Mainnet");
+        } else if(MEMCMP((const char *) parser_tx_obj.context.suffixPtr, TESTNET_GENESIS_HASH,
+                   parser_tx_obj.context.suffixLen) == 0) {
+            *pageCount = 1;
+            snprintf(outVal, outValLen, "Testnet");
         } else {
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,
