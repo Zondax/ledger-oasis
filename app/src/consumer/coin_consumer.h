@@ -67,6 +67,7 @@ typedef enum {
 
 #define COIN_MAINNET_DENOM      "ROSE"
 #define COIN_TESTNET_DENOM      "TEST"
+#define COIN_DENOM              ""
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
 
