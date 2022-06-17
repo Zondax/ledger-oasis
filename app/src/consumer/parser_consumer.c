@@ -132,7 +132,7 @@ __Z_INLINE bool format_quantity(const quantity_t *q,
     return bignumBigEndian_bcdprint(bignum, bignumSize, bcd, bcdSize);
 }
 
-__Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
+__Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q, const context_t *net,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
     // upperbound 2**(64*8)
@@ -141,10 +141,18 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
 
-    // TODO: Change depending on Mainnet / Testnet
-    snprintf(outVal, outValLen, "%s ", COIN_DENOM);
-    outVal += strlen(COIN_DENOM) + 1;
-    outValLen -= strlen(COIN_DENOM) + 1;
+    const char* denom = "";
+    if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
+                net->suffixLen) == 0) {
+        denom = COIN_MAINNET_DENOM;
+    } else if(MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH,
+                net->suffixLen) == 0) {
+        denom = COIN_TESTNET_DENOM;
+    }
+
+    snprintf(outVal, outValLen, "%s ", denom);
+    outVal += strlen(denom) + 1;
+    outValLen -= strlen(denom) + 1;
 
     char bignum[160];
     union {
@@ -167,23 +175,32 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q,
 }
 
 
-__Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, bool is_negative,
-                                                       char *outVal, uint16_t outValLen,
-                                                       uint8_t pageIdx, uint8_t *pageCount) {
+__Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, const context_t *net,
+                                                        bool is_negative, char *outVal,
+                                                        uint16_t outValLen, uint8_t pageIdx, 
+                                                        uint8_t *pageCount) {
     // upperbound 2**(64*8)
     // results in 155 decimal digits => max 78 bcd bytes
 
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
 
-    // TODO: Change depending on Mainnet / Testnet
-    if(is_negative){
-        snprintf(outVal, outValLen, "%s -", COIN_DENOM);
-    } else {
-        snprintf(outVal, outValLen, "%s +", COIN_DENOM);
+    const char* denom = "";
+    if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
+                net->suffixLen) == 0) {
+        denom = COIN_MAINNET_DENOM;
+    } else if(MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH,
+                net->suffixLen) == 0) {
+        denom = COIN_TESTNET_DENOM;
     }
-    outVal += strlen(COIN_DENOM) + 2;
-    outValLen -= strlen(COIN_DENOM) + 2;
+
+    if(is_negative){
+        snprintf(outVal, outValLen, "%s -", denom);
+    } else {
+        snprintf(outVal, outValLen, "%s +", denom);
+    }
+    outVal += strlen(denom) + 2;
+    outValLen -= strlen(denom) + 2;
 
     char bignum[160];
     union {
@@ -474,12 +491,12 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 2: {
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingTransfer.amount,
-                                                outVal, outValLen, pageIdx, pageCount);
+                                                &parser_tx_obj.context, outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx,pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -499,12 +516,12 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 1: {
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingBurn.amount,
-                                                outVal, outValLen, pageIdx, pageCount);
+                                                &parser_tx_obj.context, outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -529,12 +546,12 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 2: {
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingWithdraw.amount,
-                                                outVal, outValLen, pageIdx, pageCount);
+                                                &parser_tx_obj.context, outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -559,13 +576,13 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 2: {
                     snprintf(outKey, outKeyLen, "Amount change");
                     return parser_printQuantityWithSign(&parser_tx_obj.oasis.tx.body.stakingAllow.amount_change,
-                                                        parser_tx_obj.oasis.tx.body.stakingAllow.negative,
+                                                        &parser_tx_obj.context, parser_tx_obj.oasis.tx.body.stakingAllow.negative,
                                                         outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -590,13 +607,13 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 2: {
                     snprintf(outKey, outKeyLen, "Amount");
                     return parser_printQuantity(&parser_tx_obj.oasis.tx.body.stakingEscrow.amount,
-                                                outVal, outValLen, pageIdx, pageCount);
+                                                &parser_tx_obj.context, outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
                     // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -626,8 +643,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 case 3: {
                     // ??? displayIdx == 1 && parser_tx_obj.oasis.tx.has_fee
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -696,8 +713,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             switch (lastDisplayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -717,8 +734,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                    outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -738,8 +755,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -774,8 +791,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
             switch (dynDisplayIdx) {
                 case 0: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -806,8 +823,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                pageCount);
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
                     snprintf(outKey, outKeyLen, "Gas limit");
@@ -862,8 +879,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     }
                     case 7: {
                         snprintf(outKey, outKeyLen, "Fee");
-                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                    pageCount);
+                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                    outVal, outValLen, pageIdx, pageCount);
                     }
                     case 8: {
                         snprintf(outKey, outKeyLen, "Gas limit");
@@ -888,8 +905,8 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                     }
                     case 3: {
                         snprintf(outKey, outKeyLen, "Fee");
-                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, outVal, outValLen, pageIdx,
-                                                    pageCount);
+                        return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
+                                                    outVal, outValLen, pageIdx, pageCount);
                     }
                     case 4: {
                         snprintf(outKey, outKeyLen, "Gas limit");
@@ -941,6 +958,10 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
                    parser_tx_obj.context.suffixLen) == 0) {
             *pageCount = 1;
             snprintf(outVal, outValLen, "Mainnet");
+        } else if(MEMCMP((const char *) parser_tx_obj.context.suffixPtr, TESTNET_GENESIS_HASH,
+                   parser_tx_obj.context.suffixLen) == 0) {
+            *pageCount = 1;
+            snprintf(outVal, outValLen, "Testnet");
         } else {
         pageStringExt(outVal, outValLen,
                       (const char *) parser_tx_obj.context.suffixPtr, parser_tx_obj.context.suffixLen,

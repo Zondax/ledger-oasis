@@ -16,6 +16,7 @@
 #pragma once
 
 #define MAINNET_GENESIS_HASH "53852332637bacb61b91b6411ab4095168ba02a50be4c3f82448438826f23898"
+#define TESTNET_GENESIS_HASH "50304f98ddb656620ea817cc1446c401752a05a249b36c9b90dba4616829977a"
 
 #if defined(APP_CONSUMER)
 #include "consumer/coin_consumer.h"
