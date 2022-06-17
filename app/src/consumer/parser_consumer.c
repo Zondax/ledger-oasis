@@ -141,7 +141,6 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q, const contex
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
 
-    // TODO: Change depending on Mainnet / Testnet
     const char* denom = "";
     if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
                 net->suffixLen) == 0) {
@@ -186,7 +185,6 @@ __Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, cons
     // Too many digits, we cannot format this
     LESS_THAN_64_DIGIT(q->len)
 
-    // TODO: Change depending on Mainnet / Testnet
     const char* denom = "";
     if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
                 net->suffixLen) == 0) {
