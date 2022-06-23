@@ -1068,7 +1068,7 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
         return parser_init_context_empty;
     }
 
-    if (c->offset + v->context.len > c->bufferLen) {
+    if (c->offset + v->context.len >= c->bufferLen) {
         return parser_context_unexpected_size;
     }
 
