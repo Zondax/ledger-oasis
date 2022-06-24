@@ -142,12 +142,13 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q, const contex
     LESS_THAN_64_DIGIT(q->len)
 
     const char* denom = "";
-    if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
-                net->suffixLen) == 0) {
-        denom = COIN_MAINNET_DENOM;
-    } else if(MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH,
-                net->suffixLen) == 0) {
-        denom = COIN_TESTNET_DENOM;
+    const uint8_t hashSize = sizeof(MAINNET_GENESIS_HASH) - 1;
+    if (hashSize == net->suffixLen) {
+        if (MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH, hashSize) == 0) {
+            denom = COIN_MAINNET_DENOM;
+        } else if (MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH, hashSize) == 0) {
+            denom = COIN_TESTNET_DENOM;
+        }
     }
 
     snprintf(outVal, outValLen, "%s ", denom);
@@ -177,7 +178,7 @@ __Z_INLINE parser_error_t parser_printQuantity(const quantity_t *q, const contex
 
 __Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, const context_t *net,
                                                         bool is_negative, char *outVal,
-                                                        uint16_t outValLen, uint8_t pageIdx, 
+                                                        uint16_t outValLen, uint8_t pageIdx,
                                                         uint8_t *pageCount) {
     // upperbound 2**(64*8)
     // results in 155 decimal digits => max 78 bcd bytes
@@ -323,19 +324,6 @@ __Z_INLINE parser_error_t parser_printPublicKey_b64(const publickey_t *pk,
         return parser_unexpected_value;
     }
 
-    pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
-    return parser_ok;
-}
-
-__Z_INLINE parser_error_t parser_printSignature(raw_signature_t *s,
-                                                char *outVal, uint16_t outValLen,
-                                                uint8_t pageIdx, uint8_t *pageCount) {
-
-    // 64 * 2 + 1 (one more for the zero termination)
-    char outBuffer[2 * sizeof(raw_signature_t) + 1];
-    MEMZERO(outBuffer, sizeof(outBuffer));
-
-    array_to_hexstr(outBuffer, sizeof(outBuffer), (const uint8_t *) s, sizeof(raw_signature_t));
     pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
     return parser_ok;
 }
@@ -520,7 +508,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 2: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 3: {
@@ -581,7 +569,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 3: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 4: {
@@ -734,7 +722,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
                     outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
@@ -755,7 +743,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                 }
                 case 1: {
                     snprintf(outKey, outKeyLen, "Fee");
-                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context, 
+                    return parser_printQuantity(&parser_tx_obj.oasis.tx.fee_amount, &parser_tx_obj.context,
                                                 outVal, outValLen, pageIdx, pageCount);
                 }
                 case 2: {
