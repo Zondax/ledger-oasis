@@ -187,12 +187,13 @@ __Z_INLINE parser_error_t parser_printQuantityWithSign(const quantity_t *q, cons
     LESS_THAN_64_DIGIT(q->len)
 
     const char* denom = "";
-    if(MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH,
-                net->suffixLen) == 0) {
-        denom = COIN_MAINNET_DENOM;
-    } else if(MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH,
-                net->suffixLen) == 0) {
-        denom = COIN_TESTNET_DENOM;
+    const uint8_t hashSize = sizeof(MAINNET_GENESIS_HASH) - 1;
+    if (hashSize == net->suffixLen) {
+        if (MEMCMP((const char *) net->suffixPtr, MAINNET_GENESIS_HASH, hashSize) == 0) {
+            denom = COIN_MAINNET_DENOM;
+        } else if (MEMCMP((const char *) net->suffixPtr, TESTNET_GENESIS_HASH, hashSize) == 0) {
+            denom = COIN_TESTNET_DENOM;
+        }
     }
 
     if(is_negative){
