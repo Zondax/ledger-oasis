@@ -310,19 +310,6 @@ __Z_INLINE parser_error_t parser_printPublicKey_b64(const publickey_t *pk,
     return parser_ok;
 }
 
-__Z_INLINE parser_error_t parser_printSignature(raw_signature_t *s,
-                                                char *outVal, uint16_t outValLen,
-                                                uint8_t pageIdx, uint8_t *pageCount) {
-
-    // 64 * 2 + 1 (one more for the zero termination)
-    char outBuffer[2 * sizeof(raw_signature_t) + 1];
-    MEMZERO(outBuffer, sizeof(outBuffer));
-
-    array_to_hexstr(outBuffer, sizeof(outBuffer), (const uint8_t *) s, sizeof(raw_signature_t));
-    pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
-    return parser_ok;
-}
-
 __Z_INLINE parser_error_t parser_printVote(const uint8_t vote, char *outVal, uint16_t outValLen) {
     switch (vote) {
         case 1:
@@ -937,7 +924,8 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     if (parser_tx_obj.context.suffixLen > 0 && displayIdx + 1 == numItems /*last*/) {
         // Display context
         snprintf(outKey, outKeyLen, "Network");
-        if(MEMCMP((const char *) parser_tx_obj.context.suffixPtr, MAINNET_GENESIS_HASH,
+        const uint8_t hashSize = sizeof(MAINNET_GENESIS_HASH) - 1;
+        if ((hashSize == parser_tx_obj.context.suffixLen) && MEMCMP((const char *) parser_tx_obj.context.suffixPtr, MAINNET_GENESIS_HASH,
                    parser_tx_obj.context.suffixLen) == 0) {
             *pageCount = 1;
             snprintf(outVal, outValLen, "Mainnet");
