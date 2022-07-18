@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-    branches: [ master ]
+    branches:
+      - main
+      - develop
 
 jobs:
   configure:
@@ -281,7 +283,7 @@ jobs:
 
   build_package_nanos:
     needs: [ configure, build, build_ledger, test_zemu ]
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
       image: zondax/builder-bolos:latest
@@ -322,7 +324,7 @@ jobs:
 
   build_package_nanos_plus:
     needs: [ configure, build, build_ledger, test_zemu ]
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
       image: zondax/builder-bolos:latest
@@ -363,7 +365,7 @@ jobs:
 
   build_package_validator:
     needs: [ configure, build, build_ledger_val, test_zemu_val ]
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
       image: zondax/builder-bolos:latest
