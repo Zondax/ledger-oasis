@@ -2,13 +2,19 @@
 
 ## General structure
 
+The Application Identifier depends on the app type:
+| Type | APP_CLA   | 
+| ----- | -------- | 
+| Validator | 0xf5 | 
+| Consumer  | 0x05 | 
+
 The general structure of commands and responses is as follows:
 
 #### Commands
 
 | Field   | Type     | Content                | Note |
 | :------ | :------- | :--------------------- | ---- |
-| CLA     | byte (1) | Application Identifier | 0x05 |
+| CLA     | byte (1) | Application Identifier | APP_CLA |
 | INS     | byte (1) | Instruction ID         |      |
 | P1      | byte (1) | Parameter 1            |      |
 | P2      | byte (1) | Parameter 2            |      |
@@ -29,6 +35,7 @@ The general structure of commands and responses is as follows:
 | 0x6400      | Execution Error         |
 | 0x6982      | Empty buffer            |
 | 0x6983      | Output buffer too small |
+| 0x6985      | Conditions not satisfied |
 | 0x6986      | Command not allowed     |
 | 0x6D00      | INS not supported       |
 | 0x6E00      | CLA not supported       |
@@ -45,7 +52,7 @@ The general structure of commands and responses is as follows:
 
 | Field | Type     | Content                | Expected |
 | ----- | -------- | ---------------------- | -------- |
-| CLA   | byte (1) | Application Identifier | 0x05     |
+| CLA   | byte (1) | Application Identifier | APP_CLA  |
 | INS   | byte (1) | Instruction ID         | 0x00     |
 | P1    | byte (1) | Parameter 1            | ignored  |
 | P2    | byte (1) | Parameter 2            | ignored  |
@@ -70,7 +77,7 @@ The general structure of commands and responses is as follows:
 
 | Field      | Type           | Content                | Expected       |
 | ---------- | -------------- | ---------------------- | -------------- |
-| CLA        | byte (1)       | Application Identifier | 0x05           |
+| CLA        | byte (1)       | Application Identifier | APP_CLA           |
 | INS        | byte (1)       | Instruction ID         | 0x01           |
 | P1         | byte (1)       | Request User confirmation | No = 0      |
 | P2         | byte (1)       | Parameter 2            | ignored        |
@@ -97,7 +104,7 @@ First three items in the derivation path will be hardened automatically hardened
 
 | Field | Type     | Content                | Expected  |
 | ----- | -------- | ---------------------- | --------- |
-| CLA   | byte (1) | Application Identifier | 0x05      |
+| CLA   | byte (1) | Application Identifier | APP_CLA      |
 | INS   | byte (1) | Instruction ID         | 0x02      |
 | P1    | byte (1) | Payload desc           | 0 = init  |
 |       |          |                        | 1 = add   |
@@ -108,6 +115,8 @@ First three items in the derivation path will be hardened automatically hardened
 The first packet/chunk includes only the derivation path
 
 All other packets/chunks should contain message to sign
+
+The chuncks size is 250 bytes.
 
 *First Packet*
 
@@ -134,6 +143,41 @@ Data is defined as:
 | Message | bytes..  | CBOR data to sign   |      |
 
 #### Response
+
+The response depends on app type:
+
+*Consumer Response*
+
+| Field   | Type      | Content     | Note                     |
+| ------- | --------- | ----------- | ------------------------ |
+| SIG     | byte (64) | Signature   |                          |
+| SW1-SW2 | byte (2)  | Return code | see list of return codes |
+
+*Validator Response*
+
+The Validator response has a validation flow that can result in diferente responses:
+
+1. If Oasis Blob is a Consensus Type:
+    1.1 Vote State is checked and if it is not initialized, a new valid vote is set:
+
+    | Field   | Type      | Content     | Note                     |
+    | ------- | --------- | ----------- | ------------------------ |
+    | SW1-SW2 | byte (2)  | Return code | see list of return codes |
+
+    1.2 Vote is initialized and the current vote state is returned alongside the conflicting vote data [vote][vote_state][error]
+
+    | Field     | Type      | Content     | Note                     |
+    | -------   | --------- | ----------- | ------------------------ |
+    | Buffer    | byte (1)  | Vote type         |          |
+    |           | byte (8)  | Vote height       |          |
+    |           | byte (8)  | Vote round        |          |
+    |           | byte (1)  | Vote state type   |          |
+    |           | byte (8)  | Vote state height |          |
+    |           | byte (8)  | Vote state round  |          |
+    | SW1-SW2   | byte (2)  | Return code       | see list of return codes |
+
+
+2. If Oasis Blob is not a Consensus Type:
 
 | Field   | Type      | Content     | Note                     |
 | ------- | --------- | ----------- | ------------------------ |

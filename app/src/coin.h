@@ -15,7 +15,7 @@
 ********************************************************************************/
 #pragma once
 
-#define MAINNET_GENESIS_HASH "53852332637bacb61b91b6411ab4095168ba02a50be4c3f82448438826f23898"
+#define MAINNET_GENESIS_HASH "b11b369e0da5bb230b220127f5e7b242d385ef8c6f54906243f30af63c815535"
 #define TESTNET_GENESIS_HASH "50304f98ddb656620ea817cc1446c401752a05a249b36c9b90dba4616829977a"
 
 #if defined(APP_CONSUMER)

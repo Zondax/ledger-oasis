@@ -33,6 +33,8 @@
 #include "parser_txdef.h"
 #include "parser_impl.h"
 
+#define REPLY_APDU 0x03
+
 static bool tx_initialized = false;
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
@@ -120,7 +122,7 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
     }
     if (requireConfirmation) {
         view_review_init(addr_getItem, addr_getNumItems, app_reply_address);
-        view_review_show();
+        view_review_show(REPLY_APDU);
         *flags |= IO_ASYNCH_REPLY;
         return;
     }
@@ -148,7 +150,7 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign);
-    view_review_show();
+    view_review_show(REPLY_APDU);
     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
     switch(parser_tx_obj.type) {
@@ -160,7 +162,7 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
                             } else {
                                 CHECK_APP_CANARY()
                                 view_review_init(tx_getItem, tx_getNumItems, app_sign);
-                                view_review_show();
+                                view_review_show(REPLY_APDU);
                                 *flags |= IO_ASYNCH_REPLY;
                             }
                         }
