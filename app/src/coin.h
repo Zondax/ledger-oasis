@@ -18,6 +18,16 @@
 #define MAINNET_GENESIS_HASH "b11b369e0da5bb230b220127f5e7b242d385ef8c6f54906243f30af63c815535"
 #define TESTNET_GENESIS_HASH "50304f98ddb656620ea817cc1446c401752a05a249b36c9b90dba4616829977a"
 
+#define SK_SECP256K1_SIZE       32
+#define PUB_KEY_SIZE            32
+#define ETH_ADDR_LEN            20
+#define KECCAK256_HASH_LEN      32
+
+typedef enum {
+    addr_ed25519 = 0,
+    addr_secp256k1 = 1,
+} address_kind_e;
+
 #if defined(APP_CONSUMER)
 #include "consumer/coin_consumer.h"
 #elif defined(APP_VALIDATOR)

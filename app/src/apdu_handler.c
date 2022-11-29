@@ -110,12 +110,13 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
     THROW(APDU_CODE_INVALIDP1P2);
 }
 
-__Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+__Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx, address_kind_e kind) {
+    zemu_log("handleGetAddr\n");
     extractHDPath(rx, OFFSET_DATA);
 
     uint8_t requireConfirmation = G_io_apdu_buffer[OFFSET_P1];
 
-    zxerr_t zxerr = app_fill_address();
+    zxerr_t zxerr = app_fill_address(kind);
     if (zxerr != zxerr_ok) {
         *tx = 0;
         THROW(APDU_CODE_DATA_INVALID);
@@ -201,14 +202,43 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 }
 
                 case INS_GET_ADDR_ED25519: {
+                    zemu_log("INS_GET_ADDR_ED25519\n");
+
                     if (os_global_pin_is_validated() != BOLOS_UX_OK) {
                         THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
                     }
-                    handleGetAddr(flags, tx, rx);
+                    handleGetAddr(flags, tx, rx, addr_ed25519);
                     break;
                 }
 
                 case INS_SIGN_ED25519: {
+                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
+                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
+                    }
+                    handleSign(flags, tx, rx);
+                    break;
+                }
+
+                case INS_SIGN_PT_ED25519: {
+                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
+                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
+                    }
+                    handleSign(flags, tx, rx);
+                    break;
+                }
+
+
+                case INS_GET_ADDR_SECP256K1: {
+                    zemu_log("INS_GET_ADDR_SECP256K1\n");
+
+                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
+                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
+                    }
+                    handleGetAddr(flags, tx, rx, addr_secp256k1);
+                    break;
+                }
+
+                case INS_SIGN_PT_SECP256K1: {
                     if (os_global_pin_is_validated() != BOLOS_UX_OK) {
                         THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
                     }

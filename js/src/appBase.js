@@ -26,6 +26,21 @@ function processGetAddrEd25519Response(response) {
   };
 }
 
+function processGetAddrSecp256k1Response(response) {
+  const errorCodeData = response.slice(-2);
+  const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
+
+  const pk = Buffer.from(response.slice(0, 33));
+  const hex_address = Buffer.from(response.slice(33, 73)).toString();
+
+  return {
+    pk,
+    hex_address,
+    return_code: returnCode,
+    error_message: errorCodeToString(returnCode),
+  };
+}
+
 export class OasisAppBase {
   // eslint-disable-next-line class-methods-use-this
   CLA() {
@@ -287,11 +302,25 @@ export class OasisAppBase {
       .then(processGetAddrEd25519Response, processErrorResponse);
   }
 
+  async getAddressAndPubKey_secp256k1(path) {
+    const data = await this.serializePath(path);
+    return this.transport
+      .send(this.CLA(), INS.GET_ADDR_SECP256K1, P1_VALUES.ONLY_RETRIEVE, 0, data, [0x9000])
+      .then(processGetAddrSecp256k1Response, processErrorResponse);
+  }
+
   async showAddressAndPubKey(path) {
     const data = await this.serializePath(path);
     return this.transport
       .send(this.CLA(), INS.GET_ADDR_ED25519, P1_VALUES.SHOW_ADDRESS_IN_DEVICE, 0, data, [0x9000])
       .then(processGetAddrEd25519Response, processErrorResponse);
+  }
+
+  async showAddressAndPubKey_secp256k1(path) {
+    const data = await this.serializePath(path);
+    return this.transport
+      .send(this.CLA(), INS.GET_ADDR_SECP256K1, P1_VALUES.SHOW_ADDRESS_IN_DEVICE, 0, data, [0x9000])
+      .then(processGetAddrSecp256k1Response, processErrorResponse);
   }
 
   async signSendChunk(chunkIdx, chunkNum, chunk) {

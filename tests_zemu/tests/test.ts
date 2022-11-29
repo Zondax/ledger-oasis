@@ -75,7 +75,7 @@ describe('Standard', function () {
     }
   });
 
-  test.each(models)('get address', async function (m) {
+  test.each(models)('get Ed25519 address', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
@@ -99,7 +99,31 @@ describe('Standard', function () {
     }
   });
 
-  test.each(models)('show address', async function (m) {
+  test.each(models)('get Secp256k1 address', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const resp = await app.getAddressAndPubKey_secp256k1(path);
+
+      console.log(resp)
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const expected_hex_address = "16c8101c40384131293938971998cad271055dce";
+      const expected_pk = "039a56657187f2c393249096c7b2cf5c83bd7e7664af0e87b3606886331d056193";
+
+      expect(resp.hex_address).toEqual(expected_hex_address);
+      expect(resp.pk.toString('hex')).toEqual(expected_pk);
+
+    } finally {
+      await sim.close();
+    }
+  });
+
+  test.each(models)('show Ed25519 address', async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({...defaultOptions, model: m.name,});
@@ -120,6 +144,33 @@ describe('Standard', function () {
       const expected_pk = "aba52c0dcb80c2fe96ed4c3741af40c573a0500c0d73acda22795c37cb0f1739";
 
       expect(resp.bech32_address).toEqual(expected_bech32_address);
+      expect(resp.pk.toString('hex')).toEqual(expected_pk);
+    } finally {
+      await sim.close();
+    }
+  });
+
+  test.each(models)('show Secp256k1 address', async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({...defaultOptions, model: m.name,});
+      const app = new OasisApp(sim.getTransport());
+
+      const respRequest = app.showAddressAndPubKey_secp256k1(path);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(".", `${m.prefix.toLowerCase()}-show_address_secp256k1`);
+
+      const resp = await respRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const expected_hex_address = "16c8101c40384131293938971998cad271055dce";
+      const expected_pk = "039a56657187f2c393249096c7b2cf5c83bd7e7664af0e87b3606886331d056193";
+
+      expect(resp.hex_address).toEqual(expected_hex_address);
       expect(resp.pk.toString('hex')).toEqual(expected_pk);
     } finally {
       await sim.close();

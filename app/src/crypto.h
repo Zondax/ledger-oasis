@@ -31,7 +31,7 @@ extern uint8_t hdPathLen;
 
 uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey);
 
-zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen);
+zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen,address_kind_e kind);
 
 zxerr_t crypto_sign(uint8_t *signature,
                     uint16_t signatureMaxlen,

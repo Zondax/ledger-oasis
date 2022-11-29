@@ -90,13 +90,14 @@ void app_reject() {
     io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
 }
 
-zxerr_t app_fill_address() {
+zxerr_t app_fill_address(address_kind_e kind) {
+    zemu_log("app_fill_address\n");
     // Put data directly in the apdu buffer
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
 
     action_addrResponseLen = 0;
 
-    zxerr_t err = crypto_fillAddress(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE - 2, &action_addrResponseLen);
+    zxerr_t err = crypto_fillAddress(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE - 2, &action_addrResponseLen, kind);
 
     if (err != zxerr_ok || action_addrResponseLen == 0) {
         THROW(APDU_CODE_EXECUTION_ERROR);
@@ -106,8 +107,7 @@ zxerr_t app_fill_address() {
 }
 
 void app_reply_address() {
-    zxerr_t zxerr = app_fill_address();
-    if (zxerr != zxerr_ok) {
+    if (action_addrResponseLen == 0) {
         THROW(APDU_CODE_DATA_INVALID);
     }
     set_code(G_io_apdu_buffer, action_addrResponseLen, APDU_CODE_OK);

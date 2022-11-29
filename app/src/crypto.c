@@ -17,6 +17,7 @@
 #include "crypto.h"
 #include "coin.h"
 #include "zxmacros.h"
+#include "zxformat.h"
 #include "apdu_codes.h"
 #include "coin.h"
 #include "sha512.h"
@@ -28,7 +29,13 @@ uint8_t hdPathLen;
 
 #include "cx.h"
 
-zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
+void keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
+    cx_sha3_t sha3;
+    cx_keccak_init(&sha3, 256);
+    cx_hash((cx_hash_t*)&sha3, CX_LAST, in, in_len, out, out_len);
+}
+
+zxerr_t  crypto_extractPublicKeyEd25519(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
     cx_ecfp_public_key_t cx_publicKey;
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];
@@ -82,6 +89,46 @@ zxerr_t  crypto_extractPublicKey(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_
     END_TRY;
 
     return err;
+}
+
+zxerr_t crypto_extractPublicKeySecp256k1(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
+    zemu_log("crypto_extractPublicKeySecp256k1\n");
+    cx_ecfp_public_key_t cx_publicKey;
+    cx_ecfp_private_key_t cx_privateKey;
+    uint8_t privateKeyData[SK_SECP256K1_SIZE];
+
+    if (pubKeyLen < PK_LEN_SECP256K1_FULL) {
+        return zxerr_invalid_crypto_settings;
+    }
+
+    zxerr_t error = zxerr_ok;
+    BEGIN_TRY
+    {
+        TRY {
+            os_perso_derive_node_bip32(CX_CURVE_256K1,
+                                       path,
+                                       HDPATH_LEN_DEFAULT,
+                                       privateKeyData, NULL);
+
+            cx_ecfp_init_private_key(CX_CURVE_256K1, privateKeyData, SK_SECP256K1_SIZE, &cx_privateKey);
+            cx_ecfp_init_public_key(CX_CURVE_256K1, NULL, 0, &cx_publicKey);
+            cx_ecfp_generate_pair(CX_CURVE_256K1, &cx_publicKey, &cx_privateKey, 1);
+
+            memcpy(pubKey, cx_publicKey.W, PK_LEN_SECP256K1_FULL);
+
+
+        }
+        CATCH_OTHER(e) {
+            error = zxerr_ledger_api_error;
+        }
+        FINALLY {
+            MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
+            MEMZERO(privateKeyData, SK_SECP256K1_SIZE);
+        }
+    }
+    END_TRY;
+
+    return error;
 }
 
 zxerr_t crypto_sign(uint8_t *signature,
@@ -185,13 +232,28 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     return strlen(addr_out);
 }
 
-zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
+uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
+    zemu_log("crypto_encodeEthereumAddress\n");
+    uint8_t hash[KECCAK256_HASH_LEN]={0};
+    keccak (
+            hash, KECCAK256_HASH_LEN,
+            pubkey, PUB_KEY_SIZE
+    );
+    uint8_t ethereum_address[ETH_ADDR_LEN]={0};
+    memcpy(ethereum_address, &hash[KECCAK256_HASH_LEN - ETH_ADDR_LEN],ETH_ADDR_LEN);
+    array_to_hexstr(addr_out, addr_out_max, ethereum_address, ETH_ADDR_LEN);
+    zemu_log(addr_out);
+    zemu_log("\n");
+    return strlen(addr_out);
+}
+
+zxerr_t crypto_fillAddressEd25519(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
     if (buffer_len < PK_LEN_ED25519 + 50) {
         return 0;
     }
     MEMZERO(buffer, buffer_len);
 
-    CHECK_ZXERR(crypto_extractPublicKey(hdPath, buffer, buffer_len))
+    CHECK_ZXERR(crypto_extractPublicKeyEd25519(hdPath, buffer, buffer_len))
 
     // format pubkey as oasis bech32 address
     char *addr_out = (char *) (buffer + PK_LEN_ED25519);
@@ -200,4 +262,68 @@ zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrL
 
     *addrLen = PK_LEN_ED25519 + addr_out_len;
     return zxerr_ok;
+}
+
+typedef struct {
+    uint8_t compressedPublicKey[PK_LEN_SECP256K1];
+    uint8_t address[50];
+} __attribute__((packed)) answer_secp256k1;
+
+zxerr_t crypto_fillAddressSecp256k1(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
+    zemu_log("crypto_fillAddressSecp256k1\n");
+
+    if (buffer_len < sizeof(answer_secp256k1)) {
+        *addrLen =  0;
+        return zxerr_unknown;
+    }
+    MEMZERO(buffer, buffer_len);
+
+    //to compute Etherium addresses we need the full public key (not the compressed one)
+    uint8_t publicKeyFull[PK_LEN_SECP256K1_FULL] = {0};
+
+    CHECK_ZXERR(crypto_extractPublicKeySecp256k1(hdPath, publicKeyFull, PK_LEN_SECP256K1_FULL))
+
+    // format public key as ethereum hex address
+    char *addr_out = (char *) (buffer + PK_LEN_SECP256K1);
+    const uint16_t addr_out_max =  buffer_len - PK_LEN_SECP256K1;
+    const uint16_t addr_out_len = crypto_encodeEthereumAddress(addr_out, addr_out_max, publicKeyFull);
+
+    if (addr_out_len == 0) {
+        return zxerr_unknown;
+    }
+
+    // now compress the public key to send via apdu buffer
+    char *pubKey = (char *) buffer;
+    // Format pubkey
+    for (int i = 0; i < PUB_KEY_SIZE; i++) {
+        pubKey[i] = publicKeyFull[64 - i];
+    }
+
+    publicKeyFull[0] = publicKeyFull[64] & 1 ? 0x03 : 0x02; // "Compress" public key in place
+    if ((publicKeyFull[PUB_KEY_SIZE] & 1) != 0) {
+        pubKey[PUB_KEY_SIZE - 1] |= 0x80;
+    }
+    zemu_log("copy over compressed pk\n");
+    memcpy(pubKey, publicKeyFull, PK_LEN_SECP256K1);
+
+    *addrLen = addr_out_len + PK_LEN_SECP256K1;
+    return zxerr_ok;
+}
+
+zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen, address_kind_e kind) {
+    zemu_log("crypto_fillAddress\n");
+    if (kind == addr_secp256k1){
+        zemu_log("identified secp256k1 address\n");
+    }
+    if (kind == addr_ed25519){
+        zemu_log("identified ed25519 address\n");
+    }
+    switch (kind) {
+        case addr_ed25519:
+            return crypto_fillAddressEd25519(buffer, buffer_len, addrLen);
+        case addr_secp256k1:
+            return crypto_fillAddressSecp256k1(buffer, buffer_len, addrLen);
+    }
+    zemu_log("No match for address kind!\n");
+    return zxerr_unknown;
 }

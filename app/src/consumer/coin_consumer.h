@@ -33,15 +33,10 @@ extern "C" {
 #define HDPATH_3_DEFAULT     (0u)
 #define HDPATH_4_DEFAULT     (0u)
 
-#define PK_LEN_ED25519       32u
+#define PK_LEN_ED25519          32u
+#define PK_LEN_SECP256K1        33u
+#define PK_LEN_SECP256K1_FULL   65u
 
-#ifdef APP_CONSUMER
-
-typedef enum {
-    addr_ed25519 = 0,
-} address_kind_e;
-
-#endif
 
 #define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
 #define VIEW_ADDRESS_ITEM_COUNT             2
