@@ -116,7 +116,7 @@ The first packet/chunk includes only the derivation path
 
 All other packets/chunks should contain message to sign
 
-The chuncks size is 250 bytes.
+The chunk size is 250 bytes.
 
 *First Packet*
 
@@ -157,13 +157,14 @@ The response depends on app type:
 
 The Validator response has a validation flow that can result in diferente responses:
 
-1. If Oasis Blob is a Consensus Type:
+ If Oasis Blob is a Consensus Type:
    1. Vote State is checked and if it is not initialized, a new valid vote is set:
 
-| Field   | Type      | Content     | Note                     |
-| ------- | --------- | ----------- | ------------------------ |
-| SW1-SW2 | byte (2)  | Return code | see list of return codes |
-   2. Vote is initialized and the current vote state is returned alongside the conflicting vote data [vote][vote_state][error]
+   | Field   | Type      | Content     | Note                     |
+   | ------- | --------- | ----------- | ------------------------ |
+   | SW1-SW2 | byte (2)  | Return code | see list of return codes |
+
+2. Vote is initialized and the current vote state is returned alongside the conflicting vote data [vote][vote_state][error]
 
 
 | Field     | Type      | Content     | Note                     |
@@ -177,7 +178,7 @@ The Validator response has a validation flow that can result in diferente respon
 | SW1-SW2   | byte (2)  | Return code       | see list of return codes |
 
 
-2. If Oasis Blob is not a Consensus Type:
+If Oasis Blob is not a Consensus Type:
 
 | Field   | Type      | Content     | Note                     |
 | ------- | --------- | ----------- | ------------------------ |
@@ -227,6 +228,11 @@ Data is defined as:
 |---------|---------|--------------------|----------|
 | Meta    | byte..  | CBOR metadata      |          |
 | Message | bytes.. | CBOR data to sign  |          |
+
+Meta contains the following fields:
+- runtime_id: 32-byte runtime ID
+- chain_context: 32-byte chain ID
+- orig_to (optional): 20-byte ethereum destination address
 
 #### Response
 
@@ -305,6 +311,12 @@ Data is defined as:
 |---------|---------|--------------------|----------|
 | Meta    | byte..  | CBOR metadata      |          |
 | Message | bytes.. | CBOR data to sign  |          |
+
+Meta contains the following fields:
+- runtime_id: 32-byte runtime ID
+- chain_context: 32-byte chain ID
+- orig_to (optional): 20-byte ethereum destination address
+
 
 #### Response
 

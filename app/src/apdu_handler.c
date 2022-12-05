@@ -33,8 +33,6 @@
 #include "parser_txdef.h"
 #include "parser_impl.h"
 
-#define REPLY_APDU 0x03
-
 static bool tx_initialized = false;
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
@@ -123,7 +121,7 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
     }
     if (requireConfirmation) {
         view_review_init(addr_getItem, addr_getNumItems, app_reply_address);
-        view_review_show(REPLY_APDU);
+        view_review_show(REVIEW_ADDRESS);
         *flags |= IO_ASYNCH_REPLY;
         return;
     }
@@ -151,7 +149,7 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign);
-    view_review_show(REPLY_APDU);
+    view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
     switch(parser_tx_obj.type) {
@@ -163,7 +161,7 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
                             } else {
                                 CHECK_APP_CANARY()
                                 view_review_init(tx_getItem, tx_getNumItems, app_sign);
-                                view_review_show(REPLY_APDU);
+                                view_review_show(REVIEW_TXN);
                                 *flags |= IO_ASYNCH_REPLY;
                             }
                         }
@@ -204,25 +202,19 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 case INS_GET_ADDR_ED25519: {
                     zemu_log("INS_GET_ADDR_ED25519\n");
 
-                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
-                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
-                    }
+                    CHECK_PIN_VALIDATED()
                     handleGetAddr(flags, tx, rx, addr_ed25519);
                     break;
                 }
 
                 case INS_SIGN_ED25519: {
-                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
-                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
-                    }
+                    CHECK_PIN_VALIDATED()
                     handleSign(flags, tx, rx);
                     break;
                 }
 
                 case INS_SIGN_PT_ED25519: {
-                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
-                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
-                    }
+                    CHECK_PIN_VALIDATED()
                     handleSign(flags, tx, rx);
                     break;
                 }
@@ -231,17 +223,13 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 case INS_GET_ADDR_SECP256K1: {
                     zemu_log("INS_GET_ADDR_SECP256K1\n");
 
-                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
-                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
-                    }
+                    CHECK_PIN_VALIDATED()
                     handleGetAddr(flags, tx, rx, addr_secp256k1);
                     break;
                 }
 
                 case INS_SIGN_PT_SECP256K1: {
-                    if (os_global_pin_is_validated() != BOLOS_UX_OK) {
-                        THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
-                    }
+                    CHECK_PIN_VALIDATED()
                     handleSign(flags, tx, rx);
                     break;
                 }
