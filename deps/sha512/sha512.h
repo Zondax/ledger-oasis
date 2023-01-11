@@ -32,6 +32,8 @@ void SHA512_256_with_context_version(const uint8_t *in_ctx, size_t n_ctx,
                                      uint8_t version,
                                      const uint8_t *in, size_t n, uint8_t out[SHA512_DIGEST_LENGTH]);
 
+void SHA512_256_with_context(const uint8_t *in_ctx, size_t n_ctx,
+                             const uint8_t *in, size_t n, uint8_t out[SHA512_DIGEST_LENGTH]);
 // Zero the memory pointed to by v; this will not be optimized away.
 extern void secure_wipe(uint8_t* v, uint32_t n);
 
