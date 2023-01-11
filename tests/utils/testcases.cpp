@@ -23,6 +23,7 @@
 #include <parser_impl.h>
 #include "consumer/coin_consumer.h"
 #include <zxformat.h>
+#include "coin.h"
 
 namespace utils {
     std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor) {
@@ -51,11 +52,37 @@ namespace utils {
         return bufferAllocation;
     }
 
-    testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value> &jsonSource, int index) {
+    std::vector<uint8_t> prepareRuntimeBlob(const std::string &context, const std::string &base64Cbor) {
+        std::string cborString;
+        std::string metaCborString;
+        macaron::Base64::Decode(base64Cbor, cborString);
+        macaron::Base64::Decode(context, metaCborString);
+
+        // Allocate and prepare buffer
+        // context size
+        // context
+        // CBOR payload
+        uint16_t bufferLen = 1 + metaCborString.size() + cborString.size();
+        auto bufferAllocation = std::vector<uint8_t>(bufferLen);
+
+        char tmp[1000];
+        array_to_hexstr(tmp, sizeof(tmp), (uint8_t *) cborString.c_str(), cborString.size());
+        std::cout << tmp << std::endl;
+
+        bufferAllocation[0] = metaCborString.size();
+        MEMCPY(bufferAllocation.data() + 1, metaCborString.c_str(), metaCborString.size());
+        MEMCPY(bufferAllocation.data() + 1 + metaCborString.size(), cborString.c_str(), cborString.size());
+
+        return bufferAllocation;
+    }
+
+    testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value> &jsonSource, int index, int *runtime) {
         testcaseData_t answer;
         auto v = (*jsonSource)[index];
         auto description = std::string("");
+        auto meta = std::string("");
         auto valid_tx = true;
+        auto sig_context = std::string("");
 
         if (v.isMember("valid_tx")) {
             valid_tx = v["valid_tx"].asBool();
@@ -75,16 +102,24 @@ namespace utils {
             encoded_tx = v["encoded_entity_meta"].asString();
         }
 
+        if (v.isMember("meta")) {
+            *runtime = 1;
+            sig_context = v["encoded_meta"].asString();
+        } else {
+            *runtime = 0;
+            sig_context = v["signature_context"].asString();
+        }
+
         return {
                 false,
                 description,
                 std::to_string(index),
                 v["kind"].asString(),
-                v["signature_context"].asString(),
+                sig_context,
                 encoded_tx,
                 v["valid"].asBool() && TestcaseIsValid(v),
                 valid_tx,
-                GenerateExpectedUIOutput(v["signature_context"].asString(), v)
+                GenerateExpectedUIOutput(sig_context, v)
         };
     }
 
@@ -176,6 +211,14 @@ namespace utils {
         char buffer[500];
         MEMZERO(buffer, sizeof(buffer));
         fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), COIN_AMOUNT_DECIMAL_PLACES);
+        number_inplace_trimming(buffer, 1);
+        return std::string(buffer);
+    }
+
+    std::string FormatRuntimeAmount(const std::string &amount, uint8_t decimals) {
+        char buffer[500];
+        MEMZERO(buffer, sizeof(buffer));
+        fpstr_to_str(buffer, sizeof(buffer), amount.c_str(), decimals);
         number_inplace_trimming(buffer, 1);
         return std::string(buffer);
     }
@@ -331,6 +374,141 @@ namespace utils {
         return answer;
     }
 
+static const pt_lookup_t paraTime_lookup_helper[] = { 
+    {CIPHER_MAIN_RUNID, CIPHER_MAIN_TO_ADDR, 9, "Cipher"},
+    {CIPHER_TEST_RUNID, CIPHER_TEST_TO_ADDR, 9, "Cipher"},
+    {EMERALD_MAIN_RUNID, EMERALD_MAIN_TO_ADDR, 18, "Emerald"},
+    {EMERALD_TEST_RUNID, EMERALD_TEST_TO_ADDR, 18, "Emerald"},
+    {SAPPHIRE_MAIN_RUNID, SAPPHIRE_MAIN_TO_ADDR,18, "Sapphire"},
+    {SAPPHIRE_TEST_RUNID, SAPPHIRE_TEST_TO_ADDR, 18, "Sapphire"},
+};
+
+    std::vector<std::string> GenerateExpectedUIOutputForRuntime(Json::Value j, uint32_t &itemCount) {
+        auto answer = std::vector<std::string>();
+
+        auto type = j["tx"]["call"]["method"].asString();
+        auto tx = j["tx"];
+        auto meta = j["meta"];
+        auto txbody = tx["call"]["body"];
+
+        uint8_t dummy = 0;
+
+        if (type.compare("consensus.Withdraw") == 0) {
+            addTo(answer, "{} | Type : Withdraw (Paratime)", itemCount++);
+        }
+        if (type.compare("consensus.Deposit") == 0) {
+            addTo(answer, "{} | Type : Deposit (Paratime)", itemCount++);
+        }
+        if (type.compare("accounts.Transfer") == 0) {
+            addTo(answer, "{} | Type : Transfer (Paratime)", itemCount++);
+        }
+
+        if(meta.isMember("orig_to")) {
+            auto orig = meta["orig_to"].asString();
+            if(txbody.isMember("to")) {
+                if (orig.length() == 40){
+                    orig = "0x" + orig;
+                    addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(orig, 0, &dummy));
+                    addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(orig, 1, &dummy));
+                } else {
+                    addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(meta["orig_to"].asString(), 0, &dummy));
+                    addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(meta["orig_to"].asString(), 1, &dummy));
+                }
+            }
+        } else {
+            if(txbody.isMember("to")) {
+                addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(tx["call"]["body"]["to"].asString(), 0, &dummy));
+                addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(tx["call"]["body"]["to"].asString(), 1, &dummy));              
+            } else {
+                addTo(answer, "{} | To : Self", itemCount++);
+
+            }
+                
+
+        }
+
+        auto denom = COIN_MAINNET_DENOM;
+        uint8_t decimal = 9;
+        for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+            if (tx["call"]["body"]["amount"]["Denomination"].asString().compare("") == 0) {
+                if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
+                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    denom = COIN_MAINNET_DENOM;
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
+                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    denom = COIN_TESTNET_DENOM;
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                }
+            } else {
+                if (meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0 ) {
+                    denom = " ";
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                }    
+            }
+        }
+
+        addTo(answer, "{} | Amount : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["call"]["body"]["amount"]["Amount"].asString(), decimal));
+
+        for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+            if (tx["ai"]["fee"]["amount"]["Denomination"].asString().compare("") == 0) {
+                if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
+                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    denom = COIN_MAINNET_DENOM;
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
+                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    denom = COIN_TESTNET_DENOM;
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                }
+            } else {
+                if (meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0 ) {
+                    denom = " ";
+                    decimal = paraTime_lookup_helper[i].decimals;
+                    break;
+                }    
+            }
+        }
+
+        addTo(answer, "{} | Fee : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["ai"]["fee"]["amount"]["Amount"].asString(), decimal));
+
+
+        if(tx["ai"]["fee"].isMember("gas")) {
+            addTo(answer, "{} | Gas limit : {}", itemCount++, tx["ai"]["fee"]["gas"].asUInt64());
+        } else {
+            addTo(answer, "{} | Gas limit : 0", itemCount++);
+        }
+
+        auto runid = j["meta"]["runtime_id"].asString();
+        uint8_t readable = 1;
+         for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+            if (runid.compare(paraTime_lookup_helper[i].runid) == 0) {
+                addTo(answer, "{} | Runtime : {}", itemCount++, paraTime_lookup_helper[i].name);
+                readable = 0;
+                break;
+            }
+        }
+        if (readable) {
+            addTo(answer, "{} | Runtime[1/2] : {}", itemCount++, FormatAddress(meta["runtime_id"].asString(), 0, &dummy));
+            addTo(answer, "{} | Runtime[2/2] : {}", itemCount++, FormatAddress(meta["runtime_id"].asString(), 1, &dummy));
+        }
+
+        if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0) {
+            addTo(answer, "{} | Network : {}", itemCount++, "Mainnet");
+
+        } else if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0) {
+            addTo(answer, "{} | Network : {}", itemCount++, "Testnet");
+        }
+
+        return answer;
+
+    }
+
     std::vector<std::string> GenerateExpectedUIOutputForTx(Json::Value j, uint32_t &itemCount) {
         auto answer = std::vector<std::string>();
 
@@ -364,6 +542,16 @@ namespace utils {
             addTo(answer, "{} | Type : Allow", itemCount++);
 
             auto allowAccount = txbody["beneficiary"].asString();
+            if(allowAccount.compare(CIPHER_MAIN_TO_ADDR) == 0 || allowAccount.compare(CIPHER_TEST_TO_ADDR) == 0 ) {
+                addTo(answer, "{} | Beneficiary : {}", itemCount, "CIPHER");
+            }
+            if(allowAccount.compare(EMERALD_MAIN_TO_ADDR) == 0 || allowAccount.compare(EMERALD_TEST_TO_ADDR) == 0 ) {
+                addTo(answer, "{} | Beneficiary : {}", itemCount, "EMERALD");
+            }
+            if(allowAccount.compare(SAPPHIRE_MAIN_TO_ADDR) == 0 || allowAccount.compare(SAPPHIRE_TEST_TO_ADDR) == 0 ) {
+                addTo(answer, "{} | Beneficiary : {}", itemCount, "SAPPHIRE");
+            }
+
             addTo(answer, "{} | Beneficiary[1/2] : {}", itemCount, FormatAddress(allowAccount, 0, &dummy));
             addTo(answer, "{} | Beneficiary[2/2] : {}", itemCount++, FormatAddress(allowAccount, 1, &dummy));
 
@@ -548,7 +736,7 @@ namespace utils {
         return answer;
     }
 
-    std::vector<std::string>  GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
+    std::vector<std::string> GenerateExpectedUIOutput(std::string context, const Json::Value &j) {
         auto answer = std::vector<std::string>();
         uint32_t itemCount = 0;
 
@@ -561,8 +749,11 @@ namespace utils {
         auto kind = j["kind"].asString();
 
         if (j.isMember("tx")) {
-            // is tx
-            answer = GenerateExpectedUIOutputForTx(j, itemCount);
+            if(j.isMember("meta")) {
+                answer = GenerateExpectedUIOutputForRuntime(j, itemCount);
+            } else {
+                answer = GenerateExpectedUIOutputForTx(j, itemCount);
+            }
         } else {
             // is entity
             if (j.isMember("entity_meta")) {
@@ -581,8 +772,15 @@ namespace utils {
         if (find1 != std::string::npos) {
             uint8_t dummy;
             contextSuffix = context.replace(context.find(expectedPrefix1), expectedPrefix1.size(), "");
-            addTo(answer, "{} | Network[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
-            addTo(answer, "{} | Network[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            
+            if (contextSuffix.compare(MAINNET_GENESIS_HASH) == 0) {
+                addTo(answer, "{} | Network : {}", itemCount++, "Mainnet");
+            } else if (contextSuffix.compare(TESTNET_GENESIS_HASH) == 0) {
+                addTo(answer, "{} | Network : {}", itemCount++, "Testnet");
+            } else {
+                addTo(answer, "{} | Network[1/2] : {}", itemCount, FormatHash(contextSuffix, 0, &dummy));
+                addTo(answer, "{} | Network[2/2] : {}", itemCount, FormatHash(contextSuffix, 1, &dummy));
+            }
         }
 
         auto find2 = context.find(expectedPrefix2);
