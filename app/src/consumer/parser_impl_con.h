@@ -59,6 +59,8 @@ parser_error_t _isValidEmail(email_t *email);
 
 parser_error_t _isValidHandle(handle_t *handle);
 
+parser_error_t hexStr2Arr(uint8_t *out, uint8_t *in, size_t out_len_max);
+
 #endif
 
 #ifdef __cplusplus

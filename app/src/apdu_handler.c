@@ -23,6 +23,7 @@
 
 #include "view.h"
 #include "view_custom.h"
+#include "view_internal.h"
 #include "actions.h"
 #include "tx.h"
 #include "addr.h"
@@ -50,8 +51,10 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
 
     MEMCPY(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * hdPathLen);
 
-    const bool mainnet = hdPath[0] == HDPATH_0_DEFAULT &&
-                         hdPath[1] == HDPATH_1_DEFAULT;
+    const bool mainnet = (hdPath[0] == HDPATH_0_DEFAULT &&
+                         hdPath[1] == HDPATH_1_DEFAULT) ||
+                         (hdPath[0] == HDPATH_0_DEFAULT &&
+                         hdPath[1] == HDPATH_1_ALTERNATIVE);
 
     if (!mainnet) {
         THROW(APDU_CODE_DATA_INVALID);
@@ -129,7 +132,30 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
     THROW(APDU_CODE_OK);
 }
 
-__Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+__Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+    if (!process_chunk(tx, rx)) {
+        THROW(APDU_CODE_OK);
+    }
+
+    CHECK_APP_CANARY()
+
+    const char *error_msg = tx_parse();
+    CHECK_APP_CANARY()
+
+    if (error_msg != NULL) {
+        int error_msg_length = strlen(error_msg);
+        MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
+        *tx += (error_msg_length);
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+    CHECK_APP_CANARY()
+    view_review_init(tx_getItem, tx_getNumItems, app_sign_secp256k1);
+    view_review_show(REVIEW_TXN);
+    *flags |= IO_ASYNCH_REPLY;
+}
+
+__Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     if (!process_chunk(tx, rx)) {
         THROW(APDU_CODE_OK);
     }
@@ -148,7 +174,7 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
 
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
-    view_review_init(tx_getItem, tx_getNumItems, app_sign);
+    view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
@@ -156,18 +182,18 @@ __Z_INLINE void handleSign(volatile uint32_t *flags, volatile uint32_t *tx, uint
                         case consensusType:
                         {
                             if(vote_state.isInitialized) {
-                                app_sign();
+                                app_sign_ed25519();
                                 view_status_show();
                             } else {
                                 CHECK_APP_CANARY()
-                                view_review_init(tx_getItem, tx_getNumItems, app_sign);
+                                view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
                                 view_review_show(REVIEW_TXN);
                                 *flags |= IO_ASYNCH_REPLY;
                             }
                         }
                         	break;
                         case nodeType:
-                            app_sign();
+                            app_sign_ed25519();
                             break;
                         default:
                             THROW(APDU_CODE_BAD_KEY_HANDLE);
@@ -201,7 +227,6 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
                 case INS_GET_ADDR_ED25519: {
                     zemu_log("INS_GET_ADDR_ED25519\n");
-
                     CHECK_PIN_VALIDATED()
                     handleGetAddr(flags, tx, rx, addr_ed25519);
                     break;
@@ -209,20 +234,18 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
                 case INS_SIGN_ED25519: {
                     CHECK_PIN_VALIDATED()
-                    handleSign(flags, tx, rx);
+                    handleSignEd25519(flags, tx, rx);
                     break;
                 }
 
                 case INS_SIGN_PT_ED25519: {
                     CHECK_PIN_VALIDATED()
-                    handleSign(flags, tx, rx);
+                    handleSignEd25519(flags, tx, rx);
                     break;
                 }
 
-
                 case INS_GET_ADDR_SECP256K1: {
                     zemu_log("INS_GET_ADDR_SECP256K1\n");
-
                     CHECK_PIN_VALIDATED()
                     handleGetAddr(flags, tx, rx, addr_secp256k1);
                     break;
@@ -230,7 +253,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
                 case INS_SIGN_PT_SECP256K1: {
                     CHECK_PIN_VALIDATED()
-                    handleSign(flags, tx, rx);
+                    handleSignSecp256k1(flags, tx, rx);
                     break;
                 }
 

@@ -26,6 +26,8 @@ extern "C" {
 #include <sigutils.h>
 #include <zxerror.h>
 
+#define AddressV0Secp256k1EthContext "oasis-runtime-sdk/address: secp256k1eth"
+
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
 extern uint8_t hdPathLen;
 
@@ -33,12 +35,17 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
 
 zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen,address_kind_e kind);
 
-zxerr_t crypto_sign(uint8_t *signature,
+zxerr_t crypto_signEd25519(uint8_t *signature,
                     uint16_t signatureMaxlen,
                     const uint8_t *message,
                     uint16_t messageLen,
                     uint16_t *sigSize);
 
+zxerr_t crypto_signSecp256k1(uint8_t *signature,
+                   uint16_t signatureMaxlen,
+                    const uint8_t *message,
+                    uint16_t messageLen,
+                   uint16_t *sigSize);
 #ifdef __cplusplus
 }
 #endif

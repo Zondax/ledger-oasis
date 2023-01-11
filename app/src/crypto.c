@@ -131,13 +131,84 @@ zxerr_t crypto_extractPublicKeySecp256k1(const uint32_t path[HDPATH_LEN_DEFAULT]
     return error;
 }
 
-zxerr_t crypto_sign(uint8_t *signature,
+typedef struct {
+    uint8_t r[32];
+    uint8_t s[32];
+    uint8_t v;
+
+    // DER signature max size should be 73
+    // https://bitcoin.stackexchange.com/questions/77191/what-is-the-maximum-size-of-a-der-encoded-ecdsa-signature#77192
+    uint8_t der_signature[73];
+
+} __attribute__((packed)) signature_t;
+
+
+zxerr_t crypto_signSecp256k1(uint8_t *signature,
+                    uint16_t signatureMaxlen,
+                    const uint8_t *message,
+                    uint16_t messageLen,
+                    uint16_t *sigSize) {
+    UNUSED(messageLen);
+
+    cx_ecfp_private_key_t cx_privateKey;
+    uint8_t privateKeyData[32];
+    unsigned int info = 0;
+
+    signature_t *const signature_object = (signature_t *) signature;
+    zxerr_t err = zxerr_ok;
+    BEGIN_TRY
+    {
+        TRY
+        {
+            // Generate keys
+            os_perso_derive_node_bip32(CX_CURVE_256K1,
+                                                      hdPath,
+                                                      HDPATH_LEN_DEFAULT,
+                                                      privateKeyData, NULL);
+
+            cx_ecfp_init_private_key(CX_CURVE_256K1, privateKeyData, 32, &cx_privateKey);
+
+            // Sign
+            cx_ecdsa_sign(&cx_privateKey,
+                                            CX_RND_RFC6979 | CX_LAST,
+                                            CX_SHA256,
+                                            message,
+                                            CX_SHA256_SIZE,
+                                            signature_object->der_signature,
+                                            sizeof_field(signature_t, der_signature),
+                                            &info);
+
+            err_convert_e err_c = convertDERtoRSV(signature_object->der_signature, info,  signature_object->r, signature_object->s, &signature_object->v);
+            if (err_c != no_error) {
+                // Error while converting so return length 0
+                MEMZERO(signature, signatureMaxlen);
+                err = zxerr_unknown;
+            }else{
+                *sigSize = sizeof_field(signature_t, r) +
+                    sizeof_field(signature_t, s) +
+                    sizeof_field(signature_t, v);
+            }
+        }
+        CATCH_ALL {
+            MEMZERO(signature, signatureMaxlen);
+            err = zxerr_unknown;
+        };
+        FINALLY {
+            MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
+            MEMZERO(privateKeyData, 32);
+        }
+    }
+    END_TRY;
+
+    return err;
+}
+
+zxerr_t crypto_signEd25519(uint8_t *signature,
                      uint16_t signatureMaxlen,
                      const uint8_t *message,
                      uint16_t messageLen,
                     uint16_t *sigSize) {
-    uint8_t messageDigest[CX_SHA512_SIZE];
-    SHA512_256(message, messageLen, messageDigest);
+    UNUSED(messageLen);
 
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[32];
@@ -171,7 +242,7 @@ zxerr_t crypto_sign(uint8_t *signature,
             signatureLength = cx_eddsa_sign(&cx_privateKey,
                                             CX_LAST,
                                             CX_SHA512,
-                                            messageDigest,
+                                            message,
                                             CX_SHA256_SIZE,
                                             NULL,
                                             0,
@@ -223,7 +294,7 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     const zxerr_t err = bech32EncodeFromBytes(
             addr_out, addr_out_max,
             COIN_HRP,
-            tmp.address, sizeof_field(tmp_address_t, address), 1);
+            tmp.address, sizeof_field(tmp_address_t, address), 1, BECH32_ENCODING_BECH32);
 
     if (err != zxerr_ok) {
         return 0;
