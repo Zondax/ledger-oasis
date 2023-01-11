@@ -162,10 +162,41 @@ export class OasisAppBase {
     return chunks;
   }
 
-  async signGetChunks(path, context, message) {
+    static prepareMetaChunks(serializedPathBuffer, meta, message) {
+    const chunks = [];
+
+    // First chunk (only path)
+    chunks.push(serializedPathBuffer);
+
+    const MetaSizeBuffer = Buffer.from([meta.length]);
+    const MetaBuffer = Buffer.from(meta);
+    const messageBuffer = Buffer.from(message);
+
+    if (MetaSizeBuffer.length > 1) {
+      throw new Error("Meta size buffer should be exactly 1 byte");
+    }
+
+    // Now split context length + context + message into more chunks
+    const buffer = Buffer.concat([MetaSizeBuffer, MetaBuffer, messageBuffer]);
+    for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
+      let end = i + CHUNK_SIZE;
+      if (i > buffer.length) {
+        end = buffer.length;
+      }
+      chunks.push(buffer.slice(i, end));
+    }
+
+    return chunks;
+  }
+
+  async signGetChunks(path, context, message, ins) {
     const serializedPath = await this.serializePath(path);
 
-    return OasisAppBase.prepareChunks(serializedPath, context, message);
+    if (ins === INS.SIGN_ED25519) {
+      return OasisAppBase.prepareChunks(serializedPath, context, message);
+    }
+    
+    return OasisAppBase.prepareMetaChunks(serializedPath, context, message);
   }
 
   async getVersion() {
@@ -323,7 +354,7 @@ export class OasisAppBase {
       .then(processGetAddrSecp256k1Response, processErrorResponse);
   }
 
-  async signSendChunk(chunkIdx, chunkNum, chunk) {
+  async signSendChunk(chunkIdx, chunkNum, chunk, ins) {
     let payloadType = PAYLOAD_TYPE.ADD;
     if (chunkIdx === 1) {
       payloadType = PAYLOAD_TYPE.INIT;
@@ -333,7 +364,7 @@ export class OasisAppBase {
     }
 
     return this.transport
-      .send(this.CLA(), INS.SIGN_ED25519, payloadType, 0, chunk, [0x9000, 0x6984, 0x6a80])
+      .send(this.CLA(), ins, payloadType, 0, chunk, [0x9000, 0x6984, 0x6a80])
       .then((response) => {
         const errorCodeData = response.slice(-2);
         const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
@@ -357,9 +388,9 @@ export class OasisAppBase {
   }
 
   async sign(path, context, message) {
-    const chunks = await this.signGetChunks(path, context, message);
+    const chunks = await this.signGetChunks(path, context, message, INS.SIGN_ED25519);
 
-    return this.signSendChunk(1, chunks.length, chunks[0], [0x9000]).then(async (response) => {
+    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_ED25519).then(async (response) => {
       let result = {
         return_code: response.return_code,
         error_message: response.error_message,
@@ -368,7 +399,61 @@ export class OasisAppBase {
 
       for (let i = 1; i < chunks.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        result = await this.signSendChunk(1 + i, chunks.length, chunks[i]);
+        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_ED25519);
+        if (result.return_code !== 0x9000) {
+          break;
+        }
+      }
+
+      return {
+        return_code: result.return_code,
+        error_message: result.error_message,
+        // ///
+        signature: result.signature,
+      };
+    }, processErrorResponse);
+  }
+
+  async signPtEd25519(path, meta, message) {
+    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_PT_ED25519);
+
+    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_PT_ED25519).then(async (response) => {
+      let result = {
+        return_code: response.return_code,
+        error_message: response.error_message,
+        signature: null,
+      };
+
+      for (let i = 1; i < chunks.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_PT_ED25519);
+        if (result.return_code !== 0x9000) {
+          break;
+        }
+      }
+
+      return {
+        return_code: result.return_code,
+        error_message: result.error_message,
+        // ///
+        signature: result.signature,
+      };
+    }, processErrorResponse);
+  }
+
+  async signPtSecp256k1(path, meta, message) {
+    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_PT_SECP256K1);
+
+    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_PT_SECP256K1).then(async (response) => {
+      let result = {
+        return_code: response.return_code,
+        error_message: response.error_message,
+        signature: null,
+      };
+
+      for (let i = 1; i < chunks.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_PT_SECP256K1);
         if (result.return_code !== 0x9000) {
           break;
         }
