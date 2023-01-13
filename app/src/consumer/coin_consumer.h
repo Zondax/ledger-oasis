@@ -29,19 +29,16 @@ extern "C" {
 
 #define HDPATH_0_DEFAULT     (0x80000000u | 0x2cu)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
+#define HDPATH_1_ALTERNATIVE (0x80000000u | 0x3c)
 #define HDPATH_2_DEFAULT     (0x80000000u | 0u)
 #define HDPATH_3_DEFAULT     (0u)
 #define HDPATH_4_DEFAULT     (0u)
 
-#define PK_LEN_ED25519       32u
+#define PK_LEN_ED25519          32u
+//Compressed SECP256K1 pk size
+#define PK_LEN_SECP256K1        33u
+#define PK_LEN_SECP256K1_FULL   65u
 
-#ifdef APP_CONSUMER
-
-typedef enum {
-    addr_ed25519 = 0,
-} address_kind_e;
-
-#endif
 
 #define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
 #define VIEW_ADDRESS_ITEM_COUNT             2

@@ -49,6 +49,8 @@ void __assert_fail(const char * assertion, const char * file, unsigned int line,
 #define FIELD_NUM(x) ((uint8_t)((x) >> 3u))
 #define WIRE_TYPE(x) ((uint8_t)((x) & 0x7u))
 
+vote_state_t vote_state;
+vote_t vote;
 
 __Z_INLINE parser_error_t readRawVarint(parser_context_t *ctx, uint64_t *value) {
     uint16_t offset = ctx->offset + ctx->lastConsumed;

@@ -22,16 +22,18 @@
 #include <os_io_seproxyhal.h>
 #include "coin.h"
 #include "stdbool.h"
+#include "parser_impl.h"
+#include "sha512.h"
+#include "crypto_helper.h"
 
 #ifdef APP_VALIDATOR
 #include "validator/vote.h"
 #include "validator/vote_fsm.h"
-#include "parser_impl.h"
 #endif
 
 uint16_t action_addrResponseLen;
 
-void app_sign() {
+void app_sign_ed25519() {
 
 #ifdef APP_VALIDATOR
     if(parser_tx_obj.type == consensusType) {
@@ -68,12 +70,12 @@ void app_sign() {
 #endif
 
     uint8_t *signature = G_io_apdu_buffer;
-
-    const uint8_t *message = tx_get_buffer() + CRYPTO_BLOB_SKIP_BYTES;
-    const uint16_t messageLength = tx_get_buffer_length() - CRYPTO_BLOB_SKIP_BYTES;
     uint16_t replyLen = 0;
 
-    zxerr_t err = crypto_sign(signature, IO_APDU_BUFFER_SIZE - 3, message, messageLength, &replyLen);
+    uint8_t messageDigest[CX_SHA512_SIZE];
+    crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
+
+    zxerr_t err = crypto_signEd25519(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
 
     if (err != zxerr_ok || replyLen == 0) {
         set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
@@ -84,19 +86,40 @@ void app_sign() {
     }
 }
 
+void app_sign_secp256k1() {
+
+    uint8_t *signature = G_io_apdu_buffer;
+    uint16_t replyLen = 0;
+
+    uint8_t messageDigest[CX_SHA512_SIZE];
+    crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
+
+    zxerr_t err = crypto_signSecp256k1(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
+
+    if (err != zxerr_ok || replyLen == 0) {
+        set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+    } else {
+        set_code(G_io_apdu_buffer, replyLen, APDU_CODE_OK);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, replyLen + 2);
+    }
+}
+
+
 void app_reject() {
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
     set_code(G_io_apdu_buffer, 0, APDU_CODE_COMMAND_NOT_ALLOWED);
     io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
 }
 
-zxerr_t app_fill_address() {
+zxerr_t app_fill_address(address_kind_e kind) {
+    zemu_log("app_fill_address\n");
     // Put data directly in the apdu buffer
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
 
     action_addrResponseLen = 0;
 
-    zxerr_t err = crypto_fillAddress(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE - 2, &action_addrResponseLen);
+    zxerr_t err = crypto_fillAddress(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE - 2, &action_addrResponseLen, kind);
 
     if (err != zxerr_ok || action_addrResponseLen == 0) {
         THROW(APDU_CODE_EXECUTION_ERROR);
@@ -106,8 +129,7 @@ zxerr_t app_fill_address() {
 }
 
 void app_reply_address() {
-    zxerr_t zxerr = app_fill_address();
-    if (zxerr != zxerr_ok) {
+    if (action_addrResponseLen == 0) {
         THROW(APDU_CODE_DATA_INVALID);
     }
     set_code(G_io_apdu_buffer, action_addrResponseLen, APDU_CODE_OK);

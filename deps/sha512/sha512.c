@@ -347,3 +347,15 @@ void SHA512_256_with_context_version(const uint8_t *in_ctx, size_t n_ctx,
     mbedtls_sha512_finish(&ctx, out);
     secure_wipe((uint8_t *) &ctx, sizeof(ctx));
 }
+
+void SHA512_256_with_context(const uint8_t *in_ctx, size_t n_ctx,
+                                const uint8_t *in, size_t n, uint8_t out[SHA512_DIGEST_LENGTH]) {
+    mbedtls_sha512_context ctx;
+
+    mbedtls_sha512_init(&ctx);
+    mbedtls_sha512_starts(&ctx);
+    mbedtls_sha512_update(&ctx, in_ctx, n_ctx);
+    mbedtls_sha512_update(&ctx, in, n);
+    mbedtls_sha512_finish(&ctx, out);
+    secure_wipe((uint8_t *) &ctx, sizeof(ctx));
+}

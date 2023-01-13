@@ -36,6 +36,13 @@ extern "C" {
 #define HANDLER_MAX_LENGTH 32
 #define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
 
+typedef struct {
+    const char *runid;
+    const char *address;
+    uint8_t decimals;
+    const char *name;
+} pt_lookup_t;
+
 typedef enum {
     unknownMethod,
     stakingTransfer,
@@ -49,7 +56,10 @@ typedef enum {
     registryUnfreezeNode,
     registryRegisterEntity,
     governanceSubmitProposal,
-    governanceCastVote
+    governanceCastVote,
+    accountsTransfer,
+    consensusDeposit,
+    consensusWithdraw
 } oasis_methods_e;
 
 typedef enum{
@@ -66,12 +76,17 @@ typedef struct {
 
 typedef uint8_t publickey_t[32];
 
+typedef struct {
+    uint8_t buffer[64];
+    size_t len;
+} quantity_t;
+
 typedef uint8_t address_raw_t[21];
 
 typedef struct {
     uint8_t buffer[64];
     size_t len;
-} quantity_t;
+} string_t;
 
 typedef struct {
     // one more for the zero termination
@@ -239,13 +254,69 @@ typedef struct {
   handle_t twitter;
 } oasis_entity_metadata_t;
 
+typedef struct {
+    address_raw_t to;
+    quantity_t amount;
+    string_t denom;
+    bool has_to;
+} body_unencrypted_t;
+
+typedef struct {
+    publickey_t pk;
+    string_t nonce;
+    body_unencrypted_t body;
+} body_encrypted_t;
+
+
+typedef struct {
+    uint64_t format;
+    oasis_methods_e method;
+    union{
+        body_unencrypted_t unencrypted;
+        body_encrypted_t encrypted;
+    }body;
+
+    bool ro;
+} runtime_call_t;
+
+typedef struct {
+    uint64_t consensus_msg;
+    uint64_t gas;
+    quantity_t amount;
+    string_t denom;
+} runtime_fee_t;
+
+typedef struct {
+    size_t n_si;
+    uint64_t nonce;
+    runtime_fee_t fee;
+} runtime_auth_info_t;
+
+typedef struct {
+    const uint8_t chain_context[CHAIN_CONTEXT_BYTE_LEN * 2];
+    const uint8_t runtime_id[RUNTIME_ID_BYTE_LEN * 2];
+    const uint8_t orig_to[ORIG_TO_SIZE];
+    bool has_orig_to;
+} meta_t;
+
+typedef struct {
+    char sigcxt[200];
+    size_t metaLen;
+    uint16_t v;
+    runtime_call_t call;
+    runtime_auth_info_t ai;
+    meta_t meta;
+} oasis_runtime_t;
+
+
 typedef enum {
     unknownType,
     txType,
     entityType,
     nodeType,
     consensusType,
-    entityMetadataType
+    entityMetadataType,
+    runtimeType
 } oasis_blob_type_e;
 
 typedef struct {
@@ -256,6 +327,7 @@ typedef struct {
         oasis_tx_t tx;
         oasis_entity_t entity;
         oasis_entity_metadata_t entity_metadata;
+        oasis_runtime_t runtime;
     } oasis;
 } parser_tx_t;
 

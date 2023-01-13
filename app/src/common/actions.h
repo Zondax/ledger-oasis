@@ -17,12 +17,14 @@
 
 #include <stdint.h>
 #include "zxerror.h"
+#include "coin.h"
 
 extern uint16_t action_addrResponseLen;
 
-void app_sign();
+void app_sign_ed25519();
+void app_sign_secp256k1();
 
-zxerr_t app_fill_address();
+zxerr_t app_fill_address(address_kind_e kind);
 
 void app_reject();
 

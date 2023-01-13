@@ -25,11 +25,18 @@
 using ::testing::TestWithParam;
 
 void check_testcase(const testcase_t &testcase) {
-    auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index);
+    int runtime = 0;
+    auto tc = utils::ReadTestCaseData(testcase.testcases, testcase.index, &runtime);
 
     parser_context_t ctx;
+    memset(&ctx, 0, sizeof(ctx));
 
-    auto buffer = utils::prepareBlob(tc.signature_context, tc.encoded_tx);
+    auto buffer = std::vector<uint8_t>();
+    if (runtime) {
+        buffer = utils::prepareRuntimeBlob(tc.signature_context, tc.encoded_tx);
+    } else {
+        buffer = utils::prepareBlob(tc.signature_context, tc.encoded_tx);
+    }
 
     parser_error_t err = parser_parse(&ctx, buffer.data(), buffer.size());
     if (tc.valid) {
@@ -74,6 +81,31 @@ void check_testcase(const testcase_t &testcase) {
 ///////////////////////////////////////////////////////////////////////
 // Define groups of test vectors
 
+class ManualTests : public ::testing::TestWithParam<testcase_t> {
+public:
+    struct PrintToStringParamName {
+        template<class ParamType>
+        std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
+            auto p = static_cast<testcase_t>(info.param);
+            std::stringstream ss;
+            ss << std::setfill('0') << std::setw(5) << p.index << "_" << p.description;
+            return ss.str();
+        }
+    };
+};
+
+INSTANTIATE_TEST_SUITE_P(
+        Manual,
+        ManualTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
+);
+
+TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
 class OasisTests : public ::testing::TestWithParam<testcase_t> {
 public:
     struct PrintToStringParamName {
@@ -111,29 +143,12 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/generated_entity_metadata.json")), OasisTests::PrintToStringParamName()
 );
 
-TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-
-class ManualTests : public ::testing::TestWithParam<testcase_t> {
-public:
-    struct PrintToStringParamName {
-        template<class ParamType>
-        std::string operator()(const testing::TestParamInfo<ParamType> &info) const {
-            auto p = static_cast<testcase_t>(info.param);
-            std::stringstream ss;
-            ss << std::setfill('0') << std::setw(5) << p.index << "_" << p.description;
-            return ss.str();
-        }
-    };
-};
-
 INSTANTIATE_TEST_SUITE_P(
-        Manual,
-        ManualTests,
-        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/manual.json")), ManualTests::PrintToStringParamName()
+        GeneratedRuntime,
+        OasisTests,
+        ::testing::ValuesIn(utils::GetJsonTestCases("testvectors/addr0014_generated.json")), OasisTests::PrintToStringParamName()
 );
 
-TEST_P(ManualTests, CheckUIOutput_Manual) { check_testcase(GetParam()); }
+TEST_P(OasisTests, CheckUIOutput_Oasis) { check_testcase(GetParam()); }
+
+

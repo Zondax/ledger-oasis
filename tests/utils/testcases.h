@@ -38,7 +38,9 @@ typedef struct {
 namespace utils {
     std::vector<uint8_t> prepareBlob(const std::string &context, const std::string &base64Cbor);
 
-    testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value>& jsonSource, int index);
+    std::vector<uint8_t> prepareRuntimeBlob(const std::string &context, const std::string &base64Cbor);
+
+    testcaseData_t ReadTestCaseData(const std::shared_ptr<Json::Value>& jsonSource, int index, int *runtime);
 
     std::vector<testcase_t> GetJsonTestCases(const std::string& filename);
 
