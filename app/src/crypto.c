@@ -29,10 +29,15 @@ uint8_t hdPathLen;
 
 #include "cx.h"
 
-void keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
+static zxerr_t keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
+    if (in == NULL || out == NULL || out_len < PUB_KEY_SIZE) {
+        return zxerr_invalid_crypto_settings;
+    }
     cx_sha3_t sha3;
     cx_keccak_init(&sha3, 256);
     cx_hash((cx_hash_t*)&sha3, CX_LAST, in, in_len, out, out_len);
+
+    return zxerr_ok;
 }
 
 zxerr_t  crypto_extractPublicKeyEd25519(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
@@ -303,7 +308,7 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
     return strlen(addr_out);
 }
 
-uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
+static uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
     zemu_log("crypto_encodeEthereumAddress\n");
     uint8_t hash[KECCAK256_HASH_LEN]={0};
     keccak (
@@ -349,12 +354,12 @@ zxerr_t crypto_fillAddressSecp256k1(uint8_t *buffer, uint16_t buffer_len, uint16
     }
     MEMZERO(buffer, buffer_len);
 
-    //to compute Etherium addresses we need the full public key (not the compressed one)
+    //to compute Ethereum addresses we need the full public key (not the compressed one)
     uint8_t publicKeyFull[PK_LEN_SECP256K1_FULL] = {0};
 
     CHECK_ZXERR(crypto_extractPublicKeySecp256k1(hdPath, publicKeyFull, PK_LEN_SECP256K1_FULL))
 
-    // format public key as ethereum hex address
+    // format public key as Ethereum hex address
     char *addr_out = (char *) (buffer + PK_LEN_SECP256K1);
     const uint16_t addr_out_max =  buffer_len - PK_LEN_SECP256K1;
     const uint16_t addr_out_len = crypto_encodeEthereumAddress(addr_out, addr_out_max, publicKeyFull);
@@ -383,16 +388,12 @@ zxerr_t crypto_fillAddressSecp256k1(uint8_t *buffer, uint16_t buffer_len, uint16
 
 zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen, address_kind_e kind) {
     zemu_log("crypto_fillAddress\n");
-    if (kind == addr_secp256k1){
-        zemu_log("identified secp256k1 address\n");
-    }
-    if (kind == addr_ed25519){
-        zemu_log("identified ed25519 address\n");
-    }
     switch (kind) {
         case addr_ed25519:
+            zemu_log("identified ed25519 address\n");
             return crypto_fillAddressEd25519(buffer, buffer_len, addrLen);
         case addr_secp256k1:
+            zemu_log("identified secp256k1 address\n");
             return crypto_fillAddressSecp256k1(buffer, buffer_len, addrLen);
     }
     zemu_log("No match for address kind!\n");

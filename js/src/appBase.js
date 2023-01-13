@@ -326,7 +326,7 @@ export class OasisAppBase {
     return publicKeyv1(this, serializedPath);
   }
 
-  async getAddressAndPubKey(path) {
+  async getAddressAndPubKey_ed25519(path) {
     const data = await this.serializePath(path);
     return this.transport
       .send(this.CLA(), INS.GET_ADDR_ED25519, P1_VALUES.ONLY_RETRIEVE, 0, data, [0x9000])
@@ -340,7 +340,7 @@ export class OasisAppBase {
       .then(processGetAddrSecp256k1Response, processErrorResponse);
   }
 
-  async showAddressAndPubKey(path) {
+  async showAddressAndPubKey_ed25519(path) {
     const data = await this.serializePath(path);
     return this.transport
       .send(this.CLA(), INS.GET_ADDR_ED25519, P1_VALUES.SHOW_ADDRESS_IN_DEVICE, 0, data, [0x9000])

@@ -26,8 +26,6 @@ extern "C" {
 #include <sigutils.h>
 #include <zxerror.h>
 
-#define AddressV0Secp256k1EthContext "oasis-runtime-sdk/address: secp256k1eth"
-
 extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
 extern uint8_t hdPathLen;
 

@@ -35,10 +35,8 @@
 #define INS_GET_VERSION                 0
 #define INS_GET_ADDR_ED25519            1
 #define INS_SIGN_ED25519                2
-// #define INS_GET_ADDR_SR25519         3
 #define INS_GET_ADDR_SECP256K1          4
 #define INS_SIGN_PT_ED25519             5
-// #define INS_SIGN_PT_SR25519          6
 #define INS_SIGN_PT_SECP256K1           7
 
 void app_init();

@@ -38,7 +38,7 @@ describe("Standard-Adr0008-0-Oasis", function () {
       const app = new OasisApp(sim.getTransport());
 
       const path = "m/44'/474'/0'";
-      const resp = await app.getAddressAndPubKey(path);
+      const resp = await app.getAddressAndPubKey_ed25519(path);
 
       console.log(resp);
 

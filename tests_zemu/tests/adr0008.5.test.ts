@@ -86,7 +86,7 @@ describe("Standard-Adr0008-5", function () {
       await sim.start({ ...defaultOptions, model: m.name });
       const app = new OasisApp(sim.getTransport());
 
-      const resp = await app.getAddressAndPubKey(path);
+      const resp = await app.getAddressAndPubKey_ed25519(path);
 
       console.log(resp);
 
@@ -111,7 +111,7 @@ describe("Standard-Adr0008-5", function () {
       await sim.start({ ...defaultOptions, model: m.name });
       const app = new OasisApp(sim.getTransport());
 
-      const respRequest = app.showAddressAndPubKey(path);
+      const respRequest = app.showAddressAndPubKey_ed25519(path);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
       await sim.compareSnapshotsAndApprove(
@@ -150,7 +150,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -195,7 +195,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -255,7 +255,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -300,7 +300,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -345,7 +345,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -391,7 +391,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -437,7 +437,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -483,7 +483,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -529,7 +529,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -574,7 +574,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -619,7 +619,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -664,7 +664,7 @@ describe("Standard-Adr0008-5", function () {
       );
       invalidMessage = Buffer.concat([invalidMessage, Buffer.from("1")]);
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -694,7 +694,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -739,7 +739,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -785,7 +785,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -831,7 +831,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -876,7 +876,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -922,7 +922,7 @@ describe("Standard-Adr0008-5", function () {
         "base64"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -969,7 +969,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -1015,7 +1015,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -1060,7 +1060,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -1106,7 +1106,7 @@ describe("Standard-Adr0008-5", function () {
         "hex"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -1142,7 +1142,7 @@ describe("Issue #68", function () {
           "base64"
         );
 
-        const pkResponse = await app.getAddressAndPubKey(path);
+        const pkResponse = await app.getAddressAndPubKey_ed25519(path);
         console.log(pkResponse);
         expect(pkResponse.return_code).toEqual(0x9000);
         expect(pkResponse.error_message).toEqual("No errors");

@@ -114,7 +114,7 @@ describe("Standard-Adr0014", function () {
         "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -166,7 +166,7 @@ describe("Standard-Adr0014", function () {
         "oasis-runtime-sdk/tx: v0 for chain 7f1eb9fa832a02ccda132d330f342dbef92c0817bf73eeea12020552f1d62f86"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");
@@ -218,7 +218,7 @@ describe("Standard-Adr0014", function () {
         "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738"
       );
 
-      const pkResponse = await app.getAddressAndPubKey(path);
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
       console.log(pkResponse);
       expect(pkResponse.return_code).toEqual(0x9000);
       expect(pkResponse.error_message).toEqual("No errors");

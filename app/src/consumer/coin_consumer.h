@@ -35,6 +35,7 @@ extern "C" {
 #define HDPATH_4_DEFAULT     (0u)
 
 #define PK_LEN_ED25519          32u
+//Compressed SECP256K1 pk size
 #define PK_LEN_SECP256K1        33u
 #define PK_LEN_SECP256K1_FULL   65u
 
