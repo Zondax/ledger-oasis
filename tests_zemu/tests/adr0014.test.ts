@@ -52,7 +52,7 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const expected_hex_address = "d0c6dd5f1d3c456c97e7bb8b406192bd4433e7a1";
+      const expected_hex_address = "95e5e3c1bdd92cd4a0c14c62480db5867946281d";
       const expected_pk =
         "021853d93524119eeb31ab0b06f1dcb068f84943bb230dfa10b1292f47af643575";
 
@@ -83,7 +83,7 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const expected_hex_address = "d0c6dd5f1d3c456c97e7bb8b406192bd4433e7a1";
+      const expected_hex_address = "95e5e3c1bdd92cd4a0c14c62480db5867946281d";
       const expected_pk =
         "021853d93524119eeb31ab0b06f1dcb068f84943bb230dfa10b1292f47af643575";
 
