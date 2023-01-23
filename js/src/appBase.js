@@ -414,10 +414,10 @@ export class OasisAppBase {
     }, processErrorResponse);
   }
 
-  async signPtEd25519(path, meta, message) {
-    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_PT_ED25519);
+  async signRtEd25519(path, meta, message) {
+    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_RT_ED25519);
 
-    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_PT_ED25519).then(async (response) => {
+    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_RT_ED25519).then(async (response) => {
       let result = {
         return_code: response.return_code,
         error_message: response.error_message,
@@ -426,7 +426,7 @@ export class OasisAppBase {
 
       for (let i = 1; i < chunks.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_PT_ED25519);
+        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_RT_ED25519);
         if (result.return_code !== 0x9000) {
           break;
         }
@@ -441,10 +441,10 @@ export class OasisAppBase {
     }, processErrorResponse);
   }
 
-  async signPtSecp256k1(path, meta, message) {
-    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_PT_SECP256K1);
+  async signRtSecp256k1(path, meta, message) {
+    const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_RT_SECP256K1);
 
-    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_PT_SECP256K1).then(async (response) => {
+    return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_RT_SECP256K1).then(async (response) => {
       let result = {
         return_code: response.return_code,
         error_message: response.error_message,
@@ -453,7 +453,7 @@ export class OasisAppBase {
 
       for (let i = 1; i < chunks.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_PT_SECP256K1);
+        result = await this.signSendChunk(1 + i, chunks.length, chunks[i], INS.SIGN_RT_SECP256K1);
         if (result.return_code !== 0x9000) {
           break;
         }

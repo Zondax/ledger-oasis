@@ -374,7 +374,7 @@ namespace utils {
         return answer;
     }
 
-static const pt_lookup_t paraTime_lookup_helper[] = { 
+static const rt_lookup_t runTime_lookup_helper[] = { 
     {CIPHER_MAIN_RUNID, CIPHER_MAIN_TO_ADDR, 9, "Cipher"},
     {CIPHER_TEST_RUNID, CIPHER_TEST_TO_ADDR, 9, "Cipher"},
     {EMERALD_MAIN_RUNID, EMERALD_MAIN_TO_ADDR, 18, "Emerald"},
@@ -429,23 +429,23 @@ static const pt_lookup_t paraTime_lookup_helper[] = {
 
         auto denom = "";
         uint8_t decimal = 9;
-        for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+        for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
             if (tx["call"]["body"]["amount"]["Denomination"].asString().compare("") == 0) {
                 if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
                     denom = COIN_MAINNET_DENOM;
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
                     denom = COIN_TESTNET_DENOM;
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 }
             } else {
-                if (meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0 ) {
+                if (meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0 ) {
                     denom = "";
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 }    
             }
@@ -453,23 +453,23 @@ static const pt_lookup_t paraTime_lookup_helper[] = {
 
         addTo(answer, "{} | Amount : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["call"]["body"]["amount"]["Amount"].asString(), decimal));
 
-        for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+        for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
             if (tx["ai"]["fee"]["amount"]["Denomination"].asString().compare("") == 0) {
                 if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
                     denom = COIN_MAINNET_DENOM;
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0) {
+                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
                     denom = COIN_TESTNET_DENOM;
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 }
             } else {
-                if (meta["runtime_id"].asString().compare(paraTime_lookup_helper[i].runid) == 0 ) {
+                if (meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0 ) {
                     denom = "";
-                    decimal = paraTime_lookup_helper[i].decimals;
+                    decimal = runTime_lookup_helper[i].decimals;
                     break;
                 }    
             }
@@ -486,9 +486,9 @@ static const pt_lookup_t paraTime_lookup_helper[] = {
 
         auto runid = j["meta"]["runtime_id"].asString();
         uint8_t readable = 1;
-         for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
-            if (runid.compare(paraTime_lookup_helper[i].runid) == 0) {
-                addTo(answer, "{} | ParaTime : {}", itemCount++, paraTime_lookup_helper[i].name);
+         for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+            if (runid.compare(runTime_lookup_helper[i].runid) == 0) {
+                addTo(answer, "{} | ParaTime : {}", itemCount++, runTime_lookup_helper[i].name);
                 readable = 0;
                 break;
             }

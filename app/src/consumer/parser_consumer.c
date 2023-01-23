@@ -37,7 +37,7 @@ void __assert_fail(__Z_UNUSED const char * assertion, __Z_UNUSED const char * fi
 }
 #endif
 
-static const pt_lookup_t paraTime_lookup_helper[] = {
+static const rt_lookup_t runTime_lookup_helper[] = {
     {CIPHER_MAIN_RUNID, CIPHER_MAIN_TO_ADDR, 9, "Cipher"},
     {CIPHER_TEST_RUNID, CIPHER_TEST_TO_ADDR, 9, "Cipher"},
     {EMERALD_MAIN_RUNID, EMERALD_MAIN_TO_ADDR, 18, "Emerald"},
@@ -189,22 +189,22 @@ __Z_INLINE parser_error_t parser_printRuntimeQuantity(const meta_t *meta, const 
     const char* denom = "";
     uint8_t decimal = 0;
     //empty denomination
-    for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
+    for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
         if (denomination->len == 0) {
             if (MEMCMP(meta->chain_context, MAINNET_GENESIS_HASH, HASH_SIZE) == 0 && 
-                MEMCMP(meta->runtime_id,  PIC(paraTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
+                MEMCMP(meta->runtime_id,  PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
                 denom = COIN_MAINNET_DENOM;
-                decimal = paraTime_lookup_helper[i].decimals;
+                decimal = runTime_lookup_helper[i].decimals;
                 break;
             } else if (MEMCMP(meta->chain_context, TESTNET_GENESIS_HASH, HASH_SIZE) == 0 &&
-                MEMCMP(meta->runtime_id,  PIC(paraTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
+                MEMCMP(meta->runtime_id,  PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
                 denom = COIN_TESTNET_DENOM;
-                decimal = paraTime_lookup_helper[i].decimals;
+                decimal = runTime_lookup_helper[i].decimals;
                 break;
             }
         } else {
-            if (MEMCMP(meta->runtime_id,  PIC(paraTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
-                decimal = paraTime_lookup_helper[i].decimals;
+            if (MEMCMP(meta->runtime_id,  PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
+                decimal = runTime_lookup_helper[i].decimals;
                 break;
             }
         }
@@ -337,7 +337,7 @@ __Z_INLINE parser_error_t parser_printRate(const quantity_t *q,
 
 __Z_INLINE parser_error_t parser_printAddress(const address_raw_t *addressRaw,
                                               char *outVal, uint16_t outValLen,
-                                              uint8_t pageIdx, uint8_t *pageCount, bool pt_render) {
+                                              uint8_t pageIdx, uint8_t *pageCount, bool rt_render) {
     char outBuffer[128] = {0};
 
     //  and encode as bech32
@@ -350,11 +350,11 @@ __Z_INLINE parser_error_t parser_printAddress(const address_raw_t *addressRaw,
     }
 
     // Render specific addresses
-    if (pt_render) {
-        for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
-            if (!MEMCMP(outBuffer, PIC(paraTime_lookup_helper[i].address), sizeof(outBuffer))) {
+    if (rt_render) {
+        for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+            if (!MEMCMP(outBuffer, PIC(runTime_lookup_helper[i].address), sizeof(outBuffer))) {
                 *pageCount = 1;
-                pageString(outVal, outValLen, (char *)PIC(paraTime_lookup_helper[i].name), pageIdx, pageCount);
+                pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                 return parser_ok;
             }
         }
@@ -496,10 +496,10 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
         }
         case 5: {
             snprintf(outKey, outKeyLen, "ParaTime");
-            for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
-                if (MEMCMP(&parser_tx_obj.oasis.runtime.meta.runtime_id, PIC(paraTime_lookup_helper[i].runid),
+            for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+                if (MEMCMP(&parser_tx_obj.oasis.runtime.meta.runtime_id, PIC(runTime_lookup_helper[i].runid),
                     sizeof(parser_tx_obj.oasis.runtime.meta.runtime_id)) == 0) {
-                    pageString(outVal, outValLen, (char *)PIC(paraTime_lookup_helper[i].name), pageIdx, pageCount);
+                    pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                    return parser_ok;
                 }
             }

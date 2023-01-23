@@ -186,7 +186,7 @@ If Oasis Blob is not a Consensus Type:
 | SW1-SW2 | byte (2)  | Return code | see list of return codes |
 
 --------------
-### SIGN_PT_ED25519
+### SIGN_RT_ED25519
 
 #### Command
 
@@ -271,7 +271,7 @@ First three items in the derivation path are hardened
 | SW1-SW2 | byte (2)  | Return code           | see list of return codes |
 
 --------------
-### SIGN_PT_SECP256K1
+### SIGN_RT_SECP256K1
 
 #### Command
 

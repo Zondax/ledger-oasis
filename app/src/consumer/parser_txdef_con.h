@@ -41,7 +41,7 @@ typedef struct {
     const char *address;
     uint8_t decimals;
     const char *name;
-} pt_lookup_t;
+} rt_lookup_t;
 
 typedef enum {
     unknownMethod,

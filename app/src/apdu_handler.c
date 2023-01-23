@@ -250,7 +250,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     break;
                 }
 
-                case INS_SIGN_PT_ED25519: {
+                case INS_SIGN_RT_ED25519: {
                     CHECK_PIN_VALIDATED()
                     handleSignEd25519(flags, tx, rx);
                     break;
@@ -263,7 +263,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     break;
                 }
 
-                case INS_SIGN_PT_SECP256K1: {
+                case INS_SIGN_RT_SECP256K1: {
                     CHECK_PIN_VALIDATED()
                     handleSignSecp256k1(flags, tx, rx);
                     break;
