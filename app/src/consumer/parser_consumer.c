@@ -50,7 +50,8 @@ static const char * methodsMap[] = {
     "unkown", "Transfer", "Burn", "Withdraw", "Allow", "Add escrow",
     "Reclaim escrow", "Amend commission schedule", "Deregister Entity",
     "Unfreeze Node", "Register Entity", "Submit proposal", "Cast vote",
-    "Transfer (Paratime)", "Deposit (Paratime)", "Withdraw (Paratime)"
+    "     Transfer     (ParaTime)", "     Deposit      (ParaTime)", 
+    "      Withdraw     (ParaTime)"
 };
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
@@ -203,7 +204,6 @@ __Z_INLINE parser_error_t parser_printRuntimeQuantity(const meta_t *meta, const 
             }
         } else {
             if (MEMCMP(meta->runtime_id,  PIC(paraTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
-                denom = " ";
                 decimal = paraTime_lookup_helper[i].decimals;
                 break;
             }
@@ -495,7 +495,7 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
             return parser_ok;
         }
         case 5: {
-            snprintf(outKey, outKeyLen, "Runtime");
+            snprintf(outKey, outKeyLen, "ParaTime");
             for (size_t i = 0; i < array_length(paraTime_lookup_helper); i++) {
                 if (MEMCMP(&parser_tx_obj.oasis.runtime.meta.runtime_id, PIC(paraTime_lookup_helper[i].runid),
                     sizeof(parser_tx_obj.oasis.runtime.meta.runtime_id)) == 0) {
