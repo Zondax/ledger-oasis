@@ -120,7 +120,7 @@ describe("Standard-Adr0014", function () {
       expect(pkResponse.error_message).toEqual("No errors");
 
       // do not wait here..
-      const signatureRequest = app.signPtEd25519(path, meta, txBlob);
+      const signatureRequest = app.signRtEd25519(path, meta, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
       await sim.compareSnapshotsAndApprove(
@@ -172,7 +172,7 @@ describe("Standard-Adr0014", function () {
       expect(pkResponse.error_message).toEqual("No errors");
 
       // do not wait here..
-      const signatureRequest = app.signPtEd25519(path, meta, txBlob);
+      const signatureRequest = app.signRtEd25519(path, meta, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
       await sim.compareSnapshotsAndApprove(
@@ -224,7 +224,7 @@ describe("Standard-Adr0014", function () {
       expect(pkResponse.error_message).toEqual("No errors");
 
       // do not wait here..
-      const signatureRequest = app.signPtEd25519(path, meta, txBlob);
+      const signatureRequest = app.signRtEd25519(path, meta, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
       await sim.compareSnapshotsAndApprove(
@@ -278,7 +278,7 @@ describe("Standard-Adr0014", function () {
       expect(pkResponse.error_message).toEqual("No errors");
 
       // do not wait here..
-      const signatureRequest = app.signPtSecp256k1(
+      const signatureRequest = app.signRtSecp256k1(
         secp256k1_path,
         meta,
         txBlob
@@ -341,7 +341,7 @@ describe("Standard-Adr0014", function () {
       expect(pkResponse.error_message).toEqual("No errors");
 
       // do not wait here..
-      const signatureRequest = app.signPtSecp256k1(
+      const signatureRequest = app.signRtSecp256k1(
         secp256k1_path,
         meta,
         txBlob
