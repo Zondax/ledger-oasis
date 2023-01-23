@@ -131,6 +131,10 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
             case addr_secp256k1:
                 view_review_init(addr_getItem_secp256k1, addr_getNumItems, app_reply_address);
                 break;
+            default:
+                zemu_log("No match for address kind!\n");
+                THROW(APDU_CODE_CONDITIONS_NOT_SATISFIED);
+                break;
         }
         view_review_show(REVIEW_ADDRESS);
         *flags |= IO_ASYNCH_REPLY;

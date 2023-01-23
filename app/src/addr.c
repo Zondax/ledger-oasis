@@ -36,8 +36,7 @@ zxerr_t addr_getItem_ed25519(int8_t displayIdx,
                              char *outVal, uint16_t outValLen,
                              uint8_t pageIdx, uint8_t *pageCount) {
     char buffer[300];
-    snprintf(buffer, sizeof(buffer), "addr_getItem_ed25519 %d/%d", displayIdx, pageIdx);
-    zemu_log_stack(buffer);
+    ZEMU_LOGF(50,"addr_getItem_ed25519 %d/%d", displayIdx, pageIdx);
 
     switch (displayIdx) {
         case 0:
@@ -64,8 +63,7 @@ zxerr_t addr_getItem_secp256k1(int8_t displayIdx,
                                char *outVal, uint16_t outValLen,
                                uint8_t pageIdx, uint8_t *pageCount) {
     char buffer[300];
-    snprintf(buffer, sizeof(buffer), "addr_getItem_secp256k1 %d/%d", displayIdx, pageIdx);
-    zemu_log_stack(buffer);
+    ZEMU_LOGF(50, "addr_getItem_secp256k1 %d/%d", displayIdx, pageIdx);
 
     switch (displayIdx) {
         case 0:
