@@ -313,7 +313,7 @@ static uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_m
     uint8_t hash[KECCAK256_HASH_LEN]={0};
     keccak (
             hash, KECCAK256_HASH_LEN,
-            pubkey, PUB_KEY_SIZE
+            pubkey+1, HASH_SIZE
     );
     uint8_t ethereum_address[ETH_ADDR_LEN]={0};
     memcpy(ethereum_address, &hash[KECCAK256_HASH_LEN - ETH_ADDR_LEN],ETH_ADDR_LEN);

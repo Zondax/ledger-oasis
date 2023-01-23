@@ -37,6 +37,7 @@
 static bool tx_initialized = false;
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
+    MEMZERO(hdPath,sizeof(hdPath));
     if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_ADR0008) {
         hdPathLen = HDPATH_LEN_ADR0008;
     } else if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
@@ -123,7 +124,14 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
         THROW(APDU_CODE_DATA_INVALID);
     }
     if (requireConfirmation) {
-        view_review_init(addr_getItem, addr_getNumItems, app_reply_address);
+        switch (kind) {
+            case addr_ed25519:
+                view_review_init(addr_getItem_ed25519, addr_getNumItems, app_reply_address);
+                break;
+            case addr_secp256k1:
+                view_review_init(addr_getItem_secp256k1, addr_getNumItems, app_reply_address);
+                break;
+        }
         view_review_show(REVIEW_ADDRESS);
         *flags |= IO_ASYNCH_REPLY;
         return;
