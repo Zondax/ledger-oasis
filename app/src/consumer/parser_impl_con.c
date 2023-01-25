@@ -18,7 +18,7 @@
 #include "parser_txdef_con.h"
 #include "sha512.h"
 #include "zxformat.h"
-
+#define APP_CONSUMER
 #if defined(APP_CONSUMER)
 
 #include "cbor_helper.h"
@@ -1142,10 +1142,25 @@ __Z_INLINE parser_error_t _readRuntimeMethod(parser_tx_t *v, CborValue *rootItem
         return parser_ok;
     }
 
+    if (CBOR_KEY_MATCHES(&tmp, "contracts.Upgrade")) {
+        v->oasis.runtime.call.method = contratcsUpgrade;
+        return parser_ok;
+    }
+
+    if (CBOR_KEY_MATCHES(&tmp, "contracts.Instantiate")) {
+        v->oasis.runtime.call.method = contractsInstantiate;
+        return parser_ok;
+    }
+
+    if (CBOR_KEY_MATCHES(&tmp, "contracts.Call")) {
+        v->oasis.runtime.call.method = contractsCall;
+        return parser_ok;
+    }
+
     return parser_unexpected_method;
 }
 
-__Z_INLINE parser_error_t _readRuntimeBody(parser_tx_t *v, CborValue *rootItem) {
+__Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *rootItem) {
     if (!cbor_value_is_valid(rootItem)) {
         return parser_required_method;
     }
@@ -1165,13 +1180,13 @@ __Z_INLINE parser_error_t _readRuntimeBody(parser_tx_t *v, CborValue *rootItem) 
     CborValue contents;
     CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
     if (CBOR_KEY_MATCHES(&contents, "to")) {
-        v->oasis.runtime.call.body.unencrypted.has_to = true;
+        v->oasis.runtime.call.body.consensus.has_to = true;
         CHECK_CBOR_ERR(cbor_value_advance(&contents))
-        CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.runtime.call.body.unencrypted.to))
+        CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.runtime.call.body.consensus.to))
         CHECK_CBOR_ERR(cbor_value_advance(&contents))
     } else {
-        v->oasis.runtime.call.body.unencrypted.has_to = false;
-        MEMZERO(&v->oasis.runtime.call.body.unencrypted.to, sizeof(address_raw_t));
+        v->oasis.runtime.call.body.consensus.has_to = false;
+        MEMZERO(&v->oasis.runtime.call.body.consensus.to, sizeof(address_raw_t));
     }
 
     CborValue amount;
@@ -1180,9 +1195,9 @@ __Z_INLINE parser_error_t _readRuntimeBody(parser_tx_t *v, CborValue *rootItem) 
         return parser_required_call;
     }
     CHECK_CBOR_ERR(cbor_value_enter_container(&amount, &contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.runtime.call.body.unencrypted.amount))
+    CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.runtime.call.body.consensus.amount))
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readRuntimeString(&contents, &v->oasis.runtime.call.body.unencrypted.denom))
+    CHECK_PARSER_ERR(_readRuntimeString(&contents, &v->oasis.runtime.call.body.consensus.denom))
 
     return parser_ok;
 }
@@ -1215,11 +1230,25 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
 
     if (v->oasis.runtime.call.format) {
         // ENCRYPTED TRANSACTION , next milestone
-        v->oasis.runtime.call.method = unknownMethod;
+        v->oasis.runtime.call.method = transactionEncrypted;
         return parser_required_method;
     } else {
         CHECK_PARSER_ERR(_readRuntimeMethod(v,&callField))
-        CHECK_PARSER_ERR(_readRuntimeBody(v,&callField))
+        switch(v->oasis.runtime.call.method)
+        {
+            case consensusDeposit:
+            case consensusWithdraw:
+            case accountsTransfer:
+                    CHECK_PARSER_ERR(_readRuntimeConsensusBody(v,&callField))
+            break;
+            case contractsCall:
+            case contractsInstantiate:
+            case contratcsUpgrade:
+
+            break;
+            default:
+                return parser_unexpected_method;
+        }
     }
 
     return parser_ok;

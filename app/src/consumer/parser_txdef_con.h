@@ -59,7 +59,11 @@ typedef enum {
     governanceCastVote,
     accountsTransfer,
     consensusDeposit,
-    consensusWithdraw
+    consensusWithdraw,
+    contractsInstantiate,
+    contractsCall,
+    contratcsUpgrade,
+    transactionEncrypted
 } oasis_methods_e;
 
 typedef enum{
@@ -259,20 +263,28 @@ typedef struct {
     quantity_t amount;
     string_t denom;
     bool has_to;
-} body_unencrypted_t;
+} body_consensus_t;
 
 typedef struct {
     publickey_t pk;
     string_t nonce;
-    body_unencrypted_t body;
+    string_t data_hash;
 } body_encrypted_t;
 
+typedef struct {
+    uint64_t id;
+    uint64_t code_id;
+    uint8_t *data;
+    uint16_t dataLen;
+    uint16_t tokensLen;
+} body_contracts_t;
 
 typedef struct {
     uint64_t format;
     oasis_methods_e method;
     union{
-        body_unencrypted_t unencrypted;
+        body_consensus_t consensus;
+        body_contracts_t contracts;
         body_encrypted_t encrypted;
     }body;
 

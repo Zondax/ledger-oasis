@@ -13,6 +13,7 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
+#define APP_CONSUMER
 #if defined(APP_CONSUMER)
 
 #include <stdio.h>
@@ -447,11 +448,11 @@ __Z_INLINE parser_error_t parser_ethMapNative(const uint8_t *ethstr, const uint1
     return parser_invalid_eth_mapping;
 }
 
-__Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
+__Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t *ctx,
                                                const int8_t displayIdx,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
-                                               uint8_t pageIdx, uint8_t *pageCount) {
+                                               uint8_t pageIdx, uint8_t *pageCount) {    
     switch (displayIdx) {
         case 0: {
             snprintf(outKey, outKeyLen, "Type");
@@ -462,14 +463,14 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
             snprintf(outKey, outKeyLen, "To");
             snprintf(outVal, outValLen, "Self");
             if (parser_tx_obj.oasis.runtime.meta.has_orig_to) {
-                if (parser_tx_obj.oasis.runtime.call.body.unencrypted.has_to) {
+                if (parser_tx_obj.oasis.runtime.call.body.consensus.has_to) {
                     CHECK_PARSER_ERR(parser_ethMapNative((uint8_t *)parser_tx_obj.oasis.runtime.meta.orig_to, 
-                    sizeof(parser_tx_obj.oasis.runtime.meta.orig_to), (uint8_t *)parser_tx_obj.oasis.runtime.call.body.unencrypted.to, sizeof(parser_tx_obj.oasis.runtime.call.body.unencrypted.to)));
+                    sizeof(parser_tx_obj.oasis.runtime.meta.orig_to), (uint8_t *)parser_tx_obj.oasis.runtime.call.body.consensus.to, sizeof(parser_tx_obj.oasis.runtime.call.body.consensus.to)));
                     pageStringExt(outVal, outValLen, (char *)parser_tx_obj.oasis.runtime.meta.orig_to, 42, pageIdx, pageCount);
                     return parser_ok;
                 }
-            } else if (parser_tx_obj.oasis.runtime.call.body.unencrypted.has_to) {
-                        return parser_printAddress(&parser_tx_obj.oasis.runtime.call.body.unencrypted.to,
+            } else if (parser_tx_obj.oasis.runtime.call.body.consensus.has_to) {
+                        return parser_printAddress(&parser_tx_obj.oasis.runtime.call.body.consensus.to,
                             outVal, outValLen, pageIdx, pageCount, false);
             } 
             return parser_ok;
@@ -477,8 +478,8 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
         case 2: {
             snprintf(outKey, outKeyLen, "Amount");
             return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
-                                        &parser_tx_obj.oasis.runtime.call.body.unencrypted.amount,
-                                        &parser_tx_obj.oasis.runtime.call.body.unencrypted.denom,
+                                        &parser_tx_obj.oasis.runtime.call.body.consensus.amount,
+                                        &parser_tx_obj.oasis.runtime.call.body.consensus.denom,
                                         outVal, outValLen, pageIdx, pageCount);
         }
         case 3: {
@@ -506,6 +507,31 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
             pageString(outVal, outValLen, (char *)parser_tx_obj.oasis.runtime.meta.runtime_id, pageIdx, pageCount);
             return parser_ok;
         }
+        default:
+            break;
+    }
+
+    *pageCount = 0;
+    return parser_no_data;
+}
+
+
+__Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
+                                               const int8_t displayIdx,
+                                               char *outKey, uint16_t outKeyLen,
+                                               char *outVal, uint16_t outValLen,
+                                               uint8_t pageIdx, uint8_t *pageCount) {
+    switch (parser_tx_obj.oasis.runtime.call.method) {
+        case consensusDeposit:
+        case consensusWithdraw:
+        case accountsTransfer:
+            return parser_getItemRuntimeConsensus(ctx, displayIdx, outKey, outKeyLen,
+                                            outVal, outValLen, pageIdx, pageCount);
+        case contractsCall:
+        case contractsInstantiate:
+        case contratcsUpgrade:
+        case transactionEncrypted:
+        case unknownMethod:
         default:
             break;
     }
