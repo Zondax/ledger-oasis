@@ -35,13 +35,13 @@ zxerr_t crypto_getBytesToSign(uint8_t *toSign, size_t toSignLen) {
     SHA512_256(message, messageLength, toSign);
 
     if (parser_tx_obj.type == runtimeType) {
-        message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen + CRYPTO_BLOB_SKIP_BYTES;
-        messageLength = tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen - CRYPTO_BLOB_SKIP_BYTES;
+        zemu_log("SIGNING RUNTIME\n");
+        message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen;
+        messageLength = tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen;
 
         SHA512_256_with_context(parser_tx_obj.context.ptr, parser_tx_obj.context.len,
                                 message, messageLength, toSign);
     }
-
-    return zxerr_ok;
 #endif
+    return zxerr_ok;
 }

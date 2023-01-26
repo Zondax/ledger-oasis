@@ -18,7 +18,14 @@
 #include "parser_txdef_con.h"
 #include "sha512.h"
 #include "zxformat.h"
-#define APP_CONSUMER
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+    #include "cx.h"
+#else
+    #include "picohash.h"
+    #if !defined(CX_SHA256_SIZE)
+        #define CX_SHA256_SIZE 32
+    #endif
+#endif
 #if defined(APP_CONSUMER)
 
 #include "cbor_helper.h"
@@ -143,10 +150,33 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "Invalid name length (max 50 characters)";
         case parser_invalid_eth_mapping:
             return "Invalid Ethaddr, doesn't match transaction's to";
+        case parser_required_id:
+            return "Required field id";
+        case parser_required_code_id:
+            return "Required field code_id";
+        case parser_required_pk:
+            return "Required field pk";
+        case parser_required_data:
+            return "Required field data";
         default:
             return "Unrecognized error code";
     }
 }
+
+#if !defined(TARGET_NANOS) && !defined(TARGET_NANOS2) && !defined(TARGET_NANOX)
+parser_error_t parser_picoHash(uint8_t *src, size_t srcLen, uint8_t *dest, size_t destLen) {
+    if(destLen < KECCAK256_HASH_LEN) {
+        return parser_unexpected_buffer_size;
+    }
+    picohash_ctx_t ctx;
+    picohash_init_sha256(&ctx);
+    picohash_update(&ctx, src, srcLen);
+    picohash_final(&ctx, dest);
+
+    return parser_ok;
+}
+#endif
+
 
 void parser_setCborState(cbor_parser_state_t *state, const CborParser *parser, const CborValue *it) {
     state->parser = *parser;
@@ -242,6 +272,7 @@ __Z_INLINE parser_error_t _readOrigTo(CborValue *value, uint8_t *out) {
 
     return parser_ok;
 }
+
 
 __Z_INLINE parser_error_t _readRuntimeString(CborValue *value, string_t *out) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborByteStringType)
@@ -1160,6 +1191,59 @@ __Z_INLINE parser_error_t _readRuntimeMethod(parser_tx_t *v, CborValue *rootItem
     return parser_unexpected_method;
 }
 
+__Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *rootItem) {
+    if (!cbor_value_is_valid(rootItem)) {
+        return parser_required_method;
+    }
+    // Verify it is well formed (no missing bytes...)
+    CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
+
+    CborValue bodyField;
+    size_t numItems;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
+    if (!cbor_value_is_valid(&bodyField))
+        return parser_required_body;
+
+    CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
+    if (numItems < 1 || numItems > 5) return parser_unexpected_number_items;
+
+    CborValue contents;
+    if (v->oasis.runtime.call.method != contractsInstantiate) {
+        CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "id", &contents))
+        if (!cbor_value_is_valid(&contents) || !cbor_value_is_unsigned_integer(&contents)) {
+            return parser_required_id;
+        }
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &v->oasis.runtime.call.body.contracts.id))
+    }
+
+    if (v->oasis.runtime.call.method != contractsCall) {
+        CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "code_id", &contents))
+        if (!cbor_value_is_valid(&contents) || !cbor_value_is_unsigned_integer(&contents)) {
+            return parser_required_code_id;
+        }
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&contents, &v->oasis.runtime.call.body.contracts.code_id))
+    }
+
+   CborValue dataField;
+   CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "data", &dataField))
+   if (cbor_value_is_valid(&contents)) {
+        CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &v->oasis.runtime.call.body.contracts.dataPtr,
+                                        &v->oasis.runtime.call.body.contracts.dataLen))
+   } else {
+        v->oasis.runtime.call.body.contracts.dataPtr = NULL;
+        v->oasis.runtime.call.body.contracts.dataLen = 0;
+   }
+
+
+    CborValue tokensField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "tokens", &tokensField))
+    CHECK_CBOR_TYPE(cbor_value_get_type(&tokensField), CborArrayType)
+
+    // Array of tokens
+    cbor_value_get_array_length(&tokensField, &v->oasis.runtime.call.body.contracts.tokensLen);
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *rootItem) {
     if (!cbor_value_is_valid(rootItem)) {
         return parser_required_method;
@@ -1202,6 +1286,61 @@ __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *r
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootItem) {
+    if (!cbor_value_is_valid(rootItem)) {
+        return parser_required_method;
+    }
+    // Verify it is well formed (no missing bytes...)
+    CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
+    CborValue bodyField;
+    size_t numItems;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
+    if (!cbor_value_is_valid(&bodyField))
+        return parser_required_body;
+
+    CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
+    if (numItems < 1 || numItems > 4) return parser_unexpected_number_items;
+
+    CborValue pkField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "pk", &pkField))
+    if (!cbor_value_is_valid(&pkField)) {
+        return parser_required_pk;
+    }
+    CHECK_PARSER_ERR(_readPublicKey(&pkField, &v->oasis.runtime.call.body.encrypted.pk))
+
+    CborValue nonceField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "nonce", &nonceField))
+    if (!cbor_value_is_valid(&nonceField)) {
+        return parser_required_nonce;
+    }
+    CHECK_PARSER_ERR(_readRuntimeString(&nonceField, &v->oasis.runtime.call.body.encrypted.nonce))
+
+    CborValue dataField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "data", &dataField))
+    if (!cbor_value_is_valid(&dataField)) {
+        return parser_required_nonce;
+    }
+    const uint8_t *buffer;
+    size_t buffer_size;
+    CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buffer, &buffer_size))
+
+    MEMZERO(&v->oasis.runtime.call.body.encrypted.data_hash, sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+    cx_sha256_t ctx;
+    memset(&ctx, 0, sizeof(ctx));
+    cx_sha256_init(&ctx);
+    cx_hash(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
+            sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
+#else
+    picohash_ctx_t ctx;
+    picohash_init_sha256(&ctx);
+    picohash_update(&ctx, buffer, buffer_size);
+    picohash_final(&ctx, &v->oasis.runtime.call.body.encrypted.data_hash);
+#endif
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) {
 
     CborValue callField;
@@ -1229,22 +1368,21 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
     }
 
     if (v->oasis.runtime.call.format) {
-        // ENCRYPTED TRANSACTION , next milestone
         v->oasis.runtime.call.method = transactionEncrypted;
-        return parser_required_method;
-    } else {
+         CHECK_PARSER_ERR(_readRuntimeEncrypted(v,&callField))
+    } else{
         CHECK_PARSER_ERR(_readRuntimeMethod(v,&callField))
         switch(v->oasis.runtime.call.method)
         {
             case consensusDeposit:
             case consensusWithdraw:
             case accountsTransfer:
-                    CHECK_PARSER_ERR(_readRuntimeConsensusBody(v,&callField))
+                CHECK_PARSER_ERR(_readRuntimeConsensusBody(v,&callField))
             break;
             case contractsCall:
             case contractsInstantiate:
             case contratcsUpgrade:
-
+                CHECK_PARSER_ERR(_readRuntimeContractsBody(v,&callField))
             break;
             default:
                 return parser_unexpected_method;
@@ -1355,34 +1493,57 @@ __Z_INLINE parser_error_t _computeRuntimeSigContext(parser_tx_t *v) {
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _evaluateCborInit(parser_context_t *c, CborValue * it) {
+    CborParser parser;
+    CborError err = cbor_parser_init(c->buffer + c->offset, c->bufferLen - c->offset, 0, &parser, it);
+
+    if (err != CborNoError){
+        return parser_cbor_unexpected;
+    }
+
+    return parser_ok;
+}
+
 parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     v->context.suffixPtr = NULL;
     v->context.suffixLen = 0;
 
-    // First byte is the context length
-    v->context.len = *(c->buffer + c->offset);
-
-    if (v->context.len < 2) {
-        return parser_init_context_empty;
-    }
-
-    if (c->offset + v->context.len >= c->bufferLen) {
-        return parser_context_unexpected_size;
-    }
-
-    // Test if is a runtime transaction and compute signature context
     CborValue it;
-    c->buffer += 1;
-        INIT_CBOR_PARSER(c, it)
-    if (cbor_value_is_map(&it)) {
-        CHECK_PARSER_ERR(_readRuntimeMeta(v,&it))
-        c->offset += v->context.len;
+    //Get Metadata
+    if (_evaluateCborInit(c, &it) == parser_ok && cbor_value_is_map(&it)) {
+        if(!cbor_value_is_map(&it)) {
+            return parser_required_data;
+        }
+        CHECK_PARSER_ERR(_readRuntimeMeta(v, &it))
         CHECK_PARSER_ERR(_computeRuntimeSigContext(v))
-        v->oasis.runtime.metaLen = v->context.len;
         v->context.ptr = (uint8_t *)v->oasis.runtime.sigcxt;
         v->context.len = strlen(v->oasis.runtime.sigcxt);
+
+        //Buffer has 2 CBOR maps, found the first now get the offset for tbe second
+        CborValue tx;
+        c->offset += 1;
+        while(c->offset < c->bufferLen){
+            if(_evaluateCborInit(c, &tx) == parser_ok && cbor_value_is_map(&tx)) {
+                break;
+            }
+            c->offset++;
+        }
+        v->oasis.runtime.metaLen = c->offset;
+        if(c->offset >= c->bufferLen) {
+            return parser_required_body;
+        }
     } else {
-        v->context.ptr = c->buffer;
+        // First byte is the context length
+        v->context.len = *(c->buffer + c->offset);
+
+        if (v->context.len < 2) {
+            return parser_init_context_empty;
+        }
+
+        if (c->offset + v->context.len >= c->bufferLen) {
+            return parser_context_unexpected_size;
+        }
+        v->context.ptr = ++c->buffer;
         c->offset += v->context.len;
     }
 
@@ -1497,7 +1658,7 @@ __Z_INLINE parser_error_t _readRuntime(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(rootItem), CborMapType)
     CHECK_PARSER_ERR(_readRuntimeVersion(v, rootItem))
     CHECK_PARSER_ERR(_readRuntimeCall(v, rootItem))
-    CHECK_PARSER_ERR(_readRuntimeAi(v,rootItem))
+    CHECK_PARSER_ERR(_readRuntimeAi(v, rootItem))
 
     return parser_ok;
 }
@@ -1653,14 +1814,25 @@ uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v)
             break;
     }
 
-    switch (v->oasis.runtime.call.method) {
-        case consensusDeposit:
-        case accountsTransfer:
-        case consensusWithdraw:
-            itemCount += 3;
-               break;
-        default:
-            break;
+    if ((v->type == runtimeType)) {
+        switch (v->oasis.runtime.call.method) {
+            case consensusDeposit:
+            case accountsTransfer:
+            case consensusWithdraw:
+                itemCount += 3;
+                break;
+            default:
+            case contractsCall:
+            case contractsInstantiate:
+                itemCount += 3 + v->oasis.runtime.call.body.contracts.tokensLen;
+                break;
+            case contratcsUpgrade:
+                itemCount += 4 + v->oasis.runtime.call.body.contracts.tokensLen;
+                break;
+            case transactionEncrypted:
+                itemCount += 5;
+                break;
+        }
     }
     
     return itemCount;
@@ -1793,6 +1965,54 @@ parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_
     }
 
     CHECK_PARSER_ERR(_readPublicKey(&nodesArrayContainer, node))
+
+    return parser_ok;
+}
+
+parser_error_t _getTokenAtIndex(const parser_context_t *c, token_t *token, uint8_t index) {
+    CborValue it;
+    INIT_CBOR_PARSER(c, it)
+
+    // validate CBOR canonical order before even trying to parse
+    CHECK_CBOR_ERR(cbor_value_validate(&it, CborValidateCanonicalFormat))
+
+    if (cbor_value_at_end(&it)) {
+        return parser_unexpected_buffer_end;
+    }
+
+    if (!cbor_value_is_map(&it)) {
+        return parser_root_item_should_be_a_map;
+    }
+
+    CborValue callField;   
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&it, "call", &callField))
+    if (!cbor_value_is_valid(&callField)) {
+        return parser_required_call;
+    }
+
+    CborValue bodyField;   
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&callField, "body", &bodyField))
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
+
+    CborValue tokensField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "tokens", &tokensField))
+
+    CborValue array;
+    CHECK_CBOR_ERR(cbor_value_enter_container(&tokensField, &array))
+
+    CborValue amount;
+    CHECK_CBOR_ERR(cbor_value_enter_container(&tokensField, &amount))
+    for (int i = 0; i < index; i++) {
+        CHECK_CBOR_ERR(cbor_value_advance(&amount))
+    }
+
+    CborValue content;
+    CHECK_CBOR_ERR(cbor_value_enter_container(&amount, &content))
+    _readQuantity(&content, &token->amount);
+    CHECK_CBOR_ERR(cbor_value_advance(&content))
+    _readRuntimeString(&content, &token->denom);
 
     return parser_ok;
 }

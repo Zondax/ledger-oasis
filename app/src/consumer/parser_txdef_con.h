@@ -37,6 +37,7 @@ extern "C" {
 #define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
 
 typedef struct {
+    const char *network;
     const char *runid;
     const char *address;
     uint8_t decimals;
@@ -117,6 +118,12 @@ typedef struct {
 } handle_t;
 
 typedef uint8_t raw_signature_t[64];
+
+typedef struct {
+    quantity_t amount;
+    string_t denom;
+} token_t;
+
 
 typedef struct {
     publickey_t public_key;
@@ -268,15 +275,15 @@ typedef struct {
 typedef struct {
     publickey_t pk;
     string_t nonce;
-    string_t data_hash;
+    char data_hash[32];
 } body_encrypted_t;
 
 typedef struct {
     uint64_t id;
     uint64_t code_id;
-    uint8_t *data;
-    uint16_t dataLen;
-    uint16_t tokensLen;
+    uint8_t *dataPtr;
+    size_t dataLen;
+    size_t tokensLen;
 } body_contracts_t;
 
 typedef struct {

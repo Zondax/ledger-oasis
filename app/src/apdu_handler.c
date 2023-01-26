@@ -30,6 +30,7 @@
 #include "crypto.h"
 #include "coin.h"
 #include "app_main.h"
+#include "app_mode.h"
 
 #include "parser_txdef.h"
 #include "parser_impl.h"
@@ -161,10 +162,19 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         THROW(APDU_CODE_DATA_INVALID);
     }
 
+#if defined(APP_CONSUMER)
+    if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate)
+        && (parser_tx_obj.type == runtimeType) && !app_mode_expert()) {
+        view_costum_error_show("Sign´ing Rejected","Expert Mode Required");
+        *flags |= IO_ASYNCH_REPLY;
+   } else {
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_secp256k1);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
+   }
+#endif
+
 }
 
 __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -185,10 +195,16 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
     }
 
 #if defined(APP_CONSUMER)
-    CHECK_APP_CANARY()
-    view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
-    view_review_show(REVIEW_TXN);
-    *flags |= IO_ASYNCH_REPLY;
+   if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate)
+        && (parser_tx_obj.type == runtimeType) && !app_mode_expert()) {
+        view_costum_error_show("Sign´ing Rejected","Expert Mode Required");
+        *flags |= IO_ASYNCH_REPLY;
+   } else {
+        CHECK_APP_CANARY()
+        view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
+        view_review_show(REVIEW_TXN);
+        *flags |= IO_ASYNCH_REPLY;
+   }
 #elif defined(APP_VALIDATOR)
     switch(parser_tx_obj.type) {
                         case consensusType:
