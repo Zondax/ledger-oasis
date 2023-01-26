@@ -88,6 +88,7 @@ file(GLOB_RECURSE TINYCBOR_SRC
 file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512/sha512.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/picohash/
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
@@ -119,6 +120,7 @@ target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/picohash/
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
@@ -157,6 +159,7 @@ target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/deps/picohash/
         )
 
 target_include_directories(unittests_val PUBLIC
