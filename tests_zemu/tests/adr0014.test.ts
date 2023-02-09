@@ -601,4 +601,61 @@ describe("Standard-Adr0014", function () {
       await sim.close();
     }
   });
+
+    test.each(models)("sign ed25519 runtime - evm", async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const app = new OasisApp(sim.getTransport());
+
+      // Change to expert mode so we can skip fields
+      await sim.clickRight();
+      await sim.clickBoth();
+      await sim.clickLeft();
+
+      const meta = Buffer.from(
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+        "base64"
+      );
+
+      const txBlob = Buffer.from(
+        "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnc3IyNTUxOVggljm9ZwdAldhlyWM2B4C+3gQZis+ceaxnt6QA4rOcP0ljZmVlomNnYXMZD6BmYW1vdW50gkQHW80VQ0ZPT2RjYWxsomRib2R5o2RkYXRhWESpBZy7AAAAAAAAAAAAAAAAkK3jtwZfpxXHoVAxOHffHTPnd9UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2V2YWx1ZVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWRkcmVzc1QhxxjCLVLQ86eJt1LUwv1ZCKinM2ZtZXRob2RoZXZtLkNhbGw=",
+        "base64"
+      );
+
+      const sigCtx = Buffer.from(
+        "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc"
+      );
+
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.signRtEd25519(path, meta, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(
+        ".",
+        `${m.prefix.toLowerCase()}-adr0014-sign_ed25519_runtime_evm`
+      );
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(sigCtx);
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex");
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
 });
