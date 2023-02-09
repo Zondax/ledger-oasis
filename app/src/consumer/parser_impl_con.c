@@ -158,6 +158,8 @@ const char *parser_getErrorDescription(parser_error_t err) {
             return "Required field pk";
         case parser_required_data:
             return "Required field data";
+        case parser_required_expert_mode:
+            return "Required Expert Mode";
         default:
             return "Unrecognized error code";
     }
@@ -1984,13 +1986,13 @@ parser_error_t _getTokenAtIndex(const parser_context_t *c, token_t *token, uint8
         return parser_root_item_should_be_a_map;
     }
 
-    CborValue callField;   
+    CborValue callField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&it, "call", &callField))
     if (!cbor_value_is_valid(&callField)) {
         return parser_required_call;
     }
 
-    CborValue bodyField;   
+    CborValue bodyField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&callField, "body", &bodyField))
     if (!cbor_value_is_valid(&bodyField)) {
         return parser_required_body;

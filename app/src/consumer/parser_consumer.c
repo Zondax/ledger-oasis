@@ -56,7 +56,7 @@ static const char * methodsMap[] = {
     "unkown", "Transfer", "Burn", "Withdraw", "Allow", "Add escrow",
     "Reclaim escrow", "Amend commission schedule", "Deregister Entity",
     "Unfreeze Node", "Register Entity", "Submit proposal", "Cast vote",
-    "     Transfer     (ParaTime)", "     Deposit      (ParaTime)", 
+    "     Transfer     (ParaTime)", "     Deposit      (ParaTime)",
     "      Withdraw     (ParaTime)","    Instantiate    (ParaTime)",
     "        Call      (ParaTime)","     Upgrade      (ParaTime)",
     "     Transaction    (ParaTime)",
@@ -69,7 +69,12 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 
     // Read after we determine context
     CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
-
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+   if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate)
+        && (parser_tx_obj.type == runtimeType) && !app_mode_expert()) {
+            return parser_required_expert_mode;
+    }
+#endif
     return parser_ok;
 }
 
@@ -203,7 +208,7 @@ __Z_INLINE parser_error_t parser_printRuntimeQuantity(const meta_t *meta, const 
     //empty denomination
     for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
         if (denomination->len == 0) {
-            if (MEMCMP(meta->chain_context, MAINNET_GENESIS_HASH, HASH_SIZE) == 0 && 
+            if (MEMCMP(meta->chain_context, MAINNET_GENESIS_HASH, HASH_SIZE) == 0 &&
                 MEMCMP(meta->runtime_id,  PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
                 denom = COIN_MAINNET_DENOM;
                 decimal = runTime_lookup_helper[i].decimals;
@@ -364,7 +369,7 @@ __Z_INLINE parser_error_t parser_printAddress(const address_raw_t *addressRaw,
     // Render specific addresses
     if (rt_render) {
         for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-            if (!MEMCMP(outBuffer, PIC(runTime_lookup_helper[i].address), strlen(outBuffer)) && 
+            if (!MEMCMP(outBuffer, PIC(runTime_lookup_helper[i].address), strlen(outBuffer)) &&
                 !MEMCMP((const char *) parser_tx_obj.context.suffixPtr, PIC(runTime_lookup_helper[i].network), parser_tx_obj.context.suffixLen)) {
                 *pageCount = 1;
                 pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
@@ -434,7 +439,7 @@ __Z_INLINE parser_error_t parser_printVersion(const version_t ver, char *outVal,
 }
 
 __Z_INLINE parser_error_t parser_ethMapNative(const uint8_t *ethstr, const uint16_t ethstrLen, uint8_t *native, const uint16_t nativeLen) {
-    
+
     if (nativeLen < ADDR_RAW || native == NULL) {
         return parser_unexpected_value;
     }
@@ -449,7 +454,7 @@ __Z_INLINE parser_error_t parser_ethMapNative(const uint8_t *ethstr, const uint1
     MEMCPY(total, addressV0_Secp256k1_ethContext, sizeof(addressV0_Secp256k1_ethContext));
     MEMCPY(total+sizeof(addressV0_Secp256k1_ethContext), ethaddr, ETH_ADDR_LEN);
     SHA512_256(total, sizeof(total), messageDigest);
-    
+
     uint8_t addressRaw[ADDR_RAW] = {0};
     MEMCPY(addressRaw + 1, messageDigest, ETH_ADDR_LEN);
 
@@ -464,7 +469,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
                                                const int8_t displayIdx,
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
-                                               uint8_t pageIdx, uint8_t *pageCount) {    
+                                               uint8_t pageIdx, uint8_t *pageCount) {
     switch (displayIdx) {
         case 0: {
             snprintf(outKey, outKeyLen, "Type");
@@ -476,7 +481,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
             snprintf(outVal, outValLen, "Self");
             if (parser_tx_obj.oasis.runtime.meta.has_orig_to) {
                 if (parser_tx_obj.oasis.runtime.call.body.consensus.has_to) {
-                    CHECK_PARSER_ERR(parser_ethMapNative((uint8_t *)parser_tx_obj.oasis.runtime.meta.orig_to, 
+                    CHECK_PARSER_ERR(parser_ethMapNative((uint8_t *)parser_tx_obj.oasis.runtime.meta.orig_to,
                     sizeof(parser_tx_obj.oasis.runtime.meta.orig_to), (uint8_t *)parser_tx_obj.oasis.runtime.call.body.consensus.to, sizeof(parser_tx_obj.oasis.runtime.call.body.consensus.to)));
                     pageStringExt(outVal, outValLen, (char *)parser_tx_obj.oasis.runtime.meta.orig_to, 42, pageIdx, pageCount);
                     return parser_ok;
@@ -484,7 +489,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
             } else if (parser_tx_obj.oasis.runtime.call.body.consensus.has_to) {
                         return parser_printAddress(&parser_tx_obj.oasis.runtime.call.body.consensus.to,
                             outVal, outValLen, pageIdx, pageCount, false);
-            } 
+            }
             return parser_ok;
         }
         case 2: {
@@ -509,19 +514,19 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
         }
         case 5: {
             snprintf(outKey, outKeyLen, "ParaTime");
-            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            const char *runId = (const char *)parser_tx_obj.oasis.runtime.meta.runtime_id;
             size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
-            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            const char *chain_context = (const char *)parser_tx_obj.oasis.runtime.meta.chain_context;
             size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
 
             for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-                if (!MEMCMP((const char *)runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
-                    !MEMCMP((const char *)chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                if (!MEMCMP(runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP(chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
                     pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                     return parser_ok;
                 }
             }
-            pageString(outVal, outValLen, (const char *)runId, pageIdx, pageCount);
+            pageString(outVal, outValLen, runId, pageIdx, pageCount);
             return parser_ok;
         }
         default:
@@ -593,19 +598,19 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
         }
         case 2: {
             snprintf(outKey, outKeyLen, "ParaTime");
-            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            const char *runId = (const char *)parser_tx_obj.oasis.runtime.meta.runtime_id;
             size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
-            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            const char *chain_context = (const char *)parser_tx_obj.oasis.runtime.meta.chain_context;
             size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
 
             for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-                if (!MEMCMP((const char *) runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
-                    !MEMCMP((const char *) chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                if (!MEMCMP(runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP(chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
                     pageString(outVal, outValLen, (char *) PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                     return parser_ok;
                 }
             }
-            pageString(outVal, outValLen, (const char *) runId, pageIdx, pageCount);
+            pageString(outVal, outValLen, runId, pageIdx, pageCount);
             return parser_ok;
         }
     }
@@ -673,19 +678,19 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
         }
         case 3: {
             snprintf(outKey, outKeyLen, "ParaTime");
-            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            const char *runId = (const char *)parser_tx_obj.oasis.runtime.meta.runtime_id;
             size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
-            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            const char *chain_context = (const char *)parser_tx_obj.oasis.runtime.meta.chain_context;
             size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
 
             for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-                if (!MEMCMP((const char *)runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
-                    !MEMCMP((const char *)chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                if (!MEMCMP(runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP(chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
                     pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                     return parser_ok;
                 }
             }
-            pageString(outVal, outValLen, (const char *)runId, pageIdx, pageCount);
+            pageString(outVal, outValLen, runId, pageIdx, pageCount);
             return parser_ok;
         }
     }
@@ -747,19 +752,19 @@ __Z_INLINE parser_error_t parser_getItemRuntimeEncrypted(const parser_context_t 
         }
         case 7: {
             snprintf(outKey, outKeyLen, "ParaTime");
-            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            const char *runId = (const char *)parser_tx_obj.oasis.runtime.meta.runtime_id;
             size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
-            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            const char *chain_context = (const char *)parser_tx_obj.oasis.runtime.meta.chain_context;
             size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
 
             for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-                if (!MEMCMP((const char *)runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
-                    !MEMCMP((const char *)chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                if (!MEMCMP(runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP(chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
                     pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
                     return parser_ok;
                 }
             }
-            pageString(outVal, outValLen, (const char *)runId, pageIdx, pageCount);
+            pageString(outVal, outValLen, runId, pageIdx, pageCount);
             return parser_ok;
         }
     }
@@ -1423,7 +1428,7 @@ __Z_INLINE parser_error_t parser_printGovernanceSubmitProposal(const parser_cont
             }
         }
     }
-            
+
     return parser_display_idx_out_of_range;
 }
 
@@ -1432,7 +1437,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
                                            char *outKey, uint16_t outKeyLen,
                                            char *outVal, uint16_t outValLen,
                                            uint8_t pageIdx, uint8_t *pageCount) {
-                                            
+
     // Variable items
     switch (parser_tx_obj.oasis.tx.method) {
         case stakingTransfer:

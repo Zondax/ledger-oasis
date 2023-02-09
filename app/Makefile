@@ -72,7 +72,7 @@ $(error "$(error_message)")
 endif
 
 APP_LOAD_PARAMS = --delete $(COMMON_LOAD_PARAMS) --path ${APPPATH}
-
+DEFINES += HAVE_PENDING_REVIEW_SCREEN
 NANOS_STACK_SIZE := $(APP_STACK_SIZE)
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices

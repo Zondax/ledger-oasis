@@ -69,13 +69,15 @@ uint8_t *tx_get_buffer() {
     return buffering_get_buffer()->data;
 }
 
-const char *tx_parse() {
+const char *tx_parse(uint8_t *parser_err) {
     uint8_t err = parser_parse(
             &ctx_parsed_tx,
             tx_get_buffer(),
             tx_get_buffer_length());
 
+    *parser_err = err;
     if (err != parser_ok) {
+        *parser_err = err;
         return parser_getErrorDescription(err);
     }
 
