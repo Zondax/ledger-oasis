@@ -64,7 +64,8 @@ typedef enum {
     contractsInstantiate,
     contractsCall,
     contratcsUpgrade,
-    transactionEncrypted
+    transactionEncrypted,
+    evmCall
 } oasis_methods_e;
 
 typedef enum{
@@ -273,6 +274,11 @@ typedef struct {
 } body_consensus_t;
 
 typedef struct {
+    string_t address;
+    char data_hash[32];
+} body_evm_t;
+
+typedef struct {
     publickey_t pk;
     string_t nonce;
     char data_hash[32];
@@ -293,6 +299,7 @@ typedef struct {
         body_consensus_t consensus;
         body_contracts_t contracts;
         body_encrypted_t encrypted;
+        body_evm_t evm;
     }body;
 
     bool ro;

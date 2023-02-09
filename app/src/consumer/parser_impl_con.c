@@ -1190,6 +1190,11 @@ __Z_INLINE parser_error_t _readRuntimeMethod(parser_tx_t *v, CborValue *rootItem
         return parser_ok;
     }
 
+        if (CBOR_KEY_MATCHES(&tmp, "evm.Call")) {
+        v->oasis.runtime.call.method = evmCall;
+        return parser_ok;
+    }
+
     return parser_unexpected_method;
 }
 
@@ -1343,6 +1348,54 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     return parser_ok;
 }
 
+__Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootItem) {
+    if (!cbor_value_is_valid(rootItem)) {
+        return parser_required_method;
+    }
+    // Verify it is well formed (no missing bytes...)
+    CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
+    CborValue bodyField;
+    size_t numItems;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
+    if (!cbor_value_is_valid(&bodyField))
+        return parser_required_body;
+
+    CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
+    if (numItems < 1 || numItems > 4) return parser_unexpected_number_items;
+
+    CborValue addrField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "address", &addrField))
+    if (!cbor_value_is_valid(&addrField)) {
+        return parser_required_nonce;
+    }
+    CHECK_PARSER_ERR(_readRuntimeString(&addrField, &v->oasis.runtime.call.body.evm.address))
+
+    CborValue dataField;
+    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "data", &dataField))
+    if (!cbor_value_is_valid(&dataField)) {
+        return parser_required_nonce;
+    }
+    const uint8_t *buffer;
+    size_t buffer_size;
+    CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buffer, &buffer_size))
+
+    MEMZERO(&v->oasis.runtime.call.body.evm.data_hash, sizeof(v->oasis.runtime.call.body.evm.data_hash));
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+    cx_sha256_t ctx;
+    memset(&ctx, 0, sizeof(ctx));
+    cx_sha256_init(&ctx);
+    cx_hash(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.evm.data_hash,
+            sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
+#else
+    picohash_ctx_t ctx;
+    picohash_init_sha256(&ctx);
+    picohash_update(&ctx, buffer, buffer_size);
+    picohash_final(&ctx, &v->oasis.runtime.call.body.evm.data_hash);
+#endif
+
+    return parser_ok;
+}
+
 __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) {
 
     CborValue callField;
@@ -1385,6 +1438,9 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
             case contractsInstantiate:
             case contratcsUpgrade:
                 CHECK_PARSER_ERR(_readRuntimeContractsBody(v,&callField))
+            break;
+            case evmCall:
+                CHECK_PARSER_ERR(_readRuntimeEvmBody(v,&callField))
             break;
             default:
                 return parser_unexpected_method;
@@ -1834,9 +1890,12 @@ uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v)
             case transactionEncrypted:
                 itemCount += 5;
                 break;
+            case evmCall:
+                itemCount += 4;
+                break;
         }
     }
-    
+
     return itemCount;
 }
 

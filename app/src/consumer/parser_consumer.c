@@ -59,7 +59,7 @@ static const char * methodsMap[] = {
     "     Transfer     (ParaTime)", "     Deposit      (ParaTime)",
     "      Withdraw     (ParaTime)","    Instantiate    (ParaTime)",
     "        Call      (ParaTime)","     Upgrade      (ParaTime)",
-    "     Transaction    (ParaTime)",
+    "     Transaction    (ParaTime)", "        Call      (ParaTime)",
 };
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
@@ -130,7 +130,7 @@ __Z_INLINE parser_error_t parser_getType(__Z_UNUSED const parser_context_t *ctx,
             return parser_ok;
         case runtimeType:
             if (parser_tx_obj.oasis.runtime.call.method < accountsTransfer ||
-                parser_tx_obj.oasis.runtime.call.method > transactionEncrypted) {
+                parser_tx_obj.oasis.runtime.call.method > evmCall) {
                 return parser_unexpected_method;
             }
 
@@ -773,6 +773,75 @@ __Z_INLINE parser_error_t parser_getItemRuntimeEncrypted(const parser_context_t 
     return parser_no_data;
 }
 
+__Z_INLINE parser_error_t parser_getItemRuntimeEvm(const parser_context_t *ctx,
+                                               const int8_t displayIdx,
+                                               char *outKey, uint16_t outKeyLen,
+                                               char *outVal, uint16_t outValLen,
+                                               uint8_t pageIdx, uint8_t *pageCount) {
+    char outBuffer[128] = {0};
+    switch (displayIdx) {
+        case 0: {
+            snprintf(outKey, outKeyLen, "Review Contract");
+            *pageCount = 1;
+            return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
+        }
+        case 1: {
+            snprintf(outKey, outKeyLen, "Warning!");
+            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 2: {
+            snprintf(outKey, outKeyLen, "Tx Hash");
+            if (array_to_hexstr(outBuffer, sizeof(outBuffer),(uint8_t *) &parser_tx_obj.oasis.runtime.call.body.evm.data_hash, 32) != 64) {
+                return parser_unexpected_value;
+            }
+            pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 3: {
+            snprintf(outKey, outKeyLen, "Address");
+            if (array_to_hexstr(outBuffer, sizeof(outBuffer),(uint8_t *) &parser_tx_obj.oasis.runtime.call.body.evm.address, ETH_ADDR_LEN) != 40) {
+                return parser_unexpected_value;
+            }
+            pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 4: {
+            snprintf(outKey, outKeyLen, "Fee");
+            return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
+                                        &parser_tx_obj.oasis.runtime.ai.fee.amount,
+                                        &parser_tx_obj.oasis.runtime.ai.fee.denom,
+                                        outVal, outValLen, pageIdx, pageCount);
+        }
+        case 5: {
+            snprintf(outKey, outKeyLen, "Gas limit");
+            uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.ai.fee.gas);
+            *pageCount = 1;
+            return parser_ok;
+        }
+        case 6: {
+            snprintf(outKey, outKeyLen, "ParaTime");
+            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
+            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
+
+            for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+                if (!MEMCMP((const char *)runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP((const char *)chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                    pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
+                    return parser_ok;
+                }
+            }
+            pageString(outVal, outValLen, (const char *)runId, pageIdx, pageCount);
+            return parser_ok;
+        }
+    }
+
+    *pageCount = 0;
+    return parser_no_data;
+}
+
 __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
                                                const int8_t displayIdx,
                                                char *outKey, uint16_t outKeyLen,
@@ -794,6 +863,9 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
                                                     outVal, outValLen, pageIdx, pageCount);
         case transactionEncrypted:
             return parser_getItemRuntimeEncrypted(ctx, displayIdx, outKey, outKeyLen,
+                                                outVal, outValLen, pageIdx, pageCount);
+        case evmCall:
+            return parser_getItemRuntimeEvm(ctx, displayIdx, outKey, outKeyLen,
                                                 outVal, outValLen, pageIdx, pageCount);
         case unknownMethod:
         default:
