@@ -30,6 +30,7 @@
 #include "crypto.h"
 #include "coin.h"
 #include "app_main.h"
+#include "app_mode.h"
 
 #include "parser_txdef.h"
 #include "parser_impl.h"
@@ -150,21 +151,26 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
     }
 
     CHECK_APP_CANARY()
-
-    const char *error_msg = tx_parse();
+    uint8_t parser_err;
+    const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
     if (error_msg != NULL) {
         int error_msg_length = strlen(error_msg);
         MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
         *tx += (error_msg_length);
+        if (parser_err == parser_required_expert_mode) {
+            *flags |= IO_ASYNCH_REPLY;
+            view_custom_error_show("Signing Rejected","Expert Mode Required");
+        }
         THROW(APDU_CODE_DATA_INVALID);
     }
-
+#if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_secp256k1);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
+#endif
 }
 
 __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -173,17 +179,20 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
     }
 
     CHECK_APP_CANARY()
-
-    const char *error_msg = tx_parse();
+    uint8_t parser_err;
+    const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
     if (error_msg != NULL) {
         int error_msg_length = strlen(error_msg);
         MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
         *tx += (error_msg_length);
+        if (parser_err == parser_required_expert_mode) {
+            *flags |= IO_ASYNCH_REPLY;
+            view_custom_error_show("Signing Rejected","Expert Mode Required");
+        }
         THROW(APDU_CODE_DATA_INVALID);
     }
-
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);

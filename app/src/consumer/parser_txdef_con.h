@@ -37,6 +37,7 @@ extern "C" {
 #define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
 
 typedef struct {
+    const char *network;
     const char *runid;
     const char *address;
     uint8_t decimals;
@@ -59,7 +60,11 @@ typedef enum {
     governanceCastVote,
     accountsTransfer,
     consensusDeposit,
-    consensusWithdraw
+    consensusWithdraw,
+    contractsInstantiate,
+    contractsCall,
+    contratcsUpgrade,
+    transactionEncrypted
 } oasis_methods_e;
 
 typedef enum{
@@ -113,6 +118,12 @@ typedef struct {
 } handle_t;
 
 typedef uint8_t raw_signature_t[64];
+
+typedef struct {
+    quantity_t amount;
+    string_t denom;
+} token_t;
+
 
 typedef struct {
     publickey_t public_key;
@@ -259,20 +270,28 @@ typedef struct {
     quantity_t amount;
     string_t denom;
     bool has_to;
-} body_unencrypted_t;
+} body_consensus_t;
 
 typedef struct {
     publickey_t pk;
     string_t nonce;
-    body_unencrypted_t body;
+    char data_hash[32];
 } body_encrypted_t;
 
+typedef struct {
+    uint64_t id;
+    uint64_t code_id;
+    uint8_t *dataPtr;
+    size_t dataLen;
+    size_t tokensLen;
+} body_contracts_t;
 
 typedef struct {
     uint64_t format;
     oasis_methods_e method;
     union{
-        body_unencrypted_t unencrypted;
+        body_consensus_t consensus;
+        body_contracts_t contracts;
         body_encrypted_t encrypted;
     }body;
 

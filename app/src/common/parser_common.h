@@ -85,6 +85,11 @@ typedef enum {
     parser_invalid_handle_length,
     parser_invalid_name_length,
     parser_invalid_eth_mapping,
+    parser_required_id,
+    parser_required_code_id,
+    parser_required_pk,
+    parser_required_data,
+    parser_required_expert_mode
 } parser_error_t;
 
 typedef struct {
