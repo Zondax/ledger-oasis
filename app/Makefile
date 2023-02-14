@@ -96,19 +96,21 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/ui
 APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
+LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
+APP_SOURCE_PATH += $(CURDIR)/rust/include
 
 .PHONY: rust
 rust:
-	@echo "No rust code"
+	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
 
 # Before linking, we need to be sure rust lib is there
 bin/app.elf: rust
 
 .PHONY: rust_clean
 rust_clean:
-	@echo "No rust code"
+	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
 
 clean: rust_clean
 
