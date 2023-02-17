@@ -9,3 +9,4 @@ unsigned char *cx_rng(uint8_t *buffer, size_t len)
     cx_rng_no_throw(buffer, len);
     return buffer;
 }
+

@@ -23,6 +23,8 @@ extern uint16_t action_addrResponseLen;
 
 void app_sign_ed25519();
 void app_sign_secp256k1();
+zxerr_t app_sign_sr25519();
+void app_return_sr25519();
 
 zxerr_t app_fill_address(address_kind_e kind);
 

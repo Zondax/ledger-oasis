@@ -58,6 +58,33 @@ zxerr_t addr_getItem_ed25519(int8_t displayIdx,
     }
 }
 
+zxerr_t addr_getItem_sr25519(int8_t displayIdx,
+                             char *outKey, uint16_t outKeyLen,
+                             char *outVal, uint16_t outValLen,
+                             uint8_t pageIdx, uint8_t *pageCount) {
+    char buffer[300];
+    ZEMU_LOGF(50,"addr_getItem_sr25519 %d/%d", displayIdx, pageIdx);
+
+    switch (displayIdx) {
+        case 0:
+            snprintf(outKey, outKeyLen, "Address");
+            pageString(outVal, outValLen, (char *) (G_io_apdu_buffer + VIEW_ADDRESS_OFFSET_ED25519), pageIdx, pageCount);
+            return zxerr_ok;
+        case 1: {
+            if (!app_mode_expert()) {
+                return zxerr_no_data;
+            }
+
+            snprintf(outKey, outKeyLen, "Path");
+            bip32_to_str(buffer, sizeof(buffer), hdPath, HDPATH_LEN_DEFAULT);
+            pageString(outVal, outValLen, buffer, pageIdx, pageCount);
+            return zxerr_ok;
+        }
+        default:
+            return zxerr_no_data;
+    }
+}
+
 zxerr_t addr_getItem_secp256k1(int8_t displayIdx,
                                char *outKey, uint16_t outKeyLen,
                                char *outVal, uint16_t outValLen,

@@ -132,6 +132,9 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
             case addr_secp256k1:
                 view_review_init(addr_getItem_secp256k1, addr_getNumItems, app_reply_address);
                 break;
+            case addr_sr25519:
+                view_review_init(addr_getItem_sr25519, addr_getNumItems, app_reply_address);
+                break;
             default:
                 zemu_log("No match for address kind!\n");
                 THROW(APDU_CODE_CONDITIONS_NOT_SATISFIED);
@@ -225,6 +228,41 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
 #endif
 }
 
+__Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+    if (!process_chunk(tx, rx)) {
+        THROW(APDU_CODE_OK);
+    }
+
+    CHECK_APP_CANARY()
+    uint8_t parser_err;
+    const char *error_msg = tx_parse(&parser_err);
+    CHECK_APP_CANARY()
+
+    if (error_msg != NULL) {
+        int error_msg_length = strlen(error_msg);
+        MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
+        *tx += (error_msg_length);
+        if (parser_err == parser_required_expert_mode) {
+            *flags |= IO_ASYNCH_REPLY;
+            view_custom_error_show("Signing Rejected","Expert Mode Required");
+        }
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+    zxerr_t err = app_sign_sr25519();
+    if(err != zxerr_ok){
+        *tx = 0;
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+#if defined(APP_CONSUMER)
+    CHECK_APP_CANARY()
+    view_review_init(tx_getItem, tx_getNumItems, app_return_sr25519);
+    view_review_show(REVIEW_TXN);
+    *flags |= IO_ASYNCH_REPLY;
+#endif
+}
+
 void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     uint16_t sw = 0;
 
@@ -275,6 +313,20 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 case INS_SIGN_RT_SECP256K1: {
                     CHECK_PIN_VALIDATED()
                     handleSignSecp256k1(flags, tx, rx);
+                    break;
+                }
+
+                case INS_GET_ADDR_SR25519: {
+                    zemu_log("INS_GET_ADDR_SR25519\n");
+                    CHECK_PIN_VALIDATED()
+                    handleGetAddr(flags, tx, rx, addr_sr25519);
+                    break;
+                }
+
+                case INS_SIGN_RT_SR25519: {
+                    zemu_log("INS_SIGN_RT_SR25519\n");
+                    CHECK_PIN_VALIDATED()
+                    handleSignSr25519(flags, tx, rx);
                     break;
                 }
 

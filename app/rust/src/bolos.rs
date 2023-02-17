@@ -24,7 +24,7 @@ use merlin::TranscriptRng;
 use rand::{CryptoRng, RngCore};
 
 extern "C" {
-    fn cx_rng_no_throw(buffer: *mut u8, len: u32);
+    fn cx_rng(buffer: *mut u8, len: u32);
     fn zemu_log_stack(buffer: *const u8);
     fn check_app_canary();
 }
@@ -61,7 +61,7 @@ impl RngCore for Trng {
         c_zemu_log_stack(b"fill_bytes\x00".as_ref());
 
         unsafe {
-            cx_rng_no_throw(dest.as_mut_ptr(), dest.len() as u32);
+            cx_rng(dest.as_mut_ptr(), dest.len() as u32);
         }
     }
 

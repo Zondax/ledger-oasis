@@ -105,6 +105,24 @@ void app_sign_secp256k1() {
     }
 }
 
+zxerr_t app_sign_sr25519() {
+    uint8_t messageDigest[SR25519_BLAKE_HASH_LEN];
+    size_t ctx_len;
+
+    const uint8_t *context = crypto_getSr25519BytesToSign(messageDigest, sizeof(messageDigest), &ctx_len);
+    if(context == NULL) {
+        return zxerr_invalid_crypto_settings;
+    }
+    return crypto_sign_sr25519(messageDigest,  sizeof(messageDigest), context, ctx_len);
+}
+
+void app_return_sr25519() {
+    copy_sr25519_signdata(G_io_apdu_buffer);
+    zeroize_sr25519_signdata();
+
+    set_code(G_io_apdu_buffer, SIG_LEN, APDU_CODE_OK);
+    io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, SIG_LEN + 2);
+}
 
 void app_reject() {
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
