@@ -50,11 +50,7 @@ const uint8_t *crypto_getSr25519BytesToSign(uint8_t *msgDigest, size_t msgDigest
     }
     uint8_t *message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen;
     size_t messageLen= tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen;
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
-    cx_blake2b_t ctx;
-    cx_blake2b_init(&ctx, 256);
-    cx_hash(&ctx.header, CX_LAST, message, messageLen, msgDigest, msgDigestLen);
-#endif
+    cx_hash_sha256(message, messageLen, msgDigest, msgDigestLen);
     *ctxLen = (size_t)parser_tx_obj.context.len;
     return parser_tx_obj.context.ptr;
 #endif

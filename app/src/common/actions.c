@@ -106,7 +106,7 @@ void app_sign_secp256k1() {
 }
 
 zxerr_t app_sign_sr25519() {
-    uint8_t messageDigest[SR25519_BLAKE_HASH_LEN];
+    uint8_t messageDigest[CX_SHA256_SIZE];
     size_t ctx_len;
 
     const uint8_t *context = crypto_getSr25519BytesToSign(messageDigest, sizeof(messageDigest), &ctx_len);

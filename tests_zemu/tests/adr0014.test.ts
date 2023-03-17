@@ -19,11 +19,13 @@ import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
 import { OasisApp } from "@zondax/ledger-oasis";
 import { models } from "./common";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
+import crypto from 'crypto'
 
 const ed25519 = require("ed25519-supercop");
 const sha512 = require("js-sha512");
 const secp256k1 = require("secp256k1/elliptic");
 const addon = require("../../tests_tools/neon/native");
+
 
 const APP_SEED =
   "equip will roof matter pink blind book anxiety banner elbow sun young";
@@ -763,12 +765,10 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const context = blake2bInit(32);
-      blake2bUpdate(context, txBlob);
-      let prehash = Buffer.from(blake2bFinal(context));
+    const hash = crypto.createHash('sha256')
+    const prehash = hash.update(txBlob).digest()
 
       // Now verify the signature
-      const signingcontext = Buffer.from([]);
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
@@ -826,12 +826,10 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const context = blake2bInit(32);
-      blake2bUpdate(context, txBlob);
-      let prehash = Buffer.from(blake2bFinal(context));
+    const hash = crypto.createHash('sha256')
+    const prehash = hash.update(txBlob).digest()
 
       // Now verify the signature
-      const signingcontext = Buffer.from([]);
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
@@ -888,13 +886,11 @@ describe("Standard-Adr0014", function () {
 
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
-
-      const context = blake2bInit(32);
-      blake2bUpdate(context, txBlob);
-      let prehash = Buffer.from(blake2bFinal(context));
+      
+      const hash = crypto.createHash('sha256')
+      const prehash = hash.update(txBlob).digest()
 
       // Now verify the signature
-      const signingcontext = Buffer.from([]);
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
