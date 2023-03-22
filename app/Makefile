@@ -71,7 +71,7 @@ endef
 $(error "$(error_message)")
 endif
 
-APP_LOAD_PARAMS = --delete $(COMMON_LOAD_PARAMS) --path ${APPPATH}
+APP_LOAD_PARAMS = $(COMMON_LOAD_PARAMS) --path ${APPPATH}
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
 NANOS_STACK_SIZE := $(APP_STACK_SIZE)
 

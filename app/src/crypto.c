@@ -26,10 +26,26 @@
 
 #include <bech32.h>
 
-uint32_t hdPath[HDPATH_LEN_DEFAULT];
+uint32_t hdPath[MAX_BIP32_PATH];
 uint8_t hdPathLen;
+uint8_t chain_code;
 
 #include "cx.h"
+
+__Z_INLINE int keccak_hash(const unsigned char *in, unsigned int inLen,
+                          unsigned char *out, unsigned int outLen) {
+    // return actual size using value from signatureLength
+    cx_sha3_t ctx;
+    cx_keccak_init(&ctx, outLen * 8);
+    cx_hash((cx_hash_t *)&ctx, CX_LAST, in, inLen, out, outLen);
+
+    return 0;
+}
+
+int keccak_digest(const unsigned char *in, unsigned int inLen,
+                          unsigned char *out, unsigned int outLen) {
+    return keccak_hash(in, inLen, out, outLen);
+}
 
 static zxerr_t keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
     if (in == NULL || out == NULL || out_len < PUB_KEY_SIZE) {
@@ -142,7 +158,7 @@ zxerr_t  crypto_extractPublicKeyEd25519(const uint32_t path[HDPATH_LEN_DEFAULT],
     return err;
 }
 
-zxerr_t crypto_extractPublicKeySecp256k1(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen) {
+zxerr_t crypto_extractPublicKeySecp256k1(const uint32_t path[HDPATH_LEN_DEFAULT], uint8_t *pubKey, uint16_t pubKeyLen, uint8_t *chainCode) {
     zemu_log("crypto_extractPublicKeySecp256k1\n");
     cx_ecfp_public_key_t cx_publicKey;
     cx_ecfp_private_key_t cx_privateKey;
@@ -158,8 +174,8 @@ zxerr_t crypto_extractPublicKeySecp256k1(const uint32_t path[HDPATH_LEN_DEFAULT]
         TRY {
             os_perso_derive_node_bip32(CX_CURVE_256K1,
                                        path,
-                                       HDPATH_LEN_DEFAULT,
-                                       privateKeyData, NULL);
+                                       hdPathLen,
+                                       privateKeyData, chainCode);
 
             cx_ecfp_init_private_key(CX_CURVE_256K1, privateKeyData, SK_SECP256K1_SIZE, &cx_privateKey);
             cx_ecfp_init_public_key(CX_CURVE_256K1, NULL, 0, &cx_publicKey);
@@ -487,7 +503,7 @@ zxerr_t crypto_fillAddressSecp256k1(uint8_t *buffer, uint16_t buffer_len, uint16
     //to compute Ethereum addresses we need the full public key (not the compressed one)
     uint8_t publicKeyFull[PK_LEN_SECP256K1_FULL] = {0};
 
-    CHECK_ZXERR(crypto_extractPublicKeySecp256k1(hdPath, publicKeyFull, PK_LEN_SECP256K1_FULL))
+    CHECK_ZXERR(crypto_extractPublicKeySecp256k1(hdPath, publicKeyFull, PK_LEN_SECP256K1_FULL, NULL))
 
     // format public key as Ethereum hex address
     char *addr_out = (char *) (buffer + PK_LEN_SECP256K1);
@@ -516,6 +532,47 @@ zxerr_t crypto_fillAddressSecp256k1(uint8_t *buffer, uint16_t buffer_len, uint16
     return zxerr_ok;
 }
 
+typedef struct {
+    // plus 1-bytes to write pubkey len
+    uint8_t publicKey[PK_LEN_SECP256K1_FULL + 1];
+    // hex of the ethereum address plus 1-bytes
+    // to write the address len
+    uint8_t address[(ETH_ADDR_LEN * 2) + 1];  // 41 = because (20+1+4)*8/5 (32 base encoded size)
+    // place holder for further dev
+    uint8_t chainCode[32];
+
+} __attribute__((packed)) answer_eth_t;
+
+zxerr_t crypto_fillEthAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
+
+    if (buffer_len < sizeof(answer_eth_t)) {
+        return 0;
+    }
+    MEMZERO(buffer, buffer_len);
+    answer_eth_t *const answer = (answer_eth_t *) buffer;
+
+    CHECK_ZXERR(crypto_extractPublicKeySecp256k1(hdPath, &answer->publicKey[1], sizeof_field(answer_eth_t, publicKey) - 1, &chain_code))
+
+    answer->publicKey[0] = PK_LEN_SECP256K1_FULL;
+
+    uint8_t hash[KECCAK256_HASH_LEN] = {0};
+
+    keccak_digest(&answer->publicKey[2], PK_LEN_SECP256K1_FULL - 1, hash, KECCAK256_HASH_LEN);
+
+    answer->address[0] = ETH_ADDR_LEN * 2;
+
+    // get hex of the eth address(last 20 bytes of pubkey hash)
+    char str[41] = {0};
+
+    // take the last 20-bytes of the hash, they are the ethereum address
+    array_to_hexstr(str, 41, hash + 12 , ETH_ADDR_LEN);
+    MEMCPY(answer->address+1, str, 40);
+
+    *addrLen = sizeof_field(answer_eth_t, publicKey) + sizeof_field(answer_eth_t, address);
+
+    return zxerr_ok;
+}
+
 zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen, address_kind_e kind) {
     zemu_log("crypto_fillAddress\n");
     switch (kind) {
@@ -528,7 +585,11 @@ zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrL
         case addr_sr25519:
             zemu_log("identified sr25519 address\n");
             return crypto_fillAddressSr25519(buffer, buffer_len, addrLen);
+        case addr_eth:
+            zemu_log("identified sr25519 address\n");
+            return crypto_fillEthAddress(buffer, buffer_len, addrLen);
     }
     zemu_log("No match for address kind!\n");
     return zxerr_unknown;
 }
+

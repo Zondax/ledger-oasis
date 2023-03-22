@@ -35,6 +35,8 @@
 #include "parser_txdef.h"
 #include "parser_impl.h"
 
+#include "eth_addr.h"
+
 static bool tx_initialized = false;
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
@@ -65,6 +67,40 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
     if(hdPathLen == HDPATH_LEN_ADR0008 && hdPath[2] < 0x80000000){
         THROW(APDU_CODE_DATA_INVALID);
     }
+}
+
+void extract_eth_path(uint32_t rx, uint32_t offset)
+{
+    tx_initialized = false;
+
+    uint32_t path_len = *(G_io_apdu_buffer + offset);
+
+    if (path_len > MAX_BIP32_PATH || path_len < 1)
+        THROW(APDU_CODE_WRONG_LENGTH);
+
+    if ((rx - offset - 1) < sizeof(uint32_t) * path_len) {
+        THROW(APDU_CODE_WRONG_LENGTH);
+    }
+
+    // first byte at OFFSET_DATA is the path len, so we skip this
+    uint8_t *path_data = G_io_apdu_buffer + offset + 1;
+
+    // hw-app-eth serializes path as BE numbers
+    for (uint8_t i = 0; i < path_len; i++) {
+        hdPath[i] = U4BE(path_data, 0);
+        path_data += sizeof(uint32_t);
+    }
+
+    const bool mainnet =
+      hdPath[0] == HDPATH_ETH_0_DEFAULT && hdPath[1] == HDPATH_ETH_1_DEFAULT;
+
+
+    if (!mainnet) {
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+    // set the hdPath len
+    hdPathLen = path_len;
 }
 
 bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
@@ -140,6 +176,34 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
                 THROW(APDU_CODE_CONDITIONS_NOT_SATISFIED);
                 break;
         }
+        view_review_show(REVIEW_ADDRESS);
+        *flags |= IO_ASYNCH_REPLY;
+        return;
+    }
+    *tx = action_addrResponseLen;
+    THROW(APDU_CODE_OK);
+}
+
+__Z_INLINE void
+handleGetEthAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
+{
+    extract_eth_path(rx, OFFSET_DATA);
+
+    uint8_t requireConfirmation = G_io_apdu_buffer[OFFSET_P1];
+    uint8_t with_code = G_io_apdu_buffer[OFFSET_P2];
+
+    if (with_code != P2_CHAINCODE && with_code != P2_NO_CHAINCODE)
+        THROW(APDU_CODE_INVALIDP1P2);
+
+    chain_code = with_code;
+
+    zxerr_t zxerr = app_fill_address(addr_eth);
+    if (zxerr != zxerr_ok) {
+        *tx = 0;
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+    if (requireConfirmation) {
+        view_review_init(eth_addr_getItem, eth_addr_getNumItems, app_reply_address);
         view_review_show(REVIEW_ADDRESS);
         *flags |= IO_ASYNCH_REPLY;
         return;
@@ -270,15 +334,21 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     {
         TRY
         {
-            if (G_io_apdu_buffer[OFFSET_CLA] != CLA) {
+            uint8_t cla = G_io_apdu_buffer[OFFSET_CLA];
+            if ((cla != CLA) && (cla != CLA_ETH)) {
                 THROW(APDU_CODE_CLA_NOT_SUPPORTED);
             }
 
             if (rx < APDU_MIN_LENGTH) {
                 THROW(APDU_CODE_WRONG_LENGTH);
             }
+            uint8_t instruction = G_io_apdu_buffer[OFFSET_INS];
 
-            switch (G_io_apdu_buffer[OFFSET_INS]) {
+            // Handle this case as ins number
+            if (instruction == INS_GET_ADDR_ETH && cla == CLA_ETH)
+                 handleGetEthAddr(flags, tx, rx);
+
+            switch (instruction) {
                 case INS_GET_VERSION: {
                     handle_getversion(flags, tx, rx);
                     break;

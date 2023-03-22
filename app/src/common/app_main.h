@@ -40,6 +40,7 @@
 #define INS_SIGN_RT_ED25519             5
 #define INS_SIGN_RT_SR25519             6
 #define INS_SIGN_RT_SECP256K1           7
+#define INS_GET_ADDR_ETH                2
 
 void app_init();
 
