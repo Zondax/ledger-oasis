@@ -92,6 +92,8 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_consumer.c
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer/parser_impl_con.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser_impl_eth.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/eth_utils.c
         )
 
 file(GLOB_RECURSE LIB_VAL_SRC
@@ -160,6 +162,8 @@ target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/picohash/
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
+        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         )
 
 target_include_directories(unittests_val PUBLIC

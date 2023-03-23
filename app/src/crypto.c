@@ -23,6 +23,7 @@
 #include "sha512.h"
 #include "rslib.h"
 #include "ristretto.h"
+#include "tx.h"
 
 #include <bech32.h>
 
@@ -396,6 +397,99 @@ zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx,
     MEMZERO(sk, sizeof(sk));
 
     return err;
+}
+
+unsigned int info = 0;
+
+zxerr_t _sign(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize, const uint32_t *path, uint32_t pathLen, unsigned int *info) {
+    if (signatureMaxlen < sizeof(signature_t) || pathLen == 0 ) {
+        return zxerr_invalid_crypto_settings;
+    }
+
+    cx_ecfp_private_key_t cx_privateKey;
+    uint8_t privateKeyData[32];
+    int signatureLength = 0;
+    *info = 0;
+
+    signature_t *const signature = (signature_t *) buffer;
+
+    zxerr_t error = zxerr_ok;
+    BEGIN_TRY
+    {
+        TRY
+        {
+            // Generate keys
+            os_perso_derive_node_bip32(CX_CURVE_256K1,
+                                       path,
+                                       pathLen,
+                                       privateKeyData, NULL);
+
+            cx_ecfp_init_private_key(CX_CURVE_256K1, privateKeyData, 32, &cx_privateKey);
+
+            // Sign
+            signatureLength = cx_ecdsa_sign(&cx_privateKey,
+                                            CX_RND_RFC6979 | CX_LAST,
+                                            CX_SHA256,
+                                            message,
+                                            messageLen,
+                                            signature->der_signature,
+                                            sizeof_field(signature_t, der_signature),
+                                            info);
+        }
+        CATCH_OTHER(e) {
+            error = zxerr_ledger_api_error;
+        }
+        FINALLY {
+            MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
+            MEMZERO(privateKeyData, 32);
+        }
+    }
+    END_TRY;
+
+    if (error != zxerr_ok) {
+        return error;
+    }
+
+    err_convert_e err = convertDERtoRSV(signature->der_signature, *info,  signature->r, signature->s, &signature->v);
+    if (err != no_error) {
+        // Error while converting so return length 0
+        return zxerr_invalid_crypto_settings;
+    }
+
+    // return actual size using value from signatureLength
+    *sigSize =  sizeof_field(signature_t, r) + sizeof_field(signature_t, s) + sizeof_field(signature_t, v) + signatureLength;
+    return zxerr_ok;
+}
+
+// Sign an ethereum related transaction
+zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize) {
+
+    if (signatureMaxlen < sizeof(signature_t) ) {
+        return zxerr_invalid_crypto_settings;
+    }
+
+    uint8_t message_digest[KECCAK256_HASH_LEN] = {0};
+    keccak_digest(message, messageLen, message_digest, KECCAK256_HASH_LEN);
+
+    zxerr_t error = _sign(buffer, signatureMaxlen, message_digest, KECCAK256_HASH_LEN, sigSize, hdPath, hdPathLen, &info);
+    if (error != zxerr_ok){
+        return zxerr_invalid_crypto_settings;
+    }
+
+    // we need to fix V
+    uint8_t v = 0;
+    zxerr_t err = tx_compute_eth_v(info, &v);
+
+    if (err != zxerr_ok)
+        return zxerr_invalid_crypto_settings;
+
+    // need to reorder signature as hw-eth-app expects v at the beginning.
+    // so rsv -> vrs
+    uint8_t rs_size = sizeof_field(signature_t, r) + sizeof_field(signature_t, s);
+    memmove(buffer + 1, buffer, rs_size);
+    buffer[0] = v;
+
+    return zxerr_ok;
 }
 
 #define CX_SHA512_SIZE 64

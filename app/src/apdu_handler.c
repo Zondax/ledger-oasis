@@ -36,6 +36,7 @@
 #include "parser_impl.h"
 
 #include "eth_addr.h"
+#include "eth_utils.h"
 
 static bool tx_initialized = false;
 
@@ -119,7 +120,7 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
     uint32_t added;
     switch (payloadType) {
         case 0:
-            tx_initialize();
+            tx_initialize_oasis();
             tx_reset();
             extractHDPath(rx, OFFSET_DATA);
             tx_initialized = true;
@@ -146,6 +147,107 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
             return true;
     }
     tx_initialized = false;
+    THROW(APDU_CODE_INVALIDP1P2);
+}
+
+bool
+process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
+{
+    const uint8_t payloadType = G_io_apdu_buffer[OFFSET_PAYLOAD_TYPE];
+
+    if (G_io_apdu_buffer[OFFSET_P2] != 0) {
+        THROW(APDU_CODE_INVALIDP1P2);
+    }
+
+    if (rx < OFFSET_DATA) {
+        THROW(APDU_CODE_WRONG_LENGTH);
+    }
+
+    uint64_t read = 0;
+    uint64_t to_read = 0;
+    uint64_t max_len = 0;
+
+    uint8_t *data = &(G_io_apdu_buffer[OFFSET_DATA]);
+    uint32_t len = rx - OFFSET_DATA;
+
+    uint64_t added;
+    switch (payloadType) {
+        case P1_ETH_FIRST:
+            tx_initialize_eth();
+            tx_reset();
+            extract_eth_path(rx, OFFSET_DATA);
+            // there is not warranties that the first chunk
+            // contains the serialized path only;
+            // so we need to offset the data to point to the first transaction
+            // byte
+            uint32_t path_len = sizeof(uint32_t) * hdPathLen;
+
+            // plus the first offset data containing the path len
+            data += path_len + 1;
+            if (len < path_len) {
+                THROW(APDU_CODE_WRONG_LENGTH);
+            }
+
+            // now process the chunk
+            len -= path_len + 1;
+            if (get_tx_rlp_len(data, len, &read, &to_read) != rlp_ok) {
+                THROW(APDU_CODE_DATA_INVALID);
+            }
+
+            // get remaining data len
+            max_len = saturating_add(read, to_read);
+            max_len = MIN(max_len, len);
+
+            added = tx_append(data, max_len);
+            if (added != max_len) {
+                THROW(APDU_CODE_OUTPUT_BUFFER_TOO_SMALL);
+            }
+
+            tx_initialized = true;
+
+            // if the number of bytes read and the number of bytes to read
+            //  is the same as what we read...
+            if ((saturating_add(read, to_read) - len) == 0) {
+                return true;
+            }
+            return false;
+        case P1_ETH_MORE:
+            if (!tx_initialized) {
+                THROW(APDU_CODE_TX_NOT_INITIALIZED);
+            }
+
+            uint64_t buff_len = tx_get_buffer_length();
+            uint8_t *buff_data = tx_get_buffer();
+
+            if (get_tx_rlp_len(buff_data, buff_len, &read, &to_read) !=
+                rlp_ok) {
+                THROW(APDU_CODE_DATA_INVALID);
+            }
+
+            uint64_t rlp_read = buff_len - read;
+
+            // either the entire buffer of the remaining bytes we expect
+            uint64_t missing = to_read - rlp_read;
+            max_len = len;
+
+            if (missing < len)
+                max_len = missing;
+
+            added = tx_append(data, max_len);
+
+            if (added != max_len) {
+                tx_initialized = false;
+                THROW(APDU_CODE_OUTPUT_BUFFER_TOO_SMALL);
+            }
+
+            // check if this chunk was the last one
+            if (missing - len == 0) {
+                tx_initialized = false;
+                return true;
+            }
+
+            return false;
+    }
     THROW(APDU_CODE_INVALIDP1P2);
 }
 
@@ -327,6 +429,32 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
 #endif
 }
 
+__Z_INLINE void
+handleSignEth(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
+{
+    if (!process_chunk_eth(tx, rx)) {
+        THROW(APDU_CODE_OK);
+    }
+    CHECK_APP_CANARY()
+
+    uint8_t parser_err;
+    const char *error_msg = tx_parse(&parser_err);
+    CHECK_APP_CANARY()
+
+    if (error_msg != NULL) {
+        int error_msg_length = strlen(error_msg);
+        MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
+        *tx += (error_msg_length);
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+#if defined(APP_CONSUMER)
+    CHECK_APP_CANARY()
+    view_review_init(tx_getItem, tx_getNumItems, app_sign_eth);
+    view_review_show(REVIEW_TXN);
+    *flags |= IO_ASYNCH_REPLY;
+#endif
+}
+
 void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     uint16_t sw = 0;
 
@@ -374,9 +502,14 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 }
 
                 case INS_GET_ADDR_SECP256K1: {
-                    zemu_log("INS_GET_ADDR_SECP256K1\n");
-                    CHECK_PIN_VALIDATED()
-                    handleGetAddr(flags, tx, rx, addr_secp256k1);
+                    if (cla != CLA_ETH) {
+                        zemu_log("INS_GET_ADDR_SECP256K1\n");
+                        CHECK_PIN_VALIDATED()
+                        handleGetAddr(flags, tx, rx, addr_secp256k1);
+                    } else {
+                        zemu_log("Sign Eth\n");
+                        handleSignEth(flags, tx, rx);
+                    }
                     break;
                 }
 

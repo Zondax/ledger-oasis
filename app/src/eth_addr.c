@@ -15,8 +15,6 @@
 ********************************************************************************/
 
 #include <stdio.h>
-#include "coin_consumer.h"
-#include "coin_validator.h"
 #include "coin.h"
 #include "zxerror.h"
 #include "zxmacros.h"

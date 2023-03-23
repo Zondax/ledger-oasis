@@ -42,6 +42,10 @@
 #define INS_SIGN_RT_SECP256K1           7
 #define INS_GET_ADDR_ETH                2
 
+// transaction is sent as a blob of rlp encoded bytes,
+#define P1_ETH_FIRST                    0x00
+#define P1_ETH_MORE                     0x80
+
 void app_init();
 
 void app_main();
