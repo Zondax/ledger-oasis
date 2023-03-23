@@ -278,6 +278,7 @@ jobs:
       - name: Build and run zemu tests
         run: |
           make build_val
+          make zemu_install
           COIN=val make zemu_test
 
   build_package_nanos:
