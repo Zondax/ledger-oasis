@@ -31,6 +31,15 @@ default:
 	COIN=$(COIN) $(MAKE) -C app $@
 endif
 
+test_prepare:
+	make
+	make zemu_install
+
+test_all:
+	make
+	make zemu_install
+	make zemu_test
+
 tests_tools_build:
 	cd tests_tools/neon && yarn install
 
