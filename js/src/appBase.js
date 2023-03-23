@@ -1,4 +1,6 @@
 import bech32 from "bech32";
+import Eth from '@ledgerhq/hw-app-eth'
+import { LedgerEthTransactionResolution, LoadConfig } from '@ledgerhq/hw-app-eth/lib/services/types'
 import {
   CHUNK_SIZE,
   DEFAULT_HRP,
@@ -67,12 +69,14 @@ export class OasisAppBase {
     return "OAS";
   }
 
-  constructor(transport) {
+  constructor(transport, ethScrambleKey = 'w0w', ethLoadConfig = {}) {
     if (!transport) {
       throw new Error("Transport has not been defined");
     }
 
     this.transport = transport;
+    this.eth = new Eth(transport, ethScrambleKey, ethLoadConfig)
+
     transport.decorateAppAPIMethods(
       this,
       ["getVersion", "sign", "getAddressAndPubKey", "appInfo", "deviceInfo", "getBech32FromPK"],
@@ -492,7 +496,7 @@ export class OasisAppBase {
     }, processErrorResponse);
   }
 
-    async signRtSr25519(path, meta, message) {
+  async signRtSr25519(path, meta, message) {
     const chunks = await this.signGetChunks(path, meta, message, INS.SIGN_RT_SR25519);
 
     return this.signSendChunk(1, chunks.length, chunks[0], INS.SIGN_RT_SR25519).then(async (response) => {
@@ -518,4 +522,17 @@ export class OasisAppBase {
       };
     }, processErrorResponse);
   }
+
+  async signETHTransaction(
+    path,
+    rawTxHex,
+    resolution = null,
+  ){
+    return this.eth.signTransaction(path, rawTxHex, resolution)
+  }
+
+  async getETHAddress(path, boolDisplay = false, boolChaincode = false) {
+    return this.eth.getAddress(path, boolDisplay, boolChaincode);
+  }
+
 }
