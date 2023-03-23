@@ -38,7 +38,7 @@ const defaultOptions = {
 
 // Derivation path. First 3 items are automatically hardened!
 const path = "m/44'/474'/0'";
-const secp256k1_path = "m/44'/60'/0'";
+const secp256k1_path = "m/44'/60'/0'/0/0";
 
 jest.setTimeout(60000);
 
