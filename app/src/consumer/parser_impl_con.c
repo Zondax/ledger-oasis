@@ -1233,12 +1233,28 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
 
    CborValue dataField;
    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "data", &dataField))
-   if (cbor_value_is_valid(&contents)) {
-        CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &v->oasis.runtime.call.body.contracts.dataPtr,
-                                        &v->oasis.runtime.call.body.contracts.dataLen))
+   if (cbor_value_is_valid(&dataField)) {
+        v->oasis.runtime.call.body.contracts.dataValid = true;
+        // We create new Cbor parser with the byte string from data
+        uint8_t *buf;
+        size_t buffer_size;
+
+        CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buf, &buffer_size))
+        v->oasis.runtime.call.body.contracts.dataPtr = buf;
+        v->oasis.runtime.call.body.contracts.dataLen = buffer_size;
+        cbor_parser_state_t *cborState = &v->oasis.runtime.call.body.contracts.cborState;
+        CHECK_CBOR_ERR(cbor_parser_init(buf, buffer_size, 0, &cborState->parser, &cborState->startValue))
+
+        CborValue data = cborState->startValue;
+        if (cbor_value_get_type(&data) != CborMapType) {
+            v->oasis.runtime.call.body.contracts.dataValid = false;
+            v->oasis.runtime.call.body.contracts.dataPtr = NULL;
+            v->oasis.runtime.call.body.contracts.dataLen = 0;
+        }
    } else {
         v->oasis.runtime.call.body.contracts.dataPtr = NULL;
         v->oasis.runtime.call.body.contracts.dataLen = 0;
+        v->oasis.runtime.call.body.contracts.dataValid = false;
    }
 
 

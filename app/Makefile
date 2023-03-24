@@ -76,6 +76,7 @@ DEFINES += HAVE_PENDING_REVIEW_SCREEN
 NANOS_STACK_SIZE := $(APP_STACK_SIZE)
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
+DEFINES += HAVE_INSPECT
 
 $(info TARGET_NAME  = [$(TARGET_NAME)])
 $(info ICONNAME  = [$(ICONNAME)])

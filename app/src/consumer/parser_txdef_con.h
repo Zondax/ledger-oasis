@@ -290,6 +290,8 @@ typedef struct {
     uint64_t code_id;
     uint8_t *dataPtr;
     size_t dataLen;
+    cbor_parser_state_t cborState;
+    bool dataValid;
     size_t tokensLen;
 } body_contracts_t;
 

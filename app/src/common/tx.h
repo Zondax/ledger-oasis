@@ -18,6 +18,7 @@
 #include "os.h"
 #include "coin.h"
 #include "zxerror.h"
+#include "view.h"
 
 // transaction initializer for the buffer and transaction type.
 void tx_initialize();
@@ -56,3 +57,8 @@ zxerr_t tx_getItem(int8_t displayIdx,
                    uint8_t pageIdx, uint8_t *pageCount);
 
 zxerr_t tx_compute_eth_v(unsigned int info, uint8_t *v);
+
+/// Inspects an specific item from the transaction (including paging)
+zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_field);
+
+zxerr_t tx_getNumInnerItems(uint8_t *num_items);

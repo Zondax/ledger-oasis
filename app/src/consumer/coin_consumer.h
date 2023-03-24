@@ -82,6 +82,9 @@ extern "C" {
 #define COIN_ADDRESS_VERSION    0
 #define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
 
+#define DATA_CONTINUE      "..."
+#define DATA_SAMPLE_SIZE    10
+
 #define ENTITY_METADATA_V 1
 
 #define TOKENS_INDEX 3

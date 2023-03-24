@@ -94,6 +94,7 @@ typedef enum {
     parser_invalid_rlp_data,
     parser_invalid_chain_id,
     parser_invalid_rs_values,
+    parser_no_depth,
 } parser_error_t;
 
 typedef enum {
