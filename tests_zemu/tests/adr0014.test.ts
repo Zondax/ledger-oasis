@@ -40,7 +40,7 @@ const defaultOptions = {
 const path = "m/44'/474'/0'";
 const secp256k1_path = "m/44'/60'/0'/0/0";
 
-jest.setTimeout(60000);
+jest.setTimeout(100000);
 
 describe("Standard-Adr0014", function () {
   test.concurrent.each(models)("get Secp256k1 address", async function (m) {
@@ -902,4 +902,51 @@ describe("Standard-Adr0014", function () {
       await sim.close();
     }
   });
+});
+
+describe("Standard-Adr0014-inspect", function () {
+
+test.concurrent.each(models)('inspect', async function (m) {
+    const sim = new Zemu(m.path)
+    try {
+    await sim.start({ ...defaultOptions, model: m.name });
+    const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+    await sim.clickRight();
+    await sim.clickBoth();
+    await sim.clickLeft();
+
+    const meta = Buffer.from(
+      "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+      "base64"
+    );
+
+    const txBlob = Buffer.from(
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYS6Fpc2F5X2hlbGxvpWNtYXCiAQECBGN3aG/1ZXRlc3Rl9mh1c2VybmFtZW9lNTg5Zjk4eXI4eXJnZmhrbGFzdF9sb2dpbnOEAQIDBGZ0b2tlbnODgkQ7msoAQIJCB9BEV0JUQ4JDLcbARFdFVEhnY29kZV9pZABvdXBncmFkZXNfcG9saWN5oWhldmVyeW9uZaBmbWV0aG9kdWNvbnRyYWN0cy5JbnN0YW50aWF0ZQ==",
+      "base64"
+    );
+
+    const path = "m/44'/474'/0'";
+    const signatureRequest = app.signRtEd25519(path, meta, txBlob)
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+    if (m.name == "nanos") {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [2,0,0,0,2,0,4,0,4], false)
+    } else {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [3,0,0,0,2,0,4,0,3], false)
+    }
+
+      const signatureResponse = await signatureRequest
+      console.log(signatureResponse)
+
+      expect(signatureResponse.return_code).toEqual(0x9000)
+      expect(signatureResponse.error_message).toEqual('No errors')
+
+    } finally {
+      await sim.close()
+    }
+  })
 });
