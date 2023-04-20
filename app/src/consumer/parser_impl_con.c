@@ -523,6 +523,7 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
     CHECK_CBOR_TYPE(cbor_value_get_type(&bodyField), CborMapType)
 
     CborValue contents;
+    size_t numItems;
 
     switch (v->oasis.tx.method) {
         case stakingTransfer: {
@@ -568,8 +569,6 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             break;
         }
         case stakingAllow: {
-
-            size_t numItems;
             CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
             if(numItems < 2 || numItems > 3) return parser_unexpected_number_items;
@@ -680,7 +679,6 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             break;
         }
         case governanceSubmitProposal: {
-            size_t numItems;
             CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
             if (numItems != 1) {

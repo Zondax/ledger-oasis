@@ -62,3 +62,5 @@ zxerr_t tx_compute_eth_v(unsigned int info, uint8_t *v);
 zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_field);
 
 zxerr_t tx_getNumInnerItems(uint8_t *num_items);
+
+bool tx_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx);

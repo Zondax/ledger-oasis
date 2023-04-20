@@ -30,6 +30,9 @@
 #include "app_mode.h"
 #include "parser_impl_eth.h"
 #include "cbor_helper.h"
+#include "tx.h"
+
+bool on_data_field = false;
 
 static const char *blindSignWarning =
     "You are in Expert Mode. Activating this mode will allow you to sign "
@@ -133,64 +136,136 @@ parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_item
 }
 
 CborValue current;
-size_t previous_depth_size;
-CborType previous_type;
+size_t current_type_item_cnt;
+size_t base_level_item_cnt;
+CborType type;
 bool num_items_initialized = false;
 
 parser_error_t parser_init_innerNumItems() {
     current = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
 
-    // Enter data
-    cbor_value_get_map_length(&current, &previous_depth_size);
-    ZEMU_LOGF(50, "parser_init_number_itemns: nitems = %d\n", previous_depth_size);
+    // Check data item count Data is always a map
+    cbor_value_get_map_length(&current, &current_type_item_cnt);
+    base_level_item_cnt = current_type_item_cnt;
     return parser_ok;
 }
 
 parser_error_t parser_getInnerNumItems(uint8_t *num_items) {
 
+    // If not initialized return data item cnt
     if (!num_items_initialized) {
         parser_init_innerNumItems();
         num_items_initialized = true;
     }
 
-    *num_items = (uint8_t)previous_depth_size;
-    ZEMU_LOGF(50, "parser_getInnerNumItems: nitems = %d\n", previous_depth_size);
+    // Return last read item cnt
+    *num_items = (uint8_t)current_type_item_cnt;
     return parser_ok;
 }
 
-parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_field) {
+bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx) {
+
+    // Level 0 we can only enter data, flag set on data print
+    if (depth_level == 0 && on_data_field == true) {
+        on_data_field = false;
+        return true;
+    }
+
+    if (depth_level > 0) {
+        CborValue  cborCurrent = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
+        CborValue content;
+
+        // Enter Data
+        cbor_value_enter_container(&cborCurrent,&content);
+        cborCurrent = content;
+
+        // Data is always a map
+        CborType currentType = CborMapType;
+        for (int j = 1; j < depth_level && j < MAX_DEPTH; j++) {
+            // Follow trace (if map 2 elements per = screen advance 2)
+            for (int i = 1; i < *(trace+j)+1; i++) {
+                if (currentType == CborMapType) {
+                    cbor_value_advance(&cborCurrent);
+                }
+                cbor_value_advance(&cborCurrent);
+            }
+
+            // If we were in an map the last element we found on trace has a 
+            // map tag that needs to be advanced
+            if (currentType == CborMapType) {
+                //changing depth level so if we were on a map advance map name
+                cbor_value_advance(&cborCurrent);
+            }
+
+            // Get Type if not expected return false
+            currentType = cbor_value_get_type(&cborCurrent);
+            if (currentType != CborArrayType && currentType != CborMapType) {
+                return false;
+            } 
+
+            // Valid Type enter container
+            cbor_value_enter_container(&cborCurrent,&content);
+            cborCurrent = content;
+        }
+
+        // Already int he final trace level Now iterate over item idx
+        // Again if map advance 2 and after advance name
+        for (int i = 0; i< innerItemIdx; i++) {
+            cbor_value_advance(&cborCurrent);
+            if (currentType == CborMapType) {
+                cbor_value_advance(&cborCurrent);
+            }
+        }
+
+        if (currentType == CborMapType) {
+            cbor_value_advance(&cborCurrent);
+        }
+
+        // Get final item type
+        currentType = cbor_value_get_type(&cborCurrent);
+        if (currentType == CborArrayType || currentType == CborMapType) {
+            return true;
+        } 
+    }
+
+    return false;
+}
+
+parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace) {
     current = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
     CborValue content;
 
-    // Enter data
+    // Enter data and set important variabels, we know data is always a map
     cbor_value_enter_container(&current,&content);
     current = content;
 
-    if (depth_level == 1) {
-         previous_type = CborMapType;
+    CborType currentType = CborMapType;
+    if (depth_level == 0) {
+         type = CborMapType;
+         current_type_item_cnt = base_level_item_cnt;
     }
-    for (int j = 1; j < depth_level && j < MAX_DEPTH; j++) {
 
-        // if we need to follow trace
+    for (int j = 1; j <= depth_level && j < MAX_DEPTH; j++) {
+
+        // Follow trace and get disred level entrypoint
         for (int i = 1; i < *(trace+j)+1; i++) {
-            if(previous_type == CborMapType) {
+            if (currentType == CborMapType) {
                 cbor_value_advance(&current);
             }
             cbor_value_advance(&current);
         }
 
-        //changing depth level so we were on a map or array so advance map/array name
-        cbor_value_advance(&current);
+        if (currentType == CborMapType) {
+            cbor_value_advance(&current);
+        }
 
-        //get type before enter conteiner important to know the advance on trace following
-        previous_type = cbor_value_get_type(&current);
-        if(previous_type == CborArrayType) {
-            cbor_value_get_array_length(&current, &previous_depth_size);
-        } else if (previous_type == CborMapType) {
-            cbor_value_get_map_length(&current, &previous_depth_size);
+        //Know type before entering to use in next iteration of level if needed
+        currentType = cbor_value_get_type(&current);
+        type = currentType;
+        if (currentType == CborArrayType) {
+            cbor_value_get_array_length(&current, &current_type_item_cnt);
         } else {
-            previous_depth_size = 1;
-            return parser_no_depth;
+            cbor_value_get_map_length(&current, &current_type_item_cnt);
         }
 
         //enter container
@@ -201,79 +276,74 @@ parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace, ui_fiel
     return parser_ok;
 }
 
-parser_error_t parser_printInnerField(const parser_context_t *ctx, uint8_t depth, char *str, ui_field_t *ui_field) {
-    uint8_t cnt = 0;
-    cnt = (previous_type == CborMapType ? 2 : 1);
-    ZEMU_LOGF(50, "printInnerField: cnt = %d\n", cnt);
-    ZEMU_LOGF(50, "printInnerField: display_idx = %d\n", ui_field->displayIdx);
+parser_error_t parser_printInnerField(ui_field_t *ui_field) {
+    uint8_t elements_print = 0;
+    elements_print = (type == CborMapType ? 2 : 1);
+    
     for (int i = 0; i< ui_field->displayIdx; i++) {
-        if (previous_type == CborMapType) {
+        if (type == CborMapType) {
             cbor_value_advance(&current);
         }
             cbor_value_advance(&current);
-            ZEMU_LOGF(50, "printInnerField: PTR advanced %d = %s\n",i,current.ptr)
-            zemu_log("\n");
     }
 
-    char val[100];
+    char val[SCREEN_SIZE];
+    char text[SCREEN_SIZE];
+    int result;
     size_t len = sizeof(val);
+    uint8_t offset = 0;
+    float f;
 
-    while (cnt != 0) {
-        CborType type = cbor_value_get_type(&current);
+    while (elements_print != 0) {
+        type = cbor_value_get_type(&current);
         len = sizeof(val);
         switch (type) {
             case CborMapType:
-                ZEMU_LOGF(50, "Its an MAP\n")
-                MEMCPY(val, current.ptr, DATA_SAMPLE_SIZE);
-                snprintf(ui_field->outVal, ui_field->outValLen, "{...}");
+                snprintf(val + offset, SCREEN_SIZE - offset, "{...}");
                 break;
             case CborArrayType:
-                ZEMU_LOGF(50, "Its an ARRAY\n")
-                MEMCPY(val, current.ptr, DATA_SAMPLE_SIZE);
-                snprintf(ui_field->outVal, ui_field->outValLen, "[...]");
+                snprintf(val + offset, SCREEN_SIZE - offset, "[...]");
                 break;
-            case CborTextStringType:
-                ZEMU_LOGF(50, "Its an TEXT !!\n")
-                cbor_value_copy_text_string(&current, val, &len, NULL);
-                snprintf(ui_field->outVal, ui_field->outValLen, "%s",val);
-                ui_field->outVal+=len;
-                ZEMU_LOGF(50, "printInnerField: Val %s\n", val)
+            case CborTextStringType: {
+                cbor_value_copy_text_string(&current, text, &len, NULL);
+                snprintf(val + offset,SCREEN_SIZE - offset, "%s",text);
+                offset = len;
                 break;
-            case CborIntegerType:
-                ZEMU_LOGF(50, "Its an integer\n")
-                int result;
+            }
+            case CborIntegerType: {
                 CHECK_CBOR_ERR(cbor_value_get_int(&current, &result))
-                snprintf(ui_field->outVal, ui_field->outValLen, "%d", result);
-                ui_field->outVal+=1;
-                ZEMU_LOGF(50, "printInnerField: SCREEN %d \n", result)
+                snprintf(val + offset,SCREEN_SIZE - offset, "%d", result);
+                offset = 1;
                 break;
-            case CborBooleanType:
-                ZEMU_LOGF(50, "Its an Boolean\n")
+            }
+            case CborBooleanType: {
                 bool res;
                 CHECK_CBOR_ERR(cbor_value_get_boolean(&current, &res))
-                snprintf(ui_field->outVal, ui_field->outValLen, "%s", res ? "true" : "false");
-                ZEMU_LOGF(50, "printInnerField: SCREEN %d \n", res)
+                snprintf(val + offset, SCREEN_SIZE- offset,  "%s", res ? "true" : "false");
                 break;
+            }
             case CborNullType:
-                ZEMU_LOGF(50, "Its Null\n")
-                snprintf(ui_field->outVal, ui_field->outValLen, "%s", "null");
+                snprintf(val + offset, SCREEN_SIZE - offset,  "%s", "null");
                 break;
-            case CborFloatType:
-                ZEMU_LOGF(50, "Its Float\n")
-                float var = 0;
-                CHECK_CBOR_ERR(cbor_value_get_float(&current, &var))
-                snprintf(ui_field->outVal, ui_field->outValLen, "%f", var);
+            case CborFloatType: {
+                CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
+                int integer_part = (int)f;
+                int fractional_part = (int)(10000.0f * (f - integer_part)); 
+                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d",integer_part, fractional_part);
                 break;
+            }
             default:
                 break;
         }
-        cnt--;
-        if(cnt == 1) {
+        elements_print--;
+
+        if(elements_print == 1) {
             cbor_value_advance(&current);
-            snprintf(ui_field->outVal, ui_field->outValLen, "%s", ":");
-            ui_field->outVal+=1;
+            snprintf(val + offset, SCREEN_SIZE, "%s", ":");
+            offset +=1;
         }
     }
+    pageString(ui_field->outVal, ui_field->outValLen, val, ui_field->pageIdx, ui_field->pageCount);
     return parser_ok;
 }
 
@@ -723,6 +793,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
             snprintf(outKey, outKeyLen, "Warning!");
             pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
             return parser_ok;
+        break;
         case 1:
             if(parser_tx_obj.oasis.runtime.call.method == contractsCall) {
                 snprintf(outKey, outKeyLen, "Instance ID");
@@ -733,13 +804,15 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                 uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.code_id);
                 return parser_ok;
             }
+        break;
         case 2 :
-            ZEMU_LOGF(50, "On data print\n");
             if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid) {
+                on_data_field = true;
                 snprintf(outKey, outKeyLen, "Data");
                 snprintf(outVal, outValLen, "{...}");
                 return parser_ok;
             }
+        break;
     }
 
     if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
@@ -815,10 +888,12 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                 return parser_ok;
         case 2 :
             if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid) {
+                on_data_field = true;
                 snprintf(outKey, outKeyLen, "Data");
                 snprintf(outVal, outValLen, "{...}");
                 return parser_ok;
             }
+            break;
         }
     
     if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {

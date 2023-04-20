@@ -152,11 +152,13 @@ zxerr_t tx_compute_eth_v(unsigned int info, uint8_t *v) {
     return zxerr_ok;
 }
 
-bool item_get_done = false;
-uint8_t inspect_loop_stage = 0;
 zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_field) {
     uint8_t  innerNumItems = 0;
 
+    // Get type, size of level we are about to get in also get ptr to start of new level
+    parser_getInnerField(depth_level, trace);
+
+    // Get number of items read in the previous function
     tx_getNumInnerItems(&innerNumItems);
 
     if (ui_field->displayIdx >= innerNumItems) {
@@ -166,16 +168,15 @@ zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_fiel
     char nestingStr[20] = {0};
     char *nestingStrPtr = nestingStr;
 
-    for(uint8_t i = 1; i < depth_level && i < MAX_DEPTH; i++) {
-        snprintf(nestingStrPtr, 3, "%d.", *(trace+i) + 1);
+    for (uint8_t i = 1; i <= depth_level && i < MAX_DEPTH; i++) {
+        snprintf(nestingStrPtr, 3, "%d.", *(trace+i)+1);
+         ZEMU_LOGF(50, "%d.",*(trace+i));
         nestingStrPtr += 2;
     }
 
-    if(parser_getInnerField(depth_level, trace, ui_field) != parser_no_depth) {
-        snprintf(nestingStrPtr, 2, "%d", ui_field->displayIdx + 1);
-        snprintf(ui_field->outKey, ui_field->outKeyLen, "Data %s", nestingStr);
-        parser_printInnerField(&ctx_parsed_tx,depth_level, nestingStrPtr, ui_field);
-    }
+    snprintf(nestingStrPtr, 2, "%d", ui_field->displayIdx + 1);
+    snprintf(ui_field->outKey, ui_field->outKeyLen, "Data %s", nestingStr);
+    parser_printInnerField(ui_field);
 
     return zxerr_ok;
 }
@@ -186,4 +187,8 @@ zxerr_t tx_getNumInnerItems(uint8_t *num_items) {
     err = parser_getInnerNumItems(num_items);
 
     return zxerr_ok;
+}
+
+bool tx_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx) {
+    return parser_canInspectItem(depth_level, trace, innerItemIdx);
 }

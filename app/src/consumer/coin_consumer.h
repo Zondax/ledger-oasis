@@ -84,6 +84,7 @@ extern "C" {
 
 #define DATA_CONTINUE      "..."
 #define DATA_SAMPLE_SIZE    10
+#define SCREEN_SIZE         200
 
 #define ENTITY_METADATA_V 1
 

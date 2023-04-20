@@ -39,6 +39,8 @@
 #include "eth_utils.h"
 
 static bool tx_initialized = false;
+char error_msg_1[] = "Signing Rejected";
+char error_msg_2[]= "Expert Mode Required";
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
     MEMZERO(hdPath,sizeof(hdPath));
@@ -330,7 +332,7 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show("Signing Rejected","Expert Mode Required");
+            view_custom_error_show(error_msg_1,error_msg_2);
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -358,14 +360,14 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show("Signing Rejected","Expert Mode Required");
+            view_custom_error_show(error_msg_1,error_msg_2);
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
-    view_inspect_init(tx_getInnerItem, tx_getNumInnerItems);
+    view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
@@ -411,7 +413,7 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show("Signing Rejected","Expert Mode Required");
+            view_custom_error_show(error_msg_1,error_msg_2);
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
