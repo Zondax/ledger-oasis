@@ -923,7 +923,7 @@ test.concurrent.each(models)('inspect', async function (m) {
     );
 
     const txBlob = Buffer.from(
-      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYS6Fpc2F5X2hlbGxvpWNtYXCiAQECBGN3aG/1ZXRlc3Rl9mh1c2VybmFtZW9lNTg5Zjk4eXI4eXJnZmhrbGFzdF9sb2dpbnOEAQIDBGZ0b2tlbnODgkQ7msoAQIJCB9BEV0JUQ4JDLcbARFdFVEhnY29kZV9pZABvdXBncmFkZXNfcG9saWN5oWhldmVyeW9uZaBmbWV0aG9kdWNvbnRyYWN0cy5JbnN0YW50aWF0ZQ==",
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYJ6RjYWxs+kL26dVkYWxsMfVkYWxsMvZraW5zdGFudGlhdGWiAQICA2Z0b2tlbnODgkQ7msoAQIJCB9BEV0JUQ4JDLcbARFdFVEhnY29kZV9pZABvdXBncmFkZXNfcG9saWN5oWhldmVyeW9uZaBmbWV0aG9kdWNvbnRyYWN0cy5JbnN0YW50aWF0ZQ==",
       "base64"
     );
 
@@ -934,9 +934,53 @@ test.concurrent.each(models)('inspect', async function (m) {
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
 
     if (m.name == "nanos") {
-      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [2,0,0,0,2,0,4,0,4], false)
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [1,0,1,0,3,0,2,-3,0], false)
     } else {
-      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [3,0,0,0,2,0,4,0,3], false)
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect`, [2,0,1,0,3,0,2,-3,0], false)
+    }
+
+      const signatureResponse = await signatureRequest
+      console.log(signatureResponse)
+
+      expect(signatureResponse.return_code).toEqual(0x9000)
+      expect(signatureResponse.error_message).toEqual('No errors')
+
+    } finally {
+      await sim.close()
+    }
+  })
+
+  test.concurrent.each(models)('inspect-array-map', async function (m) {
+    const sim = new Zemu(m.path)
+    try {
+    await sim.start({ ...defaultOptions, model: m.name });
+    const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+    await sim.clickRight();
+    await sim.clickBoth();
+    await sim.clickLeft();
+
+    const meta = Buffer.from(
+      "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+      "base64"
+    );
+
+    const txBlob = Buffer.from(
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYQKJlb3RoZXKDAaJhYQFhYgICZmJpZ21hcKFnYmlnbWFwMqJrbmV3X2NvdW50ZXICb2luaXRpYWxfY291bnRlcgFmdG9rZW5zg4JEO5rKAECCQgfQRFdCVEOCQy3GwERXRVRIZ2NvZGVfaWQAb3VwZ3JhZGVzX3BvbGljeaFoZXZlcnlvbmWgZm1ldGhvZHVjb250cmFjdHMuSW5zdGFudGlhdGU=",
+      "base64"
+    );
+
+    const path = "m/44'/474'/0'";
+    const signatureRequest = app.signRtEd25519(path, meta, txBlob)
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+    if (m.name == "nanos") {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect-array`, [2,0,0,1,0,2,0,2,0,0,1,0,0,2], false)
+    } else {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-inspect-array`, [3,0,0,1,0,2,0,2,0,0,1,0,0,2], false)
     }
 
       const signatureResponse = await signatureRequest
