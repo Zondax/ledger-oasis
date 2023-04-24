@@ -87,14 +87,21 @@ endif
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.platform
 LDFLAGS += -z muldefs
-LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
 CFLAGS += -Wvla
 APP_SOURCE_PATH += $(MY_DIR)/src
+APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
+APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
+APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
+APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/ui
 APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
+APP_SOURCE_PATH += $(CURDIR)/rust/include
+
+APP_CUSTOM_LINK_DEPENDENCIES = rust
+LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
 APP_SOURCE_PATH += $(CURDIR)/rust/include
 
 .PHONY: rust

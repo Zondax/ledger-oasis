@@ -164,7 +164,6 @@ parser_error_t parser_getInnerNumItems(uint8_t *num_items) {
 }
 
 bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx) {
-
     // Level 0 we can only enter data, flag set on data print
     if (depth_level == 0 && on_data_field == true) {
         on_data_field = false;
@@ -782,6 +781,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
     *pageCount = 1;
+    on_data_field = false;
     if(displayIdx == 0) {
             snprintf(outKey, outKeyLen, "Review Contract");
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
@@ -870,6 +870,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
     *pageCount = 1;
+    on_data_field = false;
     if(displayIdx == 0) {
             snprintf(outKey, outKeyLen, "Review Contract");
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);

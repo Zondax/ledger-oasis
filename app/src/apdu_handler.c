@@ -39,8 +39,8 @@
 #include "eth_utils.h"
 
 static bool tx_initialized = false;
-char error_msg_1[] = "Signing Rejected";
-char error_msg_2[]= "Expert Mode Required";
+static char error_msg_1[] = "Signing Rejected";
+static char error_msg_2[]= "Expert Mode Required";
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
     MEMZERO(hdPath,sizeof(hdPath));
