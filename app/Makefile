@@ -87,7 +87,6 @@ endif
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.platform
 LDFLAGS += -z muldefs
-CFLAGS += -Wvla
 APP_SOURCE_PATH += $(MY_DIR)/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
