@@ -44,10 +44,6 @@ DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'" --path "44'/60'"
 
-ifeq ($(TARGET_NAME),TARGET_NANOS)
-APP_STACK_SIZE:=2392
-endif
-
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
@@ -73,7 +69,7 @@ endif
 
 APP_LOAD_PARAMS = $(COMMON_LOAD_PARAMS) --path ${APPPATH}
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
-NANOS_STACK_SIZE := $(APP_STACK_SIZE)
+NANOS_STACK_SIZE := 2392
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
 DEFINES += HAVE_INSPECT
@@ -97,7 +93,6 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 # NanoX SDK does not allow += in APP_SOURCE_PATH or INCLUDES_PATH
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
-APP_SOURCE_PATH += $(CURDIR)/rust/include
 
 APP_CUSTOM_LINK_DEPENDENCIES = rust
 LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib

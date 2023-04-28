@@ -39,8 +39,9 @@
 #include "eth_utils.h"
 
 static bool tx_initialized = false;
-static char error_msg_1[] = "Signing Rejected";
-static char error_msg_2[]= "Expert Mode Required";
+
+static const char *msg_error1 = "Expert Mode";
+static const char *msg_error2 = "Required";
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
     MEMZERO(hdPath,sizeof(hdPath));
@@ -354,7 +355,7 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(error_msg_1,error_msg_2);
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -382,7 +383,7 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(error_msg_1,error_msg_2);
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -435,7 +436,7 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(error_msg_1,error_msg_2);
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }

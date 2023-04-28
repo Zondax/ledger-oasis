@@ -399,8 +399,6 @@ zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx,
     return err;
 }
 
-unsigned int info = 0;
-
 zxerr_t _sign(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize, const uint32_t *path, uint32_t pathLen, unsigned int *info) {
     if (signatureMaxlen < sizeof(signature_t) || pathLen == 0 ) {
         return zxerr_invalid_crypto_settings;
@@ -471,6 +469,7 @@ zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t
     uint8_t message_digest[KECCAK256_HASH_LEN] = {0};
     keccak_digest(message, messageLen, message_digest, KECCAK256_HASH_LEN);
 
+    unsigned int info = 0;
     zxerr_t error = _sign(buffer, signatureMaxlen, message_digest, KECCAK256_HASH_LEN, sigSize, hdPath, hdPathLen, &info);
     if (error != zxerr_ok){
         return zxerr_invalid_crypto_settings;
