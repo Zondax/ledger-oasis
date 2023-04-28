@@ -1174,7 +1174,7 @@ __Z_INLINE parser_error_t _readRuntimeMethod(parser_tx_t *v, CborValue *rootItem
     }
 
     if (CBOR_KEY_MATCHES(&tmp, "contracts.Upgrade")) {
-        v->oasis.runtime.call.method = contratcsUpgrade;
+        v->oasis.runtime.call.method = contractsUpgrade;
         return parser_ok;
     }
 
@@ -1231,7 +1231,7 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
 
    CborValue dataField;
    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "data", &dataField))
-   if (cbor_value_is_valid(&dataField)) {
+   if (cbor_value_is_valid(&dataField) ) {
         v->oasis.runtime.call.body.contracts.dataValid = true;
         // We create new Cbor parser with the byte string from data
         uint8_t *buf;
@@ -1244,7 +1244,9 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
         CHECK_CBOR_ERR(cbor_parser_init(buf, buffer_size, 0, &cborState->parser, &cborState->startValue))
 
         CborValue data = cborState->startValue;
-        if (cbor_value_get_type(&data) != CborMapType) {
+        size_t data_size=0;
+        cbor_value_get_map_length(&data,&data_size);
+        if (cbor_value_get_type(&data) != CborMapType || data_size == 0) {
             v->oasis.runtime.call.body.contracts.dataValid = false;
             v->oasis.runtime.call.body.contracts.dataPtr = NULL;
             v->oasis.runtime.call.body.contracts.dataLen = 0;
@@ -1254,7 +1256,6 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
         v->oasis.runtime.call.body.contracts.dataLen = 0;
         v->oasis.runtime.call.body.contracts.dataValid = false;
    }
-
 
     CborValue tokensField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "tokens", &tokensField))
@@ -1450,7 +1451,7 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
             break;
             case contractsCall:
             case contractsInstantiate:
-            case contratcsUpgrade:
+            case contractsUpgrade:
                 CHECK_PARSER_ERR(_readRuntimeContractsBody(v,&callField))
             break;
             case evmCall:
@@ -1896,10 +1897,10 @@ uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v)
             default:
             case contractsCall:
             case contractsInstantiate:
-                itemCount += 3 + v->oasis.runtime.call.body.contracts.tokensLen;
+                itemCount += 2 + v->oasis.runtime.call.body.contracts.tokensLen + v->oasis.runtime.call.body.contracts.dataValid;
                 break;
-            case contratcsUpgrade:
-                itemCount += 4 + v->oasis.runtime.call.body.contracts.tokensLen;
+            case contractsUpgrade:
+                itemCount += 3 + v->oasis.runtime.call.body.contracts.tokensLen + v->oasis.runtime.call.body.contracts.dataValid;
                 break;
             case transactionEncrypted:
                 itemCount += 5;

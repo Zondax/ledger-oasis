@@ -64,7 +64,7 @@ typedef enum {
     consensusWithdraw,
     contractsInstantiate,
     contractsCall,
-    contratcsUpgrade,
+    contractsUpgrade,
     transactionEncrypted,
     evmCall
 } oasis_methods_e;

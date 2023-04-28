@@ -30,7 +30,6 @@
 #include "app_mode.h"
 #include "parser_impl_eth.h"
 #include "cbor_helper.h"
-#include "tx.h"
 
 bool on_data_field = false;
 
@@ -292,7 +291,7 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
     size_t len = sizeof(val);
     uint8_t offset = 0;
     float f;
-
+    ZEMU_LOGF(50,"PRINTING\n")
     while (elements_print != 0) {
         type = cbor_value_get_type(&current);
         len = sizeof(val);
@@ -327,8 +326,9 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
             case CborFloatType: {
                 CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
                 int integer_part = (int)f;
-                int fractional_part = (int)(10000.0f * (f - integer_part)); 
-                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d",integer_part, fractional_part);
+                int fractional_part = (int)(10000.0f * (f - integer_part));
+                ZEMU_LOGF(50,"after float %d.%02d\n",integer_part, fractional_part);
+                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%02d",integer_part, fractional_part);
                 break;
             }
             default:
@@ -782,17 +782,10 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                                uint8_t pageIdx, uint8_t *pageCount) {
     *pageCount = 1;
     on_data_field = false;
-    if(displayIdx == 0) {
+    switch (displayIdx) {
+        case 0:
             snprintf(outKey, outKeyLen, "Review Contract");
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
-    }
-    uint8_t displayIdxValid = displayIdx - (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid ? 0 : 1);
-
-    switch (displayIdxValid) {
-        case 0:
-            snprintf(outKey, outKeyLen, "Warning!");
-            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
-            return parser_ok;
         break;
         case 1:
             if(parser_tx_obj.oasis.runtime.call.method == contractsCall) {
@@ -805,19 +798,18 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                 return parser_ok;
             }
         break;
-        case 2 :
-            if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid) {
-                on_data_field = true;
-                snprintf(outKey, outKeyLen, "Data");
-                snprintf(outVal, outValLen, "{...}");
-                return parser_ok;
-            }
-        break;
     }
 
-    if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
+    if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1 && displayIdx == DATA_INDEX) {
+        on_data_field = true;
+        snprintf(outKey, outKeyLen, "Data");
+        snprintf(outVal, outValLen, "{...}");
+        return parser_ok;
+    }
+    uint8_t index_offset = TOKENS_INDEX - ((parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1) ? 0 : 1);
+    if (displayIdx < index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
         token_t token;
-        uint8_t index = displayIdx - TOKENS_INDEX;
+        uint8_t index = displayIdx - index_offset;
         snprintf(outKey, outKeyLen, "Amount %d", index + 1);
         _getTokenAtIndex(ctx, &token, index);
         return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
@@ -825,7 +817,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
     switch (displayIndex)
     {
@@ -871,35 +863,28 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                                uint8_t pageIdx, uint8_t *pageCount) {
     *pageCount = 1;
     on_data_field = false;
-    if(displayIdx == 0) {
+    switch (displayIdx) {
+        case 0:
             snprintf(outKey, outKeyLen, "Review Contract");
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
-    }
-    uint8_t displayIdxValid = displayIdx - (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid ? 0 : 1);
-
-    switch (displayIdxValid) {
-        case 0:
-            snprintf(outKey, outKeyLen, "Warning!");
-            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
-            return parser_ok;
+        break;
         case 1:
-                snprintf(outKey, outKeyLen, "Instance ID");
-                uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.id);
-                *pageCount = 1;
-                return parser_ok;
-        case 2 :
-            if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid) {
-                on_data_field = true;
-                snprintf(outKey, outKeyLen, "Data");
-                snprintf(outVal, outValLen, "{...}");
-                return parser_ok;
-            }
-            break;
-        }
-    
-    if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
+            snprintf(outKey, outKeyLen, "Instance ID");
+            uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.id);
+            return parser_ok;
+        break;
+    }
+
+    if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1 && displayIdx == DATA_INDEX) {
+        on_data_field = true;
+        snprintf(outKey, outKeyLen, "Data");
+        snprintf(outVal, outValLen, "{...}");
+        return parser_ok;
+    }
+    uint8_t index_offset = TOKENS_INDEX - ((parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1) ? 0 : 1);
+    if (displayIdx < index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
         token_t token;
-        uint8_t index = displayIdx - TOKENS_INDEX;
+        uint8_t index = displayIdx - index_offset;
         snprintf(outKey, outKeyLen, "Amount %d", index + 1);
         _getTokenAtIndex(ctx, &token, index);
         return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
@@ -907,7 +892,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
     switch (displayIndex)
     {
@@ -1112,7 +1097,7 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
         case contractsInstantiate:
             return parser_getItemRuntimeContracts(ctx, displayIdx, outKey, outKeyLen,
                                                 outVal, outValLen, pageIdx, pageCount);
-        case contratcsUpgrade:
+        case contractsUpgrade:
             return parser_getItemRuntimeContractsUpgrade(ctx, displayIdx, outKey, outKeyLen,
                                                     outVal, outValLen, pageIdx, pageCount);
         case transactionEncrypted:

@@ -89,6 +89,7 @@ extern "C" {
 #define ENTITY_METADATA_V 1
 
 #define TOKENS_INDEX 3
+#define DATA_INDEX 2
 
 #ifdef __cplusplus
 }

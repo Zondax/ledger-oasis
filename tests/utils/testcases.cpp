@@ -418,13 +418,6 @@ static const rt_lookup_t runTime_lookup_helper[] = {
             addTo(answer, "{} | Review Contract :     Instantiate    (ParaTime)", itemCount++);
         }
 
-        addTo(answer, "{} | Warning![1/6] : You are in Expert Mode. Activating this", itemCount);
-        addTo(answer, "{} | Warning![2/6] :  mode will allow you to sign transactio", itemCount);
-        addTo(answer, "{} | Warning![3/6] : ns without reviewing each transaction f", itemCount);
-        addTo(answer, "{} | Warning![4/6] : ield. If you are not sure why you are h", itemCount);
-        addTo(answer, "{} | Warning![5/6] : ere, reject or unplug your device immed", itemCount);
-        addTo(answer, "{} | Warning![6/6] : iately.", itemCount++);
-
         if (type.compare("contracts.Call") == 0 || type.compare("contracts.Upgrade") == 0) {
             addTo(answer, "{} | Instance ID : {}", itemCount++, txbody["id"].asString());
         } else {
