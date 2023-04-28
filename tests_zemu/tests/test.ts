@@ -703,9 +703,10 @@ describe("Standard", function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndAccept(
+      await sim.compareSnapshotsAndApprove(
         ".",
         `${m.prefix.toLowerCase()}-sign_amend`,
+        true,
         m.name === "nanos" ? 29 : 30
       );
 
@@ -748,9 +749,10 @@ describe("Standard", function () {
       const signatureRequest = app.sign(path, context, txBlob);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
-      await sim.compareSnapshotsAndAccept(
+      await sim.compareSnapshotsAndApprove(
         ".",
         `${m.prefix.toLowerCase()}-sign_amend_issue_130`,
+        true,
         m.name === "nanos" ? 20 : 21
       );
 
@@ -1161,7 +1163,7 @@ describe("Issue #68", function () {
         expect(resp.error_message).toEqual("No errors");
 
         // Need to wait a bit before signing again.
-        await Zemu.delay(200);
+        await Zemu.sleep(200);
 
         // Here we go again
         const signatureRequestBis = app.sign(path, context, txBlob);

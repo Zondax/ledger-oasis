@@ -1,4 +1,4 @@
-import { DeviceModel } from "@zondax/zemu";
+import { IDeviceModel } from "@zondax/zemu";
 
 const Resolve = require("path").resolve;
 
@@ -14,7 +14,7 @@ export const EXPECTED_ETH_PK =
 export const EXPECTED_ETH_ADDRESS =
   "0xcadff9350e9548bc68cb1e44d744bd9a801d5a5b";
 
-export const models: DeviceModel[] = [
+export const models: IDeviceModel[] = [
   { name: "nanos", prefix: "S", path: APP_PATH_S },
   { name: "nanox", prefix: "X", path: APP_PATH_X },
   { name: "nanosp", prefix: "SP", path: APP_PATH_SP },
