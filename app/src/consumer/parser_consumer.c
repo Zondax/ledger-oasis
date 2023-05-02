@@ -325,10 +325,13 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
                 break;
             case CborFloatType: {
                 CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
-                int integer_part = (int)f;
-                int fractional_part = (int)(10000.0f * (f - integer_part));
-                ZEMU_LOGF(50,"after float %d.%02d\n",integer_part, fractional_part);
-                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%02d",integer_part, fractional_part);
+                unsigned int integer_part = (unsigned int)f; // extract integer part
+                unsigned int decimal_part = (unsigned int)(100.0f * (f - (float)integer_part));
+#if defined TARGET_NANOX
+                integer_part=1;
+                decimal_part=1;
+#endif
+                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d",integer_part, decimal_part);
                 break;
             }
             default:
