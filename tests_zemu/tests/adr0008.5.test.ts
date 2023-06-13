@@ -37,7 +37,7 @@ jest.setTimeout(60000);
 const path = "m/44'/474'/5'";
 
 describe("Standard-Adr0008-5", function () {
-  test.each(models)("can start and stop container", async function (m) {
+  test.concurrent.each(models)("can start and stop container", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -46,7 +46,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("main menu", async function (m) {
+  test.concurrent.each(models)("main menu", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -60,7 +60,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("get app version", async function (m) {
+  test.concurrent.each(models)("get app version", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -80,7 +80,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("get address", async function (m) {
+  test.concurrent.each(models)("get address", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -105,7 +105,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("show address", async function (m) {
+  test.concurrent.each(models)("show address", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -137,7 +137,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign basic - withdraw", async function (m) {
+  test.concurrent.each(models)("sign basic - withdraw", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -182,7 +182,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign basic - allow", async function (m) {
+  test.concurrent.each(models)("sign basic - allow", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -242,7 +242,7 @@ describe("Standard-Adr0008-5", function () {
     );
   });
 
-  test.each(models)("sign basic", async function (m) {
+  test.concurrent.each(models)("sign basic", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -287,7 +287,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("submit proposal - upgrade", async function (m) {
+  test.concurrent.each(models)("submit proposal - upgrade", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -332,7 +332,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("submit proposal - cancel upgrade", async function (m) {
+  test.concurrent.each(models)("submit proposal - cancel upgrade", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -377,7 +377,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("add escrow", async function (m) {
+  test.concurrent.each(models)("add escrow", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -423,7 +423,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("reclaim escrow", async function (m) {
+  test.concurrent.each(models)("reclaim escrow", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -469,7 +469,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("transfer", async function (m) {
+  test.concurrent.each(models)("transfer", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -515,7 +515,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("cast vote - abstain", async function (m) {
+  test.concurrent.each(models)("cast vote - abstain", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -561,7 +561,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("cast vote - yes", async function (m) {
+  test.concurrent.each(models)("cast vote - yes", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -606,7 +606,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("cast vote - no", async function (m) {
+  test.concurrent.each(models)("cast vote - no", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -651,7 +651,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign basic - invalid", async function (m) {
+  test.concurrent.each(models)("sign basic - invalid", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -682,7 +682,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign amend schedule", async function (m) {
+  test.concurrent.each(models)("sign amend schedule", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -706,8 +706,7 @@ describe("Standard-Adr0008-5", function () {
       await sim.compareSnapshotsAndApprove(
         ".",
         `${m.prefix.toLowerCase()}-adr0008-5-sign_amend`,
-        true,
-        m.name === "nanos" ? 29 : 30
+        true
       );
 
       let resp = await signatureRequest;
@@ -728,7 +727,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign amend schedule - issue #130", async function (m) {
+  test.concurrent.each(models)("sign amend schedule - issue #130", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -752,8 +751,7 @@ describe("Standard-Adr0008-5", function () {
       await sim.compareSnapshotsAndApprove(
         ".",
         `${m.prefix.toLowerCase()}-adr0008-5-sign_amend_issue_130`,
-        true,
-        m.name === "nanos" ? 20 : 21
+        true
       );
 
       let resp = await signatureRequest;
@@ -774,7 +772,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign entity metadata", async function (m) {
+  test.concurrent.each(models)("sign entity metadata", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -819,7 +817,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign register entity with nodes", async function (m) {
+  test.concurrent.each(models)("sign register entity with nodes", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -865,7 +863,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign entity descriptor", async function (m) {
+  test.concurrent.each(models)("sign entity descriptor", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -910,7 +908,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign register entity without nodes", async function (m) {
+  test.concurrent.each(models)("sign register entity without nodes", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -956,7 +954,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign deregister entity", async function (m) {
+  test.concurrent.each(models)("sign deregister entity", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -1003,7 +1001,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign entity metadata - utf8", async function (m) {
+  test.concurrent.each(models)("sign entity metadata - utf8", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -1049,7 +1047,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign entity metadata - long url", async function (m) {
+  test.concurrent.each(models)("sign entity metadata - long url", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -1094,7 +1092,7 @@ describe("Standard-Adr0008-5", function () {
     }
   });
 
-  test.each(models)("sign entity metadata - long name", async function (m) {
+  test.concurrent.each(models)("sign entity metadata - long name", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
@@ -1130,7 +1128,7 @@ describe("Standard-Adr0008-5", function () {
 });
 
 describe("Issue #68", function () {
-  test.each(models)(
+  test.concurrent.each(models)(
     "should sign a transaction two time in a row (issue #68)",
     async function (m) {
       const sim = new Zemu(m.path);
