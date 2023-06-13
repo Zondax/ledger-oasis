@@ -106,14 +106,14 @@ void app_sign_secp256k1() {
 }
 
 zxerr_t app_sign_sr25519() {
-    uint8_t messageDigest[CX_SHA256_SIZE];
+    uint8_t messageDigest[CX_SHA512_SIZE];
     size_t ctx_len;
 
     const uint8_t *context = crypto_getSr25519BytesToSign(messageDigest, sizeof(messageDigest), &ctx_len);
     if(context == NULL) {
         return zxerr_invalid_crypto_settings;
     }
-    return crypto_sign_sr25519(messageDigest,  sizeof(messageDigest), context, ctx_len);
+    return crypto_sign_sr25519(messageDigest,  CX_SHA256_SIZE, context, ctx_len);
 }
 
 void app_return_sr25519() {

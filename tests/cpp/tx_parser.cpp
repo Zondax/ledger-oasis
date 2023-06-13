@@ -30,7 +30,7 @@ TEST(TxParser, EmptyBuffer) {
     auto buffer = std::vector<uint8_t>();
     buffer.push_back(0);
     auto err = parser_parse(&ctx, buffer.data(), buffer.size());
-    ASSERT_EQ(err, parser_unsupported_tx) << parser_getErrorDescription(err);
+    ASSERT_EQ(err, parser_init_context_empty) << parser_getErrorDescription(err);
 }
 
 TEST(TxParser, EmptyBuffer2) {
