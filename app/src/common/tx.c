@@ -182,9 +182,8 @@ zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_fiel
 }
 
 zxerr_t tx_getNumInnerItems(uint8_t *num_items) {
-    parser_error_t err = parser_ok;
 
-    err = parser_getInnerNumItems(num_items);
+    parser_getInnerNumItems(num_items);
 
     return zxerr_ok;
 }
