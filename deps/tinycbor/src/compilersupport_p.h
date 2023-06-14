@@ -44,7 +44,7 @@
 #  include <stdbool.h>
 #endif
 
-#if __STDC_VERSION__ >= 201112L || __cplusplus >= 201103L || __cpp_static_assert >= 200410
+#if __STDC_VERSION__ >= 201112L || (defined(__cplusplus) && __cplusplus >= 201103L) || (defined(__cpp_static_assert) && __cpp_static_assert >= 200410)
 #  define cbor_static_assert(x)         static_assert(x, #x)
 #elif !defined(__cplusplus) && defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 406) && (__STDC_VERSION__ > 199901L)
 #  define cbor_static_assert(x)         _Static_assert(x, #x)
@@ -128,6 +128,23 @@
 #  define cbor_htonl        _byteswap_ulong
 #  define cbor_ntohs        _byteswap_ushort
 #  define cbor_htons        _byteswap_ushort
+#elif defined(__ICCARM__)
+#  if __LITTLE_ENDIAN__ == 1
+#    include <intrinsics.h>
+#    define ntohll(x)       ((__REV((uint32_t)(x)) * UINT64_C(0x100000000)) + (__REV((x) >> 32)))
+#    define htonll          ntohll
+#    define cbor_ntohl     __REV
+#    define cbor_htonl     __REV
+#    define cbor_ntohs     __REVSH
+#    define cbor_htons     __REVSH
+#  else
+#    define cbor_ntohll
+#    define cbor_htonll
+#    define cbor_ntohl
+#    define cbor_htonl
+#    define cbor_ntohs
+#    define cbor_htons
+#  endif
 #endif
 #ifndef cbor_ntohs
 #  include <arpa/inet.h>
@@ -156,7 +173,7 @@
     (defined(BYTE_ORDER) && defined(LITTLE_ENDIAN) && BYTE_ORDER == LITTLE_ENDIAN) || \
     defined(_LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__MIPSEL__) || \
     defined(__i386) || defined(__i386__) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64)
-#      define ntohll(x)       ((ntohl((uint32_t)(x)) * UINT64_C(0x100000000)) + (ntohl((x) >> 32)))
+#      define ntohll(x)       ((cbor_ntohl((uint32_t)(x)) * UINT64_C(0x100000000)) + (cbor_ntohl((x) >> 32)))
 #      define htonll          ntohll
 #    else
 #      error "Unable to determine byte order!"
@@ -202,4 +219,3 @@ static inline bool add_check_overflow(size_t v1, size_t v2, size_t *r)
 }
 
 #endif /* COMPILERSUPPORT_H */
-

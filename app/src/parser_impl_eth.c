@@ -1,18 +1,18 @@
 /*******************************************************************************
- *   (c) 2019 Zondax GmbH
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- ********************************************************************************/
+*  (c) 2018 - 2023 Zondax AG
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+********************************************************************************/
 
 #include "parser_impl_eth.h"
 #include "app_mode.h"
@@ -37,6 +37,7 @@ static parser_error_t parse_field(parser_context_t *ctx, uint32_t *fieldOffset, 
 
     if ( parse_rlp_item(data, ctx->bufferLen - ctx->offset, &read, len) != rlp_ok)
         return parser_invalid_rlp_data;
+
     *fieldOffset = ctx->offset + read;
 
     if (*fieldOffset > ctx->bufferLen)
@@ -190,19 +191,22 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj)
     uint32_t len = 0;
 
     // read out transaction rlp header(which indicates tx data length)
-    if (parse_rlp_item(ctx->buffer + ctx->offset, ctx->bufferLen, &read, &len) != rlp_ok)
+    if (parse_rlp_item(ctx->buffer + ctx->offset, ctx->bufferLen, &read, &len) != rlp_ok) {
         // should not happen as this was check before
+        ctx->offset = start;
         return parser_unexepected_error;
+    }
 
     ctx->offset += read;
 
-    if (ctx->offset > ctx->bufferLen)
+    if (ctx->offset > ctx->bufferLen) {
         // should not happend though
+        ctx->offset = start;
         return parser_unexepected_error;
+    }
 
     // parser transaction
     parser_error_t err = parseEthTx(ctx, tx_obj);
-
     ctx->offset = start;
 
     if (err != parser_ok)
@@ -283,8 +287,9 @@ parser_error_t _computeV(parser_context_t *ctx, eth_tx_t *tx_obj, unsigned int i
         // this is not good but it relies on hw-eth-app lib from ledger
         // to recover the right chain_id from the V component being computed here, and
         // which is returned with the signature
-        if (id_len > UINT32_MAX)
-            id_len = UINT32_MAX;
+        if (id_len > UINT8_MAX) {
+            return parser_unexepected_error;
+        }
 
         const uint8_t *chain = ctx->buffer + tx_obj->chain_id.offset;
 

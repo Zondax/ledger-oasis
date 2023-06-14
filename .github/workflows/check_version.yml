@@ -29,8 +29,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
-
-        run: make version
+      - run: make version
       - id: store-version
         run: echo "version=$(cat ./app/app.version)" >> $GITHUB_OUTPUT
 
