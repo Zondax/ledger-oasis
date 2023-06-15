@@ -62,6 +62,7 @@ typedef enum {
     addr_ed25519 = 0,
     addr_secp256k1 = 1,
     addr_sr25519 = 2,
+    addr_eth = 3,
 } address_kind_e;
 
 #if defined(APP_CONSUMER)

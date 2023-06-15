@@ -20,6 +20,7 @@
 #include "parser.h"
 #include <string.h>
 #include "zxmacros.h"
+#include "parser_common.h"
 
 #if defined(TARGET_NANOX) || defined(TARGET_NANOS2)
 #define RAM_BUFFER_SIZE 8192
@@ -52,6 +53,17 @@ void tx_initialize() {
             sizeof(N_appdata.buffer)
     );
 }
+
+void tx_initialize_oasis() {
+  ctx_parsed_tx.tx_type = oasis_tx;
+  tx_initialize();
+}
+
+void tx_initialize_eth() {
+  ctx_parsed_tx.tx_type = eth_tx;
+  tx_initialize();
+}
+
 
 void tx_reset() {
     buffering_reset();
@@ -130,3 +142,13 @@ zxerr_t tx_getItem(int8_t displayIdx,
 
     return zxerr_ok;
 }
+
+zxerr_t tx_compute_eth_v(unsigned int info, uint8_t *v) {
+    parser_error_t err = parser_compute_eth_v(&ctx_parsed_tx, info, v);
+
+    if (err != parser_ok)
+        return zxerr_unknown;
+
+    return zxerr_ok;
+}
+

@@ -92,11 +92,16 @@ typedef enum {
     parser_required_expert_mode
 } parser_error_t;
 
+typedef enum {
+  oasis_tx = 0,
+  eth_tx,
+}tx_type_t;
 typedef struct {
     const uint8_t *buffer;
     uint16_t bufferLen;
     uint16_t offset;
     uint16_t lastConsumed;
+    tx_type_t tx_type;
 } parser_context_t;
 
 #ifdef __cplusplus
