@@ -89,7 +89,12 @@ typedef enum {
     parser_required_code_id,
     parser_required_pk,
     parser_required_data,
-    parser_required_expert_mode
+    parser_required_expert_mode,
+    parser_unsupported_tx,
+    parser_invalid_rlp_data,
+    parser_invalid_chain_id,
+    parser_invalid_rs_values,
+    parser_no_depth,
 } parser_error_t;
 
 typedef enum {

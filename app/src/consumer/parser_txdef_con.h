@@ -64,8 +64,9 @@ typedef enum {
     consensusWithdraw,
     contractsInstantiate,
     contractsCall,
-    contratcsUpgrade,
-    transactionEncrypted
+    contractsUpgrade,
+    transactionEncrypted,
+    evmCall
 } oasis_methods_e;
 
 typedef enum{
@@ -274,6 +275,11 @@ typedef struct {
 } body_consensus_t;
 
 typedef struct {
+    string_t address;
+    char data_hash[32];
+} body_evm_t;
+
+typedef struct {
     publickey_t pk;
     string_t nonce;
     char data_hash[32];
@@ -284,6 +290,8 @@ typedef struct {
     uint64_t code_id;
     uint8_t *dataPtr;
     size_t dataLen;
+    cbor_parser_state_t cborState;
+    bool dataValid;
     size_t tokensLen;
 } body_contracts_t;
 
@@ -294,6 +302,7 @@ typedef struct {
         body_consensus_t consensus;
         body_contracts_t contracts;
         body_encrypted_t encrypted;
+        body_evm_t evm;
     }body;
 
     bool ro;
