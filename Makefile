@@ -31,6 +31,20 @@ default:
 	COIN=$(COIN) $(MAKE) -C app $@
 endif
 
+test_prepare:
+	make
+	make zemu_install
+
+test_all:
+	make
+	make zemu_install
+	make zemu_test
+
+tests_tools_build:
+	cd tests_tools/neon && yarn install
+
+zemu_install: tests_tools_build
+
 build_val: COIN=oasis_validator
 build_val: buildS
 	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
