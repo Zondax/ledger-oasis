@@ -2,6 +2,7 @@ import Zemu, {DEFAULT_START_OPTIONS} from "@zondax/zemu";
 
 // @ts-ignore
 import {OasisValidatorApp} from "@zondax/ledger-oasis";
+import { models } from "./common";
 
 const Resolve = require("path").resolve;
 const APP_PATH = Resolve("../app/bin/app_val.elf");
@@ -9,12 +10,10 @@ const APP_PATH = Resolve("../app/bin/app_val.elf");
 const APP_SEED = "equip will roof matter pink blind book anxiety banner elbow sun young"
 const sim_options = {
     ...DEFAULT_START_OPTIONS,
-    pressDelay: 500,
     logging: true,
     startDelay: 3000,
     custom: `-s "${APP_SEED}"`,
-    X11: false,
-    model: "nanos",
+    model: models[0].name,
     startText: 'Validator'
 };
 const VOTE_SLEEP = 500;
