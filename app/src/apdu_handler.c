@@ -37,6 +37,9 @@
 
 static bool tx_initialized = false;
 
+static const char *msg_error1 = "Expert Mode";
+static const char *msg_error2 = "Required";
+
 void extractHDPath(uint32_t rx, uint32_t offset) {
     MEMZERO(hdPath,sizeof(hdPath));
     if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_ADR0008) {
@@ -113,6 +116,28 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
     THROW(APDU_CODE_INVALIDP1P2);
 }
 
+__Z_INLINE void handle_getversion(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+    UNUSED(flags);
+    UNUSED(rx);
+#ifdef DEBUG
+    G_io_apdu_buffer[0] = 0xFF;
+#else
+    G_io_apdu_buffer[0] = 0;
+#endif
+    G_io_apdu_buffer[1] = LEDGER_MAJOR_VERSION;
+    G_io_apdu_buffer[2] = LEDGER_MINOR_VERSION;
+    G_io_apdu_buffer[3] = LEDGER_PATCH_VERSION;
+    G_io_apdu_buffer[4] = !IS_UX_ALLOWED;
+
+    G_io_apdu_buffer[5] = (TARGET_ID >> 24) & 0xFF;
+    G_io_apdu_buffer[6] = (TARGET_ID >> 16) & 0xFF;
+    G_io_apdu_buffer[7] = (TARGET_ID >> 8) & 0xFF;
+    G_io_apdu_buffer[8] = (TARGET_ID >> 0) & 0xFF;
+
+    *tx += 9;
+    THROW(APDU_CODE_OK);
+}
+
 __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx, address_kind_e kind) {
     zemu_log("handleGetAddr\n");
     extractHDPath(rx, OFFSET_DATA);
@@ -131,6 +156,9 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
                 break;
             case addr_secp256k1:
                 view_review_init(addr_getItem_secp256k1, addr_getNumItems, app_reply_address);
+                break;
+            case addr_sr25519:
+                view_review_init(addr_getItem_sr25519, addr_getNumItems, app_reply_address);
                 break;
             default:
                 zemu_log("No match for address kind!\n");
@@ -161,7 +189,7 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show("Signing Rejected","Expert Mode Required");
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -189,7 +217,7 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show("Signing Rejected","Expert Mode Required");
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -222,6 +250,41 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
 
 #else
 #error "APP MODE IS NOT SUPPORTED"
+#endif
+}
+
+__Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+    if (!process_chunk(tx, rx)) {
+        THROW(APDU_CODE_OK);
+    }
+
+    CHECK_APP_CANARY()
+    uint8_t parser_err;
+    const char *error_msg = tx_parse(&parser_err);
+    CHECK_APP_CANARY()
+
+    if (error_msg != NULL) {
+        int error_msg_length = strlen(error_msg);
+        MEMCPY(G_io_apdu_buffer, error_msg, error_msg_length);
+        *tx += (error_msg_length);
+        if (parser_err == parser_required_expert_mode) {
+            *flags |= IO_ASYNCH_REPLY;
+            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
+        }
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+    zxerr_t err = app_sign_sr25519();
+    if(err != zxerr_ok){
+        *tx = 0;
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+#if defined(APP_CONSUMER)
+    CHECK_APP_CANARY()
+    view_review_init(tx_getItem, tx_getNumItems, app_return_sr25519);
+    view_review_show(REVIEW_TXN);
+    *flags |= IO_ASYNCH_REPLY;
 #endif
 }
 
@@ -275,6 +338,20 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 case INS_SIGN_RT_SECP256K1: {
                     CHECK_PIN_VALIDATED()
                     handleSignSecp256k1(flags, tx, rx);
+                    break;
+                }
+
+                case INS_GET_ADDR_SR25519: {
+                    zemu_log("INS_GET_ADDR_SR25519\n");
+                    CHECK_PIN_VALIDATED()
+                    handleGetAddr(flags, tx, rx, addr_sr25519);
+                    break;
+                }
+
+                case INS_SIGN_RT_SR25519: {
+                    zemu_log("INS_SIGN_RT_SR25519\n");
+                    CHECK_PIN_VALIDATED()
+                    handleSignSr25519(flags, tx, rx);
                     break;
                 }
 
