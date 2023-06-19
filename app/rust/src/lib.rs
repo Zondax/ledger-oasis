@@ -109,7 +109,7 @@ pub extern "C" fn sign_sr25519_phase1(
 
     let mut signtranscript = Transcript::new(b"SigningContext");
     signtranscript.append_message(b"", context);
-    signtranscript.append_message(b"sign-bytes", message);
+    signtranscript.append_message(b"sign-256", message);
     signtranscript.append_message(b"proto-name", b"Schnorr-sig"); //proto name
     signtranscript.append_message(b"sign:pk", pk); //commitpoint: pk
 
@@ -138,7 +138,7 @@ pub extern "C" fn sign_sr25519_phase2(
 
     let mut signtranscript = Transcript::new(b"SigningContext");
     signtranscript.append_message(b"", context);
-    signtranscript.append_message(b"sign-bytes", message);
+    signtranscript.append_message(b"sign-256", message);
     signtranscript.append_message(b"proto-name", b"Schnorr-sig"); //proto name
     signtranscript.append_message(b"sign:pk", pk); //commitpoint: pk
     signtranscript.append_message(b"sign:R", &signature[0..32]); //commitpoint: pk
