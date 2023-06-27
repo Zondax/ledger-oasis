@@ -7,6 +7,7 @@ use neon::prelude::*;
 //bridge stuff only
 
 use schnorrkel::{context::*, PublicKey, Signature};
+use sha2::{Sha512Trunc256, digest::Digest};
 
 fn schnorrkel_verify(mut cx: FunctionContext) -> JsResult<JsValue> {
 
@@ -37,8 +38,11 @@ fn schnorrkel_verify(mut cx: FunctionContext) -> JsResult<JsValue> {
     let sig = signature.unwrap();
 
     let sigcontext = signing_context(context);
-
-    let v = pk.verify(sigcontext.bytes(message), &sig);
+    
+    let mut hasher = Sha512Trunc256::new();
+    hasher.update(message);
+    
+    let v = pk.verify(sigcontext.hash256(hasher), &sig);
     if v.is_ok(){
         Ok(cx.boolean(true).upcast())
     }else{

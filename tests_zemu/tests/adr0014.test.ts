@@ -596,14 +596,11 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const hasher = sha512.sha512_256.update(txBlob);
-      const msgHash = Buffer.from(hasher.hex(), "hex");
-
       // Now verify the signature
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
-        msgHash,
+        txBlob,
         resp.signature
       );
       expect(valid).toEqual(true);
@@ -657,14 +654,11 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
 
-      const hasher = sha512.sha512_256.update(txBlob);
-      const msgHash = Buffer.from(hasher.hex(), "hex");
-
       // Now verify the signature
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
-        msgHash,
+        txBlob,
         resp.signature
       );
       expect(valid).toEqual(true);
@@ -718,14 +712,11 @@ describe("Standard-Adr0014", function () {
       expect(resp.return_code).toEqual(0x9000);
       expect(resp.error_message).toEqual("No errors");
       
-      const hasher = sha512.sha512_256.update(txBlob);
-      const msgHash = Buffer.from(hasher.hex(), "hex");
-
       // Now verify the signature
       const valid = addon.schnorrkel_verify(
         pkResponse.pk,
         sigCtx,
-        msgHash,
+        txBlob,
         resp.signature
       );
       expect(valid).toEqual(true);

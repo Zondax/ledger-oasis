@@ -17,3 +17,4 @@ neon-build = "0.10.1"
 [dependencies]
 neon = "0.10.1"
 schnorrkel = "0.10.2"
+sha2 = "0.9.9"
