@@ -57,6 +57,7 @@
 #define CHAIN_CONTEXT_BYTE_LEN  32
 #define SIGCONTEXT_HASH_LEN     64
 #define ORIG_TO_SIZE            42
+#define ED25519_SIGNATURE_SIZE  64u
 
 typedef enum {
     addr_ed25519 = 0,

@@ -72,10 +72,10 @@ void app_sign_ed25519() {
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
-    uint8_t messageDigest[CX_SHA512_SIZE];
+    uint8_t messageDigest[CX_SHA512_SIZE] = {0};
     crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
 
-    zxerr_t err = crypto_signEd25519(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
+    const zxerr_t err = crypto_signEd25519(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA256_SIZE, &replyLen);
 
     if (err != zxerr_ok || replyLen == 0) {
         set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
@@ -91,10 +91,10 @@ void app_sign_secp256k1() {
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
-    uint8_t messageDigest[CX_SHA512_SIZE];
+    uint8_t messageDigest[CX_SHA512_SIZE] = {0};
     crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
 
-    zxerr_t err = crypto_signSecp256k1(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
+    zxerr_t err = crypto_signSecp256k1(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA256_SIZE, &replyLen);
 
     if (err != zxerr_ok || replyLen == 0) {
         set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
