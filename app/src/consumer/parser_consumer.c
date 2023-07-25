@@ -290,7 +290,6 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
     int result;
     size_t len = sizeof(val);
     uint8_t offset = 0;
-    float f;
     ZEMU_LOGF(50,"PRINTING\n")
     while (elements_print != 0) {
         type = cbor_value_get_type(&current);
@@ -324,12 +323,12 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
                 snprintf(val + offset, SCREEN_SIZE - offset,  "%s", "null");
                 break;
             case CborFloatType: {
+                float f = 0.0f;
                 CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
                 unsigned int integer_part = (unsigned int)f; // extract integer part
                 unsigned int decimal_part = (unsigned int)(100.0f * (f - (float)integer_part));
 #if defined TARGET_NANOX
-                integer_part=1;
-                decimal_part=1;
+                decimal_part = 0;
 #endif
                 snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d",integer_part, decimal_part);
                 break;
