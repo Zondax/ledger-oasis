@@ -22,7 +22,6 @@
 #include "parser_impl.h"
 #include "sha512.h"
 
-
 zxerr_t crypto_getBytesToSign(uint8_t *toSign, size_t toSignLen) {
 #if defined(APP_CONSUMER)
     if (toSign == NULL || toSignLen < CX_SHA512_SIZE) {
@@ -35,13 +34,25 @@ zxerr_t crypto_getBytesToSign(uint8_t *toSign, size_t toSignLen) {
     SHA512_256(message, messageLength, toSign);
 
     if (parser_tx_obj.type == runtimeType) {
-        zemu_log("SIGNING RUNTIME\n");
         message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen;
         messageLength = tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen;
-
         SHA512_256_with_context(parser_tx_obj.context.ptr, parser_tx_obj.context.len,
-                                message, messageLength, toSign);
+                                 message, messageLength, toSign);
     }
 #endif
     return zxerr_ok;
+}
+
+const uint8_t *crypto_getSr25519BytesToSign(uint8_t *msgDigest, size_t msgDigestLen, size_t *ctxLen) {
+#if defined(APP_CONSUMER)
+    if (msgDigest == NULL || msgDigestLen < CX_SHA512_SIZE) {
+        return NULL;
+    }
+    uint8_t *message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen;
+    size_t messageLen= tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen;
+    SHA512_256(message, messageLen, msgDigest);
+    *ctxLen = (size_t)parser_tx_obj.context.len;
+    return parser_tx_obj.context.ptr;
+#endif
+    return NULL;
 }

@@ -43,16 +43,9 @@ extern "C" {
 #define PK_LEN_SECP256K1        33u
 #define PK_LEN_SECP256K1_FULL   65u
 #define SK_LEN_25519            64u
-#define PK_LEN_ED25519          32u
 
 #define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
 #define VIEW_ADDRESS_OFFSET_SECP256K1       (PK_LEN_SECP256K1)
-
-// eth address chain_code allowed valuec
-#define P2_NO_CHAINCODE                 0x00
-#define P2_CHAINCODE                    0x01
-#define VIEW_ADDRESS_OFFSET_ETH             (PK_LEN_SECP256K1_FULL + 1 + 1)
-
 #define VIEW_ADDRESS_ITEM_COUNT             2
 #define VIEW_ADDRESS_LAST_PAGE_DEFAULT      0
 

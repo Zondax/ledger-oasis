@@ -21,6 +21,8 @@
 #include "apdu_codes.h"
 #include "coin.h"
 #include "sha512.h"
+#include "rslib.h"
+#include "ristretto.h"
 #include "tx.h"
 
 #include <bech32.h>
@@ -56,8 +58,44 @@ static zxerr_t keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
 
     return zxerr_ok;
 }
+zxerr_t  crypto_extractPublicKeySr25519(uint8_t *pubKey, uint16_t pubKeyLen) {
+    if (pubKey == NULL || pubKeyLen < PK_LEN_SR25519) {
+        return zxerr_invalid_crypto_settings;
+    }
+
+    cx_ecfp_private_key_t cx_privateKey;
+    uint8_t privateKeyData[SK_LEN_25519] = {0};
+
+    zxerr_t error = zxerr_unknown;
+    const int mode = (hdPathLen == HDPATH_LEN_ADR0008) ? HDW_ED25519_SLIP10 : HDW_NORMAL;
+
+    // Generate keys
+    CATCH_CXERROR(os_derive_bip32_with_seed_no_throw(mode,
+                                                     CX_CURVE_Ed25519,
+                                                     hdPath,
+                                                     hdPathLen,
+                                                     privateKeyData,
+                                                     NULL,
+                                                     NULL,
+                                                     0))
+    get_sr25519_sk(privateKeyData);
+    CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(pubKey, privateKeyData))
+    error = zxerr_ok;
+
+catch_cx_error:
+    MEMZERO(&cx_privateKey, sizeof(cx_privateKey));
+    MEMZERO(privateKeyData, sizeof(privateKeyData));
+
+    if (error != zxerr_ok) {
+        MEMZERO(pubKey, pubKeyLen);
+    }
+    return error;
+}
 
 zxerr_t  crypto_extractPublicKeyEd25519(uint8_t *pubKey, uint16_t pubKeyLen) {
+    if (pubKey == NULL || pubKeyLen < PK_LEN_ED25519) {
+        return zxerr_invalid_crypto_settings;
+    }
     cx_ecfp_public_key_t cx_publicKey;
     cx_ecfp_private_key_t cx_privateKey;
     uint8_t privateKeyData[SK_LEN_25519] = {0};
@@ -243,7 +281,48 @@ catch_cx_error:
     return error;
 }
 
-#define CX_SHA512_SIZE 64
+static uint8_t sr25519_signature[SIG_LEN];
+
+void zeroize_sr25519_signdata(void) {
+    explicit_bzero(sr25519_signature, sizeof(sr25519_signature));
+}
+
+void copy_sr25519_signdata(uint8_t *buffer) {
+    memcpy(buffer, sr25519_signature, SIG_LEN);
+}
+
+zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx, size_t ctx_len) {
+    uint8_t sk[SK_LEN_25519] = {0};
+    uint8_t pk[PK_LEN_SR25519] = {0};
+
+    zxerr_t error = zxerr_unknown;
+    const int mode = (hdPathLen == HDPATH_LEN_ADR0008) ? HDW_ED25519_SLIP10 : HDW_NORMAL;
+    CATCH_CXERROR(os_derive_bip32_with_seed_no_throw(mode,
+                                                     CX_CURVE_Ed25519,
+                                                     hdPath,
+                                                     hdPathLen,
+                                                     sk,
+                                                     NULL,
+                                                     NULL,
+                                                     0))
+    get_sr25519_sk(sk);
+    CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(pk, sk))
+    sign_sr25519_phase1(sk, pk, ctx, ctx_len, data, len, sr25519_signature);
+    CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(sr25519_signature, sr25519_signature + PK_LEN_SR25519))
+    error = zxerr_ok;
+
+
+catch_cx_error:
+    if (error == zxerr_ok) {
+        sign_sr25519_phase2(sk, pk, ctx, ctx_len, data, len, sr25519_signature);
+    } else {
+        explicit_bzero(sr25519_signature, sizeof(sr25519_signature));
+    }
+
+    MEMZERO(pk, sizeof(pk));
+    MEMZERO(sk, sizeof(sk));
+    return error;
+}
 
 zxerr_t _sign(uint8_t *output, uint16_t outputLen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize, unsigned int *info) {
     if (output == NULL || message == NULL || sigSize == NULL ||
@@ -329,6 +408,8 @@ zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t
     return zxerr_ok;
 }
 
+#define CX_SHA512_SIZE 64
+
 typedef union {
     //    1 byte <context-version> + first 20 bytes of SHA512-256(<context-identifier> || <pubkey>)
     uint8_t address[21];
@@ -395,6 +476,23 @@ zxerr_t crypto_fillAddressEd25519(uint8_t *buffer, uint16_t buffer_len, uint16_t
     const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
 
     *addrLen = PK_LEN_ED25519 + addr_out_len;
+    return zxerr_ok;
+}
+
+zxerr_t crypto_fillAddressSr25519(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen) {
+    if (buffer_len < PK_LEN_SR25519 + 50) {
+        return 0;
+    }
+    MEMZERO(buffer, buffer_len);
+
+    CHECK_ZXERR(crypto_extractPublicKeySr25519(buffer, buffer_len))
+
+    // format pubkey as oasis bech32 address
+    char *addr_out = (char *) (buffer + PK_LEN_SR25519);
+    const uint16_t addr_out_max =  buffer_len - PK_LEN_SR25519;
+    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
+
+    *addrLen = PK_LEN_SR25519 + addr_out_len;
     return zxerr_ok;
 }
 
@@ -494,6 +592,9 @@ zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrL
         case addr_secp256k1:
             zemu_log("identified secp256k1 address\n");
             return crypto_fillAddressSecp256k1(buffer, buffer_len, addrLen);
+        case addr_sr25519:
+            zemu_log("identified sr25519 address\n");
+            return crypto_fillAddressSr25519(buffer, buffer_len, addrLen);
         case addr_eth:
             zemu_log("identified sr25519 address\n");
             return crypto_fillEthAddress(buffer, buffer_len, addrLen);

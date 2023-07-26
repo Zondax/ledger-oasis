@@ -45,6 +45,7 @@
 #define SAPPHIRE_MAIN_TO_ADDR "oasis1qrd3mnzhhgst26hsp96uf45yhq6zlax0cuzdgcfc"
 #define SAPPHIRE_TEST_TO_ADDR "oasis1qqczuf3x6glkgjuf0xgtcpjjw95r3crf7y2323xd"
 
+#define SR25519_BLAKE_HASH_LEN  32
 #define SIG_LEN                 64
 #define SK_SECP256K1_SIZE       32
 #define HASH_SIZE               64
@@ -61,6 +62,7 @@
 typedef enum {
     addr_ed25519 = 0,
     addr_secp256k1 = 1,
+    addr_sr25519 = 2,
     addr_eth = 3,
 } address_kind_e;
 

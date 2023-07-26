@@ -39,8 +39,10 @@ extern "C" {
 #define HDPATH_ETH_1_DEFAULT (0x80000000u | 0x3cu)
 #define HDPATH_ETH_0_DEFAULT (0x80000000u | 0x2cu)
 
+#define SK_LEN                  64u
 #define SK_LEN_25519            64u
 #define PK_LEN_ED25519          32u
+#define PK_LEN_SR25519          32u
 //Compressed SECP256K1 pk size
 #define PK_LEN_SECP256K1        33u
 #define PK_LEN_SECP256K1_FULL   65u

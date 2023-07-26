@@ -46,6 +46,12 @@ zxerr_t crypto_signSecp256k1(uint8_t *signature,
                     uint16_t messageLen,
                     uint16_t *sigSize);
 
+void zeroize_sr25519_signdata(void);
+
+void copy_sr25519_signdata(uint8_t *buffer);
+
+zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx, size_t ctx_len);
+
 zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize);
 
 int keccak_digest(const unsigned char *in, unsigned int inLen,
