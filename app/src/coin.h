@@ -15,6 +15,19 @@
 ********************************************************************************/
 #pragma once
 
+#define INS_GET_ADDR_ED25519            1
+#define INS_SIGN_ED25519                2
+#define INS_GET_ADDR_SR25519            3
+#define INS_GET_ADDR_SECP256K1          4
+#define INS_SIGN_RT_ED25519             5
+#define INS_SIGN_RT_SR25519             6
+#define INS_SIGN_RT_SECP256K1           7
+#define INS_GET_ADDR_ETH                2
+
+// transaction is sent as a blob of rlp encoded bytes,
+#define P1_ETH_FIRST                    0x00
+#define P1_ETH_MORE                     0x80
+
 #define MAINNET_GENESIS_HASH "b11b369e0da5bb230b220127f5e7b242d385ef8c6f54906243f30af63c815535"
 #define TESTNET_GENESIS_HASH "50304f98ddb656620ea817cc1446c401752a05a249b36c9b90dba4616829977a"
 
@@ -32,6 +45,7 @@
 #define SAPPHIRE_MAIN_TO_ADDR "oasis1qrd3mnzhhgst26hsp96uf45yhq6zlax0cuzdgcfc"
 #define SAPPHIRE_TEST_TO_ADDR "oasis1qqczuf3x6glkgjuf0xgtcpjjw95r3crf7y2323xd"
 
+#define SIG_LEN                 64
 #define SK_SECP256K1_SIZE       32
 #define HASH_SIZE               64
 #define PUB_KEY_SIZE            32
@@ -42,10 +56,12 @@
 #define CHAIN_CONTEXT_BYTE_LEN  32
 #define SIGCONTEXT_HASH_LEN     64
 #define ORIG_TO_SIZE            42
+#define ED25519_SIGNATURE_SIZE  64u
 
 typedef enum {
     addr_ed25519 = 0,
     addr_secp256k1 = 1,
+    addr_eth = 3,
 } address_kind_e;
 
 #if defined(APP_CONSUMER)
