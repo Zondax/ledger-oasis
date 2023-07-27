@@ -437,6 +437,63 @@ describe("Standard-Adr0014", function () {
     }
   });
 
+  test.concurrent.each(models)("sign ed25519 runtime - evm", async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const app = new OasisApp(sim.getTransport());
+
+      // Change to expert mode so we can skip fields
+      await sim.clickRight();
+      await sim.clickBoth();
+      await sim.clickLeft();
+
+      const meta = Buffer.from(
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+        "base64"
+      );
+
+      const txBlob = Buffer.from(
+        "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnc3IyNTUxOVggljm9ZwdAldhlyWM2B4C+3gQZis+ceaxnt6QA4rOcP0ljZmVlomNnYXMZD6BmYW1vdW50gkQHW80VQ0ZPT2RjYWxsomRib2R5o2RkYXRhWESpBZy7AAAAAAAAAAAAAAAAkK3jtwZfpxXHoVAxOHffHTPnd9UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2V2YWx1ZVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWRkcmVzc1QhxxjCLVLQ86eJt1LUwv1ZCKinM2ZtZXRob2RoZXZtLkNhbGw=",
+        "base64"
+      );
+
+      const sigCtx = Buffer.from(
+        "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc"
+      );
+
+      const pkResponse = await app.getAddressAndPubKey_ed25519(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.signRtEd25519(path, meta, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(
+        ".",
+        `${m.prefix.toLowerCase()}-adr0014-sign_ed25519_runtime_evm`
+      );
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const hasher = sha512.sha512_256.update(sigCtx);
+      hasher.update(txBlob);
+      const msgHash = Buffer.from(hasher.hex(), "hex");
+
+      // Now verify the signature
+      const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.concurrent.each(models)("get Sr25519 address", async function (m) {
     const sim = new Zemu(m.path);
     try {
@@ -552,6 +609,64 @@ describe("Standard-Adr0014", function () {
     }
   });
 
+  test.concurrent.each(models)("sign sr25519 runtime - evm", async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const app = new OasisApp(sim.getTransport());
+
+      // Change to expert mode so we can skip fields
+      await sim.clickRight();
+      await sim.clickBoth();
+      await sim.clickLeft();
+
+      const meta = Buffer.from(
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+        "base64"
+      );
+
+      const txBlob = Buffer.from(
+        "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnc3IyNTUxOVggljm9ZwdAldhlyWM2B4C+3gQZis+ceaxnt6QA4rOcP0ljZmVlomNnYXMZD6BmYW1vdW50gkQHW80VQ0ZPT2RjYWxsomRib2R5o2RkYXRhWESpBZy7AAAAAAAAAAAAAAAAkK3jtwZfpxXHoVAxOHffHTPnd9UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2V2YWx1ZVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWRkcmVzc1QhxxjCLVLQ86eJt1LUwv1ZCKinM2ZtZXRob2RoZXZtLkNhbGw=",
+        "base64"
+      );
+
+      const sigCtx = Buffer.from(
+        "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc"
+      );
+
+      const pkResponse = await app.getAddressAndPubKey_sr25519(path);
+      console.log(pkResponse);
+      expect(pkResponse.return_code).toEqual(0x9000);
+      expect(pkResponse.error_message).toEqual("No errors");
+
+      // do not wait here..
+      const signatureRequest = app.signRtSr25519(path, meta, txBlob);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(
+        ".",
+        `${m.prefix.toLowerCase()}-adr0014-sign_sr25519_runtime_evm`
+      );
+
+      let resp = await signatureRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      // Now verify the signature
+      const valid = addon.schnorrkel_verify(
+        pkResponse.pk,
+        sigCtx,
+        txBlob,
+        resp.signature
+      );
+      expect(valid).toEqual(true);
+    } finally {
+      await sim.close();
+    }
+  });
+
   test.concurrent.each(models)("sign sr25519 runtime - encrypted", async function (m) {
     const sim = new Zemu(m.path);
     try {
@@ -609,4 +724,134 @@ describe("Standard-Adr0014", function () {
       await sim.close();
     }
   });
+
+test.concurrent.each(models)('contracts-empty-data', async function (m) {
+    const sim = new Zemu(m.path)
+    try {
+    await sim.start({ ...defaultOptions, model: m.name });
+    const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+    await sim.clickRight();
+    await sim.clickBoth();
+    await sim.clickLeft();
+
+    const meta = Buffer.from(
+      "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+      "base64"
+    );
+
+    const txBlob = Buffer.from(
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFBoGZ0b2tlbnODgkQ7msoAQIJCB9BEV0JUQ4JDLcbARFdFVEhnY29kZV9pZABvdXBncmFkZXNfcG9saWN5oWhldmVyeW9uZaBmbWV0aG9kdWNvbnRyYWN0cy5JbnN0YW50aWF0ZQ==",
+      "base64"
+    );
+
+    const path = "m/44'/474'/0'";
+    const signatureRequest = app.signRtEd25519(path, meta, txBlob)
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+    await sim.compareSnapshotsAndApprove(
+      ".",
+      `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-empty-data`
+    );
+
+      const signatureResponse = await signatureRequest
+      console.log(signatureResponse)
+
+      expect(signatureResponse.return_code).toEqual(0x9000)
+      expect(signatureResponse.error_message).toEqual('No errors')
+
+    } finally {
+      await sim.close()
+    }
+  })
+
+  test.concurrent.each(models)('contracts-array-map', async function (m) {
+    const sim = new Zemu(m.path)
+    try {
+    await sim.start({ ...defaultOptions, model: m.name });
+    const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+    await sim.clickRight();
+    await sim.clickBoth();
+    await sim.clickLeft();
+
+    const meta = Buffer.from(
+      "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+      "base64"
+    );
+
+    const txBlob = Buffer.from(
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYQKJlb3RoZXKDAaJhYQFhYgICZmJpZ21hcKFnYmlnbWFwMqJrbmV3X2NvdW50ZXICb2luaXRpYWxfY291bnRlcgFmdG9rZW5zg4JEO5rKAECCQgfQRFdCVEOCQy3GwERXRVRIZ2NvZGVfaWQAb3VwZ3JhZGVzX3BvbGljeaFoZXZlcnlvbmWgZm1ldGhvZHVjb250cmFjdHMuSW5zdGFudGlhdGU=",
+      "base64"
+    );
+
+    const path = "m/44'/474'/0'";
+    const signatureRequest = app.signRtEd25519(path, meta, txBlob)
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+    if (m.name == "nanos") {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`, [2,0,0,1,0,2,0,2,0,8,0], false)
+    } else {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts--array-map`, [3,0,0,1,0,2,0,2,0,8,0], false)
+    }
+
+      const signatureResponse = await signatureRequest
+      console.log(signatureResponse)
+
+      expect(signatureResponse.return_code).toEqual(0x9000)
+      expect(signatureResponse.error_message).toEqual('No errors')
+
+    } finally {
+      await sim.close()
+    }
+  })
+  test.concurrent.each(models)('contracts-types', async function (m) {
+    const sim = new Zemu(m.path)
+    try {
+    await sim.start({ ...defaultOptions, model: m.name });
+    const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+    await sim.clickRight();
+    await sim.clickBoth();
+    await sim.clickLeft();
+
+    const meta = Buffer.from(
+      "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+      "base64"
+    );
+
+    const txBlob = Buffer.from(
+      "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmkZGRhdGFYcqdjYWxs+kL26dVkYWxsMfVkYWxsMvZlZmlyc3RldGVzdGVlb3RoZXKDAaJhYQFhYgICZmJpZ21hcKFnYmlnbWFwMqJrbmV3X2NvdW50ZXICb2luaXRpYWxfY291bnRlcgFraW5zdGFudGlhdGWiAQICA2Z0b2tlbnODgkQ7msoAQIJCB9BEV0JUQ4JDLcbARFdFVEhnY29kZV9pZABvdXBncmFkZXNfcG9saWN5oWhldmVyeW9uZaBmbWV0aG9kdWNvbnRyYWN0cy5JbnN0YW50aWF0ZQ==",
+      "base64"
+    );
+
+    const path = "m/44'/474'/0'";
+    const signatureRequest = app.signRtEd25519(path, meta, txBlob)
+
+      // Wait until we are not in the main menu
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot())
+
+    if (m.name == "nanos") {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-types`, [2,0,0,5,0,0,-1,0,8,0], false)
+    } else {
+      await sim.navigateAndCompareSnapshots('.', `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-types`, [3,0,0,5,0,0,-1,0,8,0], false)
+    }
+
+      const signatureResponse = await signatureRequest
+      console.log(signatureResponse)
+
+      expect(signatureResponse.return_code).toEqual(0x9000)
+      expect(signatureResponse.error_message).toEqual('No errors')
+
+    } finally {
+      await sim.close()
+    }
+  })
 });
