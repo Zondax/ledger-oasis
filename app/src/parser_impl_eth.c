@@ -24,6 +24,12 @@
 #include <stdio.h>
 #include <zxmacros.h>
 
+#define OASIS_MAINNET_CHAINID 26863
+#define OASIS_SAPPHIRE_CHAINID 23294
+#define OASIS_SAPPHIRE_TESTNET_CHAINID 23295
+#define OASIS_EMERALD_CHAINID 42262
+#define OASIS_EMERALD_TESTNET_CHAINID 42261
+
 eth_tx_t eth_tx_obj;
 
 static parser_error_t parse_field(parser_context_t *ctx, uint32_t *fieldOffset,
@@ -49,9 +55,18 @@ static parser_error_t parse_field(parser_context_t *ctx, uint32_t *fieldOffset,
 }
 
 static parser_error_t readChainID(parser_context_t *ctx, chain_id_t *chain_id) {
-  if (parse_field(ctx, &(chain_id->offset), &(chain_id->len)) != parser_ok)
+  if (parse_field(ctx, &(chain_id->offset), &(chain_id->len)) != parser_ok) {
     return parser_invalid_rlp_data;
+  }
 
+  const uint8_t *chain = ctx->buffer + chain_id->offset;
+  uint64_t id = 0;
+  if (be_bytes_to_u64(chain, chain_id->len, &id) != 0 ||
+      (id != OASIS_EMERALD_CHAINID && id != OASIS_MAINNET_CHAINID &&
+      id != OASIS_SAPPHIRE_CHAINID && id != OASIS_SAPPHIRE_TESTNET_CHAINID &&
+      id != OASIS_EMERALD_TESTNET_CHAINID)) {
+    return parser_invalid_chain_id;
+  }
   return parser_ok;
 }
 
@@ -75,7 +90,7 @@ static parser_error_t readAddress(parser_context_t *ctx, eth_addr_t *addr) {
     return parser_ok;
   }
 
-  if (addr_len != ETH_ADDRESS_LEN || offset > ctx->bufferLen)
+  if (addr_len != ETH_ADDRESS_LEN || offset >= ctx->bufferLen)
     return parser_invalid_address;
 
   MEMCPY(addr->addr, &ctx->buffer[offset], ETH_ADDRESS_LEN);

@@ -45,7 +45,7 @@ const SIGN_TEST_DATA = [
       value: "abcdef00",
       to: "df073477da421520cf03af261b782282c304ad66",
     },
-    chainId: 9867,
+    chainId: 26863,
   },
   {
     name: "legacy_contract_deploy",
@@ -53,7 +53,7 @@ const SIGN_TEST_DATA = [
       value: "abcdef00",
       data: "1a8451e600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     },
-    chainId: 5,
+    chainId: 26863,
   },
   {
     name: "legacy_contract_call",
@@ -62,7 +62,7 @@ const SIGN_TEST_DATA = [
       value: "abcdef01",
       data: "ee919d500000000000000000000000000000000000000000000000000000000000000001",
     },
-    chainId: 689,
+    chainId: 23294,
   },
   {
     name: "basic_transfer_no_eip155",
@@ -70,6 +70,7 @@ const SIGN_TEST_DATA = [
       value: "a1bcd400",
       to: "df073477da421520cf03af261b782282c304ad66",
     },
+    chainId: 23294,
   },
   {
     name: "contract_deploy_no_eip155",
@@ -77,6 +78,7 @@ const SIGN_TEST_DATA = [
       value: "1",
       data: "1a8451e600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     },
+    chainId: 42262,
   },
 ];
 
@@ -94,7 +96,7 @@ const rawUnsignedLegacyTransaction = (
   };
 
   const chain = Common.forCustomChain(1, {
-    name: "avalanche",
+    name: "oasis",
     networkId: 1,
     chainId,
   });
@@ -120,7 +122,7 @@ function check_legacy_signature(
   const ethTx = Buffer.from(hexTx, "hex");
 
   const chain = Common.forCustomChain(1, {
-    name: "avalanche",
+    name: "oasis",
     networkId: 1,
     chainId,
   });
