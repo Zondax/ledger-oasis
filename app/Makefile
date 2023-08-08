@@ -43,15 +43,12 @@ ifeq ($(COIN),oasis)
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'" --path "44'/60'"
-
-ifeq ($(TARGET_NAME),TARGET_NANOS)
-APP_STACK_SIZE:=2392
-endif
-
+APPCURVE = --curve ed25519 --curve secp256k1
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
+APPCURVE =
 ifeq ($(TARGET_NAME),TARGET_NANOS)
 APP_STACK_SIZE:=1956
 endif
@@ -71,11 +68,12 @@ endef
 $(error "$(error_message)")
 endif
 
-APP_LOAD_PARAMS = --delete $(COMMON_LOAD_PARAMS) --path ${APPPATH}
+APP_LOAD_PARAMS = $(APPCURVE) $(COMMON_LOAD_PARAMS) --path ${APPPATH}
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
-NANOS_STACK_SIZE := $(APP_STACK_SIZE)
+NANOS_STACK_SIZE := 2392
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
+DEFINES += HAVE_INSPECT
 
 $(info TARGET_NAME  = [$(TARGET_NAME)])
 $(info ICONNAME  = [$(ICONNAME)])
@@ -86,9 +84,7 @@ endif
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.platform
 LDFLAGS += -z muldefs
-CFLAGS += -Wvla
 APP_SOURCE_PATH += $(MY_DIR)/src
-APP_SOURCE_PATH += $(MY_DIR)/glyphs
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/include
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/ledger-zxlib/app/common
@@ -99,16 +95,20 @@ APP_SOURCE_PATH += $(MY_DIR)/../deps/sha512
 CFLAGS += -I$(MY_DIR)/../deps/tinycbor/src
 APP_SOURCE_PATH += $(MY_DIR)/../deps/tinycbor-ledger
 
+APP_CUSTOM_LINK_DEPENDENCIES = rust
+LDLIBS += -Lrust/target/thumbv6m-none-eabi/release -lrslib
+APP_SOURCE_PATH += $(CURDIR)/rust/include
+
 .PHONY: rust
 rust:
-	@echo "No rust code"
+	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo build --target thumbv6m-none-eabi --release
 
 # Before linking, we need to be sure rust lib is there
 bin/app.elf: rust
 
 .PHONY: rust_clean
 rust_clean:
-	@echo "No rust code"
+	cd rust && CARGO_HOME="$(CURDIR)/rust/.cargo" cargo clean
 
 clean: rust_clean
 

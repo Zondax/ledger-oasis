@@ -72,10 +72,10 @@ void app_sign_ed25519() {
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
-    uint8_t messageDigest[CX_SHA512_SIZE];
+    uint8_t messageDigest[CX_SHA512_SIZE] = {0};
     crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
 
-    zxerr_t err = crypto_signEd25519(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
+    const zxerr_t err = crypto_signEd25519(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA256_SIZE, &replyLen);
 
     if (err != zxerr_ok || replyLen == 0) {
         set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
@@ -91,10 +91,10 @@ void app_sign_secp256k1() {
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
-    uint8_t messageDigest[CX_SHA512_SIZE];
+    uint8_t messageDigest[CX_SHA512_SIZE] = {0};
     crypto_getBytesToSign(messageDigest, sizeof(messageDigest));
 
-    zxerr_t err = crypto_signSecp256k1(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA512_SIZE, &replyLen);
+    zxerr_t err = crypto_signSecp256k1(signature, IO_APDU_BUFFER_SIZE - 3, messageDigest, CX_SHA256_SIZE, &replyLen);
 
     if (err != zxerr_ok || replyLen == 0) {
         set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
@@ -105,6 +105,24 @@ void app_sign_secp256k1() {
     }
 }
 
+zxerr_t app_sign_sr25519() {
+    uint8_t messageDigest[CX_SHA512_SIZE] = {0};
+    size_t ctx_len;
+
+    const uint8_t *context = crypto_getSr25519BytesToSign(messageDigest, sizeof(messageDigest), &ctx_len);
+    if(context == NULL) {
+        return zxerr_invalid_crypto_settings;
+    }
+    return crypto_sign_sr25519(messageDigest,  CX_SHA256_SIZE, context, ctx_len);
+}
+
+void app_return_sr25519() {
+    copy_sr25519_signdata(G_io_apdu_buffer);
+    zeroize_sr25519_signdata();
+
+    set_code(G_io_apdu_buffer, SIG_LEN, APDU_CODE_OK);
+    io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, SIG_LEN + 2);
+}
 
 void app_reject() {
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
@@ -126,6 +144,23 @@ zxerr_t app_fill_address(address_kind_e kind) {
     }
 
     return zxerr_ok;
+}
+
+void app_sign_eth() {
+    const uint8_t *message = tx_get_buffer();
+    const uint16_t messageLength = tx_get_buffer_length();
+    uint16_t replyLen = 0;
+
+    MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
+    zxerr_t err = crypto_sign_eth(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE - 3, message, messageLength, &replyLen);
+
+    if (err != zxerr_ok || replyLen == 0) {
+        set_code(G_io_apdu_buffer, 0, APDU_CODE_SIGN_VERIFY_ERROR);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
+    } else {
+        set_code(G_io_apdu_buffer, replyLen, APDU_CODE_OK);
+        io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, replyLen + 2);
+    }
 }
 
 void app_reply_address() {

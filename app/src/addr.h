@@ -32,6 +32,10 @@ zxerr_t addr_getItem_secp256k1(int8_t displayIdx,
                                char *outKey, uint16_t outKeyLen,
                                char *outValue, uint16_t outValueLen,
                                uint8_t pageIdx, uint8_t *pageCount);
+zxerr_t addr_getItem_sr25519(int8_t displayIdx,
+                               char *outKey, uint16_t outKeyLen,
+                               char *outValue, uint16_t outValueLen,
+                               uint8_t pageIdx, uint8_t *pageCount);
 
 #ifdef __cplusplus
 }

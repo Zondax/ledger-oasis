@@ -28,6 +28,8 @@
 #include "coin.h"
 #include "sha512.h"
 #include "app_mode.h"
+#include "parser_impl_eth.h"
+#include "cbor_helper.h"
 
 static const char *blindSignWarning =
     "You are in Expert Mode. Activating this mode will allow you to sign "
@@ -63,6 +65,11 @@ static const char * methodsMap[] = {
 };
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
+    if (ctx->tx_type == eth_tx) {
+        CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
+        return _readEth(ctx, &eth_tx_obj);
+    }
+    
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
     CHECK_PARSER_ERR(_extractContextSuffix(&parser_tx_obj))
@@ -79,11 +86,16 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-    CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
+    if(ctx->tx_type == eth_tx) {
+        CHECK_PARSER_ERR(_validateTxEth(ctx))
+    } else {
+        CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
 
-    if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate) && !app_mode_expert()) {
-        return parser_ok;
+        if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate) && !app_mode_expert()) {
+            return parser_ok;
+        }
     }
+
     // Iterate through all items to check that all can be shown and are valid
     uint8_t numItems = 0;
     CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
@@ -101,9 +113,21 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
 }
 
 parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
-    *num_items = _getNumItems(ctx, &parser_tx_obj);
-    if (parser_tx_obj.context.suffixLen > 0) {
-        (*num_items)++;
+
+    switch (ctx->tx_type) {
+      case oasis_tx:{
+        *num_items = _getNumItems(ctx, &parser_tx_obj);
+        if (parser_tx_obj.context.suffixLen > 0) {
+            (*num_items)++;
+        }
+        break;
+      }
+      case eth_tx:{
+        *num_items = _getNumItemsEth(ctx);
+        break;
+      }
+      default:
+          return parser_unsupported_tx;
     }
     return parser_ok;
 }
@@ -1485,7 +1509,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
     return parser_no_data;
 }
 
-parser_error_t parser_getItem(const parser_context_t *ctx,
+parser_error_t parser_getItemOasis(const parser_context_t *ctx,
                               uint16_t displayIdx,
                               char *outKey, uint16_t outKeyLen,
                               char *outVal, uint16_t outValLen,
@@ -1587,6 +1611,31 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     #endif
 
     return err;
+}
+
+parser_error_t parser_getItem(const parser_context_t *ctx,
+                              uint16_t displayIdx,
+                              char *outKey, uint16_t outKeyLen,
+                              char *outVal, uint16_t outValLen,
+                              uint8_t pageIdx, uint8_t *pageCount) {
+
+    switch (ctx->tx_type) {
+      case oasis_tx:{
+          return parser_getItemOasis(ctx, displayIdx, outKey, outKeyLen,
+                              outVal, outValLen, pageIdx, pageCount);
+      }
+      case eth_tx:{
+          // for now just display the hash
+          return _getItemEth(ctx, displayIdx, outKey, outKeyLen,
+                              outVal, outValLen, pageIdx, pageCount);
+      }
+      default:
+          return parser_unsupported_tx;
+    }
+}
+
+parser_error_t parser_compute_eth_v(parser_context_t *ctx, unsigned int info, uint8_t *v) {
+    return _computeV(ctx , &eth_tx_obj, info, v);
 }
 
 #endif // APP_CONSUMER

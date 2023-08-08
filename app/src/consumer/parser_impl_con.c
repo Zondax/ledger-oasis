@@ -1201,7 +1201,7 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
     CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
 
     CborValue bodyField;
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
     if (!cbor_value_is_valid(&bodyField))
         return parser_required_body;
@@ -1254,7 +1254,7 @@ __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *r
     CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
 
     CborValue bodyField;
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
     if (!cbor_value_is_valid(&bodyField))
         return parser_required_body;
@@ -1295,7 +1295,7 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     // Verify it is well formed (no missing bytes...)
     CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
     CborValue bodyField;
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
     if (!cbor_value_is_valid(&bodyField))
         return parser_required_body;
@@ -1330,8 +1330,8 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
 #if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
     cx_sha256_t ctx;
     memset(&ctx, 0, sizeof(ctx));
-    cx_sha256_init(&ctx);
-    cx_hash(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
+    cx_sha256_init_no_throw(&ctx);
+    cx_hash_no_throw(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
             sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
 #else
     picohash_ctx_t ctx;

@@ -31,7 +31,7 @@ const defaultOptions = {
 jest.setTimeout(60000);
 
 describe("Standard-Adr0008-0-Oasis", function () {
-  test.each(models)("get address", async function (m) {
+  test.concurrent.each(models)("get address", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
