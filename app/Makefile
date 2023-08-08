@@ -43,11 +43,12 @@ ifeq ($(COIN),oasis)
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
 APPPATH = "44'/474'" --path "44'/60'"
-
+APPCURVE = --curve ed25519 --curve secp256k1
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
+APPCURVE =
 ifeq ($(TARGET_NAME),TARGET_NANOS)
 APP_STACK_SIZE:=1956
 endif
@@ -67,7 +68,7 @@ endef
 $(error "$(error_message)")
 endif
 
-APP_LOAD_PARAMS = $(COMMON_LOAD_PARAMS) --path ${APPPATH}
+APP_LOAD_PARAMS = $(APPCURVE) $(COMMON_LOAD_PARAMS) --path ${APPPATH}
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
 NANOS_STACK_SIZE := 2392
 
