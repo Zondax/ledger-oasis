@@ -21,6 +21,8 @@ extern "C" {
 #endif
 
 #include "parser_impl.h"
+#include "view.h"
+#include "stdbool.h"
 
 const char *parser_getErrorDescription(parser_error_t err);
 
@@ -32,6 +34,16 @@ parser_error_t parser_validate(const parser_context_t *ctx);
 
 //// returns the number of items in the current parsing context
 parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items);
+
+parser_error_t parser_getInnerNumItems(uint8_t *num_items);
+
+parser_error_t parser_printInnerField(ui_field_t *ui_field);
+
+parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace);
+
+parser_error_t parser_init_innerNumItems();
+
+bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx);
 
 // retrieves a readable output for each field / page
 parser_error_t parser_getItem(const parser_context_t *ctx,

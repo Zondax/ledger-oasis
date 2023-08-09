@@ -324,3 +324,84 @@ Meta contains the following fields:
 | ------- | --------- | ----------- | ------------------------ |
 | SIG     | byte (64) | Signature   |                          |
 | SW1-SW2 | byte (2)  | Return code | see list of return codes |
+
+### GET_ADDR_SR25519
+
+#### Command
+
+| Field      | Type           | Content                   | Expected  |
+| ---------- | -------------- |---------------------------|-----------|
+| CLA        | byte (1)       | Application Identifier    | 0x05      |
+| INS        | byte (1)       | Instruction ID            | 0x03      |
+| P1         | byte (1)       | Request User confirmation | No = 0    |
+| P2         | byte (1)       | Parameter 2               | ignored   |
+| L          | byte (1)       | Bytes in payload          | (depends) |
+| Path[0]    | byte (4)       | Derivation Path Data      | 44        |
+| Path[1]    | byte (4)       | Derivation Path Data      | 474       |
+| Path[2]    | byte (4)       | Derivation Path Data      | ?         |
+| Path[3]    | byte (4)       | Derivation Path Data      | ?         |
+| Path[4]    | byte (4)       | Derivation Path Data      | ?         |
+
+First three items in the derivation path are hardened
+
+#### Response
+
+| Field   | Type      | Content               | Note                     |
+| ------- | --------- | --------------------- | ------------------------ |
+| PK      | byte (32) | Public Key            |                          |
+| ADDR    | byte (??) | Bech 32 addr          |                          |
+| SW1-SW2 | byte (2)  | Return code           | see list of return codes |
+
+### SIGN_RT_SR25519
+
+#### Command
+
+| Field | Type     | Content                | Expected  |
+| ----- | -------- | ---------------------- |-----------|
+| CLA   | byte (1) | Application Identifier | 0x05      |
+| INS   | byte (1) | Instruction ID         | 0x06      |
+| P1    | byte (1) | Payload desc           | 0 = init  |
+|       |          |                        | 1 = add   |
+|       |          |                        | 2 = last  |
+| P2    | byte (1) | ----                   | not used  |
+| L     | byte (1) | Bytes in payload       | (depends) |
+
+The first packet/chunk includes only the derivation path
+
+All other packets/chunks should contain message to sign
+
+*First Packet*
+
+| Field      | Type     | Content                | Expected |
+| ---------- | -------- | ---------------------- |----------|
+| Path[0]    | byte (4) | Derivation Path Data   | 44       |
+| Path[1]    | byte (4) | Derivation Path Data   | 474      |
+| Path[2]    | byte (4) | Derivation Path Data   | ?        |
+| Path[3]    | byte (4) | Derivation Path Data   | ?        |
+| Path[4]    | byte (4) | Derivation Path Data   | ?        |
+
+*Other Chunks/Packets*
+
+| Field   | Type     | Content         | Expected |
+| ------- | -------- | --------------- | -------- |
+| Data    | bytes... | Meta+Message |          |
+
+Data is defined as:
+
+| Field   | Type    | Content            | Expected |
+|---------|---------|--------------------|----------|
+| Meta    | byte..  | CBOR metadata      |          |
+| Message | bytes.. | CBOR data to sign  |          |
+
+Meta contains the following fields:
+- runtime_id: 32-byte runtime ID
+- chain_context: 32-byte chain ID
+- orig_to (optional): 20-byte ethereum destination address
+
+
+#### Response
+
+| Field   | Type      | Content     | Note                     |
+| ------- | --------- | ----------- | ------------------------ |
+| SIG     | byte (64) | Signature   |                          |
+| SW1-SW2 | byte (2)  | Return code | see list of return codes |
