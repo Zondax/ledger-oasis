@@ -38,6 +38,7 @@ const defaultOptions = {
 // Derivation path. First 3 items are automatically hardened!
 const path = "m/44'/474'/0'";
 const secp256k1_path = "m/44'/60'/0'/0/0";
+const polkadot_path = "m/44'/354'/0'/0/0";
 
 jest.setTimeout(100000);
 
@@ -89,6 +90,42 @@ describe("Standard-Adr0014", function () {
       const expected_hex_address = "95e5e3c1bdd92cd4a0c14c62480db5867946281d";
       const expected_pk =
         "021853d93524119eeb31ab0b06f1dcb068f84943bb230dfa10b1292f47af643575";
+
+      expect(resp.hex_address).toEqual(expected_hex_address);
+      expect(resp.pk.toString("hex")).toEqual(expected_pk);
+    } finally {
+      await sim.close();
+    }
+  });
+
+    test.concurrent.each(models)("get polkadot path", async function (m) {
+    const sim = new Zemu(m.path);
+    try {
+      await sim.start({ ...defaultOptions, model: m.name });
+      const app = new OasisApp(sim.getTransport());
+
+    // Change to expert mode so we can skip fields
+     await sim.clickRight();
+     await sim.clickBoth();
+     await sim.clickLeft();
+
+      const respRequest = app.showAddressAndPubKey_secp256k1(polkadot_path);
+
+      await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+      await sim.compareSnapshotsAndApprove(
+        ".",
+        `${m.prefix.toLowerCase()}-adr0014_get_polkadot_path`
+      );
+
+      const resp = await respRequest;
+      console.log(resp);
+
+      expect(resp.return_code).toEqual(0x9000);
+      expect(resp.error_message).toEqual("No errors");
+
+      const expected_hex_address = "c90e1fff32d75635f76c3a80aa57ec2d887d0056";
+      const expected_pk =
+        "0304f96fe439a685648cb216639fd3b2a6fbb668169b764b478fa4c342bf7aae8b";
 
       expect(resp.hex_address).toEqual(expected_hex_address);
       expect(resp.pk.toString("hex")).toEqual(expected_pk);
