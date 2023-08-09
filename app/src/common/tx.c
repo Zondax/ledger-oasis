@@ -156,10 +156,12 @@ zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_fiel
     uint8_t  innerNumItems = 0;
 
     // Get type, size of level we are about to get in also get ptr to start of new level
-    parser_getInnerField(depth_level, trace);
+    if (parser_getInnerField(depth_level, trace) != parser_ok) {
+        return zxerr_unknown;
+    }
 
     // Get number of items read in the previous function
-    tx_getNumInnerItems(&innerNumItems);
+    CHECK_ZXERR(tx_getNumInnerItems(&innerNumItems));
 
     if (ui_field->displayIdx >= innerNumItems) {
         return zxerr_no_data;
@@ -176,14 +178,18 @@ zxerr_t tx_getInnerItem(uint8_t depth_level, uint8_t *trace, ui_field_t *ui_fiel
 
     snprintf(nestingStrPtr, 2, "%d", ui_field->displayIdx + 1);
     snprintf(ui_field->outKey, ui_field->outKeyLen, "Data %s", nestingStr);
-    parser_printInnerField(ui_field);
+
+    if (parser_printInnerField(ui_field) != parser_ok) {
+        return zxerr_unknown;
+    }
 
     return zxerr_ok;
 }
 
 zxerr_t tx_getNumInnerItems(uint8_t *num_items) {
-
-    parser_getInnerNumItems(num_items);
+    if (parser_getInnerNumItems(num_items) != parser_ok) {
+        return zxerr_unknown;
+    }
 
     return zxerr_ok;
 }
