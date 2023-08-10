@@ -42,7 +42,7 @@ ifeq ($(COIN),oasis)
 # Main app configuration
 DEFINES += APP_CONSUMER
 APPNAME = "Oasis"
-APPPATH = "44'/474'" --path "44'/60'"
+APPPATH = "44'/474'" --path "44'/60'" --path "44'/354'"
 APPCURVE = --curve ed25519 --curve secp256k1
 else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
