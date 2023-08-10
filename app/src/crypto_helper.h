@@ -19,3 +19,4 @@
 #include "zxerror.h"
 
 zxerr_t crypto_getBytesToSign(uint8_t *toSign, size_t toSignLen);
+const uint8_t *crypto_getSr25519BytesToSign(uint8_t *msgDigest, size_t msgDigestLen, uint32_t *ctxLen);

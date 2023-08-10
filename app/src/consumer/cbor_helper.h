@@ -38,12 +38,12 @@ __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
 #define CHECK_CBOR_TYPE(type, expected) {if (type!=expected) return parser_unexpected_type;}
 
 #define CHECK_CBOR_MAP_LEN(map, expected_count) { \
-    size_t numItems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &numItems)); \
-    if (numItems != expected_count)  return parser_unexpected_number_items; }
+    size_t nitems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems)); \
+    if (nitems != expected_count)  return parser_unexpected_number_items; }
 
 #define CHECK_CBOR_MAP_MAXLEN(map, expected_max_count) { \
-    size_t numItems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &numItems)); \
-    if (numItems > expected_max_count)  return parser_unexpected_number_items; }
+    size_t nitems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems)); \
+    if (nitems > expected_max_count)  return parser_unexpected_number_items; }
 
 #define INIT_CBOR_PARSER(c, it)  \
     CborParser parser;           \

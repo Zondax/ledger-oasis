@@ -28,6 +28,10 @@
 #include "coin.h"
 #include "sha512.h"
 #include "app_mode.h"
+#include "parser_impl_eth.h"
+#include "cbor_helper.h"
+
+bool on_data_field = false;
 
 static const char *blindSignWarning =
     "You are in Expert Mode. Activating this mode will allow you to sign "
@@ -59,10 +63,15 @@ static const char * methodsMap[] = {
     "     Transfer     (ParaTime)", "     Deposit      (ParaTime)",
     "      Withdraw     (ParaTime)","    Instantiate    (ParaTime)",
     "        Call      (ParaTime)","     Upgrade      (ParaTime)",
-    "     Transaction    (ParaTime)",
+    "     Transaction    (ParaTime)", "        Call      (ParaTime)",
 };
 
 parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t dataLen) {
+    if (ctx->tx_type == eth_tx) {
+        CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
+        return _readEth(ctx, &eth_tx_obj);
+    }
+    
     CHECK_PARSER_ERR(parser_init(ctx, data, dataLen))
     CHECK_PARSER_ERR(_readContext(ctx, &parser_tx_obj))
     CHECK_PARSER_ERR(_extractContextSuffix(&parser_tx_obj))
@@ -79,11 +88,16 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-    CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
+    if(ctx->tx_type == eth_tx) {
+        CHECK_PARSER_ERR(_validateTxEth(ctx))
+    } else {
+        CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
 
-    if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate) && !app_mode_expert()) {
-        return parser_ok;
+        if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate) && !app_mode_expert()) {
+            return parser_ok;
+        }
     }
+
     // Iterate through all items to check that all can be shown and are valid
     uint8_t numItems = 0;
     CHECK_PARSER_ERR(parser_getNumItems(ctx, &numItems))
@@ -101,10 +115,252 @@ parser_error_t parser_validate(const parser_context_t *ctx) {
 }
 
 parser_error_t parser_getNumItems(const parser_context_t *ctx, uint8_t *num_items) {
-    *num_items = _getNumItems(ctx, &parser_tx_obj);
-    if (parser_tx_obj.context.suffixLen > 0) {
-        (*num_items)++;
+
+    switch (ctx->tx_type) {
+      case oasis_tx:{
+        *num_items = _getNumItems(ctx, &parser_tx_obj);
+        if (parser_tx_obj.context.suffixLen > 0) {
+            (*num_items)++;
+        }
+        break;
+      }
+      case eth_tx:{
+        *num_items = _getNumItemsEth(ctx);
+        break;
+      }
+      default:
+          return parser_unsupported_tx;
     }
+    return parser_ok;
+}
+
+CborValue current;
+size_t current_type_item_cnt;
+size_t base_level_item_cnt;
+CborType type;
+bool num_items_initialized = false;
+
+parser_error_t parser_init_innerNumItems() {
+    current = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
+
+    // Check data item count Data is always a map
+    cbor_value_get_map_length(&current, &current_type_item_cnt);
+    base_level_item_cnt = current_type_item_cnt;
+    return parser_ok;
+}
+
+parser_error_t parser_getInnerNumItems(uint8_t *num_items) {
+    if (num_items == NULL) {
+        return parser_unexepected_error;
+    }
+
+    // If not initialized return data item cnt
+    if (!num_items_initialized) {
+        parser_init_innerNumItems();
+        num_items_initialized = true;
+    }
+
+    // Return last read item cnt
+    *num_items = (uint8_t)current_type_item_cnt;
+    return parser_ok;
+}
+
+bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx) {
+    if (trace == NULL) {
+        return parser_unexepected_error;
+    }
+
+    // Level 0 we can only enter data, flag set on data print
+    if (depth_level == 0 && on_data_field == true) {
+        on_data_field = false;
+        return true;
+    }
+
+    if (depth_level > 0) {
+        CborValue  cborCurrent = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
+        CborValue content;
+
+        // Enter Data
+        cbor_value_enter_container(&cborCurrent,&content);
+        cborCurrent = content;
+
+        // Data is always a map
+        CborType currentType = CborMapType;
+        for (int j = 1; j < depth_level && j < MAX_DEPTH; j++) {
+            // Follow trace (if map 2 elements per = screen advance 2)
+            for (int i = 1; i < *(trace+j)+1; i++) {
+                if (currentType == CborMapType) {
+                    cbor_value_advance(&cborCurrent);
+                }
+                cbor_value_advance(&cborCurrent);
+            }
+
+            // If we were in an map the last element we found on trace has a
+            // map tag that needs to be advanced
+            if (currentType == CborMapType) {
+                //changing depth level so if we were on a map advance map name
+                cbor_value_advance(&cborCurrent);
+            }
+
+            // Get Type if not expected return false
+            currentType = cbor_value_get_type(&cborCurrent);
+            if (currentType != CborArrayType && currentType != CborMapType) {
+                return false;
+            }
+
+            // Valid Type enter container
+            cbor_value_enter_container(&cborCurrent,&content);
+            cborCurrent = content;
+        }
+
+        // Already int the final trace level Now iterate over item idx
+        // Again if map advance 2 and after advance name
+        for (int i = 0; i< innerItemIdx; i++) {
+            cbor_value_advance(&cborCurrent);
+            if (currentType == CborMapType) {
+                cbor_value_advance(&cborCurrent);
+            }
+        }
+
+        if (currentType == CborMapType) {
+            cbor_value_advance(&cborCurrent);
+        }
+
+        // Get final item type
+        currentType = cbor_value_get_type(&cborCurrent);
+        if (currentType == CborArrayType || currentType == CborMapType) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace) {
+    if (trace == NULL) {
+        return parser_unexepected_error;
+    }
+
+    current = parser_tx_obj.oasis.runtime.call.body.contracts.cborState.startValue;
+    CborValue content;
+
+    // Enter data and set important variabels, we know data is always a map
+    cbor_value_enter_container(&current,&content);
+    current = content;
+
+    CborType currentType = CborMapType;
+    if (depth_level == 0) {
+         type = CborMapType;
+         current_type_item_cnt = base_level_item_cnt;
+    }
+
+    for (int j = 1; j <= depth_level && j < MAX_DEPTH; j++) {
+
+        // Follow trace and get disred level entrypoint
+        for (int i = 1; i < *(trace+j)+1; i++) {
+            if (currentType == CborMapType) {
+                cbor_value_advance(&current);
+            }
+            cbor_value_advance(&current);
+        }
+
+        if (currentType == CborMapType) {
+            cbor_value_advance(&current);
+        }
+
+        //Know type before entering to use in next iteration of level if needed
+        currentType = cbor_value_get_type(&current);
+        type = currentType;
+        if (currentType == CborArrayType) {
+            cbor_value_get_array_length(&current, &current_type_item_cnt);
+        } else {
+            cbor_value_get_map_length(&current, &current_type_item_cnt);
+        }
+
+        //enter container
+        cbor_value_enter_container(&current,&content);
+        current = content;
+    }
+
+    return parser_ok;
+}
+
+parser_error_t parser_printInnerField(ui_field_t *ui_field) {
+    if (ui_field == NULL) {
+        return parser_unexepected_error;
+    }
+
+    uint8_t elements_print = 0;
+    elements_print = (type == CborMapType ? 2 : 1);
+    
+    for (int i = 0; i< ui_field->displayIdx; i++) {
+        if (type == CborMapType) {
+            cbor_value_advance(&current);
+        }
+            cbor_value_advance(&current);
+    }
+
+    char val[SCREEN_SIZE] = {0};
+    char text[SCREEN_SIZE] = {0};
+    int result = 0;
+    size_t len = sizeof(val);
+    uint8_t offset = 0;
+
+    while (elements_print != 0) {
+        type = cbor_value_get_type(&current);
+        len = sizeof(val);
+        switch (type) {
+            case CborMapType:
+                snprintf(val + offset, SCREEN_SIZE - offset, "{...}");
+                break;
+            case CborArrayType:
+                snprintf(val + offset, SCREEN_SIZE - offset, "[...]");
+                break;
+            case CborTextStringType: {
+                cbor_value_copy_text_string(&current, text, &len, NULL);
+                snprintf(val + offset,SCREEN_SIZE - offset, "%s",text);
+                offset = len;
+                break;
+            }
+            case CborIntegerType: {
+                CHECK_CBOR_ERR(cbor_value_get_int(&current, &result))
+                snprintf(val + offset,SCREEN_SIZE - offset, "%d", result);
+                offset = 1;
+                break;
+            }
+            case CborBooleanType: {
+                bool res;
+                CHECK_CBOR_ERR(cbor_value_get_boolean(&current, &res))
+                snprintf(val + offset, SCREEN_SIZE- offset,  "%s", res ? "true" : "false");
+                break;
+            }
+            case CborNullType:
+                snprintf(val + offset, SCREEN_SIZE - offset,  "%s", "null");
+                break;
+            case CborFloatType: {
+                float f = 0.0f;
+                CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
+                unsigned int integer_part = (unsigned int)f; // extract integer part
+#if defined TARGET_NANOX
+                snprintf(val + offset, SCREEN_SIZE - offset, "%d",integer_part);
+# else
+                unsigned int decimal_part = (unsigned int)(100.0f * (f - (float)integer_part));
+                snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d",integer_part, decimal_part);
+#endif
+                break;
+            }
+            default:
+                break;
+        }
+        elements_print--;
+
+        if(elements_print == 1) {
+            cbor_value_advance(&current);
+            snprintf(val + offset, SCREEN_SIZE, "%s", ":");
+            offset +=1;
+        }
+    }
+    pageString(ui_field->outVal, ui_field->outValLen, val, ui_field->pageIdx, ui_field->pageCount);
     return parser_ok;
 }
 
@@ -130,7 +386,7 @@ __Z_INLINE parser_error_t parser_getType(__Z_UNUSED const parser_context_t *ctx,
             return parser_ok;
         case runtimeType:
             if (parser_tx_obj.oasis.runtime.call.method < accountsTransfer ||
-                parser_tx_obj.oasis.runtime.call.method > transactionEncrypted) {
+                parser_tx_obj.oasis.runtime.call.method > evmCall) {
                 return parser_unexpected_method;
             }
 
@@ -542,36 +798,38 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
+    *pageCount = 1;
+    on_data_field = false;
     switch (displayIdx) {
-        case 0: {
+        case 0:
             snprintf(outKey, outKeyLen, "Review Contract");
-            *pageCount = 1;
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
-        }
-        case 1: {
-            snprintf(outKey, outKeyLen, "Warning!");
-            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
-            return parser_ok;
-        }
-        case 2: {
+        break;
+        case 1:
             if(parser_tx_obj.oasis.runtime.call.method == contractsCall) {
                 snprintf(outKey, outKeyLen, "Instance ID");
                 uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.id);
-                *pageCount = 1;
                 return parser_ok;
             } else if (parser_tx_obj.oasis.runtime.call.method == contractsInstantiate) {
                 snprintf(outKey, outKeyLen, "Code ID");
                 uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.code_id);
-                *pageCount = 1;
                 return parser_ok;
             }
-            return parser_unexpected_method;
-        }
+        break;
     }
 
-    if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
+    if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1 && displayIdx == DATA_INDEX) {
+        on_data_field = true;
+        num_items_initialized = false;
+        snprintf(outKey, outKeyLen, "Data");
+        snprintf(outVal, outValLen, "{...}");
+        return parser_ok;
+    }
+
+    uint8_t index_offset = TOKENS_INDEX - ((parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1) ? 0 : 1);
+    if (displayIdx < index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
         token_t token;
-        uint8_t index = displayIdx - TOKENS_INDEX;
+        uint8_t index = displayIdx - index_offset;
         snprintf(outKey, outKeyLen, "Amount %d", index + 1);
         _getTokenAtIndex(ctx, &token, index);
         return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
@@ -579,7 +837,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
     switch (displayIndex)
     {
@@ -593,7 +851,6 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
         case 1: {
             snprintf(outKey, outKeyLen, "Gas limit");
             uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.ai.fee.gas);
-            *pageCount = 1;
             return parser_ok;
         }
         case 2: {
@@ -624,28 +881,30 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                                char *outKey, uint16_t outKeyLen,
                                                char *outVal, uint16_t outValLen,
                                                uint8_t pageIdx, uint8_t *pageCount) {
+    *pageCount = 1;
+    on_data_field = false;
     switch (displayIdx) {
-        case 0: {
+        case 0:
             snprintf(outKey, outKeyLen, "Review Contract");
-            *pageCount = 1;
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
-        }
-        case 1: {
-            snprintf(outKey, outKeyLen, "Warning!");
-            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
+        break;
+        case 1:
+            snprintf(outKey, outKeyLen, "Instance ID");
+            uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.id);
             return parser_ok;
-        }
-        case 2: {
-                snprintf(outKey, outKeyLen, "Instance ID");
-                uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.call.body.contracts.id);
-                *pageCount = 1;
-                return parser_ok;
-        }
+        break;
     }
 
-    if (displayIdx < TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
+    if (parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1 && displayIdx == DATA_INDEX) {
+        on_data_field = true;
+        snprintf(outKey, outKeyLen, "Data");
+        snprintf(outVal, outValLen, "{...}");
+        return parser_ok;
+    }
+    uint8_t index_offset = TOKENS_INDEX - ((parser_tx_obj.oasis.runtime.call.body.contracts.dataValid == 1) ? 0 : 1);
+    if (displayIdx < index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen) {
         token_t token;
-        uint8_t index = displayIdx - TOKENS_INDEX;
+        uint8_t index = displayIdx - index_offset;
         snprintf(outKey, outKeyLen, "Amount %d", index + 1);
         _getTokenAtIndex(ctx, &token, index);
         return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
@@ -653,7 +912,7 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (TOKENS_INDEX + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
     switch (displayIndex)
     {
@@ -773,6 +1032,75 @@ __Z_INLINE parser_error_t parser_getItemRuntimeEncrypted(const parser_context_t 
     return parser_no_data;
 }
 
+__Z_INLINE parser_error_t parser_getItemRuntimeEvm(const parser_context_t *ctx,
+                                               const int8_t displayIdx,
+                                               char *outKey, uint16_t outKeyLen,
+                                               char *outVal, uint16_t outValLen,
+                                               uint8_t pageIdx, uint8_t *pageCount) {
+    char outBuffer[128] = {0};
+    switch (displayIdx) {
+        case 0: {
+            snprintf(outKey, outKeyLen, "Review Contract");
+            *pageCount = 1;
+            return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
+        }
+        case 1: {
+            snprintf(outKey, outKeyLen, "Warning!");
+            pageString(outVal, outValLen, (const char*)PIC(blindSignWarning), pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 2: {
+            snprintf(outKey, outKeyLen, "Tx Hash");
+            if (array_to_hexstr(outBuffer, sizeof(outBuffer),(uint8_t *) &parser_tx_obj.oasis.runtime.call.body.evm.data_hash, 32) != 64) {
+                return parser_unexpected_value;
+            }
+            pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 3: {
+            snprintf(outKey, outKeyLen, "Address");
+            if (array_to_hexstr(outBuffer, sizeof(outBuffer),(uint8_t *) &parser_tx_obj.oasis.runtime.call.body.evm.address, ETH_ADDR_LEN) != 40) {
+                return parser_unexpected_value;
+            }
+            pageString(outVal, outValLen, outBuffer, pageIdx, pageCount);
+            return parser_ok;
+        }
+        case 4: {
+            snprintf(outKey, outKeyLen, "Fee");
+            return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
+                                        &parser_tx_obj.oasis.runtime.ai.fee.amount,
+                                        &parser_tx_obj.oasis.runtime.ai.fee.denom,
+                                        outVal, outValLen, pageIdx, pageCount);
+        }
+        case 5: {
+            snprintf(outKey, outKeyLen, "Gas limit");
+            uint64_to_str(outVal, outValLen, parser_tx_obj.oasis.runtime.ai.fee.gas);
+            *pageCount = 1;
+            return parser_ok;
+        }
+        case 6: {
+            snprintf(outKey, outKeyLen, "ParaTime");
+            const uint8_t *runId = parser_tx_obj.oasis.runtime.meta.runtime_id;
+            size_t runIdLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
+            const uint8_t *chain_context = parser_tx_obj.oasis.runtime.meta.chain_context;
+            size_t chain_contextLen = sizeof(parser_tx_obj.oasis.runtime.meta.chain_context);
+
+            for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+                if (!MEMCMP((const char *)runId, PIC(runTime_lookup_helper[i].runid), runIdLen) &&
+                    !MEMCMP((const char *)chain_context, PIC(runTime_lookup_helper[i].network), chain_contextLen)) {
+                    pageString(outVal, outValLen, (char *)PIC(runTime_lookup_helper[i].name), pageIdx, pageCount);
+                    return parser_ok;
+                }
+            }
+            pageString(outVal, outValLen, (const char *)runId, pageIdx, pageCount);
+            return parser_ok;
+        }
+    }
+
+    *pageCount = 0;
+    return parser_no_data;
+}
+
 __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
                                                const int8_t displayIdx,
                                                char *outKey, uint16_t outKeyLen,
@@ -789,11 +1117,14 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
         case contractsInstantiate:
             return parser_getItemRuntimeContracts(ctx, displayIdx, outKey, outKeyLen,
                                                 outVal, outValLen, pageIdx, pageCount);
-        case contratcsUpgrade:
+        case contractsUpgrade:
             return parser_getItemRuntimeContractsUpgrade(ctx, displayIdx, outKey, outKeyLen,
                                                     outVal, outValLen, pageIdx, pageCount);
         case transactionEncrypted:
             return parser_getItemRuntimeEncrypted(ctx, displayIdx, outKey, outKeyLen,
+                                                outVal, outValLen, pageIdx, pageCount);
+        case evmCall:
+            return parser_getItemRuntimeEvm(ctx, displayIdx, outKey, outKeyLen,
                                                 outVal, outValLen, pageIdx, pageCount);
         case unknownMethod:
         default:
@@ -1485,7 +1816,7 @@ __Z_INLINE parser_error_t parser_getItemTx(const parser_context_t *ctx,
     return parser_no_data;
 }
 
-parser_error_t parser_getItem(const parser_context_t *ctx,
+parser_error_t parser_getItemOasis(const parser_context_t *ctx,
                               uint16_t displayIdx,
                               char *outKey, uint16_t outKeyLen,
                               char *outVal, uint16_t outValLen,
@@ -1587,6 +1918,31 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
     #endif
 
     return err;
+}
+
+parser_error_t parser_getItem(const parser_context_t *ctx,
+                              uint16_t displayIdx,
+                              char *outKey, uint16_t outKeyLen,
+                              char *outVal, uint16_t outValLen,
+                              uint8_t pageIdx, uint8_t *pageCount) {
+
+    switch (ctx->tx_type) {
+      case oasis_tx:{
+          return parser_getItemOasis(ctx, displayIdx, outKey, outKeyLen,
+                              outVal, outValLen, pageIdx, pageCount);
+      }
+      case eth_tx:{
+          // for now just display the hash
+          return _getItemEth(ctx, displayIdx, outKey, outKeyLen,
+                              outVal, outValLen, pageIdx, pageCount);
+      }
+      default:
+          return parser_unsupported_tx;
+    }
+}
+
+parser_error_t parser_compute_eth_v(parser_context_t *ctx, unsigned int info, uint8_t *v) {
+    return _computeV(ctx , &eth_tx_obj, info, v);
 }
 
 #endif // APP_CONSUMER

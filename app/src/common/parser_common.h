@@ -89,14 +89,25 @@ typedef enum {
     parser_required_code_id,
     parser_required_pk,
     parser_required_data,
-    parser_required_expert_mode
+    parser_required_expert_mode,
+    parser_unsupported_tx,
+    parser_invalid_rlp_data,
+    parser_invalid_chain_id,
+    parser_invalid_rs_values,
+    parser_no_depth,
 } parser_error_t;
+
+typedef enum {
+  oasis_tx = 0,
+  eth_tx,
+}tx_type_t;
 
 typedef struct {
     const uint8_t *buffer;
     uint16_t bufferLen;
     uint16_t offset;
     uint16_t lastConsumed;
+    tx_type_t tx_type;
 } parser_context_t;
 
 #ifdef __cplusplus
