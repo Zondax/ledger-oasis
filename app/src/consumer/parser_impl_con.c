@@ -1743,8 +1743,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue rootItem;
     INIT_CBOR_PARSER(c, rootItem)
 
-    // validate CBOR canonical order before even trying to parse
-    CHECK_CBOR_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
+    CHECK_CBOR_ERR(cbor_value_validate_basic(&rootItem))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
@@ -2049,8 +2048,7 @@ parser_error_t _getTokenAtIndex(const parser_context_t *c, token_t *token, uint8
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
-    // validate CBOR canonical order before even trying to parse
-    CHECK_CBOR_ERR(cbor_value_validate(&it, CborValidateCanonicalFormat))
+    CHECK_CBOR_ERR(cbor_value_validate_basic(&it))
 
     if (cbor_value_at_end(&it)) {
         return parser_unexpected_buffer_end;

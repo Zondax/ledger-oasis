@@ -77,7 +77,8 @@ extern "C" {
 
 #define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
-#define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
+#define COIN_ADDRESS_ED25519_CONTEXT    "oasis-core/address: staking"
+#define COIN_ADDRESS_SR25519_CONTEXT    "oasis-runtime-sdk/address: sr25519"
 
 #ifdef __cplusplus
 }

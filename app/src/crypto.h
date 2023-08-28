@@ -30,7 +30,7 @@ extern uint32_t hdPath[MAX_BIP32_PATH];
 extern uint8_t hdPathLen;
 extern uint8_t chain_code;
 
-uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey);
+uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey, address_kind_e kind);
 
 zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen,address_kind_e kind);
 zxerr_t crypto_fillEthAddress(uint8_t *buffer, uint16_t bufferLen, uint16_t *addrLen);
