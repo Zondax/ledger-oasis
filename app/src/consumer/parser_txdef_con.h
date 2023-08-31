@@ -62,6 +62,8 @@ typedef enum {
     accountsTransfer,
     consensusDeposit,
     consensusWithdraw,
+    consensusDelegate,
+    consensusUndelegate,
     contractsInstantiate,
     contractsCall,
     contractsUpgrade,
@@ -272,6 +274,7 @@ typedef struct {
     quantity_t amount;
     string_t denom;
     bool has_to;
+    quantity_t shares;
 } body_consensus_t;
 
 typedef struct {

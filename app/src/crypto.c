@@ -424,7 +424,7 @@ typedef union {
 } tmp_address_t;
 
 uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey, address_kind_e kind) {
-    tmp_address_t tmp;
+    tmp_address_t tmp = {0};
     tmp.version = COIN_ADDRESS_VERSION;
 
     const char *context = (kind == addr_ed25519) ? COIN_ADDRESS_ED25519_CONTEXT : COIN_ADDRESS_SR25519_CONTEXT;
@@ -446,7 +446,7 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
         return 0;
     }
 
-    return strlen(addr_out);
+    return strnlen(addr_out, addr_out_max);
 }
 
 static uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
