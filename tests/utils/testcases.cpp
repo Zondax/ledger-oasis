@@ -532,6 +532,12 @@ static const rt_lookup_t runTime_lookup_helper[] = {
         if (type.compare("accounts.Transfer") == 0) {
             addTo(answer, "{} | Type :      Transfer     (ParaTime)", itemCount++);
         }
+        if (type.compare("consensus.Delegate") == 0) {
+            addTo(answer, "{} | Type :       Delegate     (ParaTime)", itemCount++);
+        }
+        if (type.compare("consensus.Undelegate") == 0) {
+            addTo(answer, "{} | Type :       Undelegate     (ParaTime)", itemCount++);
+        }
 
         if(meta.isMember("orig_to")) {
             auto orig = meta["orig_to"].asString();
@@ -545,40 +551,64 @@ static const rt_lookup_t runTime_lookup_helper[] = {
                     addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(meta["orig_to"].asString(), 1, &dummy));
                 }
             }
+            if(txbody.isMember("from")) {
+                if (orig.length() == 40){
+                    orig = "0x" + orig;
+                    addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(orig, 0, &dummy));
+                    addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(orig, 1, &dummy));
+                } else {
+                    addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(meta["orig_to"].asString(), 0, &dummy));
+                    addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(meta["orig_to"].asString(), 1, &dummy));
+                }
+            }
         } else {
-            if(txbody.isMember("to")) {
-                addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(tx["call"]["body"]["to"].asString(), 0, &dummy));
-                addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(tx["call"]["body"]["to"].asString(), 1, &dummy));              
+            if (type.compare("consensus.Undelegate") != 0) {
+                if(txbody.isMember("to")) {
+                    addTo(answer, "{} | To[1/2] : {}", itemCount, FormatAddress(tx["call"]["body"]["to"].asString(), 0, &dummy));
+                    addTo(answer, "{} | To[2/2] : {}", itemCount++, FormatAddress(tx["call"]["body"]["to"].asString(), 1, &dummy));              
+                } else {
+                    addTo(answer, "{} | To : Self", itemCount++);
+                }
             } else {
-                addTo(answer, "{} | To : Self", itemCount++);
+                if(txbody.isMember("from")) {
+                    addTo(answer, "{} | From[1/2] : {}", itemCount, FormatAddress(tx["call"]["body"]["from"].asString(), 0, &dummy));
+                    addTo(answer, "{} | From[2/2] : {}", itemCount++, FormatAddress(tx["call"]["body"]["from"].asString(), 1, &dummy));              
+                } else {
+                    addTo(answer, "{} | From : Self", itemCount++);
+                }
             }
         }
 
         auto denom = "";
         uint8_t decimal = 9;
-        for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
-            if (tx["call"]["body"]["amount"]["Denomination"].asString().compare("") == 0) {
-                if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
-                    denom = COIN_MAINNET_DENOM;
-                    decimal = runTime_lookup_helper[i].decimals;
-                    break;
-                } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
-                    meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
-                    denom = COIN_TESTNET_DENOM;
-                    decimal = runTime_lookup_helper[i].decimals;
-                    break;
+        if (txbody.isMember("amount")) {
+            for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
+                if (tx["call"]["body"]["amount"]["Denomination"].asString().compare("") == 0) {
+                    if (meta["chain_context"].asString().compare(MAINNET_GENESIS_HASH) == 0 && 
+                        meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
+                        denom = COIN_MAINNET_DENOM;
+                        decimal = runTime_lookup_helper[i].decimals;
+                        break;
+                    } if (meta["chain_context"].asString().compare(TESTNET_GENESIS_HASH) == 0 && 
+                        meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0) {
+                        denom = COIN_TESTNET_DENOM;
+                        decimal = runTime_lookup_helper[i].decimals;
+                        break;
+                    }
+                } else {
+                    if (meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0 ) {
+                        denom = "";
+                        decimal = runTime_lookup_helper[i].decimals;
+                        break;
+                    }    
                 }
-            } else {
-                if (meta["runtime_id"].asString().compare(runTime_lookup_helper[i].runid) == 0 ) {
-                    denom = "";
-                    decimal = runTime_lookup_helper[i].decimals;
-                    break;
-                }    
             }
-        }
 
-        addTo(answer, "{} | Amount : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["call"]["body"]["amount"]["Amount"].asString(), decimal));
+            addTo(answer, "{} | Amount : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["call"]["body"]["amount"]["Amount"].asString(), decimal));
+
+        } else if (txbody.isMember("shares")){
+            addTo(answer, "{} | Shares : {}", itemCount++, FormatShares(txbody["shares"].asString()));
+        }
 
         for (size_t i = 0; i < array_length(runTime_lookup_helper); i++) {
             if (tx["ai"]["fee"]["amount"]["Denomination"].asString().compare("") == 0) {
@@ -601,7 +631,6 @@ static const rt_lookup_t runTime_lookup_helper[] = {
                 }    
             }
         }
-
         addTo(answer, "{} | Fee : {} {}", itemCount++, denom, FormatRuntimeAmount(tx["ai"]["fee"]["amount"]["Amount"].asString(), decimal));
 
 
@@ -811,7 +840,8 @@ std::vector<std::string> GenerateExpectedUIOutputForRuntime(Json::Value j, uint3
         auto type = tx["call"]["method"];
 
         if (type.compare("consensus.Withdraw") == 0 || type.compare("consensus.Deposit") == 0 ||
-            type.compare("accounts.Transfer") == 0) {
+            type.compare("accounts.Transfer") == 0 || type.compare("consensus.Delegate") == 0 ||
+            type.compare("consensus.Undelegate") == 0) {
             return GenerateExpectedUIOutputForRuntimeConsensus(j, itemCount);
         } else if (type.compare("contracts.Call") == 0 || type.compare("contracts.Upgrade") == 0 ||
                    type.compare("contracts.Instantiate") == 0){

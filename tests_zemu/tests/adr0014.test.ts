@@ -18,8 +18,6 @@ import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
 // @ts-ignore
 import { OasisApp } from "@zondax/ledger-oasis";
 import { models } from "./common";
-import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
-import crypto from "crypto";
 
 const ed25519 = require("ed25519-supercop");
 const sha512 = require("js-sha512");
@@ -98,23 +96,23 @@ describe("Standard-Adr0014", function () {
     }
   });
 
-    test.concurrent.each(models)("get polkadot path", async function (m) {
+  test.concurrent.each(models)("get polkadot path", async function (m) {
     const sim = new Zemu(m.path);
     try {
       await sim.start({ ...defaultOptions, model: m.name });
       const app = new OasisApp(sim.getTransport());
 
-    // Change to expert mode so we can skip fields
-     await sim.clickRight();
-     await sim.clickBoth();
-     await sim.clickLeft();
+      // Change to expert mode so we can skip fields
+      await sim.clickRight();
+      await sim.clickBoth();
+      await sim.clickLeft();
 
       const respRequest = app.showAddressAndPubKey_secp256k1(polkadot_path);
 
       await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
       await sim.compareSnapshotsAndApprove(
         ".",
-        `${m.prefix.toLowerCase()}-adr0014_get_polkadot_path`
+        `${m.prefix.toLowerCase()}-adr0014_get_polkadot_path`,
       );
 
       const resp = await respRequest;
@@ -321,9 +319,8 @@ describe("Standard-Adr0014", function () {
           "oasis-runtime-sdk/tx: v0 for chain 7f1eb9fa832a02ccda132d330f342dbef92c0817bf73eeea12020552f1d62f86",
         );
 
-        const pkResponse = await app.getAddressAndPubKey_secp256k1(
-          secp256k1_path,
-        );
+        const pkResponse =
+          await app.getAddressAndPubKey_secp256k1(secp256k1_path);
         console.log(pkResponse);
         expect(pkResponse.return_code).toEqual(0x9000);
         expect(pkResponse.error_message).toEqual("No errors");
@@ -387,9 +384,8 @@ describe("Standard-Adr0014", function () {
           "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc",
         );
 
-        const pkResponse = await app.getAddressAndPubKey_secp256k1(
-          secp256k1_path,
-        );
+        const pkResponse =
+          await app.getAddressAndPubKey_secp256k1(secp256k1_path);
         console.log(pkResponse);
         expect(pkResponse.return_code).toEqual(0x9000);
         expect(pkResponse.error_message).toEqual("No errors");
@@ -565,7 +561,7 @@ describe("Standard-Adr0014", function () {
       expect(resp.error_message).toEqual("No errors");
 
       const expected_bech32_address =
-        "oasis1qqajq8zd0srsqufm5x2qayurm45uxvuaxcc32zvt";
+        "oasis1qzkpf5wrzr9z22827ua44efsvm86yksdzvctsq6r";
       const expected_pk =
         "d424ac290ba31640775fef1c87ffae982efeb8d2ffe2c4b33d625f6c01f1946d";
 
@@ -597,7 +593,7 @@ describe("Standard-Adr0014", function () {
       expect(resp.error_message).toEqual("No errors");
 
       const expected_bech32_address =
-        "oasis1qqajq8zd0srsqufm5x2qayurm45uxvuaxcc32zvt";
+        "oasis1qzkpf5wrzr9z22827ua44efsvm86yksdzvctsq6r";
       const expected_pk =
         "d424ac290ba31640775fef1c87ffae982efeb8d2ffe2c4b33d625f6c01f1946d";
 
@@ -981,4 +977,114 @@ describe("Standard-Adr0014", function () {
       await sim.close();
     }
   });
+
+  test.concurrent.each(models)(
+    "sign ed25519 consensus - delegate",
+    async function (m) {
+      const sim = new Zemu(m.path);
+      try {
+        await sim.start({ ...defaultOptions, model: m.name });
+        const app = new OasisApp(sim.getTransport());
+
+        const meta = Buffer.from(
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "base64",
+        );
+
+        const txBlob = Buffer.from(
+          "o2F2AWJhaaJic2mBomVub25jZQFsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaNjZ2FzGQfQZmFtb3VudIJAQHJjb25zZW5zdXNfbWVzc2FnZXMBZGNhbGyiZGJvZHmiYnRvVQAml8ChOLxRJ4uAlvu79/O9KQ0gmGZhbW91bnSCSAFjRXhdigAAQGZtZXRob2RyY29uc2Vuc3VzLkRlbGVnYXRl",
+          "base64",
+        );
+
+        const sigCtx = Buffer.from(
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+        );
+
+        const pkResponse = await app.getAddressAndPubKey_ed25519(path);
+        console.log(pkResponse);
+        expect(pkResponse.return_code).toEqual(0x9000);
+        expect(pkResponse.error_message).toEqual("No errors");
+
+        // do not wait here..
+        const signatureRequest = app.signRtEd25519(path, meta, txBlob);
+
+        await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+        await sim.compareSnapshotsAndApprove(
+          ".",
+          `${m.prefix.toLowerCase()}-adr0014-sign_ed25519_consensus_delegate`,
+        );
+
+        let resp = await signatureRequest;
+        console.log(resp);
+
+        expect(resp.return_code).toEqual(0x9000);
+        expect(resp.error_message).toEqual("No errors");
+
+        const hasher = sha512.sha512_256.update(sigCtx);
+        hasher.update(txBlob);
+        const msgHash = Buffer.from(hasher.hex(), "hex");
+
+        // Now verify the signature
+        const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+        expect(valid).toEqual(true);
+      } finally {
+        await sim.close();
+      }
+    },
+  );
+
+  test.concurrent.each(models)(
+    "sign ed25519 consensus - undelegate",
+    async function (m) {
+      const sim = new Zemu(m.path);
+      try {
+        await sim.start({ ...defaultOptions, model: m.name });
+        const app = new OasisApp(sim.getTransport());
+
+        const meta = Buffer.from(
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "base64",
+        );
+
+        const txBlob = Buffer.from(
+          "o2F2AWJhaaJic2mBomVub25jZQFsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJmYW1vdW50gkBAcmNvbnNlbnN1c19tZXNzYWdlcwFkY2FsbKJkYm9keaJkZnJvbVUA7UP3UlAm/VN6C/UkSIt8VJ8DmCVmc2hhcmVzSAFjRXhdigAAZm1ldGhvZHRjb25zZW5zdXMuVW5kZWxlZ2F0ZQ==",
+          "base64",
+        );
+
+        const sigCtx = Buffer.from(
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+        );
+
+        const pkResponse = await app.getAddressAndPubKey_ed25519(path);
+        console.log(pkResponse);
+        expect(pkResponse.return_code).toEqual(0x9000);
+        expect(pkResponse.error_message).toEqual("No errors");
+
+        // do not wait here..
+        const signatureRequest = app.signRtEd25519(path, meta, txBlob);
+
+        await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot(), 20000);
+        await sim.compareSnapshotsAndApprove(
+          ".",
+          `${m.prefix.toLowerCase()}-adr0014-sign_ed25519_consensus_undelegate`,
+        );
+
+        let resp = await signatureRequest;
+        console.log(resp);
+
+        expect(resp.return_code).toEqual(0x9000);
+        expect(resp.error_message).toEqual("No errors");
+
+        const hasher = sha512.sha512_256.update(sigCtx);
+        hasher.update(txBlob);
+        const msgHash = Buffer.from(hasher.hex(), "hex");
+
+        // Now verify the signature
+        const valid = ed25519.verify(resp.signature, msgHash, pkResponse.pk);
+        expect(valid).toEqual(true);
+      } finally {
+        await sim.close();
+      }
+    },
+  );
 });

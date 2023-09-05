@@ -1193,6 +1193,16 @@ __Z_INLINE parser_error_t _readRuntimeMethod(parser_tx_t *v, CborValue *rootItem
         return parser_ok;
     }
 
+    if (CBOR_KEY_MATCHES(&tmp, "consensus.Delegate")) {
+        v->oasis.runtime.call.method = consensusDelegate;
+        return parser_ok;
+    }
+
+    if (CBOR_KEY_MATCHES(&tmp, "consensus.Undelegate")) {
+        v->oasis.runtime.call.method = consensusUndelegate;
+        return parser_ok;
+    }
+
     return parser_unexpected_method;
 }
 
@@ -1285,7 +1295,7 @@ __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *r
 
     CborValue contents;
     CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
-    if (CBOR_KEY_MATCHES(&contents, "to")) {
+    if (CBOR_KEY_MATCHES(&contents, "to") || CBOR_KEY_MATCHES(&contents, "from")) {
         v->oasis.runtime.call.body.consensus.has_to = true;
         CHECK_CBOR_ERR(cbor_value_advance(&contents))
         CHECK_PARSER_ERR(_readAddressRaw(&contents, &v->oasis.runtime.call.body.consensus.to))
@@ -1294,16 +1304,26 @@ __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *r
         v->oasis.runtime.call.body.consensus.has_to = false;
         MEMZERO(&v->oasis.runtime.call.body.consensus.to, sizeof(address_raw_t));
     }
-
-    CborValue amount;
-    CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "amount", &amount))
-    if (!cbor_value_is_valid(&amount)) {
-        return parser_required_call;
+    if(v->oasis.runtime.call.method != consensusUndelegate) {
+        CborValue amount;
+        CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "amount", &amount))
+        if (!cbor_value_is_valid(&amount)) {
+            return parser_required_call;
+        }
+        CHECK_CBOR_ERR(cbor_value_enter_container(&amount, &contents))
+        CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.runtime.call.body.consensus.amount))
+        CHECK_CBOR_ERR(cbor_value_advance(&contents))
+        CHECK_PARSER_ERR(_readRuntimeString(&contents, &v->oasis.runtime.call.body.consensus.denom))
+    } else {
+        CborValue shares;
+        CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "shares", &shares))
+        if (!cbor_value_is_valid(&shares)) {
+            return parser_required_call;
+        }
+        CHECK_CBOR_ERR(cbor_value_advance(&contents))
+        CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.runtime.call.body.consensus.shares))
+        CHECK_CBOR_ERR(cbor_value_advance(&contents))
     }
-    CHECK_CBOR_ERR(cbor_value_enter_container(&amount, &contents))
-    CHECK_PARSER_ERR(_readQuantity(&contents, &v->oasis.runtime.call.body.consensus.amount))
-    CHECK_CBOR_ERR(cbor_value_advance(&contents))
-    CHECK_PARSER_ERR(_readRuntimeString(&contents, &v->oasis.runtime.call.body.consensus.denom))
 
     return parser_ok;
 }
@@ -1445,6 +1465,8 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
         switch(v->oasis.runtime.call.method)
         {
             case consensusDeposit:
+            case consensusDelegate:
+            case consensusUndelegate:
             case consensusWithdraw:
             case accountsTransfer:
                 CHECK_PARSER_ERR(_readRuntimeConsensusBody(v,&callField))
@@ -1743,8 +1765,7 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue rootItem;
     INIT_CBOR_PARSER(c, rootItem)
 
-    // validate CBOR canonical order before even trying to parse
-    CHECK_CBOR_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat))
+    CHECK_CBOR_ERR(cbor_value_validate_basic(&rootItem))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
@@ -1892,6 +1913,8 @@ uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v)
             case consensusDeposit:
             case accountsTransfer:
             case consensusWithdraw:
+            case consensusDelegate:
+            case consensusUndelegate:
                 itemCount += 3;
                 break;
             default:
@@ -2049,8 +2072,7 @@ parser_error_t _getTokenAtIndex(const parser_context_t *c, token_t *token, uint8
     CborValue it;
     INIT_CBOR_PARSER(c, it)
 
-    // validate CBOR canonical order before even trying to parse
-    CHECK_CBOR_ERR(cbor_value_validate(&it, CborValidateCanonicalFormat))
+    CHECK_CBOR_ERR(cbor_value_validate_basic(&it))
 
     if (cbor_value_at_end(&it)) {
         return parser_unexpected_buffer_end;

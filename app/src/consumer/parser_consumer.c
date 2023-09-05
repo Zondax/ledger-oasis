@@ -61,7 +61,8 @@ static const char * methodsMap[] = {
     "Reclaim escrow", "Amend commission schedule", "Deregister Entity",
     "Unfreeze Node", "Register Entity", "Submit proposal", "Cast vote",
     "     Transfer     (ParaTime)", "     Deposit      (ParaTime)",
-    "      Withdraw     (ParaTime)","    Instantiate    (ParaTime)",
+    "      Withdraw     (ParaTime)", "      Delegate     (ParaTime)",
+    "      Undelegate     (ParaTime)","    Instantiate    (ParaTime)",
     "        Call      (ParaTime)","     Upgrade      (ParaTime)",
     "     Transaction    (ParaTime)", "        Call      (ParaTime)",
 };
@@ -733,7 +734,12 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
             return parser_getType(ctx, outVal, outValLen, pageIdx, pageCount);
         }
         case 1: {
-            snprintf(outKey, outKeyLen, "To");
+            if (parser_tx_obj.oasis.runtime.call.method != consensusUndelegate) {
+                snprintf(outKey, outKeyLen, "To");
+            } else {
+                snprintf(outKey, outKeyLen, "From");
+            }
+
             snprintf(outVal, outValLen, "Self");
             if (parser_tx_obj.oasis.runtime.meta.has_orig_to) {
                 if (parser_tx_obj.oasis.runtime.call.body.consensus.has_to) {
@@ -749,11 +755,17 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
             return parser_ok;
         }
         case 2: {
-            snprintf(outKey, outKeyLen, "Amount");
-            return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
-                                        &parser_tx_obj.oasis.runtime.call.body.consensus.amount,
-                                        &parser_tx_obj.oasis.runtime.call.body.consensus.denom,
-                                        outVal, outValLen, pageIdx, pageCount);
+            if (parser_tx_obj.oasis.runtime.call.method != consensusUndelegate) {
+                snprintf(outKey, outKeyLen, "Amount");
+                return parser_printRuntimeQuantity(&parser_tx_obj.oasis.runtime.meta,
+                                            &parser_tx_obj.oasis.runtime.call.body.consensus.amount,
+                                            &parser_tx_obj.oasis.runtime.call.body.consensus.denom,
+                                            outVal, outValLen, pageIdx, pageCount);
+            } else {
+                snprintf(outKey, outKeyLen, "Shares");
+                return parser_printShares(&parser_tx_obj.oasis.runtime.call.body.consensus.shares,
+                                         outVal, outValLen, pageIdx, pageCount);
+            }
         }
         case 3: {
             snprintf(outKey, outKeyLen, "Fee");
@@ -1111,6 +1123,8 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
         case consensusDeposit:
         case consensusWithdraw:
         case accountsTransfer:
+        case consensusDelegate:
+        case consensusUndelegate:
             return parser_getItemRuntimeConsensus(ctx, displayIdx, outKey, outKeyLen,
                                             outVal, outValLen, pageIdx, pageCount);
         case contractsCall:

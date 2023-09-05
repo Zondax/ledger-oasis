@@ -423,12 +423,14 @@ typedef union {
     };
 } tmp_address_t;
 
-uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
-    tmp_address_t tmp;
+uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey, address_kind_e kind) {
+    tmp_address_t tmp = {0};
     tmp.version = COIN_ADDRESS_VERSION;
 
+    const char *context = (kind == addr_ed25519) ? COIN_ADDRESS_ED25519_CONTEXT : COIN_ADDRESS_SR25519_CONTEXT;
+
     SHA512_256_with_context_version (
-            (uint8_t *) COIN_ADDRESS_CONTEXT, strlen(COIN_ADDRESS_CONTEXT),
+            (uint8_t *)context, strnlen(context, MAX_CONTEXT_SIZE),
             COIN_ADDRESS_VERSION,
             pubkey, PK_LEN_ED25519,
             tmp.pkHash
@@ -444,7 +446,7 @@ uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pu
         return 0;
     }
 
-    return strlen(addr_out);
+    return strnlen(addr_out, addr_out_max);
 }
 
 static uint16_t crypto_encodeEthereumAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey) {
@@ -473,7 +475,7 @@ zxerr_t crypto_fillAddressEd25519(uint8_t *buffer, uint16_t buffer_len, uint16_t
     // format pubkey as oasis bech32 address
     char *addr_out = (char *) (buffer + PK_LEN_ED25519);
     const uint16_t addr_out_max =  buffer_len - PK_LEN_ED25519;
-    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
+    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer, addr_ed25519);
 
     *addrLen = PK_LEN_ED25519 + addr_out_len;
     return zxerr_ok;
@@ -490,7 +492,7 @@ zxerr_t crypto_fillAddressSr25519(uint8_t *buffer, uint16_t buffer_len, uint16_t
     // format pubkey as oasis bech32 address
     char *addr_out = (char *) (buffer + PK_LEN_SR25519);
     const uint16_t addr_out_max =  buffer_len - PK_LEN_SR25519;
-    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer);
+    const uint16_t addr_out_len = crypto_encodeAddress(addr_out, addr_out_max, buffer, addr_sr25519);
 
     *addrLen = PK_LEN_SR25519 + addr_out_len;
     return zxerr_ok;
