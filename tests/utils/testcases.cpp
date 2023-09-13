@@ -533,10 +533,10 @@ static const rt_lookup_t runTime_lookup_helper[] = {
             addTo(answer, "{} | Type :      Transfer     (ParaTime)", itemCount++);
         }
         if (type.compare("consensus.Delegate") == 0) {
-            addTo(answer, "{} | Type :       Delegate     (ParaTime)", itemCount++);
+            addTo(answer, "{} | Type :      Delegate    (ParaTime)", itemCount++);
         }
         if (type.compare("consensus.Undelegate") == 0) {
-            addTo(answer, "{} | Type :       Undelegate     (ParaTime)", itemCount++);
+            addTo(answer, "{} | Type :     Undelegate   (ParaTime)", itemCount++);
         }
 
         if(meta.isMember("orig_to")) {
