@@ -77,8 +77,16 @@ zxerr_t  crypto_extractPublicKeySr25519(uint8_t *pubKey, uint16_t pubKeyLen) {
                                                      privateKeyData,
                                                      NULL,
                                                      NULL,
-                                                     0))
-    get_sr25519_sk(privateKeyData);
+                                                     0));
+
+    if (mode == HDW_ED25519_SLIP10) {
+        uint8_t privateKeyData_expanded[SK_LEN_25519] = {0};
+        expanded_sr25519_sk(privateKeyData, privateKeyData_expanded);
+        MEMCPY(privateKeyData, privateKeyData_expanded, SK_LEN_25519);
+    } else {
+        get_sr25519_sk(privateKeyData);
+    }
+
     CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(pubKey, privateKeyData))
     error = zxerr_ok;
 
@@ -305,7 +313,15 @@ zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx,
                                                      NULL,
                                                      NULL,
                                                      0))
-    get_sr25519_sk(sk);
+    
+    if (mode == HDW_ED25519_SLIP10) {
+        uint8_t privateKeyData_expanded[SK_LEN_25519] = {0};
+        expanded_sr25519_sk(sk, privateKeyData_expanded);
+        MEMCPY(sk, privateKeyData_expanded, SK_LEN_25519);
+    } else {
+        get_sr25519_sk(sk);
+    }
+
     CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(pk, sk))
     sign_sr25519_phase1(sk, pk, ctx, ctx_len, data, len, sr25519_signature);
     CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(sr25519_signature, sr25519_signature + PK_LEN_SR25519))
