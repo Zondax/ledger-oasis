@@ -83,6 +83,7 @@ zxerr_t  crypto_extractPublicKeySr25519(uint8_t *pubKey, uint16_t pubKeyLen) {
         uint8_t privateKeyData_expanded[SK_LEN_25519] = {0};
         expanded_sr25519_sk(privateKeyData, privateKeyData_expanded);
         MEMCPY(privateKeyData, privateKeyData_expanded, SK_LEN_25519);
+        MEMZERO(privateKeyData_expanded, sizeof(privateKeyData_expanded));
     } else {
         get_sr25519_sk(privateKeyData);
     }
@@ -318,6 +319,7 @@ zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx,
         uint8_t privateKeyData_expanded[SK_LEN_25519] = {0};
         expanded_sr25519_sk(sk, privateKeyData_expanded);
         MEMCPY(sk, privateKeyData_expanded, SK_LEN_25519);
+        MEMZERO(privateKeyData_expanded, sizeof(privateKeyData_expanded));
     } else {
         get_sr25519_sk(sk);
     }
