@@ -561,9 +561,9 @@ describe("Standard-Adr0014", function () {
       expect(resp.error_message).toEqual("No errors");
 
       const expected_bech32_address =
-        "oasis1qzkpf5wrzr9z22827ua44efsvm86yksdzvctsq6r";
+        "oasis1qr9af6sfg3gmv5nefxkq7k7cxpz48r0wlu2j9frf";
       const expected_pk =
-        "d424ac290ba31640775fef1c87ffae982efeb8d2ffe2c4b33d625f6c01f1946d";
+        "bcfd51e4c33347fafdae2732998a4f6c103d26f9a58b1773944616129c791316";
 
       expect(resp.bech32_address).toEqual(expected_bech32_address);
       expect(resp.pk.toString("hex")).toEqual(expected_pk);
@@ -593,9 +593,9 @@ describe("Standard-Adr0014", function () {
       expect(resp.error_message).toEqual("No errors");
 
       const expected_bech32_address =
-        "oasis1qzkpf5wrzr9z22827ua44efsvm86yksdzvctsq6r";
+        "oasis1qr9af6sfg3gmv5nefxkq7k7cxpz48r0wlu2j9frf";
       const expected_pk =
-        "d424ac290ba31640775fef1c87ffae982efeb8d2ffe2c4b33d625f6c01f1946d";
+        "bcfd51e4c33347fafdae2732998a4f6c103d26f9a58b1773944616129c791316";
 
       expect(resp.bech32_address).toEqual(expected_bech32_address);
       expect(resp.pk.toString("hex")).toEqual(expected_pk);

@@ -61,8 +61,8 @@ static const char * methodsMap[] = {
     "Reclaim escrow", "Amend commission schedule", "Deregister Entity",
     "Unfreeze Node", "Register Entity", "Submit proposal", "Cast vote",
     "     Transfer     (ParaTime)", "     Deposit      (ParaTime)",
-    "      Withdraw     (ParaTime)", "      Delegate     (ParaTime)",
-    "      Undelegate     (ParaTime)","    Instantiate    (ParaTime)",
+    "      Withdraw     (ParaTime)", "     Delegate    (ParaTime)",
+    "    Undelegate   (ParaTime)","    Instantiate    (ParaTime)",
     "        Call      (ParaTime)","     Upgrade      (ParaTime)",
     "     Transaction    (ParaTime)", "        Call      (ParaTime)",
 };

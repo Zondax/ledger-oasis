@@ -31,7 +31,7 @@ use curve25519_dalek::scalar::Scalar;
 use merlin::{Transcript, TranscriptRng, TranscriptRngBuilder};
 use rand::RngCore;
 use schnorrkel::context::{SigningContext, SigningTranscript};
-use schnorrkel::{PublicKey, SecretKey};
+use schnorrkel::{ExpansionMode, MiniSecretKey, PublicKey, SecretKey};
 use zeroize::Zeroize;
 
 use crate::bolos::*;
@@ -152,6 +152,14 @@ pub extern "C" fn sign_sr25519_phase2(
     mult_with_secret(&mut k, sk_ristretto_expanded);
     signature[32..].copy_from_slice(&add_witness(&mut k, x));
     signature[63] |= 128;
+}
+
+#[no_mangle]
+pub extern "C" fn expanded_sr25519_sk(sk_ed25519_ptr: *mut u8, sk_ed25519_expanded_ptr: *mut u8) {
+    let sk_ed25519 = unsafe { from_raw_parts_mut(sk_ed25519_ptr as *mut u8, 32) };
+    let sk_ed25519_expanded = unsafe { from_raw_parts_mut(sk_ed25519_expanded_ptr as *mut u8, 64) };
+    let secret: MiniSecretKey = MiniSecretKey::from_bytes(&sk_ed25519[..]).unwrap();
+    sk_ed25519_expanded.copy_from_slice(&secret.expand(ExpansionMode::Uniform).to_bytes());
 }
 
 #[no_mangle]
