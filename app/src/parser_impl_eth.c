@@ -234,10 +234,6 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
   return parser_ok;
 }
 
-parser_error_t _validateTxEth(__Z_UNUSED const parser_context_t *ctx) {
-  return parser_ok;
-}
-
 parser_error_t _getItemEth(const parser_context_t *ctx, uint8_t displayIdx,
                            char *outKey, uint16_t outKeyLen, char *outVal,
                            uint16_t outValLen, uint8_t pageIdx,
