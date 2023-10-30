@@ -257,6 +257,9 @@ __Z_INLINE parser_error_t _readString(CborValue *value, uint8_t *out, size_t max
 }
 
 __Z_INLINE parser_error_t _readOrigTo(CborValue *value, uint8_t *out) {
+    if (value == NULL || out == NULL) {
+        return parser_unexpected_value;
+    }
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
     CborValue dummy;
     size_t len = ORIG_TO_SIZE;
@@ -963,7 +966,7 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
 
 parser_error_t _isValidUrl(url_t *url) {
     // Verify they are all printable char
-    for (uint8_t i = 0; i < url->len; i++) {
+    for (uint8_t i = 0; i < (uint8_t)url->len; i++) {
         uint8_t c = *(url->buffer + i);
         // 33  because no space in url
         if (c < 33 || c > 127) {
@@ -1020,7 +1023,7 @@ parser_error_t _isValidEmail(email_t *email) {
     uint8_t arobase_count = 0;
     uint8_t punct_count = 0;
 
-    for (uint8_t i = 0; i < email->len; i++) {
+    for (uint8_t i = 0; i < (uint8_t)email->len; i++) {
         uint8_t c = *(email->buffer + i);
         // Verify they are all printable char
         if (c < 33 || c > 127) {
@@ -1083,7 +1086,7 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
 
 parser_error_t _isValidHandle(handle_t *handle) {
     // Verify they are all printable char
-    for (uint8_t i = 0; i < handle->len; i++) {
+    for (uint8_t i = 0; i < (uint8_t)handle->len; i++) {
         uint8_t c = *(handle->buffer + i);
         if ((c < 48 || c > 57) && (c < 65 || c > 90) && (c < 97 || c > 122) && c != '-' && c != '_') {
             return parser_invalid_handle_format;
@@ -1606,9 +1609,6 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     CborValue it;
     //Get Metadata
     if (_evaluateCborInit(c, &it) == parser_ok && cbor_value_is_map(&it)) {
-        if(!cbor_value_is_map(&it)) {
-            return parser_required_data;
-        }
         CHECK_PARSER_ERR(_readRuntimeMeta(v, &it))
         CHECK_PARSER_ERR(_computeRuntimeSigContext(v))
         v->context.ptr = (uint8_t *)v->oasis.runtime.sigcxt;
@@ -1911,14 +1911,19 @@ uint8_t _getNumItems(__Z_UNUSED const parser_context_t *c, const parser_tx_t *v)
     if ((v->type == runtimeType)) {
         switch (v->oasis.runtime.call.method) {
             case consensusDeposit:
+                __attribute__((fallthrough));
             case accountsTransfer:
+                __attribute__((fallthrough));
             case consensusWithdraw:
+                __attribute__((fallthrough));
             case consensusDelegate:
+                __attribute__((fallthrough));
             case consensusUndelegate:
                 itemCount += 3;
                 break;
             default:
             case contractsCall:
+                __attribute__((fallthrough));
             case contractsInstantiate:
                 itemCount += 2 + v->oasis.runtime.call.body.contracts.tokensLen + v->oasis.runtime.call.body.contracts.dataValid;
                 break;

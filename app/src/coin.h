@@ -58,6 +58,9 @@
 #define SIGCONTEXT_HASH_LEN     64
 #define ORIG_TO_SIZE            42
 #define ED25519_SIGNATURE_SIZE  64u
+#define ETH_MAP_BUFFER          60
+#define ETH_ADDR_HEX_LEN        41
+#define ETH_ADDR_OFFSET         12
 
 typedef enum {
     addr_ed25519 = 0,

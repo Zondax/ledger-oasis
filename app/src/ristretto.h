@@ -13,7 +13,7 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
-
+#pragma once
 #define ED25519_SCALAR_BYTES       32
 #define RISTRETTO_BYTES            32
 #define ED25519_SDKPOINT_BYTES     65

@@ -22,22 +22,22 @@
 #include "parser_impl.h"
 #include "sha512.h"
 
-zxerr_t crypto_getBytesToSign(uint8_t *toSign, size_t toSignLen) {
+zxerr_t crypto_getBytesToSign(uint8_t *out_hash, size_t out_hash_len) {
 #if defined(APP_CONSUMER)
-    if (toSign == NULL || toSignLen < CX_SHA512_SIZE) {
+    if (out_hash == NULL || out_hash_len < CX_SHA512_SIZE) {
         return zxerr_encoding_failed;
     }
-    MEMZERO(toSign, toSignLen);
+    MEMZERO(out_hash, out_hash_len);
 
     uint8_t *message = tx_get_buffer() + CRYPTO_BLOB_SKIP_BYTES;
     uint16_t messageLength = tx_get_buffer_length() - CRYPTO_BLOB_SKIP_BYTES;
-    SHA512_256(message, messageLength, toSign);
+    SHA512_256(message, messageLength, out_hash);
 
     if (parser_tx_obj.type == runtimeType) {
         message = tx_get_buffer() + parser_tx_obj.oasis.runtime.metaLen;
         messageLength = tx_get_buffer_length() - parser_tx_obj.oasis.runtime.metaLen;
         SHA512_256_with_context(parser_tx_obj.context.ptr, parser_tx_obj.context.len,
-                                 message, messageLength, toSign);
+                                 message, messageLength, out_hash);
     }
 #endif
     return zxerr_ok;

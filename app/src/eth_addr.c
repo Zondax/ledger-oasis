@@ -23,6 +23,10 @@
 #include "zxformat.h"
 
 zxerr_t eth_addr_getNumItems(uint8_t *num_items) {
+    if (num_items == NULL) {
+        return zxerr_no_data;
+    }
+    
     zemu_log_stack("eth_addr_getNumItems");
     *num_items = 1;
     if (app_mode_expert()) {

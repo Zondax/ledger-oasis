@@ -266,7 +266,6 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 }
 
 parser_error_t parser_validate(__Z_UNUSED const parser_context_t *ctx) {
-    // UNUSED(ctx);
     if(parser_tx_obj.type == nodeType) {
         //We don't validate anything, for now
         return parser_ok;
