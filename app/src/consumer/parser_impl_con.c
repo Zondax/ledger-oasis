@@ -396,7 +396,7 @@ __Z_INLINE parser_error_t _readBound(CborValue *value, commissionRateBoundStep_t
     CborValue tmp;
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "start", &tmp))
     if (tmp.type != CborInvalidType) {
-        CHECK_PARSER_ERR(cbor_value_get_uint64(&tmp, &out->start))
+        CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &out->start))
     }
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(value, "rate_max", &tmp))
@@ -671,7 +671,8 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             const uint8_t *buffer;
             size_t buffer_size;
 
-            CHECK_CBOR_ERR(get_string_chunk(&contents, (const void **) &buffer, &buffer_size))
+            CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&contents))
+            CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&contents, (const void **) &buffer, &buffer_size, NULL))
             cbor_parser_state_t *cborState = &v->oasis.tx.body.registryRegisterEntity.entity.cborState;
             CHECK_CBOR_ERR(cbor_parser_init(buffer, buffer_size, 0, &cborState->parser, &cborState->startValue))
 
@@ -953,12 +954,12 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
     MEMZERO(&v->oasis.entity_metadata.name, sizeof(name_t));
     v->oasis.entity_metadata.name.len = sizeof_field(name_t, buffer);
 
-    CHECK_PARSER_ERR(cbor_value_get_string_length(&nameField, &cbor_name_length))
+    CHECK_CBOR_ERR(cbor_value_get_string_length(&nameField, &cbor_name_length))
     if (cbor_name_length > ENTITY_METADATA_NAME_MAX_CHAR) {
         return parser_invalid_name_length;
     }
 
-    CHECK_PARSER_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer,
+    CHECK_CBOR_ERR(cbor_value_copy_text_string(&nameField, (char *) &v->oasis.entity_metadata.name.buffer,
                                                  &v->oasis.entity_metadata.name.len, &dummy))
 
     return parser_ok;
@@ -1003,7 +1004,7 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
     }
 
-    CHECK_PARSER_ERR(cbor_value_get_string_length(&urlField, &cbor_url_length))
+    CHECK_CBOR_ERR(cbor_value_get_string_length(&urlField, &cbor_url_length))
     if (cbor_url_length > ENTITY_METADATA_URL_MAX_CHAR) {
         return parser_invalid_url_length;
     }
@@ -1067,7 +1068,7 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
     }
 
-    CHECK_PARSER_ERR(cbor_value_get_string_length(&emailField, &cbor_email_length))
+    CHECK_CBOR_ERR(cbor_value_get_string_length(&emailField, &cbor_email_length))
     if (cbor_email_length > ENTITY_METADATA_EMAIL_MAX_CHAR) {
         return parser_invalid_email_length;
     }
@@ -1108,7 +1109,7 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
     }
 
-    CHECK_PARSER_ERR(cbor_value_get_string_length(&keybaseField, &cbor_keybase_length))
+    CHECK_CBOR_ERR(cbor_value_get_string_length(&keybaseField, &cbor_keybase_length))
     if (cbor_keybase_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
         return parser_invalid_handle_length;
     }
@@ -1136,7 +1137,7 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
         return parser_ok;
     }
 
-    CHECK_PARSER_ERR(cbor_value_get_string_length(&twitterField, &cbor_twitter_length))
+    CHECK_CBOR_ERR(cbor_value_get_string_length(&twitterField, &cbor_twitter_length))
     if (cbor_twitter_length > ENTITY_METADATA_HANDLE_MAX_CHAR) {
         return parser_invalid_handle_length;
     }
@@ -1249,8 +1250,8 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
         // We create new Cbor parser with the byte string from data
         uint8_t *buf;
         size_t buffer_size;
-
-        CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buf, &buffer_size))
+        CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
+        CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **) &buf, &buffer_size, NULL))
         v->oasis.runtime.call.body.contracts.dataPtr = buf;
         v->oasis.runtime.call.body.contracts.dataLen = buffer_size;
         cbor_parser_state_t *cborState = &v->oasis.runtime.call.body.contracts.cborState;
@@ -1367,7 +1368,8 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     }
     const uint8_t *buffer;
     size_t buffer_size;
-    CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buffer, &buffer_size))
+    CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
+    CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **) &buffer, &buffer_size, NULL))
 
     MEMZERO(&v->oasis.runtime.call.body.encrypted.data_hash, sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
 #if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
@@ -1415,7 +1417,8 @@ __Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootIte
     }
     const uint8_t *buffer;
     size_t buffer_size;
-    CHECK_CBOR_ERR(get_string_chunk(&dataField, (const void **) &buffer, &buffer_size))
+    CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
+    CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **) &buffer, &buffer_size, NULL))
 
     MEMZERO(&v->oasis.runtime.call.body.evm.data_hash, sizeof(v->oasis.runtime.call.body.evm.data_hash));
 #if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
@@ -1607,8 +1610,11 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     v->context.suffixLen = 0;
 
     CborValue it;
+    CborParser parser;
+    CborError err = cbor_parser_init(c->buffer + c->offset, c->bufferLen - c->offset, 0, &parser, &it);
+
     //Get Metadata
-    if (_evaluateCborInit(c, &it) == parser_ok && cbor_value_is_map(&it)) {
+    if (cbor_value_is_map(&it)) {
         CHECK_PARSER_ERR(_readRuntimeMeta(v, &it))
         CHECK_PARSER_ERR(_computeRuntimeSigContext(v))
         v->context.ptr = (uint8_t *)v->oasis.runtime.sigcxt;
@@ -1627,7 +1633,7 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
         if(c->offset >= c->bufferLen) {
             return parser_required_body;
         }
-    } else {
+    } else if(err == CborNoError || err == CborErrorIllegalNumber){
         // First byte is the context length
         v->context.len = *(c->buffer + c->offset);
 
@@ -1640,6 +1646,8 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
         }
         v->context.ptr = ++c->buffer;
         c->offset += v->context.len;
+    } else {
+        return parser_cbor_unexpected;
     }
 
     // Check all bytes in context as ASCII within 32..127

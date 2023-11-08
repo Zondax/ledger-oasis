@@ -22,7 +22,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 option(ENABLE_FUZZING "Build with fuzzing instrumentation and build fuzz targets" OFF)
 option(ENABLE_COVERAGE "Build with source code coverage instrumentation" OFF)
-option(ENABLE_SANITIZERS "Build with ASAN and UBSAN" OFF)
+option(ENABLE_SANITIZERS "Build with ASAN and UBSAN" ON)
 
 string(APPEND CMAKE_C_FLAGS " -fno-omit-frame-pointer -g")
 string(APPEND CMAKE_CXX_FLAGS " -fno-omit-frame-pointer -g")
