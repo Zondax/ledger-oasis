@@ -30,7 +30,7 @@ core
 tags
 .DS_Store
 *.debug
-Makefile
+Makefile*
 *.prl
 *.app
 *.pro.user*
