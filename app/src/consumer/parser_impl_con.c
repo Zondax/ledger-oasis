@@ -1614,7 +1614,7 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     CborError err = cbor_parser_init(c->buffer + c->offset, c->bufferLen - c->offset, 0, &parser, &it);
 
     //Get Metadata
-    if (cbor_value_is_map(&it)) {
+    if (cbor_value_is_map(&it) && err == CborNoError) {
         CHECK_PARSER_ERR(_readRuntimeMeta(v, &it))
         CHECK_PARSER_ERR(_computeRuntimeSigContext(v))
         v->context.ptr = (uint8_t *)v->oasis.runtime.sigcxt;
@@ -1644,14 +1644,15 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
         if (c->offset + v->context.len >= c->bufferLen) {
             return parser_context_unexpected_size;
         }
-        v->context.ptr = ++c->buffer;
+        c->offset++;
+        v->context.ptr = c->buffer + 1;
         c->offset += v->context.len;
     } else {
         return parser_cbor_unexpected;
     }
 
     // Check all bytes in context as ASCII within 32..127
-    for (uint16_t i = 0; i < v->context.len - 1; i++) {
+    for (uint16_t i = 0; i < v->context.len; i++) {
         const uint8_t tmp = v->context.ptr[i];
         if (!IS_PRINTABLE(tmp)) {
             return parser_context_invalid_chars;
