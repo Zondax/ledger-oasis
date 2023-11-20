@@ -878,10 +878,12 @@ __Z_INLINE parser_error_t _readFormatVersion(parser_tx_t *v, CborValue *rootItem
         return parser_required_v;
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
-    // REVIEW: is int same as uint16_t ?
-    CHECK_CBOR_ERR(cbor_value_get_int(&vField, (int *) &v->oasis.entity_metadata.v))
-    if (v->oasis.entity_metadata.v != ENTITY_METADATA_V)
+
+    if (v->oasis.entity_metadata.v != ENTITY_METADATA_V) {
         return parser_invalid_v_value;
+    }
+    int64_t tmpVersion = v->oasis.entity_metadata.v;
+    CHECK_CBOR_ERR(cbor_value_get_int64_checked(&vField, &tmpVersion))
 
     return parser_ok;
 }
@@ -894,7 +896,9 @@ __Z_INLINE parser_error_t _readRuntimeVersion(parser_tx_t *v, CborValue *rootIte
         return parser_required_v;
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
-    CHECK_CBOR_ERR(cbor_value_get_int(&vField, (int *) &v->oasis.runtime.v))
+
+    int64_t tmpVersion = v->oasis.runtime.v;
+    CHECK_CBOR_ERR(cbor_value_get_int64_checked(&vField, &tmpVersion))
 
     return parser_ok;
 }
@@ -1636,16 +1640,17 @@ parser_error_t _readContext(parser_context_t *c, parser_tx_t *v) {
     } else if(err == CborNoError || err == CborErrorIllegalNumber){
         // First byte is the context length
         v->context.len = *(c->buffer + c->offset);
+        c->offset++;
 
         if (v->context.len < 2) {
             return parser_init_context_empty;
         }
 
-        if (c->offset + v->context.len >= c->bufferLen) {
+        if (c->offset + v->context.len > c->bufferLen) {
             return parser_context_unexpected_size;
         }
-        c->offset++;
-        v->context.ptr = c->buffer + 1;
+
+        v->context.ptr = c->buffer + c->offset;
         c->offset += v->context.len;
     } else {
         return parser_cbor_unexpected;
@@ -1703,14 +1708,6 @@ parser_error_t matchPrefix(char *prefix, uint8_t prefixLen, oasis_blob_type_e *t
 parser_error_t _extractContextSuffix(parser_tx_t *v) {
     v->context.suffixPtr = NULL;
     v->context.suffixLen = 0;
-
-    // Check all bytes in context as ASCII within 32..127
-    for (uint8_t i = 0; i < v->context.len - 1; i++) {
-        uint8_t c = *(v->context.ptr + i);
-        if (!IS_PRINTABLE(c)) {
-            return parser_context_invalid_chars;
-        }
-    }
 
     CHECK_PARSER_ERR(matchPrefix((char *) v->context.ptr, v->context.len, &v->type))
 
@@ -1771,7 +1768,8 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     if (c->bufferLen <= c->offset) {
         return parser_unexpected_buffer_end;
     }
-    CborValue rootItem;
+
+    CborValue rootItem = {0};
     INIT_CBOR_PARSER(c, rootItem)
 
     CHECK_CBOR_ERR(cbor_value_validate_basic(&rootItem))
