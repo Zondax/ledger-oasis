@@ -879,11 +879,13 @@ __Z_INLINE parser_error_t _readFormatVersion(parser_tx_t *v, CborValue *rootItem
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
 
+    int64_t tmpVersion = v->oasis.entity_metadata.v;
+    CHECK_CBOR_ERR(cbor_value_get_int64_checked(&vField, &tmpVersion))
+    v->oasis.entity_metadata.v = tmpVersion;
+
     if (v->oasis.entity_metadata.v != ENTITY_METADATA_V) {
         return parser_invalid_v_value;
     }
-    int64_t tmpVersion = v->oasis.entity_metadata.v;
-    CHECK_CBOR_ERR(cbor_value_get_int64_checked(&vField, &tmpVersion))
 
     return parser_ok;
 }
@@ -899,6 +901,7 @@ __Z_INLINE parser_error_t _readRuntimeVersion(parser_tx_t *v, CborValue *rootIte
 
     int64_t tmpVersion = v->oasis.runtime.v;
     CHECK_CBOR_ERR(cbor_value_get_int64_checked(&vField, &tmpVersion))
+    v->oasis.runtime.v = tmpVersion;
 
     return parser_ok;
 }
