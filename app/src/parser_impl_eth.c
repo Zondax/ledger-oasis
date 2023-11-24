@@ -195,6 +195,10 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
   if (marker != eip2930 && marker != eip1559 && marker < 0xc0)
     return parser_unsupported_tx;
 
+  if (ctx->offset + 1 > ctx->bufferLen) {
+      return parser_unexpected_buffer_end;
+  }
+
   if (marker == eip2930 || marker == eip1559)
     ctx->offset += 1;
 

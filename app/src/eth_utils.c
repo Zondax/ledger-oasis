@@ -196,6 +196,11 @@ parse_rlp_item(const uint8_t *data,
     // And then the length is just the number BE encoded
     uint8_t num_bytes = marker - 0xF7;
     uint64_t len = 0;
+
+    if (dataLen < num_bytes + 1) {
+        return rlp_no_data;
+    }
+    
     if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0)
         return rlp_invalid_data;
 
