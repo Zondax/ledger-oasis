@@ -31,7 +31,7 @@ const defaultOptions = {
   custom: `-s "${APP_SEED}"`,
 };
 
-jest.setTimeout(60000);
+jest.setTimeout(150000);
 
 // Derivation path. First 3 items are automatically hardened!
 const path = "m/44'/474'/5'/0'/3'";

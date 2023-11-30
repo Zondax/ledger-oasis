@@ -189,11 +189,19 @@ parser_error_t parseEthTx(parser_context_t *ctx, eth_tx_t *tx_obj) {
 }
 
 parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
+  if (ctx == NULL || tx_obj == NULL) {
+    return parser_no_data;
+  }
+
   uint8_t marker = ctx->buffer[0];
   uint32_t start = ctx->offset;
 
   if (marker != eip2930 && marker != eip1559 && marker < 0xc0)
     return parser_unsupported_tx;
+
+  if (ctx->offset + 1 > ctx->bufferLen) {
+      return parser_unexpected_buffer_end;
+  }
 
   if (marker == eip2930 || marker == eip1559)
     ctx->offset += 1;
@@ -209,7 +217,7 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
   uint32_t len = 0;
 
   // read out transaction rlp header(which indicates tx data length)
-  if (parse_rlp_item(ctx->buffer + ctx->offset, ctx->bufferLen, &read, &len) !=
+  if (parse_rlp_item(ctx->buffer + ctx->offset, ctx->bufferLen - ctx->offset, &read, &len) !=
       rlp_ok) {
     // should not happen as this was check before
     ctx->offset = start;
@@ -231,10 +239,6 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
   if (err != parser_ok)
     return err;
 
-  return parser_ok;
-}
-
-parser_error_t _validateTxEth(__Z_UNUSED const parser_context_t *ctx) {
   return parser_ok;
 }
 

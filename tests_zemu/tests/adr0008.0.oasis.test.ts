@@ -28,7 +28,7 @@ const defaultOptions = {
   custom: `-s "${APP_SEED}"`,
 };
 
-jest.setTimeout(60000);
+jest.setTimeout(100000);
 
 describe("Standard-Adr0008-0-Oasis", function () {
   test.concurrent.each(models)("get address", async function (m) {

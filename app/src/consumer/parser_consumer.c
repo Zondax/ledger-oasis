@@ -89,14 +89,8 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 }
 
 parser_error_t parser_validate(const parser_context_t *ctx) {
-    if(ctx->tx_type == eth_tx) {
-        CHECK_PARSER_ERR(_validateTxEth(ctx))
-    } else {
+    if(ctx->tx_type != eth_tx) {
         CHECK_PARSER_ERR(_validateTx(ctx, &parser_tx_obj))
-
-        if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate) && !app_mode_expert()) {
-            return parser_ok;
-        }
     }
 
     // Iterate through all items to check that all can be shown and are valid
@@ -702,8 +696,8 @@ __Z_INLINE parser_error_t parser_ethMapNative(const uint8_t *ethstr, const uint1
     }
 
     uint8_t ethaddr[ETH_ADDR_LEN] = {0};
-    uint8_t total[60] = {0};
-    uint8_t messageDigest[KECCAK256_HASH_LEN] = {0};
+    uint8_t total[ETH_MAP_BUFFER] = {0};
+    uint8_t messageDigest[SHA512_DIGEST_LENGTH] = {0};
 
     //Take Eth addr without 0x
     hexstr_to_array(ethaddr, ETH_ADDR_LEN, (char *)&ethstr[2], ethstrLen - 2);
@@ -849,9 +843,9 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContracts(const parser_context_t 
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t commonIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
-    switch (displayIndex)
+    switch (commonIndex)
     {
         case 0: {
             snprintf(outKey, outKeyLen, "Fee");
@@ -924,9 +918,9 @@ __Z_INLINE parser_error_t parser_getItemRuntimeContractsUpgrade(const parser_con
                                     outVal, outValLen, pageIdx, pageCount);
     }
 
-    uint8_t displayIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
+    uint8_t commonIndex = displayIdx - (index_offset + (uint8_t)parser_tx_obj.oasis.runtime.call.body.contracts.tokensLen);
 
-    switch (displayIndex)
+    switch (commonIndex)
     {
         case 0: {
             snprintf(outKey, outKeyLen, "New Code ID");
@@ -1121,13 +1115,18 @@ __Z_INLINE parser_error_t parser_getItemRuntime(const parser_context_t *ctx,
     *pageCount = 1;
     switch (parser_tx_obj.oasis.runtime.call.method) {
         case consensusDeposit:
+            __attribute__((fallthrough));
         case consensusWithdraw:
+            __attribute__((fallthrough));
         case accountsTransfer:
+            __attribute__((fallthrough));
         case consensusDelegate:
+            __attribute__((fallthrough));
         case consensusUndelegate:
             return parser_getItemRuntimeConsensus(ctx, displayIdx, outKey, outKeyLen,
                                             outVal, outValLen, pageIdx, pageCount);
         case contractsCall:
+            __attribute__((fallthrough));
         case contractsInstantiate:
             return parser_getItemRuntimeContracts(ctx, displayIdx, outKey, outKeyLen,
                                                 outVal, outValLen, pageIdx, pageCount);

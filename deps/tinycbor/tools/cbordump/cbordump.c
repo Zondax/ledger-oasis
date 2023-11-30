@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 Intel Corporation
+** Copyright (C) 2021 Intel Corporation
 **
 ** Permission is hereby granted, free of charge, to any person obtaining a copy
 ** of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ void printerror(CborError err, const char *fname)
     exit(EXIT_FAILURE);
 }
 
-void dumpFile(FILE *in, const char *fname, bool printJosn, int flags)
+void dumpFile(FILE *in, const char *fname, bool printJson, int flags)
 {
     static const size_t chunklen = 16 * 1024;
     static size_t bufsize = 0;
@@ -72,14 +72,14 @@ void dumpFile(FILE *in, const char *fname, bool printJosn, int flags)
     CborValue value;
     CborError err = cbor_parser_init(buffer, buflen, 0, &parser, &value);
     if (!err) {
-        if (printJosn)
+        if (printJson)
             err = cbor_value_to_json_advance(stdout, &value, flags);
         else
             err = cbor_value_to_pretty_advance_flags(stdout, &value, flags);
         if (!err)
             puts("");
     }
-    if (!err && value.ptr != buffer + buflen)
+    if (!err && cbor_value_get_next_byte(&value) != buffer + buflen)
         err = CborErrorGarbageAtEnd;
     if (err)
         printerror(err, fname);

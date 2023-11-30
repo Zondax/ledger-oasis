@@ -196,17 +196,17 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "o2dvcmlnX3RveCowWERDRTA3NUUxQzM5QjFBRTBCNzVENTU0NTU4QjY0NTFBMjI2RkZFMDBqcnVudGltZV9pZHhAMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNzJjODIxNWU2MGQ1YmNhN21jaGFpbl9jb250ZXh0eEA1MDMwNGY5OGRkYjY1NjYyMGVhODE3Y2MxNDQ2YzQwMTc1MmEwNWEyNDliMzZjOWI5MGRiYTQ2MTY4Mjk5Nzdh",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJjZ2FzGQ+gZmFtb3VudIJEB1vNFUNGT09kY2FsbKJkYm9keaJidG9VAO1D91JQJv1Tegv1JEiLfFSfA5glZmFtb3VudIJARFdCVENmbWV0aG9kcWFjY291bnRzLlRyYW5zZmVy",
+          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmiYnRvVQDI0PRZ2zjlzDHKd+ZtLERW3L61AmZhbW91bnSCSAFjRXhdigAAQGZtZXRob2RxYWNjb3VudHMuVHJhbnNmZXI=",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 7f1eb9fa832a02ccda132d330f342dbef92c0817bf73eeea12020552f1d62f86",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -256,7 +256,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJmYW1vdW50gkBAcmNvbnNlbnN1c19tZXNzYWdlcwFkY2FsbKJkYm9keaFmYW1vdW50gkID6ERXQlRDZm1ldGhvZHJjb25zZW5zdXMuV2l0aGRyYXc=",
+          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJmYW1vdW50gkBAcmNvbnNlbnN1c19tZXNzYWdlcwFkY2FsbKJkYm9keaFmYW1vdW50gkBAZm1ldGhvZHJjb25zZW5zdXMuV2l0aGRyYXc=",
           "base64",
         );
 
@@ -306,17 +306,17 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "o2dvcmlnX3RveCg3MDlFRWJkOTc5MzI4QTJCMzYwNUExNjA5MTVERUIyNkUxODZhYkY4anJ1bnRpbWVfaWR4QDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDcyYzgyMTVlNjBkNWJjYTdtY2hhaW5fY29udGV4dHhANTAzMDRmOThkZGI2NTY2MjBlYTgxN2NjMTQ0NmM0MDE3NTJhMDVhMjQ5YjM2YzliOTBkYmE0NjE2ODI5OTc3YQ==",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZQFsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhbHNlY3AyNTZrMWV0aFghAwF6GNjbybMzhi3XRj5R1oTiMMkO1nAwB7NZAlH1X4BEY2ZlZaJjZ2FzGQ+gZmFtb3VudIJEB1vNFUNGT09kY2FsbKJkYm9keaJidG9VADDXgI3ukLc0acA65kYHwNVuBE4rZmFtb3VudIJARFdCVENmbWV0aG9kcWFjY291bnRzLlRyYW5zZmVy",
+          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaFmYW1vdW50gkBAZGNhbGyiZGJvZHmiYnRvVQDI0PRZ2zjlzDHKd+ZtLERW3L61AmZhbW91bnSCSAFjRXhdigAAQGZtZXRob2RxYWNjb3VudHMuVHJhbnNmZXI=",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 7f1eb9fa832a02ccda132d330f342dbef92c0817bf73eeea12020552f1d62f86",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse =
@@ -371,17 +371,17 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFsc2VjcDI1NmsxZXRoWCEDAXoY2NvJszOGLddGPlHWhOIwyQ7WcDAHs1kCUfVfgERjZmVlomZhbW91bnSCQEByY29uc2Vuc3VzX21lc3NhZ2VzAWRjYWxsomRib2R5omJ0b1UA84957B5s/pe0/gbHiYtSqPrbR4NmYW1vdW50gkgBY0V4XYoAAERXQlRDZm1ldGhvZHJjb25zZW5zdXMuV2l0aGRyYXc=",
+          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJmYW1vdW50gkBAcmNvbnNlbnN1c19tZXNzYWdlcwFkY2FsbKJkYm9keaFmYW1vdW50gkBAZm1ldGhvZHJjb25zZW5zdXMuV2l0aGRyYXc=",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse =
@@ -501,17 +501,17 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnc3IyNTUxOVggljm9ZwdAldhlyWM2B4C+3gQZis+ceaxnt6QA4rOcP0ljZmVlomNnYXMZD6BmYW1vdW50gkQHW80VQ0ZPT2RjYWxsomRib2R5o2RkYXRhWESpBZy7AAAAAAAAAAAAAAAAkK3jtwZfpxXHoVAxOHffHTPnd9UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2V2YWx1ZVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWRkcmVzc1QhxxjCLVLQ86eJt1LUwv1ZCKinM2ZtZXRob2RoZXZtLkNhbGw=",
+          "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnZWQyNTUxOVggNcPzNW3YU2T+ugNUtUWtoQnRvbOL9dYSaBfbjHLP1pFjZmVlomNnYXMZB9BmYW1vdW50gkBAZGNhbGyiZGJvZHmjZGRhdGFYRKkFnLsAAAAAAAAAAAAAAACQreO3Bl+nFcehUDE4d98dM+d31QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZXZhbHVlWCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGdhZGRyZXNzVCHHGMItUtDzp4m3UtTC/VkIqKczZm1ldGhvZGhldm0uQ2FsbA==",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -618,17 +618,17 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ3NyMjU1MTlYIJY5vWcHQJXYZcljNgeAvt4EGYrPnHmsZ7ekAOKznD9JY2ZlZaNjZ2FzGQfQZmFtb3VudIJAQHJjb25zZW5zdXNfbWVzc2FnZXMBZGNhbGyiZGJvZHmiYnRvVQDzj3nsHmz+l7T+BseJi1Ko+ttHg2ZhbW91bnSCQgPoQGZtZXRob2RyY29uc2Vuc3VzLldpdGhkcmF3",
+          "o2F2AWJhaaJic2mBomVub25jZQBsYWRkcmVzc19zcGVjoWlzaWduYXR1cmWhZ2VkMjU1MTlYIDXD8zVt2FNk/roDVLVFraEJ0b2zi/XWEmgX24xyz9aRY2ZlZaJmYW1vdW50gkBAcmNvbnNlbnN1c19tZXNzYWdlcwFkY2FsbKJkYm9keaFmYW1vdW50gkBAZm1ldGhvZHJjb25zZW5zdXMuV2l0aGRyYXc=",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse = await app.getAddressAndPubKey_sr25519(path);
@@ -679,17 +679,17 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBhNmQxZTNlYmY2MGRmZjZjbWNoYWluX2NvbnRleHR4QDUwMzA0Zjk4ZGRiNjU2NjIwZWE4MTdjYzE0NDZjNDAxNzUyYTA1YTI0OWIzNmM5YjkwZGJhNDYxNjgyOTk3N2E=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
           "base64",
         );
 
         const txBlob = Buffer.from(
-          "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnc3IyNTUxOVggljm9ZwdAldhlyWM2B4C+3gQZis+ceaxnt6QA4rOcP0ljZmVlomNnYXMZD6BmYW1vdW50gkQHW80VQ0ZPT2RjYWxsomRib2R5o2RkYXRhWESpBZy7AAAAAAAAAAAAAAAAkK3jtwZfpxXHoVAxOHffHTPnd9UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2V2YWx1ZVggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABnYWRkcmVzc1QhxxjCLVLQ86eJt1LUwv1ZCKinM2ZtZXRob2RoZXZtLkNhbGw=",
+          "o2F2AWJhaaJic2mBomVub25jZRv//////////2xhZGRyZXNzX3NwZWOhaXNpZ25hdHVyZaFnZWQyNTUxOVggNcPzNW3YU2T+ugNUtUWtoQnRvbOL9dYSaBfbjHLP1pFjZmVlomNnYXMZB9BmYW1vdW50gkBAZGNhbGyiZGJvZHmjZGRhdGFYRKkFnLsAAAAAAAAAAAAAAACQreO3Bl+nFcehUDE4d98dM+d31QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZXZhbHVlWCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGdhZGRyZXNzVCHHGMItUtDzp4m3UtTC/VkIqKczZm1ldGhvZGhldm0uQ2FsbA==",
           "base64",
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 899658d606b299101f96238fac38a575a7024415b94e0d97ad0fe63f36d362bc",
+          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
         );
 
         const pkResponse = await app.getAddressAndPubKey_sr25519(path);
@@ -911,6 +911,7 @@ describe("Standard-Adr0014", function () {
       await sim.close();
     }
   });
+
   test.concurrent.each(models)("contracts-types", async function (m) {
     const sim = new Zemu(m.path);
     try {

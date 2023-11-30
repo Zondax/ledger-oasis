@@ -33,18 +33,28 @@ uint8_t chain_code;
 
 #include "cx.h"
 
-__Z_INLINE int keccak_hash(const unsigned char *in, unsigned int inLen,
+__Z_INLINE zxerr_t keccak_hash(const unsigned char *in, unsigned int inLen,
                           unsigned char *out, unsigned int outLen) {
-    // return actual size using value from signatureLength
-    cx_sha3_t ctx;
-    cx_keccak_init_no_throw(&ctx, outLen * 8);
-    cx_hash_no_throw((cx_hash_t *)&ctx, CX_LAST, in, inLen, out, outLen);
+    if (in == NULL || out == NULL || outLen < PUB_KEY_SIZE) {
+        return zxerr_invalid_crypto_settings;
+    }
 
-    return 0;
+    cx_sha3_t ctx;
+    zxerr_t error = zxerr_unknown;
+
+    CATCH_CXERROR(cx_keccak_init_no_throw(&ctx, outLen * 8))
+    CATCH_CXERROR(cx_hash_no_throw((cx_hash_t *)&ctx, CX_LAST, in, inLen, out, outLen))
+    error = zxerr_ok;
+
+catch_cx_error:
+    return error;
 }
 
-int keccak_digest(const unsigned char *in, unsigned int inLen,
+zxerr_t keccak_digest(const unsigned char *in, unsigned int inLen,
                           unsigned char *out, unsigned int outLen) {
+    if (in == NULL || out == NULL || outLen < PUB_KEY_SIZE) {
+        return zxerr_invalid_crypto_settings;
+    }
     return keccak_hash(in, inLen, out, outLen);
 }
 
@@ -52,12 +62,10 @@ static zxerr_t keccak(uint8_t *out, size_t out_len, uint8_t *in, size_t in_len){
     if (in == NULL || out == NULL || out_len < PUB_KEY_SIZE) {
         return zxerr_invalid_crypto_settings;
     }
-    cx_sha3_t sha3;
-    cx_keccak_init_no_throw(&sha3, 256);
-    cx_hash_no_throw((cx_hash_t*)&sha3, CX_LAST, in, in_len, out, out_len);
 
-    return zxerr_ok;
+    return keccak_hash(in, in_len, out, out_len);
 }
+
 zxerr_t  crypto_extractPublicKeySr25519(uint8_t *pubKey, uint16_t pubKeyLen) {
     if (pubKey == NULL || pubKeyLen < PK_LEN_SR25519) {
         return zxerr_invalid_crypto_settings;
@@ -290,19 +298,14 @@ catch_cx_error:
     return error;
 }
 
-static uint8_t sr25519_signature[SIG_LEN];
-
-void zeroize_sr25519_signdata(void) {
-    explicit_bzero(sr25519_signature, sizeof(sr25519_signature));
-}
-
-void copy_sr25519_signdata(uint8_t *buffer) {
-    memcpy(buffer, sr25519_signature, SIG_LEN);
-}
-
-zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx, size_t ctx_len) {
+zxerr_t crypto_sign_sr25519(uint8_t *output, uint16_t outputLen, const uint8_t *data, size_t len, const uint8_t *ctx, size_t ctx_len, uint16_t *sigSize) {
+    if (output == NULL || data == NULL || sigSize == NULL ||
+        ctx == NULL ||outputLen < SIG_LEN ) {
+        return zxerr_unknown;
+    }
     uint8_t sk[SK_LEN_25519] = {0};
     uint8_t pk[PK_LEN_SR25519] = {0};
+    *sigSize = 0;
 
     zxerr_t error = zxerr_unknown;
     const int mode = (hdPathLen == HDPATH_LEN_ADR0008) ? HDW_ED25519_SLIP10 : HDW_NORMAL;
@@ -325,16 +328,16 @@ zxerr_t crypto_sign_sr25519(const uint8_t *data, size_t len, const uint8_t *ctx,
     }
 
     CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(pk, sk))
-    sign_sr25519_phase1(sk, pk, ctx, ctx_len, data, len, sr25519_signature);
-    CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(sr25519_signature, sr25519_signature + PK_LEN_SR25519))
+    sign_sr25519_phase1(sk, pk, ctx, ctx_len, data, len, output);
+    CATCH_CXERROR(crypto_scalarmult_ristretto255_base_sdk(output, output + PK_LEN_SR25519))
+    *sigSize = SIG_LEN;
     error = zxerr_ok;
-
 
 catch_cx_error:
     if (error == zxerr_ok) {
-        sign_sr25519_phase2(sk, pk, ctx, ctx_len, data, len, sr25519_signature);
+        sign_sr25519_phase2(sk, pk, ctx, ctx_len, data, len, output);
     } else {
-        explicit_bzero(sr25519_signature, sizeof(sr25519_signature));
+         MEMZERO(output, outputLen);
     }
 
     MEMZERO(pk, sizeof(pk));
@@ -592,11 +595,11 @@ zxerr_t crypto_fillEthAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *ad
     answer->address[0] = ETH_ADDR_LEN * 2;
 
     // get hex of the eth address(last 20 bytes of pubkey hash)
-    char str[41] = {0};
+    char str[ETH_ADDR_HEX_LEN] = {0};
 
     // take the last 20-bytes of the hash, they are the ethereum address
-    array_to_hexstr(str, 41, hash + 12 , ETH_ADDR_LEN);
-    MEMCPY(answer->address+1, str, 40);
+    array_to_hexstr(str, ETH_ADDR_HEX_LEN, hash + ETH_ADDR_OFFSET , ETH_ADDR_LEN);
+    MEMCPY(answer->address+1, str, ETH_ADDR_HEX_LEN - 1);
 
     *addrLen = sizeof_field(answer_eth_t, publicKey) + sizeof_field(answer_eth_t, address);
 

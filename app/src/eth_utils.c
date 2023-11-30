@@ -139,11 +139,12 @@ parse_rlp_item(const uint8_t *data,
                uint32_t *read,
                uint32_t *item_len)
 {
+    if (data == NULL || dataLen == 0 || read == NULL || item_len == NULL) {
+        return rlp_no_data;
+    }
+
     *item_len = 0;
     *read = 0;
-
-    if (dataLen == 0)
-        return rlp_no_data;
 
     uint8_t marker = data[0];
 
@@ -169,6 +170,9 @@ parse_rlp_item(const uint8_t *data,
         // And then the length is just the number BE encoded
         uint8_t num_bytes = marker - 0xB7;
         uint64_t len = 0;
+        if (dataLen < num_bytes + 1) {
+            return rlp_no_data;
+        }
         if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0)
             return rlp_invalid_data;
 
@@ -196,6 +200,11 @@ parse_rlp_item(const uint8_t *data,
     // And then the length is just the number BE encoded
     uint8_t num_bytes = marker - 0xF7;
     uint64_t len = 0;
+
+    if (dataLen < num_bytes + 1) {
+        return rlp_no_data;
+    }
+
     if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0)
         return rlp_invalid_data;
 
