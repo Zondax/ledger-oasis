@@ -141,7 +141,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -151,7 +151,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -196,7 +196,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -206,7 +206,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -251,7 +251,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -261,7 +261,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -306,7 +306,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -316,7 +316,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse =
@@ -371,7 +371,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -381,7 +381,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse =
@@ -441,7 +441,7 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -451,7 +451,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -501,7 +501,7 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -511,7 +511,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -618,7 +618,7 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -628,7 +628,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_sr25519(path);
@@ -679,7 +679,7 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -689,7 +689,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_sr25519(path);
@@ -740,7 +740,7 @@ describe("Standard-Adr0014", function () {
         await sim.clickLeft();
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -750,7 +750,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_sr25519(path);
@@ -799,7 +799,7 @@ describe("Standard-Adr0014", function () {
       await sim.clickLeft();
 
       const meta = Buffer.from(
-        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
         "base64",
       );
 
@@ -809,7 +809,7 @@ describe("Standard-Adr0014", function () {
       );
 
       const sigCtx = Buffer.from(
-        "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+        "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
       );
 
       const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -856,7 +856,7 @@ describe("Standard-Adr0014", function () {
       await sim.clickLeft();
 
       const meta = Buffer.from(
-        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
         "base64",
       );
 
@@ -866,7 +866,7 @@ describe("Standard-Adr0014", function () {
       );
 
       const sigCtx = Buffer.from(
-        "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+        "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
       );
 
       const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -924,7 +924,7 @@ describe("Standard-Adr0014", function () {
       await sim.clickLeft();
 
       const meta = Buffer.from(
-        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+        "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
         "base64",
       );
 
@@ -934,7 +934,7 @@ describe("Standard-Adr0014", function () {
       );
 
       const sigCtx = Buffer.from(
-        "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+        "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
       );
 
       const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -988,7 +988,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -998,7 +998,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
@@ -1043,7 +1043,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         const meta = Buffer.from(
-          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGIxMWIzNjllMGRhNWJiMjMwYjIyMDEyN2Y1ZTdiMjQyZDM4NWVmOGM2ZjU0OTA2MjQzZjMwYWY2M2M4MTU1MzU=",
+          "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
           "base64",
         );
 
@@ -1053,7 +1053,7 @@ describe("Standard-Adr0014", function () {
         );
 
         const sigCtx = Buffer.from(
-          "oasis-runtime-sdk/tx: v0 for chain 03e5935652dc03c4a97e07ab2383bfbcc806a6760f872c1782a7ea560f4f7738",
+          "oasis-runtime-sdk/tx: v0 for chain 70869cb5e35133c69c82c91ccae4cbc0d6c53cfaf5e64fee098b74e7588eba03",
         );
 
         const pkResponse = await app.getAddressAndPubKey_ed25519(path);
