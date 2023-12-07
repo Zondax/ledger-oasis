@@ -35,6 +35,8 @@ use schnorrkel::{ExpansionMode, MiniSecretKey, PublicKey, SecretKey};
 use zeroize::Zeroize;
 
 use crate::bolos::*;
+mod panic_handler;
+use panic_handler::PanicHandler;
 
 mod bolos;
 
@@ -158,14 +160,15 @@ pub extern "C" fn sign_sr25519_phase2(
 pub extern "C" fn expanded_sr25519_sk(sk_ed25519_ptr: *mut u8, sk_ed25519_expanded_ptr: *mut u8) {
     let sk_ed25519 = unsafe { from_raw_parts_mut(sk_ed25519_ptr as *mut u8, 32) };
     let sk_ed25519_expanded = unsafe { from_raw_parts_mut(sk_ed25519_expanded_ptr as *mut u8, 64) };
-    let secret: MiniSecretKey = MiniSecretKey::from_bytes(&sk_ed25519[..]).unwrap();
+    let secret: MiniSecretKey = MiniSecretKey::from_bytes(&sk_ed25519[..]).unwrap_handler();
     sk_ed25519_expanded.copy_from_slice(&secret.expand(ExpansionMode::Uniform).to_bytes());
 }
 
 #[no_mangle]
 pub extern "C" fn get_sr25519_sk(sk_ed25519_expanded_ptr: *mut u8) {
     let sk_ed25519_expanded = unsafe { from_raw_parts_mut(sk_ed25519_expanded_ptr as *mut u8, 64) };
-    let secret: SecretKey = SecretKey::from_ed25519_bytes(&sk_ed25519_expanded[..]).unwrap();
+    let secret: SecretKey =
+        SecretKey::from_ed25519_bytes(&sk_ed25519_expanded[..]).unwrap_handler();
     sk_ed25519_expanded.copy_from_slice(&secret.to_bytes());
 }
 
