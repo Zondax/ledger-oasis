@@ -70,7 +70,6 @@ endif
 
 APP_LOAD_PARAMS = $(APPCURVE) $(COMMON_LOAD_PARAMS) --path ${APPPATH}
 DEFINES += HAVE_PENDING_REVIEW_SCREEN
-NANOS_STACK_SIZE := 2392
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
 DEFINES += HAVE_INSPECT
