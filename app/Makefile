@@ -48,10 +48,7 @@ else ifeq ($(COIN),oasis_validator)
 DEFINES += APP_VALIDATOR
 APPNAME = "OasisVal"
 APPPATH = "43'/474'"
-APPCURVE =
-ifeq ($(TARGET_NAME),TARGET_NANOS)
-APP_STACK_SIZE:=1956
-endif
+APPCURVE = --curve ed25519
 
 ifeq ($(TARGET_NAME),TARGET_NANOX)
 $(error "Oasis Validator App is not supported in Nano X")
