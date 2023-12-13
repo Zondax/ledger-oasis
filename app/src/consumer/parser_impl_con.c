@@ -1383,8 +1383,8 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     cx_sha256_t ctx;
     memset(&ctx, 0, sizeof(ctx));
     cx_sha256_init_no_throw(&ctx);
-    cx_hash_no_throw(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
-            sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
+   CHECK_CX_PARSER_OK(cx_hash_no_throw(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
+            sizeof(v->oasis.runtime.call.body.encrypted.data_hash)));
 #else
     picohash_ctx_t ctx;
     picohash_init_sha256(&ctx);
@@ -1432,8 +1432,8 @@ __Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootIte
     cx_sha256_t ctx;
     memset(&ctx, 0, sizeof(ctx));
     cx_sha256_init_no_throw(&ctx);
-    cx_hash_no_throw(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
-                     sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
+    CHECK_CX_PARSER_OK(cx_hash_no_throw(&ctx.header, CX_LAST, buffer, buffer_size, (unsigned char *)&v->oasis.runtime.call.body.encrypted.data_hash,
+                     sizeof(v->oasis.runtime.call.body.encrypted.data_hash)));
 #else
     picohash_ctx_t ctx;
     picohash_init_sha256(&ctx);

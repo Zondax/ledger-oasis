@@ -23,6 +23,14 @@
 extern "C" {
 #endif
 
+#define CHECK_CX_PARSER_OK(CALL)         \
+    do {                          \
+        cx_err_t __cx_err = CALL; \
+        if (__cx_err != CX_OK) {  \
+            return parser_unexepected_error; \
+        }                         \
+    } while (0)
+
 extern const char context_prefix_tx[];
 extern const char context_prefix_entity[];
 extern const char context_prefix_entity_metadata[];
