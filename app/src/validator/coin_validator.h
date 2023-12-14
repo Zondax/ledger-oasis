@@ -23,23 +23,38 @@ extern "C" {
 #include <stddef.h>
 
 #define CLA                  0xF5
+#define CLA_ETH              0xE0
 
 #define HDPATH_LEN_DEFAULT     5
 #define HDPATH_LEN_ADR0008     3
+#define MAX_BIP32_PATH           10
 
 #define HDPATH_0_DEFAULT     (0x80000000u | 0x2b)
 #define HDPATH_1_DEFAULT     (0x80000000u | 0x1da)
+#define HDPATH_1_ALTERNATIVE (0x80000000u | 0x3c)
+#define HDPATH_1_ALTERNATIVE2 (0x80000000 | 0x162)
 #define HDPATH_2_DEFAULT     (0x80000000u | 0u)
 #define HDPATH_3_DEFAULT     (0u)
 #define HDPATH_4_DEFAULT     (0u)
 
-#define PK_LEN_ED25519       32u
+#define HDPATH_ETH_0_DEFAULT (0x80000000u | 0x2cu)
+#define HDPATH_ETH_1_DEFAULT (0x80000000u | 0x3cu)
 
-typedef enum {
-    addr_ed25519 = 0,
-} address_kind_e;
+#define PK_LEN_ED25519          32u
+#define PK_LEN_SECP256K1        33u
+#define PK_LEN_SECP256K1_FULL   65u
+#define SK_LEN_25519            64u
+#define PK_LEN_ED25519          32u
+#define PK_LEN_SR25519          32u
 
 #define VIEW_ADDRESS_OFFSET_ED25519         (PK_LEN_ED25519)
+#define VIEW_ADDRESS_OFFSET_SECP256K1       (PK_LEN_SECP256K1)
+
+// eth address chain_code allowed valuec
+#define P2_NO_CHAINCODE                 0x00
+#define P2_CHAINCODE                    0x01
+#define VIEW_ADDRESS_OFFSET_ETH             (PK_LEN_SECP256K1_FULL + 1 + 1)
+
 #define VIEW_ADDRESS_ITEM_COUNT             2
 #define VIEW_ADDRESS_LAST_PAGE_DEFAULT      0
 
@@ -62,7 +77,8 @@ typedef enum {
 
 #define COIN_DENOM          ""
 #define COIN_ADDRESS_VERSION    0
-#define COIN_ADDRESS_CONTEXT    "oasis-core/address: staking"
+#define COIN_ADDRESS_ED25519_CONTEXT    "oasis-core/address: staking"
+#define COIN_ADDRESS_SR25519_CONTEXT    "oasis-runtime-sdk/address: sr25519"
 
 #ifdef __cplusplus
 }

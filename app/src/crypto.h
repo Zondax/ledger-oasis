@@ -26,19 +26,31 @@ extern "C" {
 #include <sigutils.h>
 #include <zxerror.h>
 
-extern uint32_t hdPath[HDPATH_LEN_DEFAULT];
+extern uint32_t hdPath[MAX_BIP32_PATH];
 extern uint8_t hdPathLen;
+extern uint8_t chain_code;
 
-uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey);
+uint16_t crypto_encodeAddress(char *addr_out, uint16_t addr_out_max, uint8_t *pubkey, address_kind_e kind);
 
-zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen);
-
-zxerr_t crypto_sign(uint8_t *signature,
+zxerr_t crypto_fillAddress(uint8_t *buffer, uint16_t buffer_len, uint16_t *addrLen,address_kind_e kind);
+zxerr_t crypto_fillEthAddress(uint8_t *buffer, uint16_t bufferLen, uint16_t *addrLen);
+zxerr_t crypto_signEd25519(uint8_t *signature,
                     uint16_t signatureMaxlen,
                     const uint8_t *message,
                     uint16_t messageLen,
                     uint16_t *sigSize);
 
+zxerr_t crypto_signSecp256k1(uint8_t *signature,
+                    uint16_t signatureMaxlen,
+                    const uint8_t *message,
+                    uint16_t messageLen,
+                    uint16_t *sigSize);
+
+zxerr_t crypto_sign_sr25519(uint8_t *output, uint16_t outputLen, const uint8_t *data, size_t len, const uint8_t *ctx, size_t ctx_len, uint16_t *sigSize);
+zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t *message, uint16_t messageLen, uint16_t *sigSize);
+
+zxerr_t keccak_digest(const unsigned char *in, unsigned int inLen,
+                    unsigned char *out, unsigned int outLen);
 #ifdef __cplusplus
 }
 #endif

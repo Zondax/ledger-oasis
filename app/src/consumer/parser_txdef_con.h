@@ -35,6 +35,15 @@ extern "C" {
 
 #define HANDLER_MAX_LENGTH 32
 #define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
+#define ETH_ADDRESS_LEN         20
+
+typedef struct {
+    const char *network;
+    const char *runid;
+    const char *address;
+    uint8_t decimals;
+    const char *name;
+} rt_lookup_t;
 
 typedef enum {
     unknownMethod,
@@ -49,7 +58,17 @@ typedef enum {
     registryUnfreezeNode,
     registryRegisterEntity,
     governanceSubmitProposal,
-    governanceCastVote
+    governanceCastVote,
+    accountsTransfer,
+    consensusDeposit,
+    consensusWithdraw,
+    consensusDelegate,
+    consensusUndelegate,
+    contractsInstantiate,
+    contractsCall,
+    contractsUpgrade,
+    transactionEncrypted,
+    evmCall
 } oasis_methods_e;
 
 typedef enum{
@@ -66,12 +85,17 @@ typedef struct {
 
 typedef uint8_t publickey_t[32];
 
+typedef struct {
+    uint8_t buffer[64];
+    size_t len;
+} quantity_t;
+
 typedef uint8_t address_raw_t[21];
 
 typedef struct {
     uint8_t buffer[64];
     size_t len;
-} quantity_t;
+} string_t;
 
 typedef struct {
     // one more for the zero termination
@@ -98,6 +122,12 @@ typedef struct {
 } handle_t;
 
 typedef uint8_t raw_signature_t[64];
+
+typedef struct {
+    quantity_t amount;
+    string_t denom;
+} token_t;
+
 
 typedef struct {
     publickey_t public_key;
@@ -239,13 +269,86 @@ typedef struct {
   handle_t twitter;
 } oasis_entity_metadata_t;
 
+typedef struct {
+    address_raw_t to;
+    quantity_t amount;
+    string_t denom;
+    bool has_to;
+    quantity_t shares;
+} body_consensus_t;
+
+typedef struct {
+    string_t address;
+    char data_hash[32];
+} body_evm_t;
+
+typedef struct {
+    publickey_t pk;
+    string_t nonce;
+    char data_hash[32];
+} body_encrypted_t;
+
+typedef struct {
+    uint64_t id;
+    uint64_t code_id;
+    uint8_t *dataPtr;
+    size_t dataLen;
+    cbor_parser_state_t cborState;
+    bool dataValid;
+    size_t tokensLen;
+} body_contracts_t;
+
+typedef struct {
+    uint64_t format;
+    oasis_methods_e method;
+    union{
+        body_consensus_t consensus;
+        body_contracts_t contracts;
+        body_encrypted_t encrypted;
+        body_evm_t evm;
+    }body;
+
+    bool ro;
+} runtime_call_t;
+
+typedef struct {
+    uint64_t consensus_msg;
+    uint64_t gas;
+    quantity_t amount;
+    string_t denom;
+} runtime_fee_t;
+
+typedef struct {
+    size_t n_si;
+    uint64_t nonce;
+    runtime_fee_t fee;
+} runtime_auth_info_t;
+
+typedef struct {
+    const uint8_t chain_context[CHAIN_CONTEXT_BYTE_LEN * 2];
+    const uint8_t runtime_id[RUNTIME_ID_BYTE_LEN * 2];
+    const uint8_t orig_to[ORIG_TO_SIZE];
+    bool has_orig_to;
+} meta_t;
+
+typedef struct {
+    char sigcxt[200];
+    size_t metaLen;
+    uint16_t v;
+    runtime_call_t call;
+    runtime_auth_info_t ai;
+    meta_t meta;
+} oasis_runtime_t;
+
+
 typedef enum {
     unknownType,
     txType,
     entityType,
     nodeType,
     consensusType,
-    entityMetadataType
+    entityMetadataType,
+    runtimeType
 } oasis_blob_type_e;
 
 typedef struct {
@@ -256,8 +359,62 @@ typedef struct {
         oasis_tx_t tx;
         oasis_entity_t entity;
         oasis_entity_metadata_t entity_metadata;
+        oasis_runtime_t runtime;
     } oasis;
 } parser_tx_t;
+
+// simple struct that holds a bigint(256) 
+typedef struct {
+    uint32_t offset;
+    // although bigInts are defined in 
+    // ethereum as 256 bits,
+    // it is possible that it is smaller.
+    uint32_t len;
+} eth_big_int_t;
+
+// chain_id
+typedef struct {
+    uint32_t offset;
+    uint32_t len;
+} chain_id_t;
+
+// ripemd160(sha256(compress(secp256k1.publicKey()))
+typedef struct {
+    uint8_t addr[ETH_ADDRESS_LEN];
+} eth_addr_t;
+
+// Type that holds the common fields 
+// for legacy and eip2930 transactions
+typedef struct {
+    eth_big_int_t nonce;
+    eth_big_int_t gas_price;
+    eth_big_int_t gas_limit;
+    eth_addr_t address;
+    eth_big_int_t value;
+    uint32_t data_at;
+    uint32_t dataLen;
+} eth_base_t;
+
+// EIP 2718 TransactionType
+// Valid transaction types should be in [0x00, 0x7f]
+typedef enum eth_tx_type_t {
+  eip2930 = 0x01,
+  eip1559 = 0x02,
+  // Legacy tx type is greater than or equal to 0xc0.
+  legacy = 0xc0
+} eth_tx_type_t;
+
+typedef struct {
+    eth_tx_type_t tx_type;
+    chain_id_t chain_id;
+    // lets use an anonymous 
+    // union to hold the 3 possible types of transactions:
+    // legacy, eip2930, eip1559
+    union {
+        eth_base_t legacy;
+    };
+ 
+} eth_tx_t;
 
 #ifdef __cplusplus
 }

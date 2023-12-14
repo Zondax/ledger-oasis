@@ -7,3 +7,6 @@ rustflags = [
     "-C", "link-arg=-nostartfiles",
     "-C", "link-arg=-Tlink.ld",
 ]
+[unstable]
+build-std=["core"]
+build-std-features=["panic_immediate_abort"]

@@ -50,6 +50,7 @@ typedef enum {
     parser_invalid_address,
     parser_unexpected_chain,
     parser_query_no_results,
+    parser_unsupported_cal,
     // Coin Specific
     parser_cbor_unexpected,
     parser_cbor_unexpected_EOF,
@@ -63,6 +64,9 @@ typedef enum {
     parser_required_nonce,
     parser_required_method,
     parser_required_body,
+    parser_required_call,
+    parser_required_chain_context,
+    parser_required_runtime_id,
     // Amino related
     parser_unexpected_wire_type,
     parser_unexpected_round_value,
@@ -80,13 +84,30 @@ typedef enum {
     parser_invalid_handle_format,
     parser_invalid_handle_length,
     parser_invalid_name_length,
+    parser_invalid_eth_mapping,
+    parser_required_id,
+    parser_required_code_id,
+    parser_required_pk,
+    parser_required_data,
+    parser_required_expert_mode,
+    parser_unsupported_tx,
+    parser_invalid_rlp_data,
+    parser_invalid_chain_id,
+    parser_invalid_rs_values,
+    parser_no_depth,
 } parser_error_t;
+
+typedef enum {
+  oasis_tx = 0,
+  eth_tx,
+}tx_type_t;
 
 typedef struct {
     const uint8_t *buffer;
     uint16_t bufferLen;
     uint16_t offset;
     uint16_t lastConsumed;
+    tx_type_t tx_type;
 } parser_context_t;
 
 #ifdef __cplusplus

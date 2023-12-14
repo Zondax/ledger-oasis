@@ -53,6 +53,19 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+##########################
+
+tests_zemu/.yarn/*
+tests_zemu/!.yarn/patches
+tests_zemu/!.yarn/releases
+tests_zemu/!.yarn/plugins
+tests_zemu/!.yarn/sdks
+tests_zemu/!.yarn/versions
+tests_zemu/.pnp.*
+\tests_zemu/yarn.lock
+
+#########################
+
 \cmake-build-debug
 \.idea/
 /tmp/
@@ -77,6 +90,7 @@ cmake-build-fuzz/
 /app/debug/
 /app/obj/
 /build
+/app/build/
 
 \deps/*
 !\deps/nanos-secure-sdk
@@ -87,3 +101,12 @@ cmake-build-fuzz/
 \fuzz-*.log
 \fuzz/corpora/*
 .vscode
+.idea
+
+node_modules
+
+tests_zemu/snapshots-tmp
+tests_zemu/yarn.lock
+tests_tools/target
+
+/scan-build

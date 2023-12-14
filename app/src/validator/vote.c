@@ -19,9 +19,6 @@
 #include "vote.h"
 #include <zxmacros.h>
 
-vote_state_t vote_state;
-vote_t vote;
-
 void vote_state_reset() {
     MEMZERO(&vote_state, sizeof(vote_state_t));
 }

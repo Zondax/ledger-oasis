@@ -23,6 +23,14 @@
 extern "C" {
 #endif
 
+#define CHECK_CX_PARSER_OK(CALL)         \
+    do {                          \
+        cx_err_t __cx_err = CALL; \
+        if (__cx_err != CX_OK) {  \
+            return parser_unexepected_error; \
+        }                         \
+    } while (0)
+
 extern const char context_prefix_tx[];
 extern const char context_prefix_entity[];
 extern const char context_prefix_entity_metadata[];
@@ -49,6 +57,8 @@ parser_error_t _getCommissionBoundStepAtIndex(const parser_context_t *c,
                                               commissionRateBoundStep_t *bound,
                                               uint8_t index);
 
+parser_error_t _getTokenAtIndex(const parser_context_t *c, token_t *token, uint8_t index);
+
 parser_error_t _getEntityNodesIdAtIndex(const oasis_entity_t *entity, publickey_t *node, uint8_t index);
 
 parser_error_t _extractContextSuffix(parser_tx_t *v);
@@ -58,6 +68,8 @@ parser_error_t _isValidUrl(url_t *url);
 parser_error_t _isValidEmail(email_t *email);
 
 parser_error_t _isValidHandle(handle_t *handle);
+
+parser_error_t parser_picoHash(uint8_t *src, size_t srcLen, uint8_t *dest, size_t destLen);
 
 #endif
 
