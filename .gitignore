@@ -110,3 +110,4 @@ tests_zemu/yarn.lock
 tests_tools/target
 
 /scan-build
+app/rust/.cargo/.package-cache-mutate
