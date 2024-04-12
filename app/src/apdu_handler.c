@@ -38,6 +38,10 @@
 #include "eth_addr.h"
 #include "eth_utils.h"
 
+#if defined(APP_VALIDATOR)
+#include "view_custom.h"
+#endif
+
 static bool tx_initialized = false;
 
 static const char *msg_error1 = "Expert Mode";

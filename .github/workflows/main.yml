@@ -89,7 +89,7 @@ jobs:
       - run: |
           echo "LNS app size: ${{needs.build_ledger.outputs.size}} KiB"
           [ ${{needs.build_ledger.outputs.size}} -le $NANOS_LIMIT_SIZE ]
-          
+
   build_ledger_val:
     needs: configure
     runs-on: ubuntu-latest
@@ -109,7 +109,8 @@ jobs:
         id: build
         shell: bash -l {0}
         run: |
-          COIN=oasis_validator make
+          make build_val
+
   test_zemu:
     runs-on: ubuntu-latest
     steps:
@@ -389,7 +390,7 @@ jobs:
       - name: Build NanoS validator
         shell: bash -l {0}
         run: |
-          COIN=oasis_validator make
+          make build_val
           mv ./app/pkg/installer_s.sh ./app/pkg/installer_nanos_validator.sh
 
       - name: Set tag
