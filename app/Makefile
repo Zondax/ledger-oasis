@@ -50,8 +50,8 @@ APPNAME = "OasisVal"
 APPPATH = "43'/474'"
 APPCURVE = --curve ed25519
 
-ifeq ($(TARGET_NAME),TARGET_NANOX)
-$(error "Oasis Validator App is not supported in Nano X")
+ifneq ($(TARGET_NAME),TARGET_NANOS)
+$(error "Oasis Validator App only available for Nano S")
 endif
 
 else
