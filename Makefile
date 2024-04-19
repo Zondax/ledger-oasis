@@ -22,6 +22,7 @@ TESTS_JS_PACKAGE = "@zondax/ledger-oasis"
 TESTS_JS_DIR = $(CURDIR)/js
 
 ifeq ($(BOLOS_SDK),)
+ZXLIB_COMPILE_STAX ?= 1
 include $(CURDIR)/deps/ledger-zxlib/dockerized_build.mk
 else
 default:

@@ -28,7 +28,7 @@
 #include "coin.h"
 #include "vote_fsm.h"
 
-#if defined(TARGET_NANOX) || defined(TARGET_NANOS2)
+#if defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX)
 // For some reason NanoX requires this function
 void __assert_fail(const char * assertion, const char * file, unsigned int line, const char * function){
     while(1) {};

@@ -49,11 +49,11 @@ jobs:
           cd ./app/rust
           cargo clippy --version
           cargo clippy --all-features --all-targets || true
-#      - name: audit
-#        run: |
-#          cd ./app/rust
-#          cargo audit --version
-#          cargo audit
+      #      - name: audit
+      #        run: |
+      #          cd ./app/rust
+      #          cargo audit --version
+      #          cargo audit
       - name: run tests
         run: |
           cd ./app/rust
@@ -89,7 +89,7 @@ jobs:
       - run: |
           echo "LNS app size: ${{needs.build_ledger.outputs.size}} KiB"
           [ ${{needs.build_ledger.outputs.size}} -le $NANOS_LIMIT_SIZE ]
-          
+
   build_ledger_val:
     needs: configure
     runs-on: ubuntu-latest
@@ -294,7 +294,7 @@ jobs:
           COIN=val make zemu_test
 
   build_package_nanos:
-    needs: [ configure, build, build_ledger, test_zemu ]
+    needs: [configure, build, build_ledger, test_zemu]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
@@ -332,7 +332,7 @@ jobs:
           prerelease: false
 
   build_package_nanos_plus:
-    needs: [ configure, build, build_ledger, test_zemu ]
+    needs: [configure, build, build_ledger, test_zemu]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
@@ -370,14 +370,14 @@ jobs:
           prerelease: false
 
   build_package_validator:
-    needs: [ configure, build, build_ledger_val, test_zemu_val ]
+    needs: [configure, build, build_ledger_val, test_zemu_val]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     container:
       image: zondax/ledger-app-builder:latest
       options: --user ${{ needs.configure.outputs.uid_gid }}
     env:
-      BOLOS_SDK: /opt/nanosplus-secure-sdk
+      BOLOS_SDK: /opt/nanos-secure-sdk
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -394,10 +394,10 @@ jobs:
 
       - name: Set tag
         id: nanos_val
-        run: echo ::set-output name=tag_name::$(./app/pkg/installer_nanos_validator.sh version)
+        run: echo "tag_name=$(./app/pkg/installer_nanos_validator.sh version)" >> $GITHUB_OUTPUT
 
-      - name: Update Release
-        id: create_release_1
+      - name: Create Release
+        id: create_release_0
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
