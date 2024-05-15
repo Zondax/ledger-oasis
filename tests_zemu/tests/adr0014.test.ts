@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, { DEFAULT_START_OPTIONS } from "@zondax/zemu";
+import Zemu, { ButtonKind, DEFAULT_START_OPTIONS } from "@zondax/zemu";
 // @ts-ignore
 import { OasisApp } from "@zondax/ledger-oasis";
 import { models } from "./common";
@@ -68,7 +68,12 @@ describe("Standard-Adr0014", function () {
   test.concurrent.each(models)("show Secp256k1 address", async function (m) {
     const sim = new Zemu(m.path);
     try {
-      await sim.start({ ...defaultOptions, model: m.name });
+      await sim.start({
+        ...defaultOptions,
+        model: m.name,
+        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveAction: ButtonKind.ApproveTapButton,
+      });
       const app = new OasisApp(sim.getTransport());
 
       const respRequest = app.showAddressAndPubKey_secp256k1(secp256k1_path);
@@ -99,13 +104,16 @@ describe("Standard-Adr0014", function () {
   test.concurrent.each(models)("get polkadot path", async function (m) {
     const sim = new Zemu(m.path);
     try {
-      await sim.start({ ...defaultOptions, model: m.name });
+      await sim.start({
+        ...defaultOptions,
+        model: m.name,
+        approveKeyword: m.name === "stax" ? "Path" : "",
+        approveAction: ButtonKind.ApproveTapButton,
+      });
       const app = new OasisApp(sim.getTransport());
 
       // Change to expert mode so we can skip fields
-      await sim.clickRight();
-      await sim.clickBoth();
-      await sim.clickLeft();
+      await sim.toggleExpertMode();
 
       const respRequest = app.showAddressAndPubKey_secp256k1(polkadot_path);
 
@@ -436,9 +444,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         // Change to expert mode so we can skip fields
-        await sim.clickRight();
-        await sim.clickBoth();
-        await sim.clickLeft();
+        await sim.toggleExpertMode();
 
         const meta = Buffer.from(
           "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -496,9 +502,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         // Change to expert mode so we can skip fields
-        await sim.clickRight();
-        await sim.clickBoth();
-        await sim.clickLeft();
+        await sim.toggleExpertMode();
 
         const meta = Buffer.from(
           "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -575,7 +579,12 @@ describe("Standard-Adr0014", function () {
   test.concurrent.each(models)("show Sr25519 address", async function (m) {
     const sim = new Zemu(m.path);
     try {
-      await sim.start({ ...defaultOptions, model: m.name });
+      await sim.start({
+        ...defaultOptions,
+        model: m.name,
+        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveAction: ButtonKind.ApproveTapButton,
+      });
       const app = new OasisApp(sim.getTransport());
 
       const respRequest = app.showAddressAndPubKey_sr25519(path);
@@ -613,9 +622,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         // Change to expert mode so we can skip fields
-        await sim.clickRight();
-        await sim.clickBoth();
-        await sim.clickLeft();
+        await sim.toggleExpertMode();
 
         const meta = Buffer.from(
           "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -674,9 +681,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         // Change to expert mode so we can skip fields
-        await sim.clickRight();
-        await sim.clickBoth();
-        await sim.clickLeft();
+        await sim.toggleExpertMode();
 
         const meta = Buffer.from(
           "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -735,9 +740,7 @@ describe("Standard-Adr0014", function () {
         const app = new OasisApp(sim.getTransport());
 
         // Change to expert mode so we can skip fields
-        await sim.clickRight();
-        await sim.clickBoth();
-        await sim.clickLeft();
+        await sim.toggleExpertMode();
 
         const meta = Buffer.from(
           "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -794,9 +797,7 @@ describe("Standard-Adr0014", function () {
       const app = new OasisApp(sim.getTransport());
 
       // Change to expert mode so we can skip fields
-      await sim.clickRight();
-      await sim.clickBoth();
-      await sim.clickLeft();
+      await sim.toggleExpertMode();
 
       const meta = Buffer.from(
         "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -851,9 +852,7 @@ describe("Standard-Adr0014", function () {
       const app = new OasisApp(sim.getTransport());
 
       // Change to expert mode so we can skip fields
-      await sim.clickRight();
-      await sim.clickBoth();
-      await sim.clickLeft();
+      await sim.toggleExpertMode();
 
       const meta = Buffer.from(
         "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -884,6 +883,11 @@ describe("Standard-Adr0014", function () {
           `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`,
           [2, 0, 0, 1, 0, 2, 0, 2, 0, 8, 0],
           false,
+        );
+      } else if (m.name == "stax") {
+        await sim.compareSnapshotsAndApprove(
+          ".",
+          `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`,
         );
       } else {
         await sim.navigateAndCompareSnapshots(
@@ -919,9 +923,7 @@ describe("Standard-Adr0014", function () {
       const app = new OasisApp(sim.getTransport());
 
       // Change to expert mode so we can skip fields
-      await sim.clickRight();
-      await sim.clickBoth();
-      await sim.clickLeft();
+      await sim.toggleExpertMode();
 
       const meta = Buffer.from(
         "ompydW50aW1lX2lkeEAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDBlMmVhYTk5ZmMwMDhmODdmbWNoYWluX2NvbnRleHR4QGJiM2Q3NDhkZWY1NWJkZmI3OTdhMmFjNTNlZTZlZTE0MWU1NGNkMmFiMmRjMjM3NWY0YTA3MDNhMTc4ZTZlNTU=",
@@ -951,6 +953,11 @@ describe("Standard-Adr0014", function () {
           `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-types`,
           [2, 0, 0, 5, 0, 0, -1, 0, 8, 0],
           false,
+        );
+      } else if (m.name == "stax") {
+        await sim.compareSnapshotsAndApprove(
+          ".",
+          `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`,
         );
       } else {
         await sim.navigateAndCompareSnapshots(

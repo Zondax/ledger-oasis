@@ -364,7 +364,9 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_secp256k1);
+#ifndef TARGET_STAX
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
+#endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #endif
@@ -393,7 +395,9 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
+#ifndef TARGET_STAX
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
+#endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #elif defined(APP_VALIDATOR)
@@ -473,7 +477,9 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
 #if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_sr25519);
+#ifndef TARGET_STAX
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
+#endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
 #endif

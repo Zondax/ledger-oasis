@@ -22,7 +22,6 @@ import { Transaction } from "@ethereumjs/tx";
 import Common from "@ethereumjs/common";
 import { rlp, bufArrToArr } from "ethereumjs-util";
 import { ec } from "elliptic";
-const BN = require("bn.js");
 
 const APP_SEED =
   "equip will roof matter pink blind book anxiety banner elbow sun young";
@@ -33,11 +32,6 @@ const defaultOptions = {
   custom: `-s "${APP_SEED}"`,
 };
 
-type TestData = {
-  name: string;
-  op: Buffer;
-  chainId: number | undefined;
-};
 const SIGN_TEST_DATA = [
   {
     name: "basic_transfer",
@@ -84,7 +78,7 @@ const SIGN_TEST_DATA = [
 
 const rawUnsignedLegacyTransaction = (
   params: any,
-  chainId: number | undefined
+  chainId: number | undefined,
 ) => {
   const txParams = {
     nonce: "0x00",
@@ -95,7 +89,7 @@ const rawUnsignedLegacyTransaction = (
     data: params.data !== undefined ? "0x" + params.data : undefined,
   };
 
-  const chain = Common.forCustomChain(1, {
+  const chain = Common.custom({
     name: "oasis",
     networkId: 1,
     chainId,
@@ -117,20 +111,20 @@ const rawUnsignedLegacyTransaction = (
 function check_legacy_signature(
   hexTx: string,
   signature: any,
-  chainId: number | undefined
+  chainId: number | undefined,
 ) {
   const ethTx = Buffer.from(hexTx, "hex");
 
-  const chain = Common.forCustomChain(1, {
+  const chain = Common.custom({
     name: "oasis",
     networkId: 1,
     chainId,
   });
   const tx_options = chainId !== undefined ? { common: chain } : undefined;
 
-  const txnBufsDecoded: any = rlp.decode(ethTx).slice(0, 6);
+  const txnBufsDecoded: any = rlp.decode(ethTx).slice(0, 6); // do not change to subarray
   const txnBufsMap = [signature.v, signature.r, signature.s].map((a) =>
-    Buffer.from(a.length % 2 == 1 ? "0" + a : a, "hex")
+    Buffer.from(a.length % 2 == 1 ? "0" + a : a, "hex"),
   );
 
   const txnBufs = txnBufsDecoded.concat(txnBufsMap);
@@ -150,21 +144,18 @@ describe.each(models)("ETH_Legacy", function (m) {
         await sim.start({ ...defaultOptions, model: m.name });
         const app = new OasisApp(sim.getTransport());
 
-        const testcase = `${m.prefix.toLowerCase()}-eth-sign-${data.name}`;
-
-        const currentScreen = sim.snapshot();
         const msg = rawUnsignedLegacyTransaction(data.op, data.chainId);
         console.log("tx: ", msg.toString("hex"));
 
         const respReq = app.signETHTransaction(
           ETH_PATH,
           msg.toString("hex"),
-          null
+          null,
         );
         await sim.waitUntilScreenIsNot(sim.getMainMenuSnapshot());
         await sim.compareSnapshotsAndApprove(
           ".",
-          `${m.prefix.toLowerCase()}-eth-${data.name}`
+          `${m.prefix.toLowerCase()}-eth-${data.name}`,
         );
 
         const resp = await respReq;
@@ -190,15 +181,15 @@ describe.each(models)("ETH_Legacy", function (m) {
         expect(signatureOK).toEqual(true);
 
         // alternative verification to be safe
-        const test = await check_legacy_signature(
+        const test = check_legacy_signature(
           msg.toString("hex"),
           resp,
-          data.chainId
+          data.chainId,
         );
         expect(test).toEqual(true);
       } finally {
         await sim.close();
       }
-    }
+    },
   );
 });

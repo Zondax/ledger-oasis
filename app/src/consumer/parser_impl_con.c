@@ -18,7 +18,7 @@
 #include "parser_txdef_con.h"
 #include "sha512.h"
 #include "zxformat.h"
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX)
     #include "cx.h"
 #else
     #include "picohash.h"
@@ -165,7 +165,7 @@ const char *parser_getErrorDescription(parser_error_t err) {
     }
 }
 
-#if !defined(TARGET_NANOS) && !defined(TARGET_NANOS2) && !defined(TARGET_NANOX)
+#if !defined(TARGET_NANOS) && !defined(TARGET_NANOS2) && !defined(TARGET_NANOX) && !defined(TARGET_STAX)
 parser_error_t parser_picoHash(uint8_t *src, size_t srcLen, uint8_t *dest, size_t destLen) {
     if(destLen < KECCAK256_HASH_LEN) {
         return parser_unexpected_buffer_size;
@@ -1379,7 +1379,7 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **) &buffer, &buffer_size, NULL))
 
     MEMZERO(&v->oasis.runtime.call.body.encrypted.data_hash, sizeof(v->oasis.runtime.call.body.encrypted.data_hash));
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX)
     cx_sha256_t ctx;
     memset(&ctx, 0, sizeof(ctx));
     cx_sha256_init_no_throw(&ctx);
@@ -1428,7 +1428,7 @@ __Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootIte
     CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **) &buffer, &buffer_size, NULL))
 
     MEMZERO(&v->oasis.runtime.call.body.evm.data_hash, sizeof(v->oasis.runtime.call.body.evm.data_hash));
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX)
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX)
     cx_sha256_t ctx;
     memset(&ctx, 0, sizeof(ctx));
     cx_sha256_init_no_throw(&ctx);
