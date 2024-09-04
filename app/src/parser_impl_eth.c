@@ -258,7 +258,7 @@ parser_error_t _getItemEth(const parser_context_t *ctx, uint8_t displayIdx,
 
   // we need to get keccak hash of the transaction data
   uint8_t hash[32] = {0};
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX)
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX) || defined(TARGET_FLEX)
   keccak_digest(ctx->buffer, ctx->bufferLen, hash, 32);
 #endif
   // now get the hex string of the hash
