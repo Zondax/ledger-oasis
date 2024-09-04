@@ -40,7 +40,7 @@ static const char *blindSignWarning =
 
 const char addressV0_Secp256k1_ethContext[40] = "oasis-runtime-sdk/address: secp256k1eth";
 
-#if defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX)
+#if defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
 // For some reason NanoX requires this function
 void __assert_fail(__Z_UNUSED const char * assertion, __Z_UNUSED const char * file, __Z_UNUSED unsigned int line, __Z_UNUSED const char * function){
     while(1) {};
@@ -79,7 +79,7 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 
     // Read after we determine context
     CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX)
+#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX) || defined(TARGET_FLEX)
    if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate)
         && (parser_tx_obj.type == runtimeType) && !app_mode_expert()) {
             return parser_required_expert_mode;
