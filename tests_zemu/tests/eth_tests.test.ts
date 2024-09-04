@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, { ButtonKind, DEFAULT_START_OPTIONS } from "@zondax/zemu";
+import Zemu, { ButtonKind, DEFAULT_START_OPTIONS, isTouchDevice } from "@zondax/zemu";
 // @ts-ignore
 import { OasisApp } from "@zondax/ledger-oasis";
 import {
@@ -164,7 +164,7 @@ describe("EthAddress", function () {
       await sim.start({
         ...defaultOptions,
         model: m.name,
-        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveKeyword: isTouchDevice(m.name) ? "Confirm" : "",
         approveAction: ButtonKind.ApproveTapButton,
       });
       const app = new OasisApp(sim.getTransport());
