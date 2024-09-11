@@ -26,7 +26,19 @@ include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.installer_script
 
 include $(BOLOS_SDK)/Makefile.defines
 
-$(info ************ TARGET_NAME  = [$(TARGET_NAME)])
+# Set the default value for PRODUCTION_BUILD to 1 if not already defined
+PRODUCTION_BUILD ?= 1
+
+$(info ************ OASIS_NAME  = [$(TARGET_NAME)])
+
+# Display whether this is a production build or for internal use
+ifeq ($(PRODUCTION_BUILD), 1)
+    $(info ************ PRODUCTION_BUILD  = [PRODUCTION BUILD])
+else
+    $(info ************ PRODUCTION_BUILD  = [INTERNAL USE])
+endif
+
+DEFINES += PRODUCTION_BUILD=$(PRODUCTION_BUILD)
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.app_testing
 
@@ -66,7 +78,6 @@ $(error "$(error_message)")
 endif
 
 APP_LOAD_PARAMS = $(APPCURVE) $(COMMON_LOAD_PARAMS) --path ${APPPATH}
-DEFINES += HAVE_PENDING_REVIEW_SCREEN
 
 include $(CURDIR)/../deps/ledger-zxlib/makefiles/Makefile.devices
 DEFINES += HAVE_INSPECT

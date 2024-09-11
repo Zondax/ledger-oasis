@@ -17,6 +17,7 @@
 import Zemu, {
   ButtonKind,
   DEFAULT_START_OPTIONS,
+  isTouchDevice,
   zondaxMainmenuNavigation,
 } from "@zondax/zemu";
 // @ts-ignore
@@ -119,7 +120,7 @@ describe("Standard-Adr0008-0", function () {
       await sim.start({
         ...defaultOptions,
         model: m.name,
-        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveKeyword: isTouchDevice(m.name) ? "Confirm" : "",
         approveAction: ButtonKind.ApproveTapButton,
       });
       const app = new OasisApp(sim.getTransport());

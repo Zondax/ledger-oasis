@@ -14,7 +14,7 @@
  *  limitations under the License.
  ******************************************************************************* */
 
-import Zemu, { ButtonKind, DEFAULT_START_OPTIONS } from "@zondax/zemu";
+import Zemu, { ButtonKind, DEFAULT_START_OPTIONS, isTouchDevice } from "@zondax/zemu";
 // @ts-ignore
 import { OasisApp } from "@zondax/ledger-oasis";
 import { models } from "./common";
@@ -71,7 +71,7 @@ describe("Standard-Adr0014", function () {
       await sim.start({
         ...defaultOptions,
         model: m.name,
-        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveKeyword: isTouchDevice(m.name) ? "Confirm" : "",
         approveAction: ButtonKind.ApproveTapButton,
       });
       const app = new OasisApp(sim.getTransport());
@@ -107,7 +107,7 @@ describe("Standard-Adr0014", function () {
       await sim.start({
         ...defaultOptions,
         model: m.name,
-        approveKeyword: m.name === "stax" ? "Path" : "",
+        approveKeyword: isTouchDevice(m.name) ? "Path" : "",
         approveAction: ButtonKind.ApproveTapButton,
       });
       const app = new OasisApp(sim.getTransport());
@@ -582,7 +582,7 @@ describe("Standard-Adr0014", function () {
       await sim.start({
         ...defaultOptions,
         model: m.name,
-        approveKeyword: m.name === "stax" ? "QR" : "",
+        approveKeyword: isTouchDevice(m.name) ? "Confirm" : "",
         approveAction: ButtonKind.ApproveTapButton,
       });
       const app = new OasisApp(sim.getTransport());
@@ -884,7 +884,7 @@ describe("Standard-Adr0014", function () {
           [2, 0, 0, 1, 0, 2, 0, 2, 0, 8, 0],
           false,
         );
-      } else if (m.name == "stax") {
+      } else if (isTouchDevice(m.name)) {
         await sim.compareSnapshotsAndApprove(
           ".",
           `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`,
@@ -954,7 +954,7 @@ describe("Standard-Adr0014", function () {
           [2, 0, 0, 5, 0, 0, -1, 0, 8, 0],
           false,
         );
-      } else if (m.name == "stax") {
+      } else if (isTouchDevice(m.name)) {
         await sim.compareSnapshotsAndApprove(
           ".",
           `${m.prefix.toLowerCase()}-adr0014-sign_ed15519_contracts-array-map`,
