@@ -31,6 +31,7 @@ project(ledger-oasis VERSION 0.0.0)
 set(CMAKE_CXX_STANDARD 17)
 cmake_policy(SET CMP0025 NEW)
 cmake_policy(SET CMP0144 NEW)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 set(HUNTER_STATUS_DEBUG ON)
 set(HUNTER_TLS_VERIFY OFF)
@@ -137,7 +138,6 @@ add_library(app_val_lib STATIC
         ${LIB_VAL_SRC}
         )
 
-target_compile_definitions(app_lib PRIVATE APP_CONSUMER)
 target_compile_definitions(app_lib PRIVATE NO_DISPLAY)
 target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
@@ -169,14 +169,7 @@ file(GLOB_RECURSE TESTS_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/*.cpp
         )
 
-file(GLOB_RECURSE TESTS_VAL_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp_val/*.cpp
-        )
-
 add_executable(unittests ${TESTS_SRC})
-target_compile_definitions(unittests PRIVATE APP_CONSUMER=1)
-add_executable(unittests_val ${TESTS_VAL_SRC})
-target_compile_definitions(unittests_val PRIVATE APP_VALIDATOR=1)
 
 target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src
@@ -188,14 +181,6 @@ target_include_directories(unittests PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         )
 
-target_include_directories(unittests_val PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/app/ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
-        )
-
 add_compile_definitions(TESTVECTORS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/")
 
 target_link_libraries(unittests PRIVATE
@@ -204,18 +189,10 @@ target_link_libraries(unittests PRIVATE
         JsonCpp::JsonCpp
         app_lib)
 
-target_link_libraries(unittests_val PRIVATE
-        GTest::gtest_main
-        fmt::fmt
-        JsonCpp::JsonCpp
-        app_val_lib)
 
 add_test(NAME unittests COMMAND unittests)
-add_test(NAME unittests_val COMMAND unittests_val)
 
 set_tests_properties(unittests PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
-set_tests_properties(unittests_val PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
-
 
 ##############################################################
 ##############################################################

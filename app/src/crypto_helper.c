@@ -23,7 +23,6 @@
 #include "sha512.h"
 
 zxerr_t crypto_getBytesToSign(uint8_t *out_hash, size_t out_hash_len) {
-#if defined(APP_CONSUMER)
     if (out_hash == NULL || out_hash_len < CX_SHA512_SIZE) {
         return zxerr_encoding_failed;
     }
@@ -39,12 +38,10 @@ zxerr_t crypto_getBytesToSign(uint8_t *out_hash, size_t out_hash_len) {
         SHA512_256_with_context(parser_tx_obj.context.ptr, parser_tx_obj.context.len,
                                  message, messageLength, out_hash);
     }
-#endif
     return zxerr_ok;
 }
 
 const uint8_t *crypto_getSr25519BytesToSign(uint8_t *msgDigest, size_t msgDigestLen, size_t *ctxLen) {
-#if defined(APP_CONSUMER)
     if (msgDigest == NULL || msgDigestLen < CX_SHA512_SIZE) {
         return NULL;
     }
@@ -53,6 +50,4 @@ const uint8_t *crypto_getSr25519BytesToSign(uint8_t *msgDigest, size_t msgDigest
     SHA512_256(message, messageLen, msgDigest);
     *ctxLen = (size_t)parser_tx_obj.context.len;
     return parser_tx_obj.context.ptr;
-#endif
-    return NULL;
 }

@@ -35,7 +35,7 @@ main(void) {
             app_main();
         }
         CATCH_OTHER(e)
-        {}
+        { UNUSED(e);}
         FINALLY
         {}
     }

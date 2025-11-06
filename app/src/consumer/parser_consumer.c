@@ -13,8 +13,6 @@
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
 ********************************************************************************/
-#if defined(APP_CONSUMER)
-
 #include <stdio.h>
 #include <zxmacros.h>
 #include <zxerror.h>
@@ -40,7 +38,7 @@ static const char *blindSignWarning =
 
 const char addressV0_Secp256k1_ethContext[40] = "oasis-runtime-sdk/address: secp256k1eth";
 
-#if defined(TARGET_NANOX) || defined(TARGET_NANOS2) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
 // For some reason NanoX requires this function
 void __assert_fail(__Z_UNUSED const char * assertion, __Z_UNUSED const char * file, __Z_UNUSED unsigned int line, __Z_UNUSED const char * function){
     while(1) {};
@@ -79,7 +77,7 @@ parser_error_t parser_parse(parser_context_t *ctx, const uint8_t *data, size_t d
 
     // Read after we determine context
     CHECK_PARSER_ERR(_read(ctx, &parser_tx_obj));
-#if defined(TARGET_NANOS) || defined(TARGET_NANOS2) || defined(TARGET_NANOX) || defined(TARGET_STAX) || defined(TARGET_FLEX)
+#if defined(LEDGER_SPECIFIC)
    if ((parser_tx_obj.oasis.runtime.call.method >= contractsInstantiate)
         && (parser_tx_obj.type == runtimeType) && !app_mode_expert()) {
             return parser_required_expert_mode;
@@ -371,12 +369,6 @@ __Z_INLINE parser_error_t parser_getType(__Z_UNUSED const parser_context_t *ctx,
             }
 
             str = (char *)PIC(methodsMap[parser_tx_obj.oasis.tx.method]);
-#if defined(TARGET_NANOS)
-            if (parser_tx_obj.oasis.tx.method == stakingAmendCommissionSchedule) {
-                snprintf(outVal, outValLen, "Amend commission  schedule");
-                return parser_ok;
-            }
-#endif
             snprintf(outVal, outValLen, "%s", str);
             return parser_ok;
         case runtimeType:
@@ -1957,5 +1949,3 @@ parser_error_t parser_getItem(const parser_context_t *ctx,
 parser_error_t parser_compute_eth_v(parser_context_t *ctx, unsigned int info, uint8_t *v) {
     return _computeV(ctx , &eth_tx_obj, info, v);
 }
-
-#endif // APP_CONSUMER
