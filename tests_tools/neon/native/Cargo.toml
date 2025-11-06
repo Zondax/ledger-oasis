@@ -6,6 +6,9 @@ license = "Apache-2.0"
 edition = "2021"
 exclude = ["artifacts.json", "index.node"]
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(feature, values("default-panic-hook"))'] }
+
 [lib]
 name = "teststtools"
 crate-type = ["cdylib"]
