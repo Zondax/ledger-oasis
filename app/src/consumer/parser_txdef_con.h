@@ -1,18 +1,18 @@
 /*******************************************************************************
-*  (c) 2019 Zondax GmbH
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *  (c) 2019 Zondax GmbH
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 #pragma once
 
 #define CBOR_PARSER_MAX_RECURSIONS 4
@@ -25,8 +25,8 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #define ENTITY_METADATA_NAME_MAX_CHAR 50
 #define ENTITY_METADATA_URL_MAX_CHAR 64
@@ -35,7 +35,7 @@ extern "C" {
 
 #define HANDLER_MAX_LENGTH 32
 #define EPOCH_MAX_VALUE 0xFFFFFFFFFFFFFFFF
-#define ETH_ADDRESS_LEN         20
+#define ETH_ADDRESS_LEN 20
 
 typedef struct {
     const char *network;
@@ -71,10 +71,7 @@ typedef enum {
     evmCall
 } oasis_methods_e;
 
-typedef enum{
-    upgrade,
-    cancelUpgrade
-} submit_proposal_type;
+typedef enum { upgrade, cancelUpgrade } submit_proposal_type;
 
 typedef struct {
     const uint8_t *ptr;
@@ -99,25 +96,25 @@ typedef struct {
 
 typedef struct {
     // one more for the zero termination
-    uint8_t buffer[ENTITY_METADATA_NAME_MAX_CHAR+1];
+    uint8_t buffer[ENTITY_METADATA_NAME_MAX_CHAR + 1];
     size_t len;
 } name_t;
 
 typedef struct {
     // one more for the zero termination
-    uint8_t buffer[ENTITY_METADATA_URL_MAX_CHAR+1];
+    uint8_t buffer[ENTITY_METADATA_URL_MAX_CHAR + 1];
     size_t len;
 } url_t;
 
 typedef struct {
     // one more for the zero termination
-    uint8_t buffer[ENTITY_METADATA_EMAIL_MAX_CHAR+1];
+    uint8_t buffer[ENTITY_METADATA_EMAIL_MAX_CHAR + 1];
     size_t len;
 } email_t;
 
 typedef struct {
     // one more for the zero termination
-    uint8_t buffer[ENTITY_METADATA_HANDLE_MAX_CHAR+1];
+    uint8_t buffer[ENTITY_METADATA_HANDLE_MAX_CHAR + 1];
     size_t len;
 } handle_t;
 
@@ -127,7 +124,6 @@ typedef struct {
     quantity_t amount;
     string_t denom;
 } token_t;
-
 
 typedef struct {
     publickey_t public_key;
@@ -260,13 +256,13 @@ typedef struct {
 } oasis_tx_t;
 
 typedef struct {
-  uint16_t v;
-  uint64_t serial;
-  name_t name;
-  url_t url;
-  email_t email;
-  handle_t keybase;
-  handle_t twitter;
+    uint16_t v;
+    uint64_t serial;
+    name_t name;
+    url_t url;
+    email_t email;
+    handle_t keybase;
+    handle_t twitter;
 } oasis_entity_metadata_t;
 
 typedef struct {
@@ -301,12 +297,12 @@ typedef struct {
 typedef struct {
     uint64_t format;
     oasis_methods_e method;
-    union{
+    union {
         body_consensus_t consensus;
         body_contracts_t contracts;
         body_encrypted_t encrypted;
         body_evm_t evm;
-    }body;
+    } body;
 
     bool ro;
 } runtime_call_t;
@@ -340,16 +336,7 @@ typedef struct {
     meta_t meta;
 } oasis_runtime_t;
 
-
-typedef enum {
-    unknownType,
-    txType,
-    entityType,
-    nodeType,
-    consensusType,
-    entityMetadataType,
-    runtimeType
-} oasis_blob_type_e;
+typedef enum { unknownType, txType, entityType, nodeType, consensusType, entityMetadataType, runtimeType } oasis_blob_type_e;
 
 typedef struct {
     context_t context;
@@ -363,10 +350,10 @@ typedef struct {
     } oasis;
 } parser_tx_t;
 
-// simple struct that holds a bigint(256) 
+// simple struct that holds a bigint(256)
 typedef struct {
     uint32_t offset;
-    // although bigInts are defined in 
+    // although bigInts are defined in
     // ethereum as 256 bits,
     // it is possible that it is smaller.
     uint32_t len;
@@ -383,7 +370,7 @@ typedef struct {
     uint8_t addr[ETH_ADDRESS_LEN];
 } eth_addr_t;
 
-// Type that holds the common fields 
+// Type that holds the common fields
 // for legacy and eip2930 transactions
 typedef struct {
     eth_big_int_t nonce;
@@ -398,22 +385,22 @@ typedef struct {
 // EIP 2718 TransactionType
 // Valid transaction types should be in [0x00, 0x7f]
 typedef enum eth_tx_type_t {
-  eip2930 = 0x01,
-  eip1559 = 0x02,
-  // Legacy tx type is greater than or equal to 0xc0.
-  legacy = 0xc0
+    eip2930 = 0x01,
+    eip1559 = 0x02,
+    // Legacy tx type is greater than or equal to 0xc0.
+    legacy = 0xc0
 } eth_tx_type_t;
 
 typedef struct {
     eth_tx_type_t tx_type;
     chain_id_t chain_id;
-    // lets use an anonymous 
+    // lets use an anonymous
     // union to hold the 3 possible types of transactions:
     // legacy, eip2930, eip1559
     union {
         eth_base_t legacy;
     };
- 
+
 } eth_tx_t;
 
 #ifdef __cplusplus
