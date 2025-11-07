@@ -9,6 +9,9 @@ readme = "README.md"
 name = "rslib"
 crate-type = ["staticlib"]
 
+[features]
+clippy = []
+
 [dependencies]
 rand={ version = "0.7.3", default-features = false}
 merlin = {version = "2.0.0", default-features=false}

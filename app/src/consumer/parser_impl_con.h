@@ -35,8 +35,6 @@ extern const char context_prefix_tx[];
 extern const char context_prefix_entity[];
 extern const char context_prefix_entity_metadata[];
 
-#if defined(APP_CONSUMER)
-
 extern parser_tx_t parser_tx_obj;
 
 parser_error_t parser_init(parser_context_t *ctx, const uint8_t *buffer, uint16_t bufferSize);
@@ -71,7 +69,6 @@ parser_error_t _isValidHandle(handle_t *handle);
 
 parser_error_t parser_picoHash(uint8_t *src, size_t srcLen, uint8_t *dest, size_t destLen);
 
-#endif
 
 #ifdef __cplusplus
 }

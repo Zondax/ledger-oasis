@@ -22,7 +22,6 @@
 #include <ux.h>
 
 #include "view.h"
-#include "view_custom.h"
 #include "view_internal.h"
 #include "actions.h"
 #include "tx.h"
@@ -264,9 +263,9 @@ __Z_INLINE void handle_getversion(volatile uint32_t *flags, volatile uint32_t *t
 #else
     G_io_apdu_buffer[0] = 0;
 #endif
-    G_io_apdu_buffer[1] = LEDGER_MAJOR_VERSION;
-    G_io_apdu_buffer[2] = LEDGER_MINOR_VERSION;
-    G_io_apdu_buffer[3] = LEDGER_PATCH_VERSION;
+    G_io_apdu_buffer[1] = MAJOR_VERSION;
+    G_io_apdu_buffer[2] = MINOR_VERSION;
+    G_io_apdu_buffer[3] = PATCH_VERSION;
     G_io_apdu_buffer[4] = 0;
 
     G_io_apdu_buffer[5] = (TARGET_ID >> 24) & 0xFF;
@@ -361,15 +360,15 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
-#if defined(APP_CONSUMER)
+
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_secp256k1);
-#if !defined(TARGET_STAX) && !defined(TARGET_FLEX)
+#if !defined(TARGET_STAX) && !defined(TARGET_FLEX) && !defined(TARGET_APEX_P)
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
 #endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-#endif
+
 }
 
 __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -392,39 +391,13 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
-#if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
-#if !defined(TARGET_STAX) && !defined(TARGET_FLEX)
+#if !defined(TARGET_STAX) && !defined(TARGET_FLEX) && !defined(TARGET_APEX_P)
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
 #endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-#elif defined(APP_VALIDATOR)
-    switch(parser_tx_obj.type) {
-                        case consensusType:
-                        {
-                            if(vote_state.isInitialized) {
-                                app_sign_ed25519();
-                                view_status_show();
-                            } else {
-                                CHECK_APP_CANARY()
-                                view_review_init(tx_getItem, tx_getNumItems, app_sign_ed25519);
-                                view_review_show(REVIEW_TXN);
-                                *flags |= IO_ASYNCH_REPLY;
-                            }
-                        }
-                        	break;
-                        case nodeType:
-                            app_sign_ed25519();
-                            break;
-                        default:
-                            THROW(APDU_CODE_BAD_KEY_HANDLE);
-                    }
-
-#else
-#error "APP MODE IS NOT SUPPORTED"
-#endif
 }
 
 __Z_INLINE void
@@ -445,12 +418,12 @@ handleSignEth(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
         *tx += (error_msg_length);
         THROW(APDU_CODE_DATA_INVALID);
     }
-#if defined(APP_CONSUMER)
+
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_eth);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-#endif
+
 }
 
 __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -474,15 +447,13 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
         THROW(APDU_CODE_DATA_INVALID);
     }
 
-#if defined(APP_CONSUMER)
     CHECK_APP_CANARY()
     view_review_init(tx_getItem, tx_getNumItems, app_sign_sr25519);
-#if !defined(TARGET_STAX) && !defined(TARGET_FLEX)
+#if !defined(TARGET_STAX) && !defined(TARGET_FLEX) && !defined(TARGET_APEX_P)
     view_inspect_init(tx_getInnerItem, tx_getNumInnerItems, tx_canInspectItem);
 #endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-#endif
 }
 
 void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {

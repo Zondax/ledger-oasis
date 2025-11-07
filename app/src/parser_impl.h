@@ -15,10 +15,5 @@
 ********************************************************************************/
 #pragma once
 
-#if defined(APP_CONSUMER)
 #include "./consumer/parser_impl_con.h"
-#elif defined(APP_VALIDATOR)
-#include "./validator/parser_impl_val.h"
-#else
-#error "APP MODE IS NOT SUPPORTED"
-#endif
+

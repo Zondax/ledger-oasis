@@ -69,10 +69,4 @@ typedef enum {
     addr_eth = 3,
 } address_kind_e;
 
-#if defined(APP_CONSUMER)
 #include "consumer/coin_consumer.h"
-#elif defined(APP_VALIDATOR)
-#include "validator/coin_validator.h"
-#else
-#error "APP MODE IS NOT SUPPORTED"
-#endif
