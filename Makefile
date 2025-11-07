@@ -39,20 +39,29 @@ default:
 	COIN=$(COIN) $(MAKE) -C app $@
 endif
 
-test_prepare:
-	make
-	make zemu_install
-
+# Main test target called by CI
 test_all:
 	make
 	make zemu_install
 	make zemu_test
 
-tests_tools_build:
+# Install test dependencies
+.PHONY: zemu_install
+zemu_install: zemu_install_js_link
+	# Build native test tools
 	cd tests_tools/neon && yarn install
+	# Install test dependencies
+	cd $(TESTS_ZEMU_DIR) && yarn install
 
-zemu_install: tests_tools_build
+# Run tests
+zemu_test:
+	cd tests_zemu && yarn test
 
-build_val: COIN=oasis_validator
-build_val: buildS
-	cp $(CURDIR)/app/bin/app.elf $(CURDIR)/app/bin/app_val.elf
+# Helper targets for development
+tests_tools_clean:
+	rm -f tests_tools/neon/native/index.node
+	rm -rf tests_tools/target
+	cd tests_tools && cargo clean
+
+tests_tools_rebuild: tests_tools_clean
+	cd tests_tools/neon && yarn install

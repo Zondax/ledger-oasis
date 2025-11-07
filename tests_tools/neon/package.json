@@ -6,11 +6,12 @@
   "author": "Zondax GmbH <info@zondax.ch>",
   "license": "Apache-2.0",
   "private": true,
-  "dependencies": {
-    "neon-cli": "^0.10.1"
+  "engines": {
+    "node": ">=22.0.0"
   },
   "scripts": {
-    "install": "node_modules/.bin/neon build",
-    "test": "node -e 'require(\"./\")'"
+    "build": "cd ../../tests_tools && cargo build --release && cp target/release/libteststtools.dylib ../tests_tools/neon/native/index.node 2>/dev/null || cp target/release/libteststtools.so ../tests_tools/neon/native/index.node",
+    "install": "npm run build",
+    "test": "node -e 'require(\"./native\")'"
   }
 }

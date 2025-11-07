@@ -120,26 +120,12 @@ file(GLOB_RECURSE LIB_SRC
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/eth_utils.c
         )
 
-file(GLOB_RECURSE LIB_VAL_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/src/*.c
-        #########
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/parser.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_validator.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/parser_impl_val.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote_fsm.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator/vote.c
-        )
-
 add_library(app_lib STATIC
         ${LIB_SRC}
         ${TINYCBOR_SRC}
         )
-add_library(app_val_lib STATIC
-        ${LIB_VAL_SRC}
-        )
 
 target_compile_definitions(app_lib PRIVATE NO_DISPLAY)
-target_compile_definitions(app_val_lib PRIVATE APP_VALIDATOR)
 
 target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
@@ -149,15 +135,6 @@ target_include_directories(app_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/deps/picohash/
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/consumer
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
-        )
-
-target_include_directories(app_val_lib PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/ledger-zxlib/app/ui
-        ${CMAKE_CURRENT_SOURCE_DIR}/deps/sha512
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/app/src/validator
         ${CMAKE_CURRENT_SOURCE_DIR}/app/src/common
         )
 

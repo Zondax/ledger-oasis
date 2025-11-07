@@ -15,4 +15,4 @@ jobs:
     with:
       runs-on: ${{ github.repository_owner == 'zondax' && 'zondax-runners' || 'ubuntu-latest' }}
       has-rust: true
-      node-version: '22'
+      node-version: "22"
