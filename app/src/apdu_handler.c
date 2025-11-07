@@ -1,41 +1,39 @@
 /*******************************************************************************
-*   (c) 2018, 2019 Zondax GmbH
-*   (c) 2016 Ledger
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *   (c) 2018, 2019 Zondax GmbH
+ *   (c) 2016 Ledger
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 
-#include "zxmacros.h"
-#include <string.h>
-#include <os_io_seproxyhal.h>
 #include <os.h>
+#include <os_io_seproxyhal.h>
+#include <string.h>
 #include <ux.h>
 
-#include "view.h"
-#include "view_internal.h"
 #include "actions.h"
-#include "tx.h"
 #include "addr.h"
-#include "crypto.h"
-#include "coin.h"
 #include "app_main.h"
 #include "app_mode.h"
-
-#include "parser_txdef.h"
-#include "parser_impl.h"
-
+#include "coin.h"
+#include "crypto.h"
 #include "eth_addr.h"
 #include "eth_utils.h"
+#include "parser_impl.h"
+#include "parser_txdef.h"
+#include "tx.h"
+#include "view.h"
+#include "view_internal.h"
+#include "zxmacros.h"
 
 static bool tx_initialized = false;
 
@@ -43,7 +41,7 @@ static const char *msg_error1 = "Expert Mode";
 static const char *msg_error2 = "Required";
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
-    MEMZERO(hdPath,sizeof(hdPath));
+    MEMZERO(hdPath, sizeof(hdPath));
     if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_ADR0008) {
         hdPathLen = HDPATH_LEN_ADR0008;
     } else if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_DEFAULT) {
@@ -58,30 +56,27 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
 
     MEMCPY(hdPath, G_io_apdu_buffer + offset, sizeof(uint32_t) * hdPathLen);
 
-    const bool mainnet = (hdPath[0] == HDPATH_0_DEFAULT &&
-                         hdPath[1] == HDPATH_1_DEFAULT) ||
-                         (hdPath[0] == HDPATH_0_DEFAULT &&
-                         hdPath[1] == HDPATH_1_ALTERNATIVE) ||
-                         (hdPath[0] == HDPATH_0_DEFAULT &&
-                         hdPath[1] == HDPATH_1_ALTERNATIVE2);
+    const bool mainnet = (hdPath[0] == HDPATH_0_DEFAULT && hdPath[1] == HDPATH_1_DEFAULT) ||
+                         (hdPath[0] == HDPATH_0_DEFAULT && hdPath[1] == HDPATH_1_ALTERNATIVE) ||
+                         (hdPath[0] == HDPATH_0_DEFAULT && hdPath[1] == HDPATH_1_ALTERNATIVE2);
 
     if (!mainnet) {
         THROW(APDU_CODE_DATA_INVALID);
     }
 
-    if(hdPathLen == HDPATH_LEN_ADR0008 && hdPath[2] < 0x80000000){
+    if (hdPathLen == HDPATH_LEN_ADR0008 && hdPath[2] < 0x80000000) {
         THROW(APDU_CODE_DATA_INVALID);
     }
 }
 
-void extract_eth_path(uint32_t rx, uint32_t offset)
-{
+void extract_eth_path(uint32_t rx, uint32_t offset) {
     tx_initialized = false;
 
     uint32_t path_len = *(G_io_apdu_buffer + offset);
 
-    if (path_len > MAX_BIP32_PATH || path_len < 1)
+    if (path_len > MAX_BIP32_PATH || path_len < 1) {
         THROW(APDU_CODE_WRONG_LENGTH);
+    }
 
     if ((rx - offset - 1) < sizeof(uint32_t) * path_len) {
         THROW(APDU_CODE_WRONG_LENGTH);
@@ -96,9 +91,7 @@ void extract_eth_path(uint32_t rx, uint32_t offset)
         path_data += sizeof(uint32_t);
     }
 
-    const bool mainnet =
-      hdPath[0] == HDPATH_ETH_0_DEFAULT && hdPath[1] == HDPATH_ETH_1_DEFAULT;
-
+    const bool mainnet = hdPath[0] == HDPATH_ETH_0_DEFAULT && hdPath[1] == HDPATH_ETH_1_DEFAULT;
 
     if (!mainnet) {
         THROW(APDU_CODE_DATA_INVALID);
@@ -108,7 +101,7 @@ void extract_eth_path(uint32_t rx, uint32_t offset)
     hdPathLen = path_len;
 }
 
-bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
+bool process_chunk(const volatile uint32_t *tx, uint32_t rx) {
     UNUSED(tx);
 
     const uint8_t payloadType = G_io_apdu_buffer[OFFSET_PAYLOAD_TYPE];
@@ -121,7 +114,7 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
         THROW(APDU_CODE_WRONG_LENGTH);
     }
 
-    uint32_t added;
+    uint32_t added = 0;
     switch (payloadType) {
         case 0:
             tx_initialize_oasis();
@@ -152,11 +145,10 @@ bool process_chunk(volatile uint32_t *tx, uint32_t rx) {
     }
     tx_initialized = false;
     THROW(APDU_CODE_INVALIDP1P2);
+    return false;  // This is never reached, but satisfies the compiler
 }
 
-bool
-process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
-{
+bool process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx) {
     const uint8_t payloadType = G_io_apdu_buffer[OFFSET_PAYLOAD_TYPE];
 
     if (G_io_apdu_buffer[OFFSET_P2] != 0) {
@@ -174,7 +166,7 @@ process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
     uint8_t *data = &(G_io_apdu_buffer[OFFSET_DATA]);
     uint32_t len = rx - OFFSET_DATA;
 
-    uint64_t added;
+    uint64_t added = 0;
     switch (payloadType) {
         case P1_ETH_FIRST:
             tx_initialize_eth();
@@ -223,8 +215,7 @@ process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
             uint64_t buff_len = tx_get_buffer_length();
             uint8_t *buff_data = tx_get_buffer();
 
-            if (get_tx_rlp_len(buff_data, buff_len, &read, &to_read) !=
-                rlp_ok) {
+            if (get_tx_rlp_len(buff_data, buff_len, &read, &to_read) != rlp_ok) {
                 THROW(APDU_CODE_DATA_INVALID);
             }
 
@@ -234,8 +225,9 @@ process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
             uint64_t missing = to_read - rlp_read;
             max_len = len;
 
-            if (missing < len)
+            if (missing < len) {
                 max_len = missing;
+            }
 
             added = tx_append(data, max_len);
 
@@ -253,9 +245,10 @@ process_chunk_eth(__Z_UNUSED volatile uint32_t *tx, uint32_t rx)
             return false;
     }
     THROW(APDU_CODE_INVALIDP1P2);
+    return false;  // This is never reached, but satisfies the compiler
 }
 
-__Z_INLINE void handle_getversion(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
+__Z_INLINE void handle_getversion(const volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     UNUSED(flags);
     UNUSED(rx);
 #ifdef DEBUG
@@ -312,16 +305,15 @@ __Z_INLINE void handleGetAddr(volatile uint32_t *flags, volatile uint32_t *tx, u
     THROW(APDU_CODE_OK);
 }
 
-__Z_INLINE void
-handleGetEthAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
-{
+__Z_INLINE void handleGetEthAddr(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     extract_eth_path(rx, OFFSET_DATA);
 
     uint8_t requireConfirmation = G_io_apdu_buffer[OFFSET_P1];
     uint8_t with_code = G_io_apdu_buffer[OFFSET_P2];
 
-    if (with_code != P2_CHAINCODE && with_code != P2_NO_CHAINCODE)
+    if (with_code != P2_CHAINCODE && with_code != P2_NO_CHAINCODE) {
         THROW(APDU_CODE_INVALIDP1P2);
+    }
 
     chain_code = with_code;
 
@@ -346,7 +338,7 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
     }
 
     CHECK_APP_CANARY()
-    uint8_t parser_err;
+    uint8_t parser_err = 0;
     const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
@@ -356,7 +348,7 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
+            view_custom_error_show(PIC(msg_error1), PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -368,7 +360,6 @@ __Z_INLINE void handleSignSecp256k1(volatile uint32_t *flags, volatile uint32_t 
 #endif
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-
 }
 
 __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -377,7 +368,7 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
     }
 
     CHECK_APP_CANARY()
-    uint8_t parser_err;
+    uint8_t parser_err = 0;
     const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
@@ -387,7 +378,7 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
+            view_custom_error_show(PIC(msg_error1), PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -400,15 +391,13 @@ __Z_INLINE void handleSignEd25519(volatile uint32_t *flags, volatile uint32_t *t
     *flags |= IO_ASYNCH_REPLY;
 }
 
-__Z_INLINE void
-handleSignEth(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
-{
+__Z_INLINE void handleSignEth(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     if (!process_chunk_eth(tx, rx)) {
         THROW(APDU_CODE_OK);
     }
     CHECK_APP_CANARY()
 
-    uint8_t parser_err;
+    uint8_t parser_err = 0;
     const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
@@ -423,7 +412,6 @@ handleSignEth(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx)
     view_review_init(tx_getItem, tx_getNumItems, app_sign_eth);
     view_review_show(REVIEW_TXN);
     *flags |= IO_ASYNCH_REPLY;
-
 }
 
 __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
@@ -432,7 +420,7 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
     }
 
     CHECK_APP_CANARY()
-    uint8_t parser_err;
+    uint8_t parser_err = 0;
     const char *error_msg = tx_parse(&parser_err);
     CHECK_APP_CANARY()
 
@@ -442,7 +430,7 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
         *tx += (error_msg_length);
         if (parser_err == parser_required_expert_mode) {
             *flags |= IO_ASYNCH_REPLY;
-            view_custom_error_show(PIC(msg_error1),PIC(msg_error2));
+            view_custom_error_show(PIC(msg_error1), PIC(msg_error2));
         }
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -459,10 +447,8 @@ __Z_INLINE void handleSignSr25519(volatile uint32_t *flags, volatile uint32_t *t
 void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
     uint16_t sw = 0;
 
-    BEGIN_TRY
-    {
-        TRY
-        {
+    BEGIN_TRY {
+        TRY {
             uint8_t cla = G_io_apdu_buffer[OFFSET_CLA];
             if ((cla != CLA) && (cla != CLA_ETH)) {
                 THROW(APDU_CODE_CLA_NOT_SUPPORTED);
@@ -474,8 +460,9 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
             uint8_t instruction = G_io_apdu_buffer[OFFSET_INS];
 
             // Handle this case as ins number
-            if (instruction == INS_GET_ADDR_ETH && cla == CLA_ETH)
-                 handleGetEthAddr(flags, tx, rx);
+            if (instruction == INS_GET_ADDR_ETH && cla == CLA_ETH) {
+                handleGetEthAddr(flags, tx, rx);
+            }
 
             switch (instruction) {
                 case INS_GET_VERSION: {
@@ -538,12 +525,8 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                     THROW(APDU_CODE_INS_NOT_SUPPORTED);
             }
         }
-        CATCH(EXCEPTION_IO_RESET)
-        {
-            THROW(EXCEPTION_IO_RESET);
-        }
-        CATCH_OTHER(e)
-        {
+        CATCH(EXCEPTION_IO_RESET) { THROW(EXCEPTION_IO_RESET); }
+        CATCH_OTHER(e) {
             switch (e & 0xF000) {
                 case 0x6000:
                 case APDU_CODE_OK:
@@ -557,9 +540,7 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
             G_io_apdu_buffer[*tx + 1] = sw;
             *tx += 2;
         }
-        FINALLY
-        {
-        }
+        FINALLY {}
     }
     END_TRY;
 }
