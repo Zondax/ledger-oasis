@@ -122,9 +122,12 @@ static cx_err_t fe25519_pow22523_sdk(fe25519_sdk out, const fe25519_sdk z) {
 static cx_err_t ristretto255_sqrt_ratio_m1_sdk(fe25519_sdk x, const fe25519_sdk u, const fe25519_sdk v) {
     fe25519_sdk v3;
     fe25519_sdk vxx;
-    fe25519_sdk m_root_check, p_root_check, f_root_check;
+    fe25519_sdk m_root_check;
+    fe25519_sdk p_root_check;
+    fe25519_sdk f_root_check;
     fe25519_sdk x_sqrtm1;
-    int has_p_root, has_f_root;
+    int has_p_root = 0;
+    int has_f_root = 0;
 
     CHECK_CXERROR(fe25519_sq_sdk(v3, v));
     CHECK_CXERROR(fe25519_mul_sdk(v3, v3, v)); /* v3 = v^3 */
@@ -154,21 +157,25 @@ static cx_err_t ristretto255_sqrt_ratio_m1_sdk(fe25519_sdk x, const fe25519_sdk 
 }
 
 static cx_err_t ristretto255_p3_tobytes_sdk(fe25519_sdk s, const ge25519_p3_sdk *h) {
-    fe25519_sdk den1, den2;
+    fe25519_sdk den1;
+    fe25519_sdk den2;
     fe25519_sdk den_inv;
     fe25519_sdk eden;
     fe25519_sdk inv_sqrt;
-    fe25519_sdk ix, iy;
+    fe25519_sdk ix;
+    fe25519_sdk iy;
     fe25519_sdk one;
     fe25519_sdk s_;
     fe25519_sdk t_z_inv;
-    fe25519_sdk u1, u2;
+    fe25519_sdk u1;
+    fe25519_sdk u2;
     fe25519_sdk u1_u2u2;
-    fe25519_sdk x_, y_;
+    fe25519_sdk x_;
+    fe25519_sdk y_;
     fe25519_sdk x_z_inv;
     fe25519_sdk z_inv;
     fe25519_sdk zmy;
-    int rotate;
+    int rotate = 0;
 
     CHECK_CXERROR(fe25519_add_sdk(u1, h->Z, h->Y));  /* u1 = Z+Y */
     CHECK_CXERROR(fe25519_sub_sdk(zmy, h->Z, h->Y)); /* zmy = Z-Y */
@@ -216,7 +223,7 @@ static cx_err_t ristretto255_p3_tobytes_sdk(fe25519_sdk s, const ge25519_p3_sdk 
 
 cx_err_t crypto_scalarmult_ristretto255_base_sdk(unsigned char *q, const unsigned char *n) {
     unsigned char *t = q;
-    unsigned int i;
+    unsigned int i = 0;
     for (i = 0; i < ED25519_SCALAR_BYTES; ++i) {
         t[i] = n[ED25519_SCALAR_BYTES - 1 - i];
     }

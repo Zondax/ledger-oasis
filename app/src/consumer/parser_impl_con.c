@@ -289,7 +289,7 @@ __Z_INLINE parser_error_t _readRuntimeString(CborValue *value, string_t *out) {
 
 __Z_INLINE parser_error_t _readVersion(CborValue *target, version_t *out) {
     CborValue versions;
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_TYPE(cbor_value_get_type(target), CborMapType)
     CHECK_CBOR_ERR(cbor_value_get_map_length(target, &numItems))
 
@@ -478,7 +478,7 @@ __Z_INLINE parser_error_t _readFee(parser_tx_t *v, CborValue *rootItem) {
 
 __Z_INLINE parser_error_t _readEntity(oasis_entity_t *entity) {
     /* Not using cbor_value_map_find because Cbor canonical order should be respected */
-    CborValue value = entity->cborState.startValue;  // copy to avoid moving the original iteratorCborValue contents;
+    CborValue value = entity->cborState.startValue;  // Copy to avoid modifying the original iterator
     CborValue tmp;
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&value), CborMapType)
@@ -519,11 +519,13 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 
     CborValue bodyField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
-    if (!cbor_value_is_valid(&bodyField)) return parser_required_body;
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
     CHECK_CBOR_TYPE(cbor_value_get_type(&bodyField), CborMapType)
 
     CborValue contents;
-    size_t numItems;
+    size_t numItems = 0;
 
     switch (v->oasis.tx.method) {
         case stakingTransfer: {
@@ -570,7 +572,9 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
         case stakingAllow: {
             CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
             CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
-            if (numItems < 2 || numItems > 3) return parser_unexpected_number_items;
+            if (numItems < 2 || numItems > 3) {
+                return parser_unexpected_number_items;
+            }
 
             if (numItems == 3) {
                 CHECK_PARSER_ERR(_matchKey(&contents, "negative"))
@@ -664,8 +668,8 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
             }
 
             // We create new Cbor parser with the byte string
-            const uint8_t *buffer;
-            size_t buffer_size;
+            const uint8_t *buffer = NULL;
+            size_t buffer_size = 0;
 
             CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&contents))
             CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&contents, (const void **)&buffer, &buffer_size, NULL))
@@ -796,7 +800,9 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
 __Z_INLINE parser_error_t _readNonce(parser_tx_t *v, CborValue *rootItem) {
     CborValue nonceField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "nonce", &nonceField))
-    if (!cbor_value_is_valid(&nonceField)) return parser_required_nonce;
+    if (!cbor_value_is_valid(&nonceField)) {
+        return parser_required_nonce;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&nonceField), CborIntegerType)
     CHECK_CBOR_ERR(cbor_value_get_uint64(&nonceField, &v->oasis.tx.nonce))
@@ -874,7 +880,9 @@ __Z_INLINE parser_error_t _readFormatVersion(parser_tx_t *v, CborValue *rootItem
     // v: format version (uint16, required, must be 1)
     CborValue vField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "v", &vField))
-    if (!cbor_value_is_valid(&vField)) return parser_required_v;
+    if (!cbor_value_is_valid(&vField)) {
+        return parser_required_v;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
 
@@ -893,7 +901,9 @@ __Z_INLINE parser_error_t _readRuntimeVersion(parser_tx_t *v, CborValue *rootIte
     // v: format version (uint16, required, must be 1)
     CborValue vField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "v", &vField))
-    if (!cbor_value_is_valid(&vField)) return parser_required_v;
+    if (!cbor_value_is_valid(&vField)) {
+        return parser_required_v;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&vField), CborIntegerType)
 
@@ -937,7 +947,9 @@ __Z_INLINE parser_error_t _readSerial(parser_tx_t *v, CborValue *rootItem) {
     CborValue serialField;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "serial", &serialField))
-    if (!cbor_value_is_valid(&serialField)) return parser_required_serial;
+    if (!cbor_value_is_valid(&serialField)) {
+        return parser_required_serial;
+    }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&serialField), CborIntegerType)
     CHECK_CBOR_ERR(cbor_value_get_uint64(&serialField, &v->oasis.entity_metadata.serial))
@@ -949,7 +961,7 @@ __Z_INLINE parser_error_t _readName(parser_tx_t *v, CborValue *rootItem) {
     // name: an entity name (string, optional, max 50 characters)
     CborValue nameField;
     CborValue dummy;
-    size_t cbor_name_length;
+    size_t cbor_name_length = 0;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "name", &nameField))
     if (!cbor_value_is_valid(&nameField)) {
@@ -983,15 +995,21 @@ parser_error_t _isValidUrl(url_t *url) {
     }
 
     const char https_prefix[] = "https://";
-    if (strncmp(https_prefix, (const char *)url->buffer, strlen(https_prefix)) != 0) return parser_invalid_url_format;
+    if (strncmp(https_prefix, (const char *)url->buffer, strlen(https_prefix)) != 0) {
+        return parser_invalid_url_format;
+    }
 
     // Dectect query by lookin for the `?` separator
     char query_separator = '?';
-    if (strchr((const char *)url->buffer, query_separator) != NULL) return parser_invalid_url_format;
+    if (strchr((const char *)url->buffer, query_separator) != NULL) {
+        return parser_invalid_url_format;
+    }
 
     // Dectect fragment by looking for the `#` the fragment identifier
     char fragment_identifier = '#';
-    if (strchr((const char *)url->buffer, fragment_identifier) != NULL) return parser_invalid_url_format;
+    if (strchr((const char *)url->buffer, fragment_identifier) != NULL) {
+        return parser_invalid_url_format;
+    }
 
     return parser_ok;
 }
@@ -1001,7 +1019,7 @@ __Z_INLINE parser_error_t _readUrl(parser_tx_t *v, CborValue *rootItem) {
     // https without any query or fragments)
     CborValue urlField;
     CborValue dummy;
-    size_t cbor_url_length;
+    size_t cbor_url_length = 0;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "url", &urlField))
     if (!cbor_value_is_valid(&urlField)) {
@@ -1054,7 +1072,9 @@ parser_error_t _isValidEmail(email_t *email) {
         }
     }
 
-    if (arobase_count > 1 || punct_count < 1) return parser_invalid_email_format;
+    if (arobase_count > 1 || punct_count < 1) {
+        return parser_invalid_email_format;
+    }
 
     return parser_ok;
 }
@@ -1064,7 +1084,7 @@ __Z_INLINE parser_error_t _readEmail(parser_tx_t *v, CborValue *rootItem) {
     // address)
     CborValue emailField;
     CborValue dummy;
-    size_t cbor_email_length;
+    size_t cbor_email_length = 0;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "email", &emailField))
     if (!cbor_value_is_valid(&emailField)) {
@@ -1104,7 +1124,7 @@ __Z_INLINE parser_error_t _readKeybase(parser_tx_t *v, CborValue *rootItem) {
     // keybase: a keybase.io handle (string, optional, max 32 characters, must match the regular expression ^[A-Za-z0-9_]+$)
     CborValue keybaseField;
     CborValue dummy;
-    size_t cbor_keybase_length;
+    size_t cbor_keybase_length = 0;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "keybase", &keybaseField))
     if (!cbor_value_is_valid(&keybaseField)) {
@@ -1132,7 +1152,7 @@ __Z_INLINE parser_error_t _readTwitter(parser_tx_t *v, CborValue *rootItem) {
     // twitter: a Twitter handle (string, optional, max 32 characters, must match the regular expression ^[A-Za-z0-9_]+$)
     CborValue twitterField;
     CborValue dummy;
-    size_t cbor_twitter_length;
+    size_t cbor_twitter_length = 0;
 
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "twitter", &twitterField))
     if (!cbor_value_is_valid(&twitterField)) {
@@ -1223,10 +1243,14 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
     CborValue bodyField;
     size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
-    if (!cbor_value_is_valid(&bodyField)) return parser_required_body;
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
 
     CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
-    if (numItems < 1 || numItems > 5) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 5) {
+        return parser_unexpected_number_items;
+    }
 
     CborValue contents;
     if (v->oasis.runtime.call.method != contractsInstantiate) {
@@ -1250,8 +1274,8 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
     if (cbor_value_is_valid(&dataField)) {
         v->oasis.runtime.call.body.contracts.dataValid = true;
         // We create new Cbor parser with the byte string from data
-        uint8_t *buf;
-        size_t buffer_size;
+        uint8_t *buf = NULL;
+        size_t buffer_size = 0;
         CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
         CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **)&buf, &buffer_size, NULL))
         v->oasis.runtime.call.body.contracts.dataPtr = buf;
@@ -1292,10 +1316,14 @@ __Z_INLINE parser_error_t _readRuntimeConsensusBody(parser_tx_t *v, CborValue *r
     CborValue bodyField;
     size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
-    if (!cbor_value_is_valid(&bodyField)) return parser_required_body;
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
 
     CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
-    if (numItems < 1 || numItems > 2) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 2) {
+        return parser_unexpected_number_items;
+    }
 
     CborValue contents;
     CHECK_CBOR_ERR(cbor_value_enter_container(&bodyField, &contents))
@@ -1341,10 +1369,14 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     CborValue bodyField;
     size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
-    if (!cbor_value_is_valid(&bodyField)) return parser_required_body;
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
 
     CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
-    if (numItems < 1 || numItems > 4) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 4) {
+        return parser_unexpected_number_items;
+    }
 
     CborValue pkField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "pk", &pkField))
@@ -1365,8 +1397,8 @@ __Z_INLINE parser_error_t _readRuntimeEncrypted(parser_tx_t *v, CborValue *rootI
     if (!cbor_value_is_valid(&dataField)) {
         return parser_required_nonce;
     }
-    const uint8_t *buffer;
-    size_t buffer_size;
+    const uint8_t *buffer = NULL;
+    size_t buffer_size = 0;
     CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
     CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **)&buffer, &buffer_size, NULL))
 
@@ -1395,12 +1427,16 @@ __Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootIte
     // Verify it is well formed (no missing bytes...)
     CHECK_CBOR_ERR(cbor_value_validate_basic(rootItem))
     CborValue bodyField;
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_map_find_value(rootItem, "body", &bodyField))
-    if (!cbor_value_is_valid(&bodyField)) return parser_required_body;
+    if (!cbor_value_is_valid(&bodyField)) {
+        return parser_required_body;
+    }
 
     CHECK_CBOR_ERR(cbor_value_get_map_length(&bodyField, &numItems))
-    if (numItems < 1 || numItems > 4) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 4) {
+        return parser_unexpected_number_items;
+    }
 
     CborValue addrField;
     CHECK_CBOR_ERR(cbor_value_map_find_value(&bodyField, "address", &addrField))
@@ -1414,8 +1450,8 @@ __Z_INLINE parser_error_t _readRuntimeEvmBody(parser_tx_t *v, CborValue *rootIte
     if (!cbor_value_is_valid(&dataField)) {
         return parser_required_nonce;
     }
-    const uint8_t *buffer;
-    size_t buffer_size;
+    const uint8_t *buffer = NULL;
+    size_t buffer_size = 0;
     CHECK_CBOR_ERR(_cbor_value_begin_string_iteration(&dataField))
     CHECK_CBOR_ERR(_cbor_value_get_string_chunk(&dataField, (const void **)&buffer, &buffer_size, NULL))
 
@@ -1445,9 +1481,11 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
     }
 
     CHECK_CBOR_TYPE(cbor_value_get_type(&callField), CborMapType)
-    size_t numItems;
+    size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_get_map_length(&callField, &numItems))
-    if (numItems < 2 || numItems > 4) return parser_unexpected_number_items;
+    if (numItems < 2 || numItems > 4) {
+        return parser_unexpected_number_items;
+    }
 
     // Read format
     CborValue tmp;
@@ -1457,7 +1495,9 @@ __Z_INLINE parser_error_t _readRuntimeCall(parser_tx_t *v, CborValue *rootItem) 
             return parser_unexpected_type;
         }
         CHECK_CBOR_ERR(cbor_value_get_uint64(&tmp, &v->oasis.runtime.call.format))
-        if (v->oasis.runtime.call.format > 1) return parser_unsupported_cal;
+        if (v->oasis.runtime.call.format > 1) {
+            return parser_unsupported_cal;
+        }
     } else {
         v->oasis.runtime.call.format = 0;
     }
@@ -1506,7 +1546,9 @@ __Z_INLINE parser_error_t _readRuntimeFee(parser_tx_t *v, CborValue *rootItem) {
     }
 
     CHECK_CBOR_ERR(cbor_value_get_map_length(&feeField, &numItems))
-    if (numItems < 1 || numItems > 3) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 3) {
+        return parser_unexpected_number_items;
+    }
 
     CborValue amount;
     CborValue contents;
@@ -1550,7 +1592,9 @@ __Z_INLINE parser_error_t _readRuntimeAi(parser_tx_t *v, CborValue *rootItem) {
     }
     size_t numItems = 0;
     CHECK_CBOR_ERR(cbor_value_get_map_length(&aiField, &numItems))
-    if (numItems < 1 || numItems > 3) return parser_unexpected_number_items;
+    if (numItems < 1 || numItems > 3) {
+        return parser_unexpected_number_items;
+    }
 
     CHECK_PARSER_ERR(_readRuntimeFee(v, &aiField))
 

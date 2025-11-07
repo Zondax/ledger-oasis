@@ -11,6 +11,7 @@ Checks: "-*,
   readability-*,
   -misc-no-recursion,
   -readability-function-cognitive-complexity,
+  -readability-function-size,
   -readability-magic-numbers"
 WarningsAsErrors: "*"
 CheckOptions:

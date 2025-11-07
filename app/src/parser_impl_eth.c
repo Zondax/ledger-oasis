@@ -35,17 +35,23 @@
 eth_tx_t eth_tx_obj;
 
 static parser_error_t parse_field(parser_context_t *ctx, uint32_t *fieldOffset, uint32_t *len) {
-    if (ctx->offset >= ctx->bufferLen) return parser_unexpected_buffer_end;
+    if (ctx->offset >= ctx->bufferLen) {
+        return parser_unexpected_buffer_end;
+    }
 
     uint32_t read = 0;
 
     const uint8_t *data = &ctx->buffer[ctx->offset];
 
-    if (parse_rlp_item(data, ctx->bufferLen - ctx->offset, &read, len) != rlp_ok) return parser_invalid_rlp_data;
+    if (parse_rlp_item(data, ctx->bufferLen - ctx->offset, &read, len) != rlp_ok) {
+        return parser_invalid_rlp_data;
+    }
 
     *fieldOffset = ctx->offset + read;
 
-    if (*fieldOffset > ctx->bufferLen) return parser_invalid_rlp_data;
+    if (*fieldOffset > ctx->bufferLen) {
+        return parser_invalid_rlp_data;
+    }
 
     ctx->offset += read + *len;
 
@@ -68,7 +74,9 @@ static parser_error_t readChainID(parser_context_t *ctx, chain_id_t *chain_id) {
 }
 
 static parser_error_t readBigInt(parser_context_t *ctx, eth_big_int_t *big_int) {
-    if (parse_field(ctx, &(big_int->offset), &(big_int->len)) != rlp_ok) return parser_invalid_rlp_data;
+    if (parse_field(ctx, &(big_int->offset), &(big_int->len)) != rlp_ok) {
+        return parser_invalid_rlp_data;
+    }
 
     return parser_ok;
 }
@@ -77,14 +85,18 @@ static parser_error_t readAddress(parser_context_t *ctx, eth_addr_t *addr) {
     uint32_t addr_len = 0;
     uint32_t offset = 0;
 
-    if (parse_field(ctx, &offset, &addr_len) != parser_ok) return parser_invalid_rlp_data;
+    if (parse_field(ctx, &offset, &addr_len) != parser_ok) {
+        return parser_invalid_rlp_data;
+    }
 
     // it is ok to have an empty address
     if (addr_len == 0) {
         return parser_ok;
     }
 
-    if (addr_len != ETH_ADDRESS_LEN || offset >= ctx->bufferLen) return parser_invalid_address;
+    if (addr_len != ETH_ADDRESS_LEN || offset >= ctx->bufferLen) {
+        return parser_invalid_address;
+    }
 
     MEMCPY(addr->addr, &ctx->buffer[offset], ETH_ADDRESS_LEN);
 
@@ -136,7 +148,8 @@ static parser_error_t parse_legacy_tx(parser_context_t *ctx, eth_tx_t *tx_obj) {
 
     if (r_len == 1 && s_len == 1 && (ctx->buffer[r_offset] | ctx->buffer[s_offset])) {
         return parser_invalid_rs_values;
-    } else if (r_len == 0 && s_len == 0) {
+    }
+    if (r_len == 0 && s_len == 0) {
         return parser_ok;
     }
 
@@ -148,7 +161,9 @@ static parser_error_t parse_2930(parser_context_t *ctx, eth_tx_t *tx_obj) {
     // later we can implement the parser for the other fields
     CHECK_PARSER_ERR(readChainID(ctx, &(tx_obj->chain_id)));
 
-    if (tx_obj->chain_id.len == 0) return parser_invalid_chain_id;
+    if (tx_obj->chain_id.len == 0) {
+        return parser_invalid_chain_id;
+    }
 
     return parser_ok;
 }
@@ -158,7 +173,9 @@ static parser_error_t parse_1559(parser_context_t *ctx, eth_tx_t *tx_obj) {
     // later we can implement the parser for the other fields
     CHECK_PARSER_ERR(readChainID(ctx, &(tx_obj->chain_id)));
 
-    if (tx_obj->chain_id.len == 0) return parser_invalid_chain_id;
+    if (tx_obj->chain_id.len == 0) {
+        return parser_invalid_chain_id;
+    }
 
     return parser_ok;
 }
@@ -185,13 +202,17 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
     uint8_t marker = ctx->buffer[0];
     uint32_t start = ctx->offset;
 
-    if (marker != eip2930 && marker != eip1559 && marker < 0xc0) return parser_unsupported_tx;
+    if (marker != eip2930 && marker != eip1559 && marker < 0xc0) {
+        return parser_unsupported_tx;
+    }
 
     if (ctx->offset + 1 > ctx->bufferLen) {
         return parser_unexpected_buffer_end;
     }
 
-    if (marker == eip2930 || marker == eip1559) ctx->offset += 1;
+    if (marker == eip2930 || marker == eip1559) {
+        ctx->offset += 1;
+    }
 
     // read the first byte, it indicates if transaction falls in one of the
     // following:
@@ -222,7 +243,9 @@ parser_error_t _readEth(parser_context_t *ctx, eth_tx_t *tx_obj) {
     parser_error_t err = parseEthTx(ctx, tx_obj);
     ctx->offset = start;
 
-    if (err != parser_ok) return err;
+    if (err != parser_ok) {
+        return err;
+    }
 
     return parser_ok;
 }
@@ -267,7 +290,7 @@ parser_error_t _computeV(parser_context_t *ctx, eth_tx_t *tx_obj, unsigned int i
     uint32_t id_len = tx_obj->chain_id.len;
     uint8_t type = eth_tx_obj.tx_type;
 
-    uint8_t parity = (info & CX_ECCINFO_PARITY_ODD) == 1;
+    uint8_t parity = ((info & CX_ECCINFO_PARITY_ODD) == 1) ? 1 : 0;
 
     if (type == eip2930 || type == eip1559) {
         *v = parity;

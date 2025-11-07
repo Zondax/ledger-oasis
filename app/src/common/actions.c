@@ -69,7 +69,7 @@ void app_sign_secp256k1() {
 void app_sign_sr25519() {
     uint8_t *signature = G_io_apdu_buffer;
     uint8_t messageDigest[CX_SHA512_SIZE] = {0};
-    size_t ctx_len;
+    size_t ctx_len = 0;
     uint16_t replyLen = 0;
 
     const uint8_t *context = crypto_getSr25519BytesToSign(messageDigest, sizeof(messageDigest), &ctx_len);

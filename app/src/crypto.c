@@ -322,7 +322,9 @@ zxerr_t _sign(uint8_t *output, uint16_t outputLen, const uint8_t *message, uint1
     if (err_c == no_error) {
         *sigSize =
             sizeof_field(signature_t, r) + sizeof_field(signature_t, s) + sizeof_field(signature_t, v) + signatureLength;
-        if (info != NULL) *info = tmpInfo;
+        if (info != NULL) {
+            *info = tmpInfo;
+        }
         error = zxerr_ok;
     }
 
@@ -357,7 +359,9 @@ zxerr_t crypto_sign_eth(uint8_t *buffer, uint16_t signatureMaxlen, const uint8_t
     uint8_t v = 0;
     zxerr_t err = tx_compute_eth_v(info, &v);
 
-    if (err != zxerr_ok) return zxerr_invalid_crypto_settings;
+    if (err != zxerr_ok) {
+        return zxerr_invalid_crypto_settings;
+    }
 
     // need to reorder signature as hw-eth-app expects v at the beginning.
     // so rsv -> vrs

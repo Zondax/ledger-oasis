@@ -16,8 +16,9 @@
 #pragma once
 
 #include <zxmacros.h>
-#include "parser_common.h"
+
 #include "cbor.h"
+#include "parser_common.h"
 
 __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
     switch (err) {
@@ -65,7 +66,7 @@ __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
 __Z_INLINE parser_error_t _matchKey(CborValue *value, const char *expectedKey) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
 
-    bool result;
+    bool result = false;
     CHECK_CBOR_ERR(cbor_value_text_string_equals(value, expectedKey, &result))
     if (!result) {
         return parser_unexpected_field;

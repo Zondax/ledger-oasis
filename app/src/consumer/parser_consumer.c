@@ -175,7 +175,7 @@ parser_error_t parser_getInnerNumItems(uint8_t *num_items) {
     return parser_ok;
 }
 
-bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx) {
+bool parser_canInspectItem(uint8_t depth_level, const uint8_t *trace, uint8_t innerItemIdx) {
     if (trace == NULL) {
         return parser_unexepected_error;
     }
@@ -246,7 +246,7 @@ bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerIte
     return false;
 }
 
-parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace) {
+parser_error_t parser_getInnerField(uint8_t depth_level, const uint8_t *trace) {
     if (trace == NULL) {
         return parser_unexepected_error;
     }
@@ -338,7 +338,7 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
                 break;
             }
             case CborBooleanType: {
-                bool res;
+                bool res = false;
                 CHECK_CBOR_ERR(cbor_value_get_boolean(&current, &res))
                 snprintf(val + offset, SCREEN_SIZE - offset, "%s", res ? "true" : "false");
                 break;
@@ -347,13 +347,13 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
                 snprintf(val + offset, SCREEN_SIZE - offset, "%s", "null");
                 break;
             case CborFloatType: {
-                float f = 0.0f;
+                float f = 0.0F;
                 CHECK_CBOR_ERR(cbor_value_get_float(&current, &f))
                 unsigned int integer_part = (unsigned int)f;  // extract integer part
 #if defined TARGET_NANOX
                 snprintf(val + offset, SCREEN_SIZE - offset, "%d", integer_part);
 #else
-                unsigned int decimal_part = (unsigned int)(100.0f * (f - (float)integer_part));
+                unsigned int decimal_part = (unsigned int)(100.0F * (f - (float)integer_part));
                 snprintf(val + offset, SCREEN_SIZE - offset, "%d.%d", integer_part, decimal_part);
 #endif
                 break;
@@ -468,8 +468,9 @@ __Z_INLINE parser_error_t parser_printRuntimeQuantity(const meta_t *meta, const 
                 denom = COIN_MAINNET_DENOM;
                 decimal = runTime_lookup_helper[i].decimals;
                 break;
-            } else if (MEMCMP(meta->chain_context, TESTNET_GENESIS_HASH, HASH_SIZE) == 0 &&
-                       MEMCMP(meta->runtime_id, PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
+            }
+            if (MEMCMP(meta->chain_context, TESTNET_GENESIS_HASH, HASH_SIZE) == 0 &&
+                MEMCMP(meta->runtime_id, PIC(runTime_lookup_helper[i].runid), HASH_SIZE) == 0) {
                 denom = COIN_TESTNET_DENOM;
                 decimal = runTime_lookup_helper[i].decimals;
                 break;
@@ -751,11 +752,10 @@ __Z_INLINE parser_error_t parser_getItemRuntimeConsensus(const parser_context_t 
                 return parser_printRuntimeQuantity(
                     &parser_tx_obj.oasis.runtime.meta, &parser_tx_obj.oasis.runtime.call.body.consensus.amount,
                     &parser_tx_obj.oasis.runtime.call.body.consensus.denom, outVal, outValLen, pageIdx, pageCount);
-            } else {
-                snprintf(outKey, outKeyLen, "Shares");
-                return parser_printShares(&parser_tx_obj.oasis.runtime.call.body.consensus.shares, outVal, outValLen,
-                                          pageIdx, pageCount);
             }
+            snprintf(outKey, outKeyLen, "Shares");
+            return parser_printShares(&parser_tx_obj.oasis.runtime.call.body.consensus.shares, outVal, outValLen, pageIdx,
+                                      pageCount);
         }
         case 3: {
             snprintf(outKey, outKeyLen, "Fee");
@@ -1176,7 +1176,9 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         return parser_ok;
     }
 
-    if (entity_metadata->name.len == 0) skipped++;
+    if (entity_metadata->name.len == 0) {
+        skipped++;
+    }
 
     if (entity_metadata->url.len > 0 && (displayIdx + skipped) < 4) {
         snprintf(outKey, outKeyLen, "URL");
@@ -1184,7 +1186,9 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         return parser_ok;
     }
 
-    if (entity_metadata->url.len == 0) skipped++;
+    if (entity_metadata->url.len == 0) {
+        skipped++;
+    }
 
     if (entity_metadata->email.len > 0 && (displayIdx + skipped) < 5) {
         snprintf(outKey, outKeyLen, "Email");
@@ -1193,7 +1197,9 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         return parser_ok;
     }
 
-    if (entity_metadata->email.len == 0) skipped++;
+    if (entity_metadata->email.len == 0) {
+        skipped++;
+    }
 
     if (entity_metadata->keybase.len > 0 && (displayIdx + skipped) < 6) {
         snprintf(outKey, outKeyLen, "Keybase");
@@ -1202,7 +1208,9 @@ __Z_INLINE parser_error_t parser_getItemEntityMetadata(const oasis_entity_metada
         return parser_ok;
     }
 
-    if (entity_metadata->keybase.len == 0) skipped++;
+    if (entity_metadata->keybase.len == 0) {
+        skipped++;
+    }
 
     if (entity_metadata->twitter.len > 0) {
         snprintf(outKey, outKeyLen, "Twitter");

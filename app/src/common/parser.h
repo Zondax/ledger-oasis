@@ -39,11 +39,11 @@ parser_error_t parser_getInnerNumItems(uint8_t *num_items);
 
 parser_error_t parser_printInnerField(ui_field_t *ui_field);
 
-parser_error_t parser_getInnerField(uint8_t depth_level, uint8_t *trace);
+parser_error_t parser_getInnerField(uint8_t depth_level, const uint8_t *trace);
 
 parser_error_t parser_init_innerNumItems();
 
-bool parser_canInspectItem(uint8_t depth_level, uint8_t *trace, uint8_t innerItemIdx);
+bool parser_canInspectItem(uint8_t depth_level, const uint8_t *trace, uint8_t innerItemIdx);
 
 // retrieves a readable output for each field / page
 parser_error_t parser_getItem(const parser_context_t *ctx, uint16_t displayIdx, char *outKey, uint16_t outKeyLen,
