@@ -16,6 +16,8 @@
 #pragma once
 
 #include <zxmacros.h>
+#include "parser_common.h"
+#include "cbor.h"
 
 __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
     switch (err) {
