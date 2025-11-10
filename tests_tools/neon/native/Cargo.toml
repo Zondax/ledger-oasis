@@ -1,20 +1,16 @@
 [package]
-name = "teststools"
+name = "teststtools"
 version = "0.1.0"
 authors = ["Zondax GmbH <info@zondax.ch>"]
 license = "Apache-2.0"
-build = "build.rs"
-edition = "2018"
+edition = "2021"
 exclude = ["artifacts.json", "index.node"]
 
 [lib]
-name = "teststools"
+name = "teststtools"
 crate-type = ["cdylib"]
 
-[build-dependencies]
-neon-build = "0.10.1"
-
 [dependencies]
-neon = "0.10.1"
-schnorrkel = "0.10.2"
-sha2 = "0.9.9"
+neon = "1.0.0"
+schnorrkel = "0.11.5"
+sha2 = "0.10.9"

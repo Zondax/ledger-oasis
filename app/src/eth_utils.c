@@ -15,43 +15,37 @@
  *  limitations under the License.
  ********************************************************************************/
 #include "eth_utils.h"
+
 #include <stdio.h>
 #include <zxmacros.h>
 
-#define CHECK_RLP_LEN(BUFF_LEN, RLP_LEN)                                       \
-    {                                                                          \
-        uint64_t buff_len = BUFF_LEN;                                          \
-        uint64_t rlp_len = RLP_LEN;                                            \
-        if (buff_len < rlp_len)                                                \
-            return rlp_no_data;                                                \
+#define CHECK_RLP_LEN(BUFF_LEN, RLP_LEN)            \
+    {                                               \
+        uint64_t buff_len = BUFF_LEN;               \
+        uint64_t rlp_len = RLP_LEN;                 \
+        if (buff_len < rlp_len) return rlp_no_data; \
     }
 
-uint64_t
-saturating_add(uint64_t a, uint64_t b)
-{
-
+uint64_t saturating_add(uint64_t a, uint64_t b) {
     uint64_t num = a + b;
-    if (num < a || num < b)
+    if (num < a || num < b) {
         return UINT64_MAX;
+    }
 
     return num;
 }
 
-uint32_t
-saturating_add_u32(uint32_t a, uint32_t b)
-{
-
+uint32_t saturating_add_u32(uint32_t a, uint32_t b) {
     uint32_t num = a + b;
 
-    if (num < a || num < b)
+    if (num < a || num < b) {
         return UINT32_MAX;
+    }
 
     return num;
 }
 
-int
-be_bytes_to_u64(const uint8_t *bytes, uint8_t len, uint64_t *num)
-{
+int be_bytes_to_u64(const uint8_t *bytes, uint8_t len, uint64_t *num) {
     if (bytes == NULL || num == NULL || len == 0 || len > sizeof(uint64_t)) {
         return -1;
     }
@@ -73,14 +67,14 @@ be_bytes_to_u64(const uint8_t *bytes, uint8_t len, uint64_t *num)
     return 0;
 }
 
-rlp_error_t
-get_tx_rlp_len(const uint8_t *buffer, uint32_t len, uint64_t *read, uint64_t *to_read)
-{
-    if (buffer == NULL || len == 0)
+rlp_error_t get_tx_rlp_len(const uint8_t *buffer, uint32_t len, uint64_t *read, uint64_t *to_read) {
+    if (buffer == NULL || len == 0) {
         return rlp_no_data;
+    }
 
-    if (read == NULL || to_read == NULL)
+    if (read == NULL || to_read == NULL) {
         return rlp_no_data;
+    }
 
     // get alias
     const uint8_t *data = buffer;
@@ -92,7 +86,7 @@ get_tx_rlp_len(const uint8_t *buffer, uint32_t len, uint64_t *read, uint64_t *to
     // skip version if present/recognized
     //  otherwise tx is probably legacy so no version, just rlp data
     uint8_t version = data[offset];
-    if (version == 1 || version == 2 ) {
+    if (version == 1 || version == 2) {
         offset += 1;
         *read += 1;
     }
@@ -117,10 +111,10 @@ get_tx_rlp_len(const uint8_t *buffer, uint32_t len, uint64_t *read, uint64_t *to
         // And then the length is just the number BE encoded
         uint64_t num_bytes = (marker - 0xF7);
 
-        uint64_t num;
-        if (be_bytes_to_u64(&data[offset], num_bytes, &num) != 0)
+        uint64_t num = 0;
+        if (be_bytes_to_u64(&data[offset], num_bytes, &num) != 0) {
             return rlp_invalid_data;
-
+        }
 
         // marker byte + number of bytes used to encode the len
         *read += 1 + num_bytes;
@@ -133,12 +127,7 @@ get_tx_rlp_len(const uint8_t *buffer, uint32_t len, uint64_t *read, uint64_t *to
     return rlp_invalid_data;
 }
 
-rlp_error_t
-parse_rlp_item(const uint8_t *data,
-               uint32_t dataLen,
-               uint32_t *read,
-               uint32_t *item_len)
-{
+rlp_error_t parse_rlp_item(const uint8_t *data, uint32_t dataLen, uint32_t *read, uint32_t *item_len) {
     if (data == NULL || dataLen == 0 || read == NULL || item_len == NULL) {
         return rlp_no_data;
     }
@@ -153,16 +142,16 @@ parse_rlp_item(const uint8_t *data,
         *read = 0;
         *item_len = 1;
         return rlp_ok;
-
-    } else if (marker <= 0xB7) {
+    }
+    if (marker <= 0xB7) {
         // second case it is a string with a fixed length
         uint8_t len = marker - 0x80;
         *read = 1;
         CHECK_RLP_LEN(dataLen, len + 1)
         *item_len = len;
         return rlp_ok;
-
-    } else if (marker <= 0xBF) {
+    }
+    if (marker <= 0xBF) {
         // For strings longer than 55 bytes the length is encoded
         // differently.
         // The number of bytes that compose the length is encoded
@@ -173,16 +162,17 @@ parse_rlp_item(const uint8_t *data,
         if (dataLen < num_bytes + 1) {
             return rlp_no_data;
         }
-        if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0)
+        if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0) {
             return rlp_invalid_data;
+        }
 
         CHECK_RLP_LEN(dataLen, len + 1 + num_bytes)
         *read = 1 + num_bytes;
         *item_len = len;
 
         return rlp_ok;
-
-    } else if (marker <= 0xF7) {
+    }
+    if (marker <= 0xF7) {
         // simple list
         uint8_t len = marker - 0xC0;
 
@@ -205,8 +195,9 @@ parse_rlp_item(const uint8_t *data,
         return rlp_no_data;
     }
 
-    if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0)
+    if (be_bytes_to_u64(&data[1], num_bytes, &len) != 0) {
         return rlp_invalid_data;
+    }
 
     CHECK_RLP_LEN(dataLen, len + 1 + num_bytes)
 

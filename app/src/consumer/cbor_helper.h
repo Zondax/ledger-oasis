@@ -1,21 +1,24 @@
 /*******************************************************************************
-*  (c) 2019 ZondaX GmbH
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-********************************************************************************/
+ *  (c) 2019 ZondaX GmbH
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ ********************************************************************************/
 #pragma once
 
 #include <zxmacros.h>
+
+#include "cbor.h"
+#include "parser_common.h"
 
 __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
     switch (err) {
@@ -30,29 +33,40 @@ __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
     }
 }
 
-#define CHECK_CBOR_ERR(CALL) { \
-    CborError err = CALL;  \
-    check_app_canary(); \
-    if (err!=CborNoError) return parser_mapCborError(err);}
+#define CHECK_CBOR_ERR(CALL)                                     \
+    {                                                            \
+        CborError err = CALL;                                    \
+        check_app_canary();                                      \
+        if (err != CborNoError) return parser_mapCborError(err); \
+    }
 
-#define CHECK_CBOR_TYPE(type, expected) {if (type!=expected) return parser_unexpected_type;}
+#define CHECK_CBOR_TYPE(type, expected)                      \
+    {                                                        \
+        if (type != expected) return parser_unexpected_type; \
+    }
 
-#define CHECK_CBOR_MAP_LEN(map, expected_count) { \
-    size_t nitems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems)); \
-    if (nitems != expected_count)  return parser_unexpected_number_items; }
+#define CHECK_CBOR_MAP_LEN(map, expected_count)                              \
+    {                                                                        \
+        size_t nitems;                                                       \
+        CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems));             \
+        if (nitems != expected_count) return parser_unexpected_number_items; \
+    }
 
-#define CHECK_CBOR_MAP_MAXLEN(map, expected_max_count) { \
-    size_t nitems; CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems)); \
-    if (nitems > expected_max_count)  return parser_unexpected_number_items; }
+#define CHECK_CBOR_MAP_MAXLEN(map, expected_max_count)                          \
+    {                                                                           \
+        size_t nitems;                                                          \
+        CHECK_CBOR_ERR(cbor_value_get_map_length(map, &nitems));                \
+        if (nitems > expected_max_count) return parser_unexpected_number_items; \
+    }
 
-#define INIT_CBOR_PARSER(c, it)  \
-    CborParser parser;           \
+#define INIT_CBOR_PARSER(c, it) \
+    CborParser parser;          \
     CHECK_CBOR_ERR(cbor_parser_init(c->buffer + c->offset, c->bufferLen - c->offset, 0, &parser, &it))
 
 __Z_INLINE parser_error_t _matchKey(CborValue *value, const char *expectedKey) {
     CHECK_CBOR_TYPE(cbor_value_get_type(value), CborTextStringType)
 
-    bool result;
+    bool result = false;
     CHECK_CBOR_ERR(cbor_value_text_string_equals(value, expectedKey, &result))
     if (!result) {
         return parser_unexpected_field;
