@@ -14,8 +14,8 @@
     "Ledger"
   ],
   "scripts": {
-    "test_all": "ts-node tests/pullImageKillOld.ts && jest",
-    "test": "ts-node tests/pullImageKillOld.ts && jest -t 'Standard'",
+    "test_all": "ts-node tests/pullImageKillOld.ts && jest --maxConcurrency 2",
+    "test": "ts-node tests/pullImageKillOld.ts && jest -t 'Standard' --maxConcurrency 2",
     "testadr0008-5": "ts-node tests/pullImageKillOld.ts && jest -t 'Standard-Adr0008-5'",
     "testadr0008-0": "ts-node tests/pullImageKillOld.ts && jest -t 'Standard-Adr0008-0'",
     "testadr0008-0-oasis": "ts-node tests/pullImageKillOld.ts && jest -t 'Standard-Adr0008-0-Oasis'",
