@@ -1818,7 +1818,12 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue rootItem = {0};
     INIT_CBOR_PARSER(c, rootItem)
 
-    CHECK_CBOR_ERR(cbor_value_validate_basic(&rootItem))
+    // Enforce canonical CBOR (RFC 8949 §4.2.1) plus map-key uniqueness so
+    // any non-canonical or duplicate-key input — which the chain-side
+    // serializer would never produce — is rejected before it can drive a
+    // sign-different-than-displayed parity break.
+    CHECK_CBOR_ERR(cbor_value_validate(&rootItem,
+                                       CborValidateCanonicalFormat | CborValidateMapKeysAreUnique))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
