@@ -365,7 +365,10 @@ parser_error_t parser_printInnerField(ui_field_t *ui_field) {
 
         if (elements_print == 1) {
             cbor_value_advance(&current);
-            snprintf(val + offset, SCREEN_SIZE, "%s", ":");
+            // Bound the colon-separator write against remaining buffer space
+            // (val[SCREEN_SIZE]); SCREEN_SIZE alone would let the write spill
+            // past the end of the stack buffer once offset approached SCREEN_SIZE.
+            snprintf(val + offset, SCREEN_SIZE - offset, "%s", ":");
             offset += 1;
         }
     }
