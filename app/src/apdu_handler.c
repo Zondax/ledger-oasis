@@ -64,7 +64,12 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
         THROW(APDU_CODE_DATA_INVALID);
     }
 
-    if (hdPathLen == HDPATH_LEN_ADR0008 && hdPath[2] < 0x80000000) {
+    // Account index (BIP44 component 2) must be hardened for both the
+    // 3-element ADR-0008 and the 5-element default shapes. Leaving the
+    // account index unhardened would let a host request signatures under
+    // a non-BIP44 account, providing a silent address-enumeration
+    // primitive when paired with INS_GET_ADDR_* with no confirmation.
+    if (hdPath[2] < 0x80000000) {
         THROW(APDU_CODE_DATA_INVALID);
     }
 }
@@ -94,6 +99,14 @@ void extract_eth_path(uint32_t rx, uint32_t offset) {
     const bool mainnet = hdPath[0] == HDPATH_ETH_0_DEFAULT && hdPath[1] == HDPATH_ETH_1_DEFAULT;
 
     if (!mainnet) {
+        THROW(APDU_CODE_DATA_INVALID);
+    }
+
+    // Require the account index to be hardened when the path reaches
+    // component 2, matching the invariant enforced on the consensus side
+    // (extractHDPath above) and closing the unhardened-account
+    // enumeration primitive on EVM-side GET_ADDR.
+    if (path_len >= 3 && hdPath[2] < 0x80000000) {
         THROW(APDU_CODE_DATA_INVALID);
     }
 
