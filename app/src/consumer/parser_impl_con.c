@@ -1843,6 +1843,14 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
             return parser_context_unknown_prefix;
     }
 
+    // The signing path hashes the full received buffer, so any bytes after
+    // the parsed CBOR map would enter the signature without being displayed.
+    // Advance past the root map and require the cursor to land at end-of-stream.
+    CHECK_CBOR_ERR(cbor_value_advance(&rootItem))
+    if (!cbor_value_at_end(&rootItem)) {
+        return parser_unexpected_buffer_end;
+    }
+
     return parser_ok;
 }
 
