@@ -1450,8 +1450,8 @@ __Z_INLINE parser_error_t parser_printStakingAmendCommissionSchedule(const parse
     }
 
     uint8_t dynDisplayIdx = displayIdx - 1;
-    if (dynDisplayIdx < (int)(parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2 +
-                              parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3)) {
+    if (dynDisplayIdx < (int)((parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) +
+                              (parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3))) {
         if (dynDisplayIdx / 2 < (int)parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length) {
             const int8_t index = dynDisplayIdx / 2;
             commissionRateStep_t rate;
@@ -1497,8 +1497,8 @@ __Z_INLINE parser_error_t parser_printStakingAmendCommissionSchedule(const parse
         }
     }
 
-    uint8_t lastDisplayIdx = dynDisplayIdx - parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2 -
-                             parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3;
+    uint8_t lastDisplayIdx = dynDisplayIdx - (parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.rates_length * 2) -
+                             (parser_tx_obj.oasis.tx.body.stakingAmendCommissionSchedule.bounds_length * 3);
     switch (lastDisplayIdx) {
         case 0: {
             snprintf(outKey, outKeyLen, "Fee");
