@@ -755,6 +755,30 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readString(
                     &upgradeVal, (uint8_t *)&v->oasis.tx.body.governanceSubmitProposal.upgrade.handler, HANDLER_MAX_LENGTH));
+
+                // Reject embedded NUL bytes in the handler value. The display
+                // path uses `snprintf("%s", handler)` which walks the buffer
+                // as a C string, so an embedded NUL would truncate the
+                // user-visible text while the signed CBOR covers the full
+                // field. The enclosing oasis_tx_t was MEMZERO'd in _read, so
+                // any non-zero byte after the first NUL in the 32-byte
+                // buffer must have been supplied by the CBOR payload itself.
+                {
+                    const uint8_t *h = v->oasis.tx.body.governanceSubmitProposal.upgrade.handler;
+                    size_t handler_end = HANDLER_MAX_LENGTH;
+                    for (size_t i = 0; i < HANDLER_MAX_LENGTH; i++) {
+                        if (h[i] == 0) {
+                            handler_end = i;
+                            break;
+                        }
+                    }
+                    for (size_t i = handler_end + 1; i < HANDLER_MAX_LENGTH; i++) {
+                        if (h[i] != 0) {
+                            return parser_unexpected_characters;
+                        }
+                    }
+                }
+
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
 
                 v->oasis.tx.body.governanceSubmitProposal.type = upgrade;

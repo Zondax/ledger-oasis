@@ -206,9 +206,17 @@ zxerr_t crypto_signSecp256k1(uint8_t *output, uint16_t outputLen, const uint8_t 
 
     const err_convert_e err_c = convertDERtoRSV(signature_object->der_signature, info, signature_object->r,
                                                 signature_object->s, &signature_object->v);
+    // Explicit failure branch. Without the else, `error` would keep the
+    // last value set on the success path and the function would return
+    // zxerr_ok with a signature buffer left in an undefined state; the
+    // cleanup gate below also keys off `error != zxerr_ok`, so secret
+    // zeroization would be skipped on the unreachable-but-possible DER
+    // conversion failure.
     if (err_c == no_error) {
         *sigSize = sizeof_field(signature_t, r) + sizeof_field(signature_t, s) + sizeof_field(signature_t, v);
         error = zxerr_ok;
+    } else {
+        error = zxerr_invalid_crypto_settings;
     }
 
 catch_cx_error:
@@ -326,6 +334,10 @@ zxerr_t _sign(uint8_t *output, uint16_t outputLen, const uint8_t *message, uint1
             *info = tmpInfo;
         }
         error = zxerr_ok;
+    } else {
+        // DER conversion failed; signal explicitly so the cleanup block
+        // below zeroises `output` and the caller sees a non-ok return.
+        error = zxerr_invalid_crypto_settings;
     }
 
 catch_cx_error:
