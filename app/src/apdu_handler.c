@@ -37,10 +37,19 @@
 
 static bool tx_initialized = false;
 
+// Storage for the review-pending re-entrancy lock declared in actions.h.
+// Gates handleApdu so no new APDU can mutate tx / hdPath / G_io_apdu_buffer
+// state while a user review is on screen (BLE transport in particular has
+// no equivalent SDK-level guard).
+volatile bool g_review_pending = false;
+
 static const char *msg_error1 = "Expert Mode";
 static const char *msg_error2 = "Required";
 
 void extractHDPath(uint32_t rx, uint32_t offset) {
+    if (rx < offset) {
+        THROW(APDU_CODE_WRONG_LENGTH);
+    }
     MEMZERO(hdPath, sizeof(hdPath));
     if ((rx - offset) == sizeof(uint32_t) * HDPATH_LEN_ADR0008) {
         hdPathLen = HDPATH_LEN_ADR0008;
@@ -76,6 +85,14 @@ void extractHDPath(uint32_t rx, uint32_t offset) {
 
 void extract_eth_path(uint32_t rx, uint32_t offset) {
     tx_initialized = false;
+
+    // Reject before reading the path-length byte: rx == offset is
+    // reachable with a truncated APDU (rx == APDU_MIN_LENGTH ==
+    // OFFSET_DATA), which would otherwise read past the received data
+    // and underflow the length check below.
+    if (rx <= offset) {
+        THROW(APDU_CODE_WRONG_LENGTH);
+    }
 
     uint32_t path_len = *(G_io_apdu_buffer + offset);
 
@@ -462,6 +479,14 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
 
     BEGIN_TRY {
         TRY {
+            // Reject every incoming APDU while a user review is pending.
+            // Every terminal callback in actions.c clears the flag; a
+            // concurrent APDU landing during the review window throws here
+            // without touching shared state.
+            if (review_is_pending()) {
+                THROW(APDU_CODE_COMMAND_NOT_ALLOWED);
+            }
+
             uint8_t cla = G_io_apdu_buffer[OFFSET_CLA];
             if ((cla != CLA) && (cla != CLA_ETH)) {
                 THROW(APDU_CODE_CLA_NOT_SUPPORTED);
@@ -537,8 +562,18 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 default:
                     THROW(APDU_CODE_INS_NOT_SUPPORTED);
             }
+
+            // If the dispatched handler entered an async user review,
+            // arm the re-entrancy lock. Cleared by each terminal
+            // callback in actions.c.
+            if ((*flags & IO_ASYNCH_REPLY) != 0) {
+                review_mark_pending();
+            }
         }
-        CATCH(EXCEPTION_IO_RESET) { THROW(EXCEPTION_IO_RESET); }
+        CATCH(EXCEPTION_IO_RESET) {
+            review_clear_pending();
+            THROW(EXCEPTION_IO_RESET);
+        }
         CATCH_OTHER(e) {
             switch (e & 0xF000) {
                 case 0x6000:
@@ -548,6 +583,13 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 default:
                     sw = 0x6800 | (e & 0x7FF);
                     break;
+            }
+            // Clear the review lock on every error path except the
+            // one that rejected an incoming APDU while a review was
+            // pending — in that case the legitimate in-flight review
+            // must keep its lock.
+            if (e != APDU_CODE_COMMAND_NOT_ALLOWED) {
+                review_clear_pending();
             }
             G_io_apdu_buffer[*tx] = sw >> 8;
             G_io_apdu_buffer[*tx + 1] = sw;
