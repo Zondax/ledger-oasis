@@ -432,6 +432,9 @@ __Z_INLINE parser_error_t _readAmendment(parser_tx_t *v, CborValue *value) {
 
     // Array of rates
     cbor_value_get_array_length(&contents, &v->oasis.tx.body.stakingAmendCommissionSchedule.rates_length);
+    if (v->oasis.tx.body.stakingAmendCommissionSchedule.rates_length > MAX_RATES) {
+        return parser_unexpected_number_items;
+    }
 
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
@@ -441,6 +444,9 @@ __Z_INLINE parser_error_t _readAmendment(parser_tx_t *v, CborValue *value) {
 
     // Array of bounds
     cbor_value_get_array_length(&contents, &v->oasis.tx.body.stakingAmendCommissionSchedule.bounds_length);
+    if (v->oasis.tx.body.stakingAmendCommissionSchedule.bounds_length > MAX_BOUNDS) {
+        return parser_unexpected_number_items;
+    }
 
     return parser_ok;
 }
@@ -1303,6 +1309,9 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
 
     // Array of tokens
     cbor_value_get_array_length(&tokensField, &v->oasis.runtime.call.body.contracts.tokensLen);
+    if (v->oasis.runtime.call.body.contracts.tokensLen > MAX_TOKENS) {
+        return parser_unexpected_number_items;
+    }
     return parser_ok;
 }
 

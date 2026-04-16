@@ -74,6 +74,8 @@ extern "C" {
 #define COIN_RATE_DECIMAL_PLACES 5
 
 #define MAX_RATES 10
+#define MAX_BOUNDS 16
+#define MAX_TOKENS 16
 #define MAX_CONTEXT_SIZE 64
 #define MAX_ENTITY_NODES 16
 
