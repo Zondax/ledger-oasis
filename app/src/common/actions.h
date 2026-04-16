@@ -23,11 +23,6 @@
 
 extern uint16_t action_addrResponseLen;
 
-// Reject every incoming APDU while a user review is on screen. The flag is
-// raised after a handler enters an async review (view_review_show +
-// IO_ASYNCH_REPLY) and cleared by each terminal callback below. Without this
-// gate the BLE transport accepts a new APDU during the review window and
-// rewrites tx_get_buffer() / hdPath under the approval callback.
 extern volatile bool g_review_pending;
 
 static inline bool review_is_pending(void) { return g_review_pending; }
