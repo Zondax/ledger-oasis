@@ -15,12 +15,19 @@
  ********************************************************************************/
 #pragma once
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "coin.h"
 #include "zxerror.h"
 
 extern uint16_t action_addrResponseLen;
+
+extern volatile bool g_review_pending;
+
+static inline bool review_is_pending(void) { return g_review_pending; }
+static inline void review_mark_pending(void) { g_review_pending = true; }
+static inline void review_clear_pending(void) { g_review_pending = false; }
 
 void app_sign_ed25519();
 void app_sign_secp256k1();
