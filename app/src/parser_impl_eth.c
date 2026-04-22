@@ -74,7 +74,7 @@ static parser_error_t readChainID(parser_context_t *ctx, chain_id_t *chain_id) {
 }
 
 static parser_error_t readBigInt(parser_context_t *ctx, eth_big_int_t *big_int) {
-    if (parse_field(ctx, &(big_int->offset), &(big_int->len)) != rlp_ok) {
+    if (parse_field(ctx, &(big_int->offset), &(big_int->len)) != parser_ok) {
         return parser_invalid_rlp_data;
     }
 

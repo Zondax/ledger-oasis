@@ -102,6 +102,20 @@ pub extern "C" fn sign_sr25519_phase1(
 ) {
     c_zemu_log_stack(b"sign_sr25519\x00".as_ref());
 
+    // Null guards at the FFI boundary. The current in-repo C callers all
+    // pass valid stack buffers, but passing NULL to `from_raw_parts` is UB
+    // regardless of whether the slice is later read. Silent early-return
+    // keeps the `void` signature unchanged; callers that pass NULL get a
+    // no-op and an unchanged signature buffer.
+    if sk_ristretto_expanded_ptr.is_null()
+        || pk_ptr.is_null()
+        || context_ptr.is_null()
+        || msg_ptr.is_null()
+        || sig_ptr.is_null()
+    {
+        return;
+    }
+
     let sk_ristretto_expanded =
         unsafe { from_raw_parts(sk_ristretto_expanded_ptr as *const u8, 64) };
     let pk = unsafe { from_raw_parts(pk_ptr as *const u8, 32) };
@@ -131,6 +145,15 @@ pub extern "C" fn sign_sr25519_phase2(
 ) {
     c_zemu_log_stack(b"sign_sr25519\x00".as_ref());
 
+    if sk_ristretto_expanded_ptr.is_null()
+        || pk_ptr.is_null()
+        || context_ptr.is_null()
+        || msg_ptr.is_null()
+        || sig_ptr.is_null()
+    {
+        return;
+    }
+
     let sk_ristretto_expanded =
         unsafe { from_raw_parts(sk_ristretto_expanded_ptr as *const u8, 64) };
     let pk = unsafe { from_raw_parts(pk_ptr as *const u8, 32) };
@@ -158,6 +181,9 @@ pub extern "C" fn sign_sr25519_phase2(
 
 #[no_mangle]
 pub extern "C" fn expanded_sr25519_sk(sk_ed25519_ptr: *mut u8, sk_ed25519_expanded_ptr: *mut u8) {
+    if sk_ed25519_ptr.is_null() || sk_ed25519_expanded_ptr.is_null() {
+        return;
+    }
     let sk_ed25519 = unsafe { from_raw_parts_mut(sk_ed25519_ptr as *mut u8, 32) };
     let sk_ed25519_expanded = unsafe { from_raw_parts_mut(sk_ed25519_expanded_ptr as *mut u8, 64) };
     let secret: MiniSecretKey = MiniSecretKey::from_bytes(&sk_ed25519[..]).unwrap_handler();
@@ -166,6 +192,9 @@ pub extern "C" fn expanded_sr25519_sk(sk_ed25519_ptr: *mut u8, sk_ed25519_expand
 
 #[no_mangle]
 pub extern "C" fn get_sr25519_sk(sk_ed25519_expanded_ptr: *mut u8) {
+    if sk_ed25519_expanded_ptr.is_null() {
+        return;
+    }
     let sk_ed25519_expanded = unsafe { from_raw_parts_mut(sk_ed25519_expanded_ptr as *mut u8, 64) };
     let secret: SecretKey =
         SecretKey::from_ed25519_bytes(&sk_ed25519_expanded[..]).unwrap_handler();

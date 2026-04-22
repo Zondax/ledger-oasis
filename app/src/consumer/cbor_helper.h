@@ -25,6 +25,7 @@ __Z_INLINE parser_error_t parser_mapCborError(CborError err) {
         case CborErrorUnexpectedEOF:
             return parser_cbor_unexpected_EOF;
         case CborErrorMapNotSorted:
+        case CborErrorMapKeysNotUnique:
             return parser_cbor_not_canonical;
         case CborNoError:
             return parser_ok;

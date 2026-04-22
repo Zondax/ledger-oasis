@@ -31,6 +31,8 @@
 uint16_t action_addrResponseLen;
 
 void app_sign_ed25519() {
+    review_clear_pending();
+
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
@@ -49,6 +51,8 @@ void app_sign_ed25519() {
 }
 
 void app_sign_secp256k1() {
+    review_clear_pending();
+
     uint8_t *signature = G_io_apdu_buffer;
     uint16_t replyLen = 0;
 
@@ -67,6 +71,8 @@ void app_sign_secp256k1() {
 }
 
 void app_sign_sr25519() {
+    review_clear_pending();
+
     uint8_t *signature = G_io_apdu_buffer;
     uint8_t messageDigest[CX_SHA512_SIZE] = {0};
     size_t ctx_len = 0;
@@ -87,6 +93,7 @@ void app_sign_sr25519() {
 }
 
 void app_reject() {
+    review_clear_pending();
     MEMZERO(G_io_apdu_buffer, IO_APDU_BUFFER_SIZE);
     set_code(G_io_apdu_buffer, 0, APDU_CODE_COMMAND_NOT_ALLOWED);
     io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
@@ -109,6 +116,8 @@ zxerr_t app_fill_address(address_kind_e kind) {
 }
 
 void app_sign_eth() {
+    review_clear_pending();
+
     const uint8_t *message = tx_get_buffer();
     const uint16_t messageLength = tx_get_buffer_length();
     uint16_t replyLen = 0;
@@ -126,6 +135,7 @@ void app_sign_eth() {
 }
 
 void app_reply_address() {
+    review_clear_pending();
     if (action_addrResponseLen == 0) {
         THROW(APDU_CODE_DATA_INVALID);
     }
@@ -134,6 +144,7 @@ void app_reply_address() {
 }
 
 void app_reply_error() {
+    review_clear_pending();
     set_code(G_io_apdu_buffer, 0, APDU_CODE_DATA_INVALID);
     io_exchange(CHANNEL_APDU | IO_RETURN_AFTER_TX, 2);
 }
