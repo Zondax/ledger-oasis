@@ -432,6 +432,9 @@ __Z_INLINE parser_error_t _readAmendment(parser_tx_t *v, CborValue *value) {
 
     // Array of rates
     cbor_value_get_array_length(&contents, &v->oasis.tx.body.stakingAmendCommissionSchedule.rates_length);
+    if (v->oasis.tx.body.stakingAmendCommissionSchedule.rates_length > MAX_RATES) {
+        return parser_unexpected_number_items;
+    }
 
     CHECK_CBOR_ERR(cbor_value_advance(&contents))
 
@@ -441,6 +444,9 @@ __Z_INLINE parser_error_t _readAmendment(parser_tx_t *v, CborValue *value) {
 
     // Array of bounds
     cbor_value_get_array_length(&contents, &v->oasis.tx.body.stakingAmendCommissionSchedule.bounds_length);
+    if (v->oasis.tx.body.stakingAmendCommissionSchedule.bounds_length > MAX_BOUNDS) {
+        return parser_unexpected_number_items;
+    }
 
     return parser_ok;
 }
@@ -749,6 +755,30 @@ __Z_INLINE parser_error_t _readBody(parser_tx_t *v, CborValue *rootItem) {
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
                 CHECK_PARSER_ERR(_readString(
                     &upgradeVal, (uint8_t *)&v->oasis.tx.body.governanceSubmitProposal.upgrade.handler, HANDLER_MAX_LENGTH));
+
+                // Reject embedded NUL bytes in the handler value. The display
+                // path uses `snprintf("%s", handler)` which walks the buffer
+                // as a C string, so an embedded NUL would truncate the
+                // user-visible text while the signed CBOR covers the full
+                // field. The enclosing oasis_tx_t was MEMZERO'd in _read, so
+                // any non-zero byte after the first NUL in the 32-byte
+                // buffer must have been supplied by the CBOR payload itself.
+                {
+                    const uint8_t *h = v->oasis.tx.body.governanceSubmitProposal.upgrade.handler;
+                    size_t handler_end = HANDLER_MAX_LENGTH;
+                    for (size_t i = 0; i < HANDLER_MAX_LENGTH; i++) {
+                        if (h[i] == 0) {
+                            handler_end = i;
+                            break;
+                        }
+                    }
+                    for (size_t i = handler_end + 1; i < HANDLER_MAX_LENGTH; i++) {
+                        if (h[i] != 0) {
+                            return parser_unexpected_characters;
+                        }
+                    }
+                }
+
                 CHECK_CBOR_ERR(cbor_value_advance(&upgradeVal))
 
                 v->oasis.tx.body.governanceSubmitProposal.type = upgrade;
@@ -1303,6 +1333,9 @@ __Z_INLINE parser_error_t _readRuntimeContractsBody(parser_tx_t *v, CborValue *r
 
     // Array of tokens
     cbor_value_get_array_length(&tokensField, &v->oasis.runtime.call.body.contracts.tokensLen);
+    if (v->oasis.runtime.call.body.contracts.tokensLen > MAX_TOKENS) {
+        return parser_unexpected_number_items;
+    }
     return parser_ok;
 }
 
@@ -1809,7 +1842,11 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
     CborValue rootItem = {0};
     INIT_CBOR_PARSER(c, rootItem)
 
-    CHECK_CBOR_ERR(cbor_value_validate_basic(&rootItem))
+    // Enforce canonical CBOR (RFC 8949 §4.2.1) plus map-key uniqueness so
+    // any non-canonical or duplicate-key input — which the chain-side
+    // serializer would never produce — is rejected before it can drive a
+    // sign-different-than-displayed parity break.
+    CHECK_CBOR_ERR(cbor_value_validate(&rootItem, CborValidateCanonicalFormat | CborValidateMapKeysAreUnique))
 
     if (cbor_value_at_end(&rootItem)) {
         return parser_unexpected_buffer_end;
@@ -1841,6 +1878,14 @@ parser_error_t _read(const parser_context_t *c, parser_tx_t *v) {
             break;
         default:
             return parser_context_unknown_prefix;
+    }
+
+    // The signing path hashes the full received buffer, so any bytes after
+    // the parsed CBOR map would enter the signature without being displayed.
+    // Advance past the root map and require the cursor to land at end-of-stream.
+    CHECK_CBOR_ERR(cbor_value_advance(&rootItem))
+    if (!cbor_value_at_end(&rootItem)) {
+        return parser_unexpected_buffer_end;
     }
 
     return parser_ok;
