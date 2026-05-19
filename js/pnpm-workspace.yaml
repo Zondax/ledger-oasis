@@ -1,0 +1,8 @@
+allowBuilds:
+  core-js: false
+  ed25519-supercop: true
+  keccak: true
+  node-hid: true
+  secp256k1: true
+  unrs-resolver: false
+  usb: true
