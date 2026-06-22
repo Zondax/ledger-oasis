@@ -6,10 +6,4 @@ rustflags = [
 	"-C", "relocation-model=ropi",
     "-C", "link-arg=-nostartfiles",
     "-C", "link-arg=-Tlink.ld",
-    "-Z", "unstable-options",
-    "-C", "panic=immediate-abort",
 ]
-[unstable]
-build-std=["core"]
-# panic_immediate_abort is no longer a build-std feature (nightly-2025-12-05);
-# immediate-abort is selected via the device-target rustflags above.
