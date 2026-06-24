@@ -16,3 +16,4 @@ jobs:
     with:
       runs-on: ${{ github.repository_owner == 'zondax' && 'zondax-runners' || 'ubuntu-latest' }}
       check_rust: true
+      use_latest_builder: true
