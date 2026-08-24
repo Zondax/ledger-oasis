@@ -497,11 +497,6 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
             }
             uint8_t instruction = G_io_apdu_buffer[OFFSET_INS];
 
-            // Handle this case as ins number
-            if (instruction == INS_GET_ADDR_ETH && cla == CLA_ETH) {
-                handleGetEthAddr(flags, tx, rx);
-            }
-
             switch (instruction) {
                 case INS_GET_VERSION: {
                     handle_getversion(flags, tx, rx);
@@ -516,6 +511,14 @@ void handleApdu(volatile uint32_t *flags, volatile uint32_t *tx, uint32_t rx) {
                 }
 
                 case INS_SIGN_ED25519: {
+                    // INS 0x02 is INS_GET_ADDR_ETH under CLA_ETH and
+                    // INS_SIGN_ED25519 under CLA. Dispatch on the class so a
+                    // single request reaches exactly one handler.
+                    if (cla == CLA_ETH) {
+                        zemu_log("INS_GET_ADDR_ETH\n");
+                        handleGetEthAddr(flags, tx, rx);
+                        break;
+                    }
                     CHECK_PIN_VALIDATED()
                     handleSignEd25519(flags, tx, rx);
                     break;
