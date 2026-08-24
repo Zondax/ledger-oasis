@@ -66,7 +66,9 @@ async function raw(port: number, hex: string, timeoutMs = 45000): Promise<string
 
 const statusOf = (r: string) => parseInt(r.slice(-4), 16)
 
-describe('APDU dispatch', function () {
+// Named to match the `jest -t 'Standard'` filter the CI job runs; a describe
+// block outside that pattern is silently skipped there.
+describe('Standard-APDU-Dispatch', function () {
   test.concurrent.each(models)('INS 0x02 resolves by class', async function (m) {
     const sim = new Zemu(m.path)
     try {
